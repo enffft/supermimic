@@ -52,9 +52,11 @@
 
 `max_hours` 在每个 50 iteration 日志点检查；超限后正常退出 loop，随后写最终 `ckpt_latest.pt` 并 flush TensorBoard。编号 checkpoint 每 4000 iteration 保存一次，若达到则包含 20000、40000、60000、80000 等里程碑。
 
-## 3. 安全重试命令（尚未执行）
+## 3. 普通终端前台启动命令（尚未执行）
 
-不要把带真实换行的参数列表放进 tmux 引号中。上次命令在内层引号中断行，shell 把后续选项当成独立命令，实际 `sm-train` 只收到前面的参数，因而采用了 4096 环境等默认值。以下做法先将启动命令写入脚本，再由 tmux 执行；每个训练参数都在同一条脚本命令中，并拒绝复用已有目录：
+上次命令把真实换行放进 `bash -lc '…'` 的引号中，Shell 会把它们当成命令分隔符；Shell 引号中的换行不会自动续接命令。另外，`--wm-trainer.batches-per-update` 被拆成了两行。实际配置快照显示 `sm-train` 只收到前面的 run name/log root/seed，其他字段使用默认值。tmux 本身不是训练失败原因：当内层命令结束后，tmux 的最后一个窗口关闭，session/server 也随之消失。具体退出错误没有保存到日志，无法确认是 CLI 后续命令报错还是进程在启动中另行退出。
+
+以下命令在当前普通终端前台运行：日志同时显示在屏幕和文件中；按 Ctrl+C 可中断。每个续行反斜杠都在 Shell 顶层，不再嵌套到引号里。启动使用新目录 `retry1`，不会覆盖失败现场：
 
 ```bash
 cd /home/yifeiy/ws_supermimic
@@ -67,20 +69,21 @@ if [ -e "$OUT" ]; then
   exit 1
 fi
 mkdir -p "$OUT"
-
-cat > "$OUT/launch.sh" <<'EOF'
-#!/usr/bin/env bash
 set -o pipefail
-cd /home/yifeiy/ws_supermimic
-env -u PYTHONPATH -u LD_LIBRARY_PATH /home/yifeiy/miniconda3/envs/supermimic/bin/sm-train --run-name lafan1_q1_4070_anchor_retry1 --log-root logs/4070 --seed 0 --data.npz-dir data/npz/lafan1 --env.anchor-obs --env.num-envs 1024 --env.replay-capacity 256 --policy-trainer.batch-size 1024 --policy-trainer.horizon 32 --wm-trainer.batch-size 1024 --wm-trainer.batches-per-update 10 --schedule.total-iterations 320000 --schedule.max-hours 4 --schedule.warmup-iterations 40 --schedule.log-interval 50 --schedule.checkpoint-interval 4000 2>&1 | tee -a logs/4070/lafan1_q1_4070_anchor_retry1/console.log
-EOF
-chmod +x "$OUT/launch.sh"
-
-tmux new-session -d -s "$RUN" "bash '$OUT/launch.sh'"
-tmux ls
+env -u PYTHONPATH -u LD_LIBRARY_PATH \
+  /home/yifeiy/miniconda3/envs/supermimic/bin/sm-train \
+  --run-name "$RUN" --log-root logs/4070 --seed 0 \
+  --data.npz-dir data/npz/lafan1 --env.anchor-obs \
+  --env.num-envs 1024 --env.replay-capacity 256 \
+  --policy-trainer.batch-size 1024 --policy-trainer.horizon 32 \
+  --wm-trainer.batch-size 1024 --wm-trainer.batches-per-update 10 \
+  --schedule.total-iterations 320000 --schedule.max-hours 4 \
+  --schedule.warmup-iterations 40 --schedule.log-interval 50 \
+  --schedule.checkpoint-interval 4000 \
+  2>&1 | tee "$OUT/console.log"
 ```
 
-这段是给用户手动执行的重试命令，本次助手没有启动训练。新 session 名为 `lafan1_q1_4070_anchor_retry1`。启动后应先检查 `config.json` 确认 1024 env、anchor=true、batch=1024、H=32、max_hours=4，再观察日志和 GPU；用 `tmux list-panes -t lafan1_q1_4070_anchor_retry1 -F '#{pane_pid}'` 查看 pane PID，`pgrep -af sm-train` 查看训练进程 PID。
+本次助手没有启动训练。正式启动后，从第二个终端检查 `config.json` 是否确为 1024 env、anchor=true、Actor/WM batch=1024、H=32、max_hours=4；另用 `pgrep -af sm-train` 查进程、`tail -f logs/4070/lafan1_q1_4070_anchor_retry1/console.log` 看日志、`nvidia-smi` 看显存。
 
 启动日志应实际确认：`MotionLibrary(full): 40 clips, 441140 frames (2.451 h @50Hz)`；参数量约 `8.82M / 8.910M / 0.237M`；GPU 为 `cuda:0`；console log 和 TensorBoard event 位于该 run 目录。以上是启动核对项，不是已发生结果。
 
@@ -104,7 +107,6 @@ tmux ls
 查看进度、显存和 TensorBoard：
 
 ```bash
-tmux capture-pane -t lafan1_q1_4070_anchor_retry1 -p -S -100
 tail -f logs/4070/lafan1_q1_4070_anchor_retry1/console.log
 nvidia-smi
 nvidia-smi --loop=2
@@ -116,14 +118,13 @@ env -u PYTHONPATH -u LD_LIBRARY_PATH \
 
 TensorBoard 重点看 WM loss/NSE/gradient、`policy/policy_grad_norm`、`policy/critic_loss`、imagined return/survival、`train/episode_norm_return`、`train/episode_len` 和 `time/*`。Imagination Return 上升不等于真实跟踪改善。
 
-首选让 `max_hours=4` 正常结束，它会执行最终 checkpoint 保存。手动 SIGINT 不经过 loop 的最终保存路径，可能丢失最近一个编号 checkpoint 之后最多约 4000 iterations。需提前确认编号 checkpoint 已完整落盘，再使用：
+首选让 `max_hours=4` 正常结束，它会执行最终 checkpoint 保存。前台运行时按 Ctrl+C 会发送 SIGINT；这不会经过 loop 的最终保存路径，可能丢失最近一个编号 checkpoint 之后最多约 4000 iterations。需提前确认编号 checkpoint 已完整落盘。中断后可在普通终端检查：
 
 ```bash
 ls -lh logs/4070/lafan1_q1_4070_anchor_retry1/ckpt_*.pt
-tmux send-keys -t lafan1_q1_4070_anchor_retry1 C-c
 ```
 
-如果手动停止，优先从最后一个完整的 `ckpt_NNNNNNNN.pt` 恢复；不要在 `torch.save` 正写文件时强行结束进程。
+如果手动停止，优先从最后一个完整的 `ckpt_NNNNNNNN.pt` 恢复；不要在 `torch.save` 正写文件时强行结束进程。只有确认训练卡死且必须立即停止时，才从另一终端对本项目的训练 PID 发送 `kill -INT <PID>`，不要用 `kill -9`。
 
 ## 5. Checkpoint 与恢复
 
@@ -152,10 +153,18 @@ if [ -e "$OUT" ]; then
 fi
 mkdir -p "$OUT"
 
-tmux new-session -d -s "$RUN" \
-  "bash -lc 'cd /home/yifeiy/ws_supermimic && set -o pipefail && env -u PYTHONPATH -u LD_LIBRARY_PATH /home/yifeiy/miniconda3/envs/supermimic/bin/sm-train --run-name $RUN --log-root logs/4070 --resume $CKPT --seed 0 --data.npz-dir data/npz/lafan1 --env.anchor-obs --env.num-envs 1024 --env.replay-capacity 256 --policy-trainer.batch-size 1024 --policy-trainer.horizon 32 --wm-trainer.batch-size 1024 --wm-trainer.batches-per-update 10 --schedule.total-iterations 320000 --schedule.max-hours 4 --schedule.warmup-iterations $WARMUP_ITER --schedule.log-interval 50 --schedule.checkpoint-interval 4000 2>&1 | tee $OUT/console.log'"
-
-tmux ls
+set -o pipefail
+env -u PYTHONPATH -u LD_LIBRARY_PATH \
+  /home/yifeiy/miniconda3/envs/supermimic/bin/sm-train \
+  --run-name "$RUN" --log-root logs/4070 --resume "$CKPT" --seed 0 \
+  --data.npz-dir data/npz/lafan1 --env.anchor-obs \
+  --env.num-envs 1024 --env.replay-capacity 256 \
+  --policy-trainer.batch-size 1024 --policy-trainer.horizon 32 \
+  --wm-trainer.batch-size 1024 --wm-trainer.batches-per-update 10 \
+  --schedule.total-iterations 320000 --schedule.max-hours 4 \
+  --schedule.warmup-iterations "$WARMUP_ITER" \
+  --schedule.log-interval 50 --schedule.checkpoint-interval 4000 \
+  2>&1 | tee "$OUT/console.log"
 ```
 
 后续 session 将 `CKPT` 改为上一 session 的完整 checkpoint，`RUN` 改成新的唯一目录。若要在约 160,000 iteration 暂停，等待 `ckpt_000160000.pt` 完整出现再停止；恢复时仍保留 `total_iterations=320000`。按当前估算从 0 到 160k 约 8.7 小时；实际以日志为准。

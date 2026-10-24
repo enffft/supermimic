@@ -1,6 +1,6 @@
 # RTX 4070 SUPER：LAFAN1 Q1 训练启动与恢复记录
 
-**状态：启动前检查完成；用户于 2026-10-24 15:04 尝试启动，但命令换行导致配置参数未传入，进程已退出。本次没有形成有效训练。**失败目录已保留；重试必须使用新的 run 名称。
+**状态：15:04 的首次启动命令因换行无效；用户随后用普通终端成功启动 `lafan1_q1_4070_anchor_retry1`。2026-10-24 15:17 核查时进程仍在运行，已到 550 iteration。**首次失败目录保留，不复用。
 
 审计时间：2026-10-24 14:53（Asia/Shanghai）。
 
@@ -10,7 +10,7 @@
 
 | 项目 | 检查结果 |
 |---|---|
-| Git | 14:53 预检时 `main` HEAD 为 `58d9898fe617bd861d19fe1d750f7da5b4fcc27f`；本次复核 HEAD 为 `fa033b8e3b7c5e91bf3ef98a62d40e4d049361be`，仅本报告有未提交更新 |
+| Git | 14:53 预检时 `main` HEAD 为 `58d9898fe617bd861d19fe1d750f7da5b4fcc27f`；报告修订提交为 `03cd422`，本次实时训练快照记录尚待提交 |
 | 算法源码 | 相对基线 `d9be385`，`src/supermimic/`、`pyproject.toml`、`uv.lock` 无差异 |
 | Conda | `/home/yifeiy/miniconda3/envs/supermimic/bin/python`，Python 3.12.15；Torch 2.11.0+cu126、Warp 1.18.0+cu12、MuJoCo/mujoco-warp 3.16.0、mjlab 1.6.0；CUDA 可用 |
 | 数据 | `data/npz/lafan1/` 有 40 NPZ，manifest 40 行，总时长 2.45056 h；不传 `--data.clips` 时会按文件名字典序加载全部 40 条 |
@@ -52,7 +52,7 @@
 
 `max_hours` 在每个 50 iteration 日志点检查；超限后正常退出 loop，随后写最终 `ckpt_latest.pt` 并 flush TensorBoard。编号 checkpoint 每 4000 iteration 保存一次，若达到则包含 20000、40000、60000、80000 等里程碑。
 
-## 3. 普通终端前台启动命令（尚未执行）
+## 3. 普通终端前台启动命令与核验
 
 上次命令把真实换行放进 `bash -lc '…'` 的引号中，Shell 会把它们当成命令分隔符；Shell 引号中的换行不会自动续接命令。另外，`--wm-trainer.batches-per-update` 被拆成了两行。实际配置快照显示 `sm-train` 只收到前面的 run name/log root/seed，其他字段使用默认值。tmux 本身不是训练失败原因：当内层命令结束后，tmux 的最后一个窗口关闭，session/server 也随之消失。具体退出错误没有保存到日志，无法确认是 CLI 后续命令报错还是进程在启动中另行退出。
 
@@ -83,26 +83,39 @@ env -u PYTHONPATH -u LD_LIBRARY_PATH \
   2>&1 | tee "$OUT/console.log"
 ```
 
-本次助手没有启动训练。正式启动后，从第二个终端检查 `config.json` 是否确为 1024 env、anchor=true、Actor/WM batch=1024、H=32、max_hours=4；另用 `pgrep -af sm-train` 查进程、`tail -f logs/4070/lafan1_q1_4070_anchor_retry1/console.log` 看日志、`nvidia-smi` 看显存。
+用户已在普通终端执行该命令；助手只做只读核验，没有启动或中断训练。2026-10-24 15:17 的实际快照如下：
 
-启动日志应实际确认：`MotionLibrary(full): 40 clips, 441140 frames (2.451 h @50Hz)`；参数量约 `8.82M / 8.910M / 0.237M`；GPU 为 `cuda:0`；console log 和 TensorBoard event 位于该 run 目录。以上是启动核对项，不是已发生结果。
+| 项目 | 实际结果 |
+|---|---|
+| 进程 / 终端 | PID 1876086，普通前台进程；无 tmux session |
+| 加载数据 | 40 clips，441,140 frames，2.451 h @50Hz，8,842 bins，0.57 GB GPU |
+| 生效配置 | 1024 env，replay 256，`anchor_obs=true`，Actor/WM batch 1024，H=32，WM window=8，batches/update=10，max_hours=4，seed=0 |
+| 参数量 | World Model 8.82M、Policy 8.91M、Critic 0.237M |
+| 进度 / 速度 | 550 iteration，204 updates；日志约 4.3 it/s，累计训练时间约 0.0343 h |
+| 学习指标（step 550） | WM NSE 1-step 0.0303、8-step 0.0902，WM grad norm 13.03；Actor grad norm 0.138；Critic loss 0.00865；各值有限 |
+| 回报（step 550） | 真实采集 `episode_norm_return` 0.384；imagination return 0.673，H-step survival 0.276。均为早期训练指标，不是 40 clip 最终评测 |
+| GPU | 6,013 / 12,282 MiB，GPU 利用率约 93%；未见 OOM |
+| Checkpoint | 尚无；当前仅 550 iteration，首个周期 checkpoint 计划在 4,000 iteration |
+| 异常检查 | 没有 traceback、NaN/Inf、CUDA OOM；有一条非致命提示：driver 12.2 导致 CUDA Graphs disabled，仿真与训练继续正常运行 |
+
+该快照说明启动参数、40 条数据、MuJoCo Warp GPU 仿真、WM 8-step 训练和 Actor 32-step BPTT/critic 更新均已进入运行链路。训练仍处于早期，尚不能据此判断多轨迹跟踪已学会。前台终端需要保持打开；如果在 4,000 iteration checkpoint 前手动中断，可能没有可恢复的本轮 checkpoint。查看实时情况可在另一个终端运行 `tail -f logs/4070/lafan1_q1_4070_anchor_retry1/console.log`、`nvidia-smi`。
+
+启动日志已确认：`MotionLibrary(full): 40 clips, 441140 frames (2.451 h @50Hz)`；参数量 `8.82M / 8.91M / 0.237M`；设备 `cuda:0`；console log 与 TensorBoard event 正在 run 目录生成。
 
 ## 4. 训练监控与预算估算
 
-之前单 clip、`anchor_obs=false` 的 42 iteration 资源验证测得约 5.1 vectorized iterations/s，峰值占用 6,175 MiB。它不是全 40 clips + anchor 的实际吞吐。本次启动后需用真实日志更新估算。
-
-按 5.1 it/s 粗估：
+之前单 clip、`anchor_obs=false` 的 42 iteration 资源验证约 5.1 vectorized iterations/s，不代表本次配置。本次 550 iteration 的日志显示约 4.3 it/s，`time/hours=0.0343`；按当前吞吐粗估如下，需用后续较长区间更新：
 
 | 目标 iteration | 估算耗时 |
 |---:|---:|
-| 20,000 | 1.09 h |
-| 40,000 | 2.18 h |
-| 60,000 | 3.27 h |
-| 80,000 | 4.36 h |
-| 160,000 | 8.71 h |
-| 320,000 | 17.43 h |
+| 20,000 | 1.29 h |
+| 40,000 | 2.58 h |
+| 60,000 | 3.88 h |
+| 80,000 | 5.17 h |
+| 160,000 | 10.34 h |
+| 320,000 | 20.67 h |
 
-因此 4 小时按旧吞吐约为 73,400 iterations，**不能保证达到 80,000**。首次编译、40 clip 数据和新增目标特征可能改变速度；等编译完成后用连续日志区间重算。
+因此按当前实测速度，4 小时约为 61,900 iterations，**不能达到 80,000**。实际会受编译、训练阶段和运行负载影响。
 
 查看进度、显存和 TensorBoard：
 
@@ -193,6 +206,6 @@ env -u PYTHONPATH -u LD_LIBRARY_PATH /home/yifeiy/miniconda3/envs/supermimic/bin
 
 ## 7. 当前报告状态
 
-已完成：Git/环境/GPU/数据/进程/checkpoint 预检，CLI help 与配置解析，anchor goal shape smoke，启动/恢复命令整理。用户的 15:04 启动尝试创建过短暂 tmux session 并写出错误配置，但没有有效训练、PID/session 留存、完整 console、Q1 checkpoint、阶段性训练指标、benchmark 或 Q1 Viewer 回放。已整理 retry1 安全重试命令，尚未执行。以上结果不得用吞吐估计代替。
+已完成：Git/环境/GPU/数据/CLI/anchor shape 预检；15:04 首次启动无效；用户随后从普通终端启动 retry1。15:17 核验进程 PID 1876086 仍运行至 550 iteration，40 条数据已加载，WM/Actor/Critic 更新有有限指标，GPU 峰值快照约 6 GB。尚未达到 4,000 iteration 首个 checkpoint，未进行全数据 benchmark 或 Viewer 回放；不能把早期训练回报或 imagination return 当作最终效果。
 
 预检输出见 `logs/4070_audit/q1_*`；此前链路记录见 [`LOCAL_REPRO_4070.md`](LOCAL_REPRO_4070.md)，算法细节见 [`SUPERMIMIC_ALGORITHM_MAP.md`](SUPERMIMIC_ALGORITHM_MAP.md)。

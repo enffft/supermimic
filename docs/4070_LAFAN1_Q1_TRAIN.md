@@ -1,6 +1,6 @@
 # RTX 4070 SUPER：LAFAN1 Q1 训练启动与恢复记录
 
-**状态：15:04 的首次启动命令因换行无效；用户随后用普通终端成功启动 `lafan1_q1_4070_anchor_retry1`。2026-10-24 15:17 核查时进程仍在运行，已到 550 iteration。**首次失败目录保留，不复用。
+**状态：15:04 的首次启动命令因换行无效；用户随后用普通终端成功运行 `lafan1_q1_4070_anchor_retry1`。训练于 2026-10-24 19:15 左右按 `max_hours` 正常结束，完成 67,900 iteration；2026-10-25 完成全 40 条确定性 MuJoCo Warp 评测。**首次失败目录保留，不复用。
 
 审计时间：2026-10-24 14:53（Asia/Shanghai）。
 
@@ -10,7 +10,7 @@
 
 | 项目 | 检查结果 |
 |---|---|
-| Git | 14:53 预检时 `main` HEAD 为 `58d9898fe617bd861d19fe1d750f7da5b4fcc27f`；报告修订提交为 `03cd422`，本次实时训练快照记录尚待提交 |
+| Git | 14:53 预检时 `main` HEAD 为 `58d9898fe617bd861d19fe1d750f7da5b4fcc27f`；本报告结果快照基于 `2b1d77b` |
 | 算法源码 | 相对基线 `d9be385`，`src/supermimic/`、`pyproject.toml`、`uv.lock` 无差异 |
 | Conda | `/home/yifeiy/miniconda3/envs/supermimic/bin/python`，Python 3.12.15；Torch 2.11.0+cu126、Warp 1.18.0+cu12、MuJoCo/mujoco-warp 3.16.0、mjlab 1.6.0；CUDA 可用 |
 | 数据 | `data/npz/lafan1/` 有 40 NPZ，manifest 40 行，总时长 2.45056 h；不传 `--data.clips` 时会按文件名字典序加载全部 40 条 |
@@ -104,18 +104,18 @@ env -u PYTHONPATH -u LD_LIBRARY_PATH \
 
 ## 4. 训练监控与预算估算
 
-之前单 clip、`anchor_obs=false` 的 42 iteration 资源验证约 5.1 vectorized iterations/s，不代表本次配置。本次 550 iteration 的日志显示约 4.3 it/s，`time/hours=0.0343`；按当前吞吐粗估如下，需用后续较长区间更新：
+训练结束于 iteration 67,900、27,144 updates、`time/hours=4.00259`，平均约 4.71 vectorized iterations/s。达到 4 小时上限时未达到 80,000 iteration（完整 320,000 计划的 1/4），实际完成约 21.2%。按本轮吞吐估算：
 
 | 目标 iteration | 估算耗时 |
 |---:|---:|
-| 20,000 | 1.29 h |
-| 40,000 | 2.58 h |
-| 60,000 | 3.88 h |
-| 80,000 | 5.17 h |
-| 160,000 | 10.34 h |
-| 320,000 | 20.67 h |
+| 20,000 | 1.18 h |
+| 40,000 | 2.36 h |
+| 60,000 | 3.54 h |
+| 80,000 | 4.72 h |
+| 160,000 | 9.44 h |
+| 320,000 | 18.88 h |
 
-因此按当前实测速度，4 小时约为 61,900 iterations，**不能达到 80,000**。实际会受编译、训练阶段和运行负载影响。
+本轮实际到 67,900 iteration，和上述估算接近。评测前确认训练进程已退出，GPU 回到桌面空闲占用。
 
 查看进度、显存和 TensorBoard：
 
@@ -180,23 +180,49 @@ env -u PYTHONPATH -u LD_LIBRARY_PATH \
   2>&1 | tee "$OUT/console.log"
 ```
 
-后续 session 将 `CKPT` 改为上一 session 的完整 checkpoint，`RUN` 改成新的唯一目录。若要在约 160,000 iteration 暂停，等待 `ckpt_000160000.pt` 完整出现再停止；恢复时仍保留 `total_iterations=320000`。按当前估算从 0 到 160k 约 8.7 小时；实际以日志为准。
+后续恢复轮次将 `CKPT` 改为上一轮完整 checkpoint，`RUN` 改成新的唯一目录。若要在约 160,000 iteration 暂停，等待 `ckpt_000160000.pt` 完整出现再停止；恢复时仍保留 `total_iterations=320000`。按本轮平均速度，从 0 到 160k 约 9.44 小时；从 67,900 继续到 160k 还需约 5.43 小时，实际以新一轮日志为准。可分成一个 4 小时恢复轮次和一个约 1.5 小时恢复轮次。
 
-## 6. 训练后评测与 Viewer（待执行）
+## 6. 全量评测结果与 Viewer
 
-训练结束后再评测全 40 条，避免与主训练争 GPU：
+训练结束、GPU 空闲后，以 `ckpt_latest.pt`、32 个环境运行全 40 条 deterministic benchmark。脚本关闭 observation/action noise、reset noise 和 domain randomization，所有轨迹均从第一帧开始。命令与控制台输出保存在 `eval_benchmark_40clips.log`，逐轨迹结果保存在 `benchmark_40clips.json`。
 
 ```bash
+set -o pipefail
 env -u PYTHONPATH -u LD_LIBRARY_PATH \
   /home/yifeiy/miniconda3/envs/supermimic/bin/python scripts/eval_benchmark.py \
   --ckpt logs/4070/lafan1_q1_4070_anchor_retry1/ckpt_latest.pt \
   --npz-dir data/npz/lafan1 --num-envs 32 \
-  --out logs/4070/lafan1_q1_4070_anchor_retry1/benchmark_40clips.json
+  --out logs/4070/lafan1_q1_4070_anchor_retry1/benchmark_40clips.json \
+  2>&1 | tee logs/4070/lafan1_q1_4070_anchor_retry1/eval_benchmark_40clips.log
 ```
 
-记录 Mean Normalized Return、Frame-weighted Normalized Return、Failed Clips、JSON 中逐条轨迹的 steps/failure，并汇总平均 episode length。比较此前短训 baseline：**Mean Norm Return 0.3869，Failed Clips 40/40**。当前没有 Q1 checkpoint 或评测结果。
+### 实测结果（2026-10-25）
 
-训练后串行回放 walk、dance、jump（每次运行一个）：
+| 指标 | 本轮 `retry1` | 用户提供的 500 iteration baseline |
+|---|---:|---:|
+| Mean Normalized Return | **0.4135** | 0.3869 |
+| step-weighted Normalized Return | **0.4143** | 未提供 |
+| Failed Clips | **2 / 40** | 40 / 40 |
+| 平均评测 episode 长度 | **10,928.3 steps（约218.6秒 @50Hz）** | 未提供 |
+
+Mean Norm Return 比 baseline 高 `0.0266`（约 `+6.9%`），失败数从 40 降至 2。该比较需注意本轮启用了 `anchor_obs=true`，baseline 为 `false`，且 baseline 来自 500 iteration；因此差异不应只归因于训练时长。仓库输出的 `step_weighted_norm_return` 是按每条 clip 实际执行步数加权，不是按完整参考帧数加权的另一种独立统计量。
+
+两条失败轨迹：
+
+- `fallAndGetUp1_subject4`：第 7,102 / 8,411 步触发失败，Norm Return 0.3886。
+- `fallAndGetUp2_subject3`：第 5,496 / 8,196 步触发失败，Norm Return 0.4336。
+
+Return 最好：`walk4_subject1` 0.5279、`walk3_subject3` 0.5234、`walk1_subject1` 0.5039。最差：`run1_subject5` 0.3043、`run2_subject4` 0.3300、`run2_subject1` 0.3301。按类别均值，walk 12 条为 0.4648；run 4 条为 0.3306；sprint 2 条为 0.4144；dance 8 条为 0.4115；jumps 3 条为 0.4064；fight 5 条为 0.3981；fall/get-up 6 条为 0.3851（其中两条失败）。当前主要短板是 run 类动作回报偏低，以及 fall/get-up 稳定性。
+
+### 训练过程信号与解释
+
+在训练日志中 WM NSE 从 step 50 的 1-step `0.2003` / 8-step `1.1725` 降到 step 67,900 的 `0.0126` / `0.0305`；Actor 梯度范数从 `6.0e-6` 到 `0.0817`，Critic loss 从 `0.0172` 到 `0.00255`，均为有限值。训练采集 Norm Return 从 `0.3737` 到 `0.4287`。Imagination Return 从 `0.0893` 升至 `1.739`，Survival 从接近 0 升至 `0.999`；这表示模型内目标明显上升，但不能单独证明真实跟踪能力，需与上述真实仿真评测一起解释。
+
+训练尾部日志在 iteration 67,900 打印 `[INFO] max_hours reached, stopping`；无 traceback、NaN/Inf 或 OOM。周期 checkpoint 保存到 `ckpt_00064000.pt`，最终 checkpoint 为 `ckpt_latest.pt`（iteration 67,900，约 206 MiB）；GPU 已释放。训练中采集到的一次显存快照约 6,013 MiB；日志未记录 allocator peak，因此不把该快照称为精确峰值。此轮保持原始 WM/Policy 网络规模、8-step WM、32-step BPTT 和 Reward/Termination，配置偏离是 `anchor_obs=true`。训练和评测时看到 CUDA Graphs disabled（驱动 12.2）；Warp 仿真仍运行。
+
+### Viewer 回放（未执行）
+
+`play.py` 是交互式 Viewer，会持续占用一个终端/窗口直到手动退出。本轮考虑到此前用户不希望遗留可视化窗口，没有自动启动 Viewer。需要观看时，在普通终端串行运行下列命令，每个窗口看完按 `Ctrl+C` 或关闭窗口，再运行下一条：
 
 ```bash
 env -u PYTHONPATH -u LD_LIBRARY_PATH /home/yifeiy/miniconda3/envs/supermimic/bin/python scripts/play.py --ckpt logs/4070/lafan1_q1_4070_anchor_retry1/ckpt_latest.pt --npz-dir data/npz/lafan1 --clips walk1_subject1 --num-envs 1 --viewer native
@@ -206,6 +232,52 @@ env -u PYTHONPATH -u LD_LIBRARY_PATH /home/yifeiy/miniconda3/envs/supermimic/bin
 
 ## 7. 当前报告状态
 
-已完成：Git/环境/GPU/数据/CLI/anchor shape 预检；15:04 首次启动无效；用户随后从普通终端启动 retry1。15:17 核验进程 PID 1876086 仍运行至 550 iteration，40 条数据已加载，WM/Actor/Critic 更新有有限指标，GPU 峰值快照约 6 GB。尚未达到 4,000 iteration 首个 checkpoint，未进行全数据 benchmark 或 Viewer 回放；不能把早期训练回报或 imagination return 当作最终效果。
+本轮 4 小时训练、周期与最终 checkpoint 保存、TensorBoard 日志和全 40 条真实仿真 benchmark 均已完成。Q1 checkpoint 在 67,900 iteration，Mean Normalized Return 0.4135、step-weighted 0.4143、失败 2/40。相对用户提供的 500 iteration baseline 有改善，但 `anchor_obs` 不同，且本轮低于计划的 80k，也不等同于完整论文结果。Viewer 回放尚未执行；短板集中在 run 和 fall/get-up 动作。建议保持本轮结构和算法，恢复训练到至少 160k，并在中途定期做同协议 benchmark；不建议仅依据 imagination return 判断是否继续。
 
 预检输出见 `logs/4070_audit/q1_*`；此前链路记录见 [`LOCAL_REPRO_4070.md`](LOCAL_REPRO_4070.md)，算法细节见 [`SUPERMIMIC_ALGORITHM_MAP.md`](SUPERMIMIC_ALGORITHM_MAP.md)。
+
+## 8. 下一轮 2048 / 3072 环境续训建议
+
+建议先用 `2048 env + 15 分钟资源探测`，稳定后再跑 12 小时；3072 env / 16 小时属于更激进、尚未验证的配置。保持完整 40 条 LAFAN1、`anchor_obs=true`、WM/Actor batch 1024、WM window 8、H=32、网络架构和 Reward/Termination 不变。只改 `num_envs` 与该轮 `max_hours`，并保持 `updates_per_env_step=0.4`。按当前代码，UTD 是每个 vectorized env iteration 计数；增加并行环境会令每次更新前收集的数据更多，因此这是采样规模变化，不是完全相同的数据/更新比例。
+
+ReplayBuffer 的张量形状是 `[num_envs, replay_capacity]`。按本项目 71-d state、29-d action、33-d xi，capacity=256 时 replay 数据约为 2048 env 的 341 MiB、3072 env 的 512 MiB；Mujoco Warp 环境数组还会随环境数增长。1024 env 曾观测到约 6.0 GB GPU 占用，但没有记录精确 peak，因此不把 3072 标为已验证可稳定运行。
+
+下面是普通终端前台命令。先使用 2048/0.25h 探测；成功退出并生成 `ckpt_latest.pt` 后，把 CKPT 指向探测 checkpoint、改 RUN 和 HOURS，再运行正式 2048/12h。想尝试 3072/16h 时，先另做 3072/0.25h 探测。不要复用 run 目录。
+
+```bash
+cd /home/yifeiy/ws_supermimic
+PY=/home/yifeiy/miniconda3/envs/supermimic/bin/python
+CKPT=logs/4070/lafan1_q1_4070_anchor_retry1/ckpt_latest.pt
+ENV_COUNT=2048
+HOURS=0.25
+RUN=lafan1_q1_resume_2048_probe15m
+OUT="logs/4070/$RUN"
+
+test -s "$CKPT" || { echo "Checkpoint missing: $CKPT"; exit 1; }
+test -s data/npz/lafan1/manifest.csv || { echo "LAFAN1 manifest missing"; exit 1; }
+if [ -e "$OUT" ]; then
+  echo "Refusing to reuse existing run directory: $OUT"
+  exit 1
+fi
+CKPT_ITER=$(env -u PYTHONPATH -u LD_LIBRARY_PATH "$PY" -c \
+  'import sys,torch; print(torch.load(sys.argv[1],map_location="cpu",weights_only=False)["iteration"])' "$CKPT")
+WARMUP_ITER=$((CKPT_ITER + 40))
+mkdir -p "$OUT"
+set -o pipefail
+env -u PYTHONPATH -u LD_LIBRARY_PATH \
+  /home/yifeiy/miniconda3/envs/supermimic/bin/sm-train \
+  --run-name "$RUN" --log-root logs/4070 --resume "$CKPT" --seed 0 \
+  --data.npz-dir data/npz/lafan1 --env.anchor-obs \
+  --env.num-envs "$ENV_COUNT" --env.replay-capacity 256 \
+  --policy-trainer.batch-size 1024 --policy-trainer.horizon 32 \
+  --wm-trainer.window 8 --wm-trainer.batch-size 1024 --wm-trainer.batches-per-update 10 \
+  --schedule.updates-per-env-step 0.4 --schedule.policy-updates-per-wm-update 1 \
+  --schedule.total-iterations 320000 --schedule.max-hours "$HOURS" \
+  --schedule.warmup-iterations "$WARMUP_ITER" \
+  --schedule.log-interval 50 --schedule.checkpoint-interval 4000 \
+  2>&1 | tee "$OUT/console.log"
+```
+
+探测稳定后正式 2048/12h：`CKPT=logs/4070/lafan1_q1_resume_2048_probe15m/ckpt_latest.pt`、`HOURS=12`、`RUN=lafan1_q1_resume_2048_12h`，其余命令不变。3072/16h 则先将探测轮次设为 `ENV_COUNT=3072`、`RUN=lafan1_q1_resume_3072_probe15m`；通过显存观察后，正式轮次改为 CKPT 指向该探测输出、`HOURS=16`、`RUN=lafan1_q1_resume_3072_16h`。
+
+`max_hours` 是每次进程的运行上限，恢复时计时器会重置；若 12/16 小时指含已完成首轮在内的总墙钟时间，应将下一轮 `HOURS` 分别设为约 8/12。训练末尾 1024-env 日志的 `sim/wm/pi` 约为 `2.0/4.1/4.3 s` 每 50 iteration。假设只有仿真部分随环境数线性增长，2048 env 约 4.0 it/s、3072 env 约 3.5 it/s；从 67,900 起，12h 粗估分别到约 242k / 218k，16h 粗估约 300k / 268k。该线性模型未实测，不能作为吞吐保证。总 iteration 仍受 320,000 上限约束，达到上限会早于 max_hours 正常结束并保存最终 checkpoint。

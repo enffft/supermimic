@@ -104,6 +104,8 @@ class WorldModel(nn.Module):
         s = states[0]
         total_state = 0.0
         total_term = 0.0
+        total_term_prob = 0.0
+        total_term_label = 0.0
         metrics = {}
         err_first = None
         err_last = None
@@ -116,6 +118,8 @@ class WorldModel(nn.Module):
             s, sq, bce, logits = step_fn(s, a_exec[j], xi, states[j + 1], done[j], root_pos, root_quat)
             total_state = total_state + sq.sum(-1).mean()
             total_term = total_term + bce.mean()
+            total_term_prob = total_term_prob + torch.sigmoid(logits).mean()
+            total_term_label = total_term_label + done.mean()
             with torch.no_grad():
                 nse = sq.mean(-1).mean()
                 if j == 0:
@@ -131,6 +135,8 @@ class WorldModel(nn.Module):
             nse_1step=err_first.detach(),
             nse_kstep=err_last.detach(),
             term_acc=(acc_num / k).detach(),
+            term_prob_mean=(total_term_prob / k).detach(),
+            term_label_ratio=(total_term_label / k).detach(),
         )
         return loss, metrics
 

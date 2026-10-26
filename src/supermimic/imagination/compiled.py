@@ -68,13 +68,15 @@ class VelocityImagStep:
 
     def _step(self, s, a, a_prev, xi, goal):
         s_next = self.wm.step(s, a, xi)
-        reward = self.task.reward(s_next, goal, self.wm.spec.nj, self.wm.spec.dt)
+        terms = self.task.reward_terms(s, s_next, goal, a, a_prev)
+        reward = torch.stack([terms[name] for name in self.task.reward_term_names], dim=0).sum(0)
+        term_vec = torch.stack([terms[name] for name in self.task.reward_term_names], dim=0)
         logits = self.wm.termination_logits(s_next, None)
         obs_clean = analytic_observation(s_next, a, xi, self.q0, self.wheel_indices)
         bodies = self.wm.heads.robot_bodies(s_next)
         ai = self.wm.heads.anchor_index
         anchor_pose = torch.cat([bodies["pos"][..., ai, :], bodies["quat"][..., ai, :]], dim=-1)
-        return s_next, reward, logits, obs_clean, anchor_pose
+        return s_next, reward, term_vec, logits, obs_clean, anchor_pose
 
     def __call__(self, s, a, a_prev, xi, goal):
         return self._fn(s, a, a_prev, xi, goal)

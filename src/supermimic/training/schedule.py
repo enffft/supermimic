@@ -11,3 +11,11 @@ def cosine_lr(step: int, total_steps: int, base_lr: float, final_ratio: float = 
         return base_lr * final_ratio
     cos = 0.5 * (1.0 + math.cos(math.pi * step / decay_steps))
     return base_lr * (final_ratio + (1.0 - final_ratio) * cos)
+
+
+def actor_ramp_scale(iteration: int, actor_start_iteration: int, ramp_iterations: int) -> float:
+    """Linear actor LR ramp measured from the first post-warmup actor iteration."""
+    if ramp_iterations <= 0:
+        return 1.0
+    progress = (iteration - actor_start_iteration + 1) / ramp_iterations
+    return min(1.0, max(0.0, progress))

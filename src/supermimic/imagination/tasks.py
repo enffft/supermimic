@@ -2,11 +2,18 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import torch
 
 from supermimic.envs.mdp.motion_library import MotionLibrary
+from supermimic.tasks.velocity_reward import (
+    VELOCITY_REWARD_NAMES,
+    VelocityRewardCfg,
+    VelocityRobotParams,
+    velocity_reward_terms,
+    velocity_reward_total,
+)
 
 
 @dataclass
@@ -24,31 +31,47 @@ class MotionTrackingTask:
 
 @dataclass
 class VelocityCommandTask:
-    """Velocity command semantics. A diagnostic reward is opt-in for gradient smoke tests only."""
+    """Go2 body-frame velocity task with a shared analytic reward core."""
 
-    debug_objective: bool = False
-    default_joint_pos: torch.Tensor | None = None
+    params: VelocityRobotParams | None = None
     dt: float = 0.02
+    reward_cfg: VelocityRewardCfg = field(default_factory=VelocityRewardCfg)
     goal_interface: str = "velocity"
-    reward_term_names: tuple[str, ...] = ("debug_velocity_tracking",)
+    reward_term_names: tuple[str, ...] = VELOCITY_REWARD_NAMES
 
-    def reward(self, s_next: torch.Tensor, goal: torch.Tensor, num_joints: int, dt: float) -> torch.Tensor:
-        if not self.debug_objective:
-            raise RuntimeError(
-                "Go2 has no selected task reward yet; policy optimization is disabled. "
-                "Enable the diagnostic objective only for a gradient smoke test."
-            )
-        from supermimic.kinematics.rotations import quat_apply_inverse
+    @property
+    def default_joint_pos(self) -> torch.Tensor | None:
+        return None if self.params is None else self.params.default_joint_pos
 
-        n = num_joints
-        root_quat = s_next[..., 3:7]
-        lin_world = s_next[..., 7 + n:10 + n]
-        ang_body = s_next[..., 10 + n:13 + n]
-        lin_body = quat_apply_inverse(root_quat, lin_world)
-        velocity = torch.cat([lin_body[..., :2], ang_body[..., 2:3]], dim=-1)
-        # Deliberately diagnostic-only: smooth bounded tracking signal for checking BPTT.
-        error_sq = ((velocity - goal) ** 2).sum(-1)
-        return float(dt) * torch.exp(-error_sq / 0.25)
+    def reward_terms(
+        self,
+        s_prev: torch.Tensor,
+        s_next: torch.Tensor,
+        goal: torch.Tensor,
+        action: torch.Tensor,
+        previous_action: torch.Tensor,
+        *,
+        measured_torque: torch.Tensor | None = None,
+        measured_joint_acceleration: torch.Tensor | None = None,
+    ) -> dict[str, torch.Tensor]:
+        if self.params is None:
+            raise RuntimeError("VelocityCommandTask requires Go2 reward parameters")
+        terms = velocity_reward_terms(
+            s_prev, s_next, goal, action, previous_action, self.params,
+            measured_torque=measured_torque,
+            measured_joint_acceleration=measured_joint_acceleration,
+        )
+        return {name: value * float(self.dt) for name, value in terms.items()}
+
+    def reward(
+        self,
+        s_prev: torch.Tensor,
+        s_next: torch.Tensor,
+        goal: torch.Tensor,
+        action: torch.Tensor,
+        previous_action: torch.Tensor,
+    ) -> torch.Tensor:
+        return velocity_reward_total(self.reward_terms(s_prev, s_next, goal, action, previous_action))
 
     @property
     def goal_dim(self) -> int:

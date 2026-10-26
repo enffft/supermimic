@@ -1,4 +1,4 @@
-"""Joint-position action with execution noise (plan D9).
+"""Joint-position action with Gaussian / OU execution noise (plan D9).
 
 The *clean* policy action stays in ``raw_action`` (so ``last_action`` observations and
 the action-rate penalty see it); Gaussian noise ``eps ~ N(0, std^2)`` is added to the
@@ -26,6 +26,13 @@ class NoisyJointPositionAction(JointPositionAction):
         super().__init__(cfg, env)
         self._executed_raw = torch.zeros_like(self._raw_actions)
         self.noise_std = float(cfg.noise_std)
+        self.ou_env_fraction = float(cfg.ou_env_fraction)
+        self.ou_noise_std = float(cfg.ou_noise_std)
+        self.ou_theta = float(cfg.ou_theta)
+        self.action_clip = float(cfg.action_clip)
+        self.dt = float(env.step_dt)
+        self._ou_state = torch.zeros_like(self._raw_actions)
+        self._ou_mask = torch.zeros(self.num_envs, dtype=torch.bool, device=self.device)
 
     @property
     def executed_raw(self) -> torch.Tensor:
@@ -33,10 +40,16 @@ class NoisyJointPositionAction(JointPositionAction):
 
     def process_actions(self, actions: torch.Tensor):
         self._raw_actions[:] = actions
-        if self.noise_std > 0:
-            self._executed_raw = self._raw_actions + self.noise_std * torch.randn_like(self._raw_actions)
+        gaussian = self.noise_std * torch.randn_like(self._raw_actions) if self.noise_std > 0.0 else torch.zeros_like(self._raw_actions)
+        if self.ou_noise_std > 0.0 and self.ou_env_fraction > 0.0:
+            self._ou_state += (
+                -self.ou_theta * self._ou_state * self.dt
+                + self.ou_noise_std * (self.dt**0.5) * torch.randn_like(self._ou_state)
+            )
+            noise = torch.where(self._ou_mask[:, None], self._ou_state, gaussian)
         else:
-            self._executed_raw = self._raw_actions.clone()
+            noise = gaussian
+        self._executed_raw = (self._raw_actions + noise).clamp(-self.action_clip, self.action_clip)
         self._processed_actions = self._executed_raw * self._scale + self._offset
         if self.cfg.clip is not None:
             self._processed_actions = torch.clamp(
@@ -46,11 +59,30 @@ class NoisyJointPositionAction(JointPositionAction):
     def reset(self, env_ids=None) -> None:
         super().reset(env_ids)
         self._executed_raw[env_ids] = 0.0
+        self._ou_state[env_ids] = 0.0
+        count = int(self._ou_mask[env_ids].numel())
+        if self.ou_env_fraction > 0.0:
+            self._ou_mask[env_ids] = torch.rand(count, device=self.device) < self.ou_env_fraction
+        else:
+            self._ou_mask[env_ids] = False
+
+    def state_dict(self) -> dict[str, torch.Tensor]:
+        return {"ou_state": self._ou_state.clone(), "ou_mask": self._ou_mask.clone()}
+
+    def load_state_dict(self, state: dict[str, torch.Tensor]) -> None:
+        if "ou_state" in state and state["ou_state"].shape == self._ou_state.shape:
+            self._ou_state.copy_(state["ou_state"].to(self._ou_state))
+        if "ou_mask" in state and state["ou_mask"].shape == self._ou_mask.shape:
+            self._ou_mask.copy_(state["ou_mask"].to(self._ou_mask))
 
 
 @dataclass(kw_only=True)
 class NoisyJointPositionActionCfg(JointPositionActionCfg):
     noise_std: float = 0.1
+    ou_env_fraction: float = 0.0
+    ou_noise_std: float = 0.0
+    ou_theta: float = 2.0
+    action_clip: float = float("inf")
 
     def build(self, env: ManagerBasedRlEnv) -> NoisyJointPositionAction:
         return NoisyJointPositionAction(self, env)

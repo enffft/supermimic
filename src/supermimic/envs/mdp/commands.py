@@ -430,14 +430,35 @@ class MultiClipMotionCommandCfg(CommandTermCfg):
 
 
 class VelocityCommand(CommandTerm):
-    """Body-frame ``(vx, vy, yaw_rate)`` goal resampled on reset / timeout."""
+    """Body-frame velocity commands with real-simulation gated A/B/C progression."""
 
     cfg: VelocityCommandCfg
 
     def __init__(self, cfg: VelocityCommandCfg, env: ManagerBasedRlEnv):
         super().__init__(cfg, env)
+        self.robot = env.scene[cfg.entity_name]
         self._command = torch.zeros(self.num_envs, 3, device=self.device)
+        self.stage = int(cfg.fixed_stage if cfg.fixed_stage is not None else cfg.initial_stage)
+        self.stage = max(0, min(self.stage, 2))
+        self.eval_count = 0
+        self.promotion_streak = 0
+        self.promotion_count = 0
+        self._episode_stage = torch.full((self.num_envs,), self.stage, dtype=torch.long, device=self.device)
+        self._episode_command = torch.zeros_like(self._command)
+        self._episode_steps = torch.zeros(self.num_envs, device=self.device)
+        self._episode_move_count = torch.zeros(self.num_envs, device=self.device)
+        self._episode_move_error_sq = torch.zeros(self.num_envs, device=self.device)
+        self._episode_yaw_count = torch.zeros(self.num_envs, device=self.device)
+        self._episode_yaw_error_sq = torch.zeros(self.num_envs, device=self.device)
+        self._episode_static_count = torch.zeros(self.num_envs, device=self.device)
+        self._episode_static_speed_sum = torch.zeros(self.num_envs, device=self.device)
+        self._episode_height_sum = torch.zeros(self.num_envs, device=self.device)
+        self._episode_fall = torch.zeros(self.num_envs, dtype=torch.bool, device=self.device)
+        self._eval_window: list[dict[str, float | int]] = []
+        self.last_eval_metrics: dict[str, float] = {}
         self.metrics["command_speed"] = torch.zeros(self.num_envs, device=self.device)
+        self.metrics["real_vel_error_xy"] = torch.zeros(self.num_envs, device=self.device)
+        self.metrics["real_yaw_error"] = torch.zeros(self.num_envs, device=self.device)
 
     @property
     def command(self) -> torch.Tensor:
@@ -449,24 +470,299 @@ class VelocityCommand(CommandTerm):
 
     def _update_metrics(self) -> None:
         self.metrics["command_speed"] = torch.linalg.vector_norm(self._command[:, :2], dim=-1)
+        lin = self.robot.data.root_link_lin_vel_b[:, :2]
+        yaw = self.robot.data.root_link_ang_vel_b[:, 2]
+        self.metrics["real_vel_error_xy"] = torch.linalg.vector_norm(self._command[:, :2] - lin, dim=-1)
+        self.metrics["real_yaw_error"] = torch.abs(self._command[:, 2] - yaw)
+
+    def record_real_step(
+        self,
+        command: torch.Tensor,
+        lin_vel_xy: torch.Tensor,
+        yaw_rate: torch.Tensor,
+        base_height: torch.Tensor,
+        terminated: torch.Tensor,
+    ) -> None:
+        """Accumulate metrics from the pre-reset MuJoCo reward evaluation."""
+        move = torch.linalg.vector_norm(command[:, :2], dim=-1) > self.cfg.moving_command_threshold
+        yaw_active = command[:, 2].abs() > self.cfg.yaw_command_threshold
+        err_xy_sq = (lin_vel_xy - command[:, :2]).square().sum(-1)
+        err_yaw_sq = (yaw_rate - command[:, 2]).square()
+        static = ~move & ~yaw_active
+        self._episode_steps += 1
+        self._episode_move_count += move
+        self._episode_move_error_sq += err_xy_sq * move
+        self._episode_yaw_count += yaw_active
+        self._episode_yaw_error_sq += err_yaw_sq * yaw_active
+        self._episode_static_count += static
+        self._episode_static_speed_sum += torch.linalg.vector_norm(lin_vel_xy, dim=-1) * static
+        self._episode_height_sum += base_height
+        self._episode_fall |= terminated.bool()
 
     def _resample_command(self, env_ids: torch.Tensor) -> None:
-        ranges = torch.tensor(self.cfg.ranges, device=self.device, dtype=torch.float32)
-        u = torch.rand(len(env_ids), 3, device=self.device)
-        self._command[env_ids] = ranges[:, 0] + u * (ranges[:, 1] - ranges[:, 0])
+        self._finish_episodes(env_ids)
+        ids = env_ids
+        n = len(ids)
+        self._command[ids] = self._sample_commands(n, self.stage)
+        self._episode_stage[ids] = self.stage
+        self._episode_command[ids] = self._command[ids]
+        self._episode_steps[ids] = 0
+        self._episode_move_count[ids] = 0
+        self._episode_move_error_sq[ids] = 0
+        self._episode_yaw_count[ids] = 0
+        self._episode_yaw_error_sq[ids] = 0
+        self._episode_static_count[ids] = 0
+        self._episode_static_speed_sum[ids] = 0
+        self._episode_height_sum[ids] = 0
+        self._episode_fall[ids] = False
+
+    def _sample_a(self, n: int) -> torch.Tensor:
+        out = torch.zeros(n, 3, device=self.device)
+        moving = torch.rand(n, device=self.device) >= self.cfg.stage_a_static_fraction
+        lo, hi = self.cfg.stage_a_vx_range
+        out[:, 0] = lo + torch.rand(n, device=self.device) * (hi - lo)
+        out[~moving] = 0.0
+        return out
+
+    def _sample_b(self, n: int) -> torch.Tensor:
+        out = torch.empty(n, 3, device=self.device)
+        for i, (lo, hi) in enumerate((self.cfg.stage_b_vx_range, self.cfg.stage_b_vy_range, self.cfg.stage_b_yaw_range)):
+            out[:, i] = lo + torch.rand(n, device=self.device) * (hi - lo)
+        return out
+
+    def _sample_c(self, n: int) -> torch.Tensor:
+        out = torch.empty(n, 3, device=self.device)
+        for i, (lo, hi) in enumerate((self.cfg.stage_c_vx_range, self.cfg.stage_c_vy_range, self.cfg.stage_c_yaw_range)):
+            out[:, i] = lo + torch.rand(n, device=self.device) * (hi - lo)
+        return out
+
+    def _sample_commands(self, n: int, stage: int) -> torch.Tensor:
+        if self.cfg.fixed_stage is not None or not self.cfg.auto_curriculum:
+            stage = int(self.cfg.fixed_stage if self.cfg.fixed_stage is not None else self.cfg.initial_stage)
+        if stage == 0:
+            return self._sample_a(n)
+        u = torch.rand(n, device=self.device)
+        if stage == 1:
+            keep_a = u < self.cfg.stage_b_keep_a_fraction
+            out = self._sample_b(n)
+            if keep_a.any():
+                out[keep_a] = self._sample_a(int(keep_a.sum()))
+            return out
+        keep_a = u < self.cfg.stage_c_keep_a_fraction
+        keep_b = (u >= self.cfg.stage_c_keep_a_fraction) & (
+            u < self.cfg.stage_c_keep_a_fraction + self.cfg.stage_c_keep_b_fraction
+        )
+        out = self._sample_c(n)
+        if keep_a.any():
+            out[keep_a] = self._sample_a(int(keep_a.sum()))
+        if keep_b.any():
+            out[keep_b] = self._sample_b(int(keep_b.sum()))
+        return out
+
+    @staticmethod
+    def _command_bins(command: torch.Tensor) -> tuple[int, int]:
+        vx, vy = float(command[0]), float(command[1])
+        speed = math.hypot(vx, vy)
+        if speed < 0.05:
+            return -1, -1
+        if abs(vx) >= abs(vy):
+            direction = 0 if vx >= 0 else 1  # forward / backward
+        else:
+            direction = 2 if vy >= 0 else 3  # left / right
+        magnitude = 0 if speed < 0.25 else (1 if speed < 0.55 else 2)
+        return direction, magnitude
+
+    def _finish_episodes(self, env_ids: torch.Tensor) -> None:
+        valid = self._episode_steps[env_ids] > 0
+        ids = env_ids[valid]
+        if ids.numel() == 0:
+            return
+        device_rows = torch.stack(
+            [
+                self._episode_stage[ids].float(),
+                torch.sqrt(self._episode_move_error_sq[ids] / self._episode_move_count[ids].clamp_min(1)),
+                torch.sqrt(self._episode_yaw_error_sq[ids] / self._episode_yaw_count[ids].clamp_min(1)),
+                self._episode_static_speed_sum[ids] / self._episode_static_count[ids].clamp_min(1),
+                self._episode_move_count[ids],
+                self._episode_yaw_count[ids],
+                self._episode_static_count[ids],
+                self._episode_fall[ids].float(),
+                self._episode_steps[ids],
+                self._episode_height_sum[ids] / self._episode_steps[ids].clamp_min(1),
+            ],
+            dim=-1,
+        )
+        rows = device_rows.detach().cpu().tolist()
+        commands = self._episode_command[ids].detach().cpu().tolist()
+        for row, command in zip(rows, commands, strict=True):
+            ep_stage = int(row[0])
+            if ep_stage != self.stage:
+                continue
+            direction, magnitude = self._command_bins(command)
+            self._eval_window.append(
+                {
+                    "vel_rmse": row[1],
+                    "yaw_rmse": row[2],
+                    "static_speed": row[3],
+                    "moving_steps": row[4],
+                    "yaw_steps": row[5],
+                    "static_steps": row[6],
+                    "fall": row[7],
+                    "length": row[8],
+                    "height": row[9],
+                    "direction": direction,
+                    "magnitude": magnitude,
+                }
+            )
+            if len(self._eval_window) >= self.cfg.promotion_window_episodes:
+                self._evaluate_window()
+
+    def _evaluate_window(self) -> None:
+        rows = self._eval_window[: self.cfg.promotion_window_episodes]
+        del self._eval_window[: self.cfg.promotion_window_episodes]
+        if not rows:
+            return
+        moving = [r["vel_rmse"] for r in rows if r["moving_steps"] > 0]
+        yaw = [r["yaw_rmse"] for r in rows if r["yaw_steps"] > 0]
+        static = [r["static_speed"] for r in rows if r["static_steps"] > 0]
+        fall_rate = sum(float(r["fall"]) for r in rows) / len(rows)
+        directions = [0, 0, 0, 0]
+        magnitudes = [0, 0, 0]
+        for r in rows:
+            if r["direction"] >= 0:
+                directions[int(r["direction"])] += 1
+                magnitudes[int(r["magnitude"])] += 1
+        vel_rmse = math.sqrt(sum(float(x) ** 2 for x in moving) / max(len(moving), 1)) if moving else float("nan")
+        yaw_rmse = math.sqrt(sum(float(x) ** 2 for x in yaw) / max(len(yaw), 1)) if yaw else float("nan")
+        static_speed = sum(float(x) for x in static) / len(static) if static else float("nan")
+        direction_coverage = sum(x >= self.cfg.min_command_bin_episodes for x in directions) / 4.0
+        magnitude_coverage = sum(x >= self.cfg.min_command_bin_episodes for x in magnitudes) / 3.0
+        self.eval_count += 1
+        self.last_eval_metrics = {
+            "real_vel_rmse_xy": vel_rmse,
+            "real_yaw_rmse": yaw_rmse,
+            "static_speed": static_speed,
+            "fall_rate": fall_rate,
+            "episode_length": sum(float(r["length"]) for r in rows) / len(rows),
+            "mean_base_height": sum(float(r["height"]) for r in rows) / len(rows),
+            "command_bin_coverage": direction_coverage,
+            "magnitude_bin_coverage": magnitude_coverage,
+            "eval_episodes": float(len(rows)),
+            "eval_count": float(self.eval_count),
+        }
+        passed = False
+        if self.stage == 0:
+            passed = (
+                len(moving) >= self.cfg.min_moving_episodes
+                and bool(static)
+                and vel_rmse < self.cfg.stage_a_max_vel_rmse
+                and static_speed < self.cfg.stage_a_max_static_speed
+                and fall_rate < self.cfg.max_fall_rate
+            )
+        elif self.stage == 1:
+            passed = (
+                len(moving) >= self.cfg.min_moving_episodes
+                and len(yaw) >= self.cfg.min_yaw_episodes
+                and vel_rmse < self.cfg.stage_b_max_vel_rmse
+                and yaw_rmse < self.cfg.stage_b_max_yaw_rmse
+                and fall_rate < self.cfg.max_fall_rate
+                and direction_coverage >= 1.0
+                and magnitude_coverage >= self.cfg.required_magnitude_coverage
+            )
+        if self.cfg.auto_curriculum and self.cfg.fixed_stage is None and self.stage < 2:
+            self.promotion_streak = self.promotion_streak + 1 if passed else 0
+            self.last_eval_metrics["promotion_pass"] = float(passed)
+            self.last_eval_metrics["promotion_streak"] = float(self.promotion_streak)
+            if self.promotion_streak >= self.cfg.consecutive_passing_windows:
+                self.stage += 1
+                self.promotion_count += 1
+                self.promotion_streak = 0
+                self._eval_window.clear()
+        else:
+            self.last_eval_metrics["promotion_pass"] = float(passed)
+            self.last_eval_metrics["promotion_streak"] = float(self.promotion_streak)
 
     def _update_command(self, env_ids: torch.Tensor | None) -> None:
         # A sampled command is held exactly constant until the next resampling event.
         return
 
+    def state_dict(self) -> dict:
+        return {
+            "stage": self.stage,
+            "eval_count": self.eval_count,
+            "promotion_streak": self.promotion_streak,
+            "promotion_count": self.promotion_count,
+            "eval_window": list(self._eval_window),
+            "last_eval_metrics": dict(self.last_eval_metrics),
+        }
+
+    def load_state_dict(self, state: dict) -> None:
+        self.stage = int(state.get("stage", self.stage))
+        self.eval_count = int(state.get("eval_count", 0))
+        self.promotion_streak = int(state.get("promotion_streak", 0))
+        self.promotion_count = int(state.get("promotion_count", 0))
+        self._eval_window = list(state.get("eval_window", []))
+        self.last_eval_metrics = dict(state.get("last_eval_metrics", {}))
+
 
 @dataclass(kw_only=True)
 class VelocityCommandCfg(CommandTermCfg):
-    ranges: tuple[tuple[float, float], ...] = ((-1.0, 2.5), (-0.5, 0.5), (-1.5, 1.5))
+    entity_name: str = "robot"
+    auto_curriculum: bool = True
+    initial_stage: int = 0
+    fixed_stage: int | None = None
+    stage_a_static_fraction: float = 0.15
+    stage_a_vx_range: tuple[float, float] = (0.15, 0.55)
+    stage_b_vx_range: tuple[float, float] = (-0.2, 0.7)
+    stage_b_vy_range: tuple[float, float] = (-0.15, 0.15)
+    stage_b_yaw_range: tuple[float, float] = (-0.4, 0.4)
+    stage_c_vx_range: tuple[float, float] = (-0.4, 1.0)
+    stage_c_vy_range: tuple[float, float] = (-0.3, 0.3)
+    stage_c_yaw_range: tuple[float, float] = (-0.8, 0.8)
+    stage_b_keep_a_fraction: float = 0.35
+    stage_c_keep_a_fraction: float = 0.25
+    stage_c_keep_b_fraction: float = 0.25
+    moving_command_threshold: float = 0.05
+    yaw_command_threshold: float = 0.05
+    promotion_window_episodes: int = 256
+    consecutive_passing_windows: int = 2
+    min_moving_episodes: int = 128
+    min_yaw_episodes: int = 64
+    min_command_bin_episodes: int = 2
+    required_magnitude_coverage: float = 2.0 / 3.0
+    max_fall_rate: float = 0.10
+    stage_a_max_vel_rmse: float = 0.18
+    stage_a_max_static_speed: float = 0.12
+    stage_b_max_vel_rmse: float = 0.20
+    stage_b_max_yaw_rmse: float = 0.20
+    resampling_time_range: tuple[float, float] = (10.0, 10.0)
 
     def __post_init__(self):
-        if len(self.ranges) != 3:
-            raise ValueError("velocity goal needs three ranges for vx, vy, yaw_rate")
+        fractions = (
+            self.stage_a_static_fraction,
+            self.stage_b_keep_a_fraction,
+            self.stage_c_keep_a_fraction,
+            self.stage_c_keep_b_fraction,
+        )
+        if any(not 0.0 <= value <= 1.0 for value in fractions):
+            raise ValueError("curriculum sampling fractions must be within [0, 1]")
+        if self.stage_c_keep_a_fraction + self.stage_c_keep_b_fraction > 1.0:
+            raise ValueError("Stage C retained Stage A/B fractions cannot sum above 1")
+        ranges = (
+            self.stage_a_vx_range,
+            self.stage_b_vx_range,
+            self.stage_b_vy_range,
+            self.stage_b_yaw_range,
+            self.stage_c_vx_range,
+            self.stage_c_vy_range,
+            self.stage_c_yaw_range,
+        )
+        if any(len(bounds) != 2 or bounds[0] > bounds[1] for bounds in ranges):
+            raise ValueError("each curriculum command range must be an ordered (min, max) pair")
+        if self.promotion_window_episodes < 1 or self.consecutive_passing_windows < 1:
+            raise ValueError("curriculum evaluation windows must be positive")
+        if self.fixed_stage is not None and self.fixed_stage not in (0, 1, 2):
+            raise ValueError("fixed_stage must be A=0, B=1, or C=2")
 
     def build(self, env: ManagerBasedRlEnv) -> VelocityCommand:
         return VelocityCommand(self, env)

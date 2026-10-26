@@ -147,8 +147,7 @@ def imagine(
             goal_next = motion_goal(frame, ref, anchor_pose)
             e_root = wm.heads.root_error_features(s_next, ref)
         else:
-            s_next, r, logits, obs_clean, anchor_pose = step_fn(s, a, a_prev, start.xi, goal)
-            term_vec = r.unsqueeze(0)
+            s_next, r, term_vec, logits, obs_clean, anchor_pose = step_fn(s, a, a_prev, start.xi, goal)
             goal_next = goal
             e_root = torch.zeros(n, 4, device=device, dtype=s.dtype)
 

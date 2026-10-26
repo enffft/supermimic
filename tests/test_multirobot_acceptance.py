@@ -363,6 +363,8 @@ def test_go2_zero_action_stand_and_termination_features():
             npz_files=[], robot_name="go2", task_name="velocity_command", num_envs=16,
             episode_length_s=20.0, action_noise_std=0.0, obs_noise=False, reset_noise=False,
             domain_randomization=False, record_transitions=False, seed=3,
+            velocity_gaussian_noise_std=0.0, velocity_ou_env_fraction=0.0, velocity_ou_noise_std=0.0,
+            velocity_curriculum=False, velocity_curriculum_fixed_stage=0,
         ),
         device="cuda:0",
     )
@@ -430,11 +432,12 @@ def test_go2_zero_action_stand_and_termination_features():
         # The free-task feature thresholds must produce exactly the environment's labels.
         thresh = float(env.cfg.terminations["root_height"].params["threshold"])
         real_low = free_root_too_low(env, SceneEntityCfg("robot"), thresh)
-        real_tilt = free_root_tilted(env, SceneEntityCfg("robot"), 0.8)
+        tilt_threshold = 1.0 - math.cos(math.radians(70.0))
+        real_tilt = free_root_tilted(env, SceneEntityCfg("robot"), tilt_threshold)
         # Use the actual root positions for the differentiable World Model feature path.
         feat = AnalyticHeads.free_termination_features(robot.data.root_link_pos_w, robot.data.root_link_quat_w, spec.default_base_height)
         torch.testing.assert_close(real_low, robot.data.root_link_pos_w[:, 2] < thresh)
-        torch.testing.assert_close(real_tilt, feat[:, 1].abs() > 0.8)
+        torch.testing.assert_close(real_tilt, feat[:, 1].abs() > tilt_threshold)
         assert not real_low.any() and not real_tilt.any()
 
         # Exercise both failure sides of the shared labels on deliberately perturbed states.
@@ -446,9 +449,9 @@ def test_go2_zero_action_stand_and_termination_features():
         io.write(torch.tensor([0, 1], device=env.device), state[:2])
         feat = AnalyticHeads.free_termination_features(robot.data.root_link_pos_w, robot.data.root_link_quat_w, spec.default_base_height)
         real_low = free_root_too_low(env, SceneEntityCfg("robot"), thresh)
-        real_tilt = free_root_tilted(env, SceneEntityCfg("robot"), 0.8)
+        real_tilt = free_root_tilted(env, SceneEntityCfg("robot"), tilt_threshold)
         torch.testing.assert_close(real_low, robot.data.root_link_pos_w[:, 2] < thresh)
-        torch.testing.assert_close(real_tilt, feat[:, 1].abs() > 0.8)
+        torch.testing.assert_close(real_tilt, feat[:, 1].abs() > tilt_threshold)
         assert real_low[0] and real_tilt[1]
         print("Go2 zero-action stand:", {
             "root_z_last_100_mean": float(root_z_hist[-100:].mean()),
@@ -464,6 +467,90 @@ def test_go2_zero_action_stand_and_termination_features():
             "reset_count": int(env.reset_buf.sum()), "foot_contact_envs": 16,
             "root_height_threshold_m": thresh,
         })
+    finally:
+        env.close()
+
+
+def test_go2_reward_parity_ou_execution_and_replay_action():
+    if not torch.cuda.is_available():
+        pytest.skip("Go2 MuJoCo-Warp acceptance requires CUDA")
+    from supermimic.envs import SuperMimicEnvCfgArgs, make_env
+    from supermimic.envs.state_io import StateIO
+    from supermimic.robots.spec import get_robot_spec
+    from supermimic.tasks.velocity_reward import VelocityRobotParams, velocity_reward_terms
+
+    spec = get_robot_spec("go2")
+    env = make_env(
+        SuperMimicEnvCfgArgs(
+            npz_files=[], robot_name="go2", task_name="velocity_command", num_envs=16,
+            episode_length_s=20.0, action_noise_std=0.0, obs_noise=False, reset_noise=False,
+            domain_randomization=False, record_transitions=True, seed=19,
+            velocity_gaussian_noise_std=0.1, velocity_ou_env_fraction=0.25,
+            velocity_ou_noise_std=0.3, velocity_ou_theta=2.0,
+            velocity_curriculum=False, velocity_curriculum_fixed_stage=0,
+        ),
+        device="cuda:0",
+    )
+    try:
+        env.reset()
+        action = torch.full((16, spec.num_joints), 0.05, device=env.device)
+        _, _, terminated, truncated, _ = env.step(action)
+        assert not (terminated | truncated).any()
+
+        robot = env.scene["robot"]
+        term = env.action_manager.get_term("joint_pos")
+        command = env.command_manager.get_term("velocity")
+        q0 = robot.data.default_joint_pos[0].detach()
+        params = VelocityRobotParams(
+            default_joint_pos=q0,
+            soft_joint_limits=robot.data.soft_joint_pos_limits[0],
+            action_scales=q0.new_tensor(spec.action_scales),
+            kp=q0.new_tensor(spec.kp),
+            kd=q0.new_tensor(spec.kd),
+            effort_limits=torch.full_like(q0, 23.5),
+            dt=env.step_dt,
+        )
+        state = StateIO(env).read()
+        # RewardManager evaluates before the final MuJoCo forward pass; use the exact
+        # real simulator tensors cached at that reward timestamp for a like-for-like call.
+        reward_inputs = env._supermimic_go2_reward_cache["inputs"]
+        direct = velocity_reward_terms(
+            reward_inputs["state_prev"], reward_inputs["state"], reward_inputs["goal"],
+            reward_inputs["action"], reward_inputs["previous_action"], reward_inputs["params"],
+            measured_torque=reward_inputs["torque"],
+            measured_joint_acceleration=reward_inputs["joint_acceleration"],
+        )
+        imagined_proxy = velocity_reward_terms(
+            reward_inputs["state_prev"], reward_inputs["state"], reward_inputs["goal"],
+            reward_inputs["action"], reward_inputs["previous_action"], reward_inputs["params"],
+        )
+        parity = {}
+        proxy_error = {}
+        for name, expected in direct.items():
+            actual = env.reward_manager.get_term(name)
+            torch.testing.assert_close(actual, expected * env.step_dt, atol=2.0e-6, rtol=1.0e-5, msg=lambda msg: f"{name}: {msg}")
+            parity[name] = float((actual - expected * env.step_dt).abs().max())
+            proxy_error[name] = float((imagined_proxy[name] - expected).abs().mean())
+
+        # The policy action stays clean; the actuator and replay use the noisy executed action.
+        torch.testing.assert_close(term.raw_action, action)
+        assert bool((term.executed_raw - action).abs().max() > 0)
+        assert float(term.executed_raw.abs().max()) <= 1.0
+        expected_target = robot.data.default_joint_pos + term.executed_raw * q0.new_tensor(spec.action_scales)
+        torch.testing.assert_close(robot.data.joint_pos_target, expected_target, atol=1.0e-6, rtol=0.0)
+        replay = env.recorder_manager.get_term("replay").buffer
+        torch.testing.assert_close(replay.a[:, 0], action)
+        torch.testing.assert_close(replay.a_exec[:, 0], term.executed_raw)
+        ou_fraction = float(term._ou_mask.float().mean())
+        assert 0.0 < ou_fraction < 1.0
+        print("Go2 reward/action parity:", json.dumps({
+            "per_term_max_abs_error": parity,
+            "proxy_vs_real_per_term_mean_abs_error_rate": proxy_error,
+            "ou_env_fraction": ou_fraction,
+            "clean_action_abs_mean": float(term.raw_action.abs().mean()),
+            "executed_action_abs_mean": float(term.executed_raw.abs().mean()),
+            "replay_matches_executed_action": True,
+        }, sort_keys=True))
     finally:
         env.close()
 

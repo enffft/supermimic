@@ -18,13 +18,16 @@ class DataCfg:
     limit: int | None = None
     manifest: Path | None = None  # csv with name,keep (filter_bones_seed.py output)
     library: Path | None = None  # packed compact library (.pt from build_library.py); overrides npz_dir
+    m1_motion_set: str = "C"  # independent runs: A=2 wheels, B=A+arm, C=all six validated clips
 
 
 @dataclass
 class EnvCfg:
     robot_name: str = "g1"  # g1 | go2 | m1_piper
     task_name: str = "motion_tracking"  # motion_tracking | velocity_command
-    num_envs: int = 4096
+    # The trainer resolves this by robot when omitted: 2048 for M1-Piper's
+    # larger convex-collision model, 4096 for Go2/G1. CLI overrides remain explicit.
+    num_envs: int | None = None
     episode_length_s: float = 10.0
     action_noise_std: float = 0.1
     obs_noise: bool = True
@@ -37,6 +40,39 @@ class EnvCfg:
     compact_library: bool = False
     anchor_obs: bool | None = None  # default: enabled for M1, disabled for G1/Go2
     velocity_debug_objective: bool = False  # smoke-test only; not a selected Go2 reward
+    velocity_gaussian_noise_std: float = 0.1
+    velocity_ou_env_fraction: float = 0.25
+    velocity_ou_noise_std: float = 0.3
+    velocity_ou_theta: float = 2.0
+    velocity_curriculum: bool = True
+    velocity_curriculum_initial_stage: int = 0
+    velocity_curriculum_fixed_stage: int | None = None  # A=0, B=1, C=2; None means automatic
+    velocity_stage_a_vx_range: tuple[float, float] = (0.15, 0.55)
+    velocity_stage_b_vx_range: tuple[float, float] = (-0.2, 0.7)
+    velocity_stage_b_vy_range: tuple[float, float] = (-0.15, 0.15)
+    velocity_stage_b_yaw_range: tuple[float, float] = (-0.4, 0.4)
+    velocity_stage_c_vx_range: tuple[float, float] = (-0.4, 1.0)
+    velocity_stage_c_vy_range: tuple[float, float] = (-0.3, 0.3)
+    velocity_stage_c_yaw_range: tuple[float, float] = (-0.8, 0.8)
+    velocity_stage_a_static_fraction: float = 0.15
+    velocity_stage_b_keep_a_fraction: float = 0.35
+    velocity_stage_c_keep_a_fraction: float = 0.25
+    velocity_stage_c_keep_b_fraction: float = 0.25
+    velocity_promotion_window_episodes: int = 256
+    velocity_consecutive_passing_windows: int = 2
+    velocity_min_moving_episodes: int = 128
+    velocity_min_yaw_episodes: int = 64
+    velocity_min_command_bin_episodes: int = 2
+    velocity_required_magnitude_coverage: float = 2.0 / 3.0
+    velocity_max_fall_rate: float = 0.10
+    velocity_stage_a_max_vel_rmse: float = 0.18
+    velocity_stage_a_max_static_speed: float = 0.12
+    velocity_stage_b_max_vel_rmse: float = 0.20
+    velocity_stage_b_max_yaw_rmse: float = 0.20
+    velocity_resample_seconds: float = 10.0
+    velocity_min_safe_height: float = 0.22  # zero-action stable Go2 root height was 0.2827 m
+    velocity_fall_height: float = 0.17
+    velocity_fall_tilt_deg: float = 70.0
 
 
 @dataclass
@@ -45,6 +81,9 @@ class ScheduleCfg:
     updates_per_env_step: float = 0.4  # UTD
     policy_updates_per_wm_update: int = 1
     warmup_iterations: int = 40  # env steps before the first update (fills k-step windows)
+    wm_only_iterations: int = 300  # WM update events before Go2 actor/critic updates
+    m1_wm_only_iterations: int = 300  # let the M1 WM fit the selected motion bank before BPTT
+    actor_ramp_iterations: int = 1000  # actor optimizer updates after WM-only warmup
     lr_final_ratio: float = 0.03
     lr_decay_fraction: float = 250_000 / 320_000
     log_interval: int = 50  # iterations

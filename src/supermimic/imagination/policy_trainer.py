@@ -55,11 +55,11 @@ class PolicyTrainer:
                 raise ValueError("VelocityCommandTask needs the robot default_joint_pos for analytic observations")
             self.step_fn = VelocityImagStep(wm, task, task.default_joint_pos, compile_mode=cfg.compile)
 
-    def set_lr(self, lr: float) -> None:
+    def set_lr(self, lr: float, critic_lr: float | None = None) -> None:
         for g in self.opt.param_groups:
             g["lr"] = lr
         for g in self.critic_opt.param_groups:
-            g["lr"] = lr
+            g["lr"] = lr if critic_lr is None else critic_lr
 
     def _critic_inputs(self, ro: ImagRollout):
         H1, n, _ = ro.states.shape
@@ -68,8 +68,6 @@ class PolicyTrainer:
 
     def update(self, buffer: ReplayBuffer, xi_norm_fn=None) -> dict[str, float]:
         cfg = self.cfg
-        if isinstance(self.task, VelocityCommandTask) and not self.task.debug_objective:
-            raise RuntimeError("Go2 policy updates are disabled until a task reward is selected; use the diagnostic objective only in smoke tests")
         start = buffer.sample_starts(cfg.batch_size, cfg.history)
         xi_norm = self.wm.spec.normalize_xi(start.xi)
 

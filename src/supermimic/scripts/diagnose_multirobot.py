@@ -5,7 +5,7 @@ few configured World Model updates, computes Actor gradients without stepping th
 optimizer, and writes a JSON report. Example:
 
   PYTHONPATH=src python -m supermimic.scripts.diagnose_multirobot --robot m1_piper
-  PYTHONPATH=src python -m supermimic.scripts.diagnose_multirobot --robot go2 --action-noise 0
+  PYTHONPATH=src python -m supermimic.scripts.diagnose_multirobot --robot go2 --num-envs 4096 --action-noise 0
 """
 
 from __future__ import annotations
@@ -132,9 +132,13 @@ def run(args: argparse.Namespace) -> dict[str, object]:
     cfg.env.obs_noise = False
     cfg.env.reset_noise = False
     cfg.env.domain_randomization = args.domain_randomization
-    cfg.env.action_noise_std = 0.0
+    cfg.env.action_noise_std = args.action_noise if args.robot == "m1_piper" else 0.0
+    cfg.env.velocity_gaussian_noise_std = args.action_noise if args.robot == "go2" else 0.0
+    cfg.env.velocity_ou_env_fraction = 0.0
+    cfg.env.velocity_ou_noise_std = 0.0
+    cfg.env.velocity_curriculum = False
+    cfg.env.velocity_curriculum_fixed_stage = 0
     cfg.env.sampling_mode = "start"
-    cfg.env.velocity_debug_objective = args.robot == "go2"  # diagnostic-only reward; no policy optimizer step
     if args.robot == "m1_piper":
         from supermimic.training.loop import M1_FIRST_PHASE_CLIPS, M1_FIRST_PHASE_MANIFEST
 
@@ -171,9 +175,6 @@ def run(args: argparse.Namespace) -> dict[str, object]:
         for _ in range(args.steps):
             with torch.no_grad():
                 action = trainer.act(obs)
-                if args.action_noise:
-                    action = action + args.action_noise * torch.randn_like(action)
-                action = action.clamp(-1.0, 1.0)
             obs, reward, terminated, timeout, _ = env.step(action)
             env_returns += reward
             lengths += 1
@@ -231,10 +232,10 @@ def run(args: argparse.Namespace) -> dict[str, object]:
             ),
             "real_return_semantics": (
                 "M1 physical tracking reward" if args.robot == "m1_piper"
-                else "zero-weight collection placeholder; not a Go2 task return"
+                else "Go2 velocity reward core applied by the real RewardManager"
             ),
             "policy_optimizer_steps": 0,
-            "go2_reward_note": "diagnostic velocity reward is enabled only to probe BPTT; it is not the selected training reward" if args.robot == "go2" else None,
+            "go2_reward_note": "uses the training reward core; the diagnostic does not step the policy optimizer" if args.robot == "go2" else None,
         }
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")
@@ -251,7 +252,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--robot", choices=("go2", "m1_piper"), default="m1_piper")
     parser.add_argument("--device", default="cuda:0")
-    parser.add_argument("--num-envs", type=int, default=16)
+    parser.add_argument("--num-envs", type=int, default=4096)
     parser.add_argument("--steps", type=int, default=256)
     parser.add_argument("--wm-updates", type=int, default=8)
     parser.add_argument("--window-batch", type=int, default=64)

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import math
+
 from mjlab.envs import ManagerBasedRlEnv, ManagerBasedRlEnvCfg
 from mjlab.envs import mdp as base_mdp
 from mjlab.envs.mdp import dr
@@ -25,13 +27,7 @@ from supermimic.envs.mdp.commands import MultiClipMotionCommandCfg, VelocityComm
 from supermimic.envs.tracking_env_cfg import QuietSimulationCfg, SuperMimicEnvCfgArgs
 from supermimic.robots.mjlab_assets import get_robot_entity_cfg
 from supermimic.robots.spec import get_robot_spec
-
-
-def zero_reward(env) -> object:
-    """Placeholder physical reward for collection only; no Go2 training reward is implied."""
-    import torch
-
-    return torch.zeros(env.num_envs, device=env.device)
+from supermimic.tasks.velocity_reward import VELOCITY_REWARD_NAMES, go2_velocity_reward_term
 
 
 def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
@@ -91,7 +87,12 @@ def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
         actions = {
             "joint_pos": NoisyJointPositionActionCfg(
                 entity_name="robot", actuator_names=robot.joint_names, scale=scale,
-                preserve_order=True, use_default_offset=True, noise_std=a.action_noise_std,
+                preserve_order=True, use_default_offset=True,
+                noise_std=a.velocity_gaussian_noise_std if robot.name == "go2" else a.action_noise_std,
+                ou_env_fraction=a.velocity_ou_env_fraction if robot.name == "go2" else 0.0,
+                ou_noise_std=a.velocity_ou_noise_std if robot.name == "go2" else 0.0,
+                ou_theta=a.velocity_ou_theta,
+                action_clip=1.0 if robot.name == "go2" else float("inf"),
             )
         }
         action_name = "joint_pos"
@@ -132,19 +133,48 @@ def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
     else:
         commands = {
             "velocity": VelocityCommandCfg(
-                resampling_time_range=(10.0, 10.0),
+                entity_name="robot",
+                resampling_time_range=(a.velocity_resample_seconds, a.velocity_resample_seconds),
+                auto_curriculum=a.velocity_curriculum,
+                initial_stage=a.velocity_curriculum_initial_stage,
+                fixed_stage=a.velocity_curriculum_fixed_stage,
+                stage_a_vx_range=a.velocity_stage_a_vx_range,
+                stage_b_vx_range=a.velocity_stage_b_vx_range,
+                stage_b_vy_range=a.velocity_stage_b_vy_range,
+                stage_b_yaw_range=a.velocity_stage_b_yaw_range,
+                stage_c_vx_range=a.velocity_stage_c_vx_range,
+                stage_c_vy_range=a.velocity_stage_c_vy_range,
+                stage_c_yaw_range=a.velocity_stage_c_yaw_range,
+                stage_a_static_fraction=a.velocity_stage_a_static_fraction,
+                stage_b_keep_a_fraction=a.velocity_stage_b_keep_a_fraction,
+                stage_c_keep_a_fraction=a.velocity_stage_c_keep_a_fraction,
+                stage_c_keep_b_fraction=a.velocity_stage_c_keep_b_fraction,
+                promotion_window_episodes=a.velocity_promotion_window_episodes,
+                consecutive_passing_windows=a.velocity_consecutive_passing_windows,
+                min_moving_episodes=a.velocity_min_moving_episodes,
+                min_yaw_episodes=a.velocity_min_yaw_episodes,
+                min_command_bin_episodes=a.velocity_min_command_bin_episodes,
+                required_magnitude_coverage=a.velocity_required_magnitude_coverage,
+                max_fall_rate=a.velocity_max_fall_rate,
+                stage_a_max_vel_rmse=a.velocity_stage_a_max_vel_rmse,
+                stage_a_max_static_speed=a.velocity_stage_a_max_static_speed,
+                stage_b_max_vel_rmse=a.velocity_stage_b_max_vel_rmse,
+                stage_b_max_yaw_rmse=a.velocity_stage_b_max_yaw_rmse,
             )
         }
-        # Reward is intentionally zero in this interface bring-up. A task reward must be
-        # specified before policy optimization is enabled.
-        rewards = {"collection_only": RewardTermCfg(func=zero_reward, weight=0.0)}
+        # Every adapter calls the same pure reward core; RewardManager applies dt once.
+        rewards = {
+            name: RewardTermCfg(func=go2_velocity_reward_term, weight=1.0, params={"term_name": name})
+            for name in VELOCITY_REWARD_NAMES
+        }
+        tilt_feature_threshold = 1.0 - math.cos(math.radians(a.velocity_fall_tilt_deg))
         terminations = {
             "time_out": TerminationTermCfg(func=base_mdp.time_out, time_out=True),
             "root_height": TerminationTermCfg(
                 func=sm_term.free_root_too_low,
-                params={"asset_cfg": SceneEntityCfg("robot"), "threshold": max(0.05, robot.default_base_height - a.root_height_threshold)},
+                params={"asset_cfg": SceneEntityCfg("robot"), "threshold": a.velocity_fall_height},
             ),
-            "root_tilt": TerminationTermCfg(func=sm_term.free_root_tilted, params={"asset_cfg": SceneEntityCfg("robot"), "threshold": a.root_tilt_threshold}),
+            "root_tilt": TerminationTermCfg(func=sm_term.free_root_tilted, params={"asset_cfg": SceneEntityCfg("robot"), "threshold": tilt_feature_threshold}),
         }
         goal_dim = 3
         command_name = "velocity"
@@ -176,13 +206,19 @@ def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
             "action_name": action_name, "goal_dim": goal_dim,
         })
 
+    # mjWarp's nconmax/njmax are PER WORLD, not totals across vectorized envs.
+    # Scaling these by num_envs multiplies the arrays by num_envs twice and can
+    # exhaust host RAM before a large GPU rollout starts.
+    # Initial compiled contacts are about 84 for Go2 and 216 for M1. Keep
+    # comfortable per-world headroom without multiplying these by num_envs.
+    nconmax = 128 if robot.name == "go2" else 256
+    njmax = 512 if robot.name == "go2" else 1024
     return ManagerBasedRlEnvCfg(
         scene=SceneCfg(terrain=TerrainEntityCfg(terrain_type="plane"), num_envs=a.num_envs, entities={"robot": get_robot_entity_cfg(robot.name)}),
         observations=observations, actions=actions, commands=commands, events=events,
         rewards=rewards, terminations=terminations, recorders=recorders,
         viewer=ViewerConfig(origin_type=ViewerConfig.OriginType.ASSET_BODY, entity_name="robot", body_name=robot.root_body_name, distance=2.8, fovy=55.0, elevation=-5.0, azimuth=120.0),
-        # Warp's initial contact capacity is for the whole vectorized model, not one env.
-        sim=QuietSimulationCfg(nconmax=max(256, a.num_envs * 16), njmax=max(512, a.num_envs * 128), mujoco=MujocoCfg(timestep=0.005, iterations=10, ls_iterations=20)),
+        sim=QuietSimulationCfg(nconmax=nconmax, njmax=njmax, mujoco=MujocoCfg(timestep=0.005, iterations=10, ls_iterations=20)),
         decimation=4, episode_length_s=a.episode_length_s, seed=a.seed,
     )
 

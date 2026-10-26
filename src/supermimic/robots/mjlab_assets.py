@@ -38,25 +38,40 @@ def _stl_face_count(path: Path) -> int:
     return path.read_bytes().lower().count(b"facet normal")
 
 
+def _dae_export_axes(path: Path) -> tuple[str, str]:
+    """Choose Blender export axes that preserve a Z-up URDF mesh frame."""
+    try:
+        root = ET.parse(path).getroot()
+        up_axis = root.find("./{*}asset/{*}up_axis")
+        source_up = (
+            up_axis.text.strip().upper()
+            if up_axis is not None and up_axis.text
+            else ""
+        )
+    except ET.ParseError:
+        source_up = ""
+    # Blender imports Collada node transforms in the declared up-axis frame. The
+    # Go2 and Piper assets declare Z_UP and URDF expects link-local Z_UP; exporting
+    # them through Blender's default Y_UP mapping rotates their vertices again.
+    # Keep the established mapping for other/unspecified Collada conventions.
+    return ("Y", "Z") if source_up == "Z_UP" else ("-Z", "Y")
+
+
 def _convert_visual_mesh(path: Path, *, max_faces: int = 160_000) -> Path:
     """Convert DAE or an oversized STL visual to a MuJoCo-friendly OBJ."""
     path = path.resolve()
     suffix = path.suffix.lower()
-    # URDF mesh vertices are already expressed in the mesh's local frame.  In
-    # particular, Blender's STL importer preserves that frame, so exporting an
-    # STL with the Collada axis conversion rotates the mesh a second time before
-    # the URDF visual origin is applied.  Collada needs the existing conversion
-    # because its imported scene uses a different up/forward convention.
-    axis_forward, axis_up = ("-Z", "Y") if suffix == ".dae" else ("Y", "Z")
-    if suffix == ".dae":
-        # Keep valid Collada conversions cached; only STL's coordinate handling
-        # changed, so those entries must not reuse the old rotated mesh.
-        fingerprint = f"v3:{path}:{path.stat().st_size}:{path.stat().st_mtime_ns}:{max_faces}"
-    else:
-        fingerprint = (
-            f"v4:{path}:{path.stat().st_size}:{path.stat().st_mtime_ns}:"
-            f"{max_faces}:{axis_forward}:{axis_up}"
-        )
+    # URDF mesh vertices are expressed in the mesh's local frame. Blender's STL
+    # importer preserves it. For Collada, respect its declared up axis: Z_UP is
+    # already the URDF link convention and must not be rotated into Y_UP.
+    axis_forward, axis_up = _dae_export_axes(path) if suffix == ".dae" else ("Y", "Z")
+    # Invalidate earlier Collada exports, which used one axis conversion for
+    # every asset regardless of the source <up_axis> declaration. This keeps
+    # oversized STL conversions on their existing cache key.
+    fingerprint = (
+        f"v4:{path}:{path.stat().st_size}:{path.stat().st_mtime_ns}:"
+        f"{max_faces}:{axis_forward}:{axis_up}"
+    )
     key = hashlib.sha1(fingerprint.encode()).hexdigest()[:16]
     cache_dir = Path.home() / ".cache" / "supermimic" / "dae_visuals"
     output = cache_dir / f"{path.stem}_{key}.obj"
@@ -74,7 +89,7 @@ def _convert_visual_mesh(path: Path, *, max_faces: int = 160_000) -> Path:
 from pathlib import Path
 args = sys.argv[sys.argv.index("--") + 1:]
 source, output, max_faces = Path(args[0]).resolve(), Path(args[1]).resolve(), int(args[2])
-axis_forward, axis_up = ("-Z", "Y") if source.suffix.lower() == ".dae" else ("Y", "Z")
+axis_forward, axis_up = args[3], args[4]
 bpy.ops.object.select_all(action="SELECT")
 bpy.ops.object.delete(use_global=False)
 if source.suffix.lower() == ".dae":
@@ -96,8 +111,8 @@ for obj in meshes:
 bpy.context.view_layer.objects.active = meshes[0]
 bpy.ops.export_scene.obj(filepath=str(output), use_selection=True,
                          use_materials=True, use_triangles=True,
-                         # Keep STL mesh-local coordinates intact; Collada's
-                         # imported axis convention needs its established mapping.
+                         # Export in the URDF link frame selected from the
+                         # source format/up-axis convention.
                          axis_forward=axis_forward, axis_up=axis_up)
 '''
     with tempfile.TemporaryDirectory(prefix="sm_dae_", dir=cache_dir) as tmp:
@@ -105,7 +120,10 @@ bpy.ops.export_scene.obj(filepath=str(output), use_selection=True,
         script = Path(tmp) / "convert.py"
         script.write_text(converter)
         result = subprocess.run(
-            [blender, "-b", "--python", str(script), "--", str(path), str(tmp_obj), str(max_faces)],
+            [
+                blender, "-b", "--python", str(script), "--", str(path), str(tmp_obj),
+                str(max_faces), axis_forward, axis_up,
+            ],
             capture_output=True,
             text=True,
         )

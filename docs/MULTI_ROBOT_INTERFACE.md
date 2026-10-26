@@ -65,10 +65,12 @@ M1 的单帧 observation 维数仍按 22 个关节计算，但 wheel joint posit
 ### Go2
 
 - 模型：/home/yifeiy/ws_parkour/lidar_locomotion/legged_gym/resources/robots/go2/urdf/go2.urdf。关节顺序为 FL、FR、RL、RR，每条腿依次 hip/thigh/calf；默认角度依次为 (0.1,0.8,-1.5),(-0.1,0.8,-1.5),(0.1,1.0,-1.5),(-0.1,1.0,-1.5)，root 高度 0.42 m（[robots/spec.py](../src/supermimic/robots/spec.py#L67)、[robots/spec.py](../src/supermimic/robots/spec.py#L127)）。
+- Play/FK 编译时，MuJoCo URDF loader 提供碰撞模型，`_add_urdf_visuals()` 单独挂入 DAE 视觉网格。Go2 DAE 的 `<up_axis>` 是 `Z_UP`，`_dae_export_axes()` 读取其坐标系并用 `Y/Z` 轴导出，保持 URDF link-local frame；缓存 key 带转换轴向以免重复使用旧错位 OBJ（[robots/mjlab_assets.py](../src/supermimic/robots/mjlab_assets.py#L41)、[robots/mjlab_assets.py](../src/supermimic/robots/mjlab_assets.py#L215)）。此修正只影响 visual mesh，不改碰撞、关节、动作或物理参数。
 - 12 路 position action，scale 0.25；Kp=40、Kd=1、effort limit=23.5。控制 dt=0.02 s，由 4 个 0.005 s physics substep 组成（[robots/mjlab_assets.py](../src/supermimic/robots/mjlab_assets.py#L117)、[envs/multirobot_env_cfg.py](../src/supermimic/envs/multirobot_env_cfg.py#L179)）。
 - 训练时 low-height termination 为 `root_z < 0.17 m`，tilt 为 `abs(1+g_local_z) > 1-cos(70°)`。16 env 零动作 8 秒测试的稳态 root z 是 `0.28271 m`；四足均接触、无腿部碰撞和力矩饱和。此结果验证静止支撑，不代表已测准真实跌倒边界（详见 [验收记录](MULTI_ROBOT_VALIDATION.md#p0-cgo2-站立与真实-termination-阈值)）。
 - Goal 为 body-frame 速度命令 `(vx,vy,yaw_rate)`，reset 时采样，并在固定的 10 秒 resample 周期内保持不变。当前配置默认启用 A/B/C command curriculum，从 A 开始；A 主要采样 `vx=[0.15,0.55] m/s`，15% 为静止命令，B/C 的范围和保留比例可在 `EnvCfg` 配置（[config.py](../src/supermimic/config.py#L46)、[envs/mdp/commands.py](../src/supermimic/envs/mdp/commands.py#L535)）。该课程逻辑在当前验收中没有做长程晋级验证。Go2 不使用 Motion Library、LiDAR 或地形输入。
 - Go2 使用 11 项 velocity reward core，并通过 `RewardManager` 使用 `weight=1`、再由 manager 乘控制 `dt`；imagination 使用同一个计算模块，但 MuJoCo measured torque/joint acceleration 缺失时会用可微 proxy（[tasks/velocity_reward.py](../src/supermimic/tasks/velocity_reward.py#L78)、[envs/multirobot_env_cfg.py](../src/supermimic/envs/multirobot_env_cfg.py#L169)）。这套当前 reward 已用于 3072-env、15 分钟短训练；该运行记录工程链路和短期行为，不代表长程收敛或课程晋级验收。
+- Go2 15 分钟 checkpoint 的 Play 已通过静态网格和命令接线检查，但固定 `vx=0.3 m/s` 下 6 秒水平位移接近零；所以可视化修复不代表短训策略已经学会前进。量化结果见[验收记录](MULTI_ROBOT_VALIDATION.md#go2-play-dae-修复与-g1-回归复验2026-10-26)。
 
 ### M1-Piper
 

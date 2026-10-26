@@ -64,6 +64,79 @@ def test_compiled_robot_joint_order_matches_robot_spec():
     assert tuple(m1.joint_names[i] for i in (3, 7, 11, 15)) == m1.wheel_joint_names
 
 
+def test_go2_z_up_dae_visual_meshes_follow_leg_link_frames():
+    """Go2 Collada meshes keep their Z-up URDF link frame after OBJ conversion."""
+    import mujoco
+
+    from supermimic.robots.mjlab_assets import _dae_export_axes, load_robot_spec_model
+    from supermimic.robots.spec import get_robot_spec
+
+    robot = get_robot_spec("go2")
+    if robot.model_path is None or not robot.model_path.is_file():
+        pytest.skip("the local Go2 URDF and DAE assets are not available")
+    dae_dir = robot.model_path.parent.parent / "dae"
+    dae_files = tuple(dae_dir.glob("*.dae"))
+    assert dae_files, f"no Go2 DAE visuals found under {dae_dir}"
+    assert all(_dae_export_axes(path) == ("Y", "Z") for path in dae_files)
+
+    model = load_robot_spec_model("go2")
+    for leg in ("FL", "FR", "RL", "RR"):
+        body_name = f"{leg}_calf"
+        geom_name = f"visual_{body_name}_0"
+        body_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, body_name)
+        geom_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_GEOM, geom_name)
+        assert body_id >= 0 and geom_id >= 0
+        assert model.geom_bodyid[geom_id] == body_id
+        assert model.geom_group[geom_id] == 1
+        # The calf mesh center belongs below the knee along link-local -Z.
+        # Prior Y-up export put it ~15 cm sideways, visually detaching the leg.
+        x, y, z = model.geom_pos[geom_id]
+        assert (x * x + y * y) ** 0.5 < 0.01
+        assert z < -0.12
+
+
+@pytest.mark.skipif(not torch.cuda.is_available(), reason="Go2 Play interface check requires CUDA")
+def test_go2_play_velocity_command_and_actor_joint_order():
+    """The Go2 Play command reaches the policy goal and each action targets its named joint."""
+    from supermimic.envs import SuperMimicEnvCfgArgs, make_env
+    from supermimic.robots.spec import get_robot_spec
+
+    spec = get_robot_spec("go2")
+    if spec.model_path is None or not spec.model_path.is_file():
+        pytest.skip("the local Go2 URDF and mesh assets are not available")
+    env = make_env(
+        SuperMimicEnvCfgArgs(
+            npz_files=[], robot_name="go2", task_name="velocity_command", num_envs=1,
+            obs_noise=False, reset_noise=False, domain_randomization=False,
+            action_noise_std=0.0, velocity_gaussian_noise_std=0.0,
+            velocity_ou_env_fraction=0.0, velocity_ou_noise_std=0.0,
+            velocity_curriculum=False, velocity_fixed_command=(0.3, 0.0, 0.0),
+            record_transitions=False, seed=0,
+        ),
+        device="cuda:0",
+    )
+    try:
+        env.reset()
+        command = env.command_manager.get_term("velocity").command
+        torch.testing.assert_close(command, command.new_tensor([[0.3, 0.0, 0.0]]))
+
+        robot = env.scene["robot"]
+        action_term = env.action_manager.get_term("joint_pos")
+        assert tuple(robot.joint_names) == spec.joint_names
+        assert tuple(action_term.target_names) == spec.joint_names
+        action = torch.zeros(1, spec.num_joints, device=env.device)
+        action[0, 2] = 0.4
+        action[0, 10] = -0.3
+        action_term.process_actions(action)
+        action_term.apply_actions()
+        expected = robot.data.default_joint_pos + action * torch.tensor(
+            spec.action_scales, device=env.device
+        )
+        torch.testing.assert_close(robot.data.joint_pos_target, expected, atol=2e-5, rtol=0.0)
+    finally:
+        env.close()
+
+
 def test_m1_visual_meshes_follow_link_frames_and_piper_stls_are_visible():
     import mujoco
 

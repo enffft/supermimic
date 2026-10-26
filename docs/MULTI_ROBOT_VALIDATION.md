@@ -17,7 +17,8 @@
 | 已启动并完成短训练 | Go2 当前 velocity reward | 使用现有 11 项 velocity reward core 完成一次 15 分钟有界训练；训练结果和失败样本统计见下文。没有在本轮修改 reward 权重。 |
 | 已完成短训练；策略验收未通过 | M1-Piper Motion Tracking | 后续 15 分钟运行在 2048 env 下完成并保存 checkpoint；六条 clip 均播完，但 success rate 为 0，不能称为已收敛。 |
 | 已修复并可见性验收 | M1 Play STL visual frame | 修正 quadruped STL 的重复 -90° visual roll；Play 使用匹配的 Piper-X Link STL。真实关节/碰撞/action 未改。 |
-| Play 验收未通过，待修 | Go2 视觉与前进表现 | 用户观察到 Go2 关节错位、机体悬浮且不前进。Go2 使用 DAE visuals，本轮 M1 STL 修复不覆盖 Go2；仍需单独核对 Go2 URDF、mesh frame 和策略命令响应。 |
+| 已修复并通过静态模型验收 | Go2 DAE visual frame | 所有 Go2 DAE 声明 `Z_UP`，此前 Blender 导出固定使用 `-Z/Y`，使小腿网格中心偏到连杆侧面约 14.8 cm。现在按 DAE `<up_axis>` 选择导出轴；修复后四条 calf 网格中心均落在 link-local `-Z`，新增回归测试。 |
+| Play 视觉已修复；策略前进验收未通过 | Go2 velocity checkpoint | `play.py` 正确加载 Go2、12 维 Actor、420 维 observation 和固定 `(0.3,0,0)` body-frame command。原 15 分钟 checkpoint 单环境 6 秒几乎没有水平位移；从该 checkpoint 再续训 15 分钟后，iteration `3250`、Actor updates `1068`、ramp `1.0`，同命令 6 秒 root 位移 `(0.0594,0.0259) m`，root 高度降至 `0.2198 m`。视觉和 Play 接线已修好，但短训策略仍没有可靠跟踪目标速度，Go2 locomotion 尚未验收通过。 |
 | 留待下一轮 | M1 多轨迹 Tracking Reward | M1 继续使用现有 8 项 tracking terms，本轮不重新设计权重。 |
 
 ## 环境、代码基准与日志
@@ -36,7 +37,8 @@
 | `src/supermimic/envs/mdp/motion_library.py::MotionLibrary.__init__`、`src/supermimic/training/loop.py::M1_MOTION_SETS` | 按 NPZ `joint_names` 重排；校验 Goal joint validity；训练入口将第一阶段选择限制在 manifest clip，拒绝不在集合内的 clip 和 packed library 绕过。 |
 | `src/supermimic/data/replay_buffer.py::ReplayBuffer.sample_windows` | 使用动作源行的 `done_next` 标注该动作预测的 successor；不再从 successor 行读入前一转移的标签。 |
 | `src/supermimic/scripts/diagnose_multirobot.py` | 短采集、Replay 正类覆盖率、8-step WM 误差/BCE/概率分布、WM warmup 前后、H=8/32 survival/Actor grad/imagined return、仿真 return。Actor optimizer step 固定为 0；CLI 环境数限制为 8 或 16。 |
-| `tests/test_multirobot_acceptance.py`、`tests/test_replay_buffer.py` | 持久化编译/运行时关节顺序、M1 数据完整性/观测和奖励 parity、Go2 站立/termination、WM backward、32-step Actor BPTT；另用 CPU 测试锁定 Replay terminal label 对齐。 |
+| `src/supermimic/robots/mjlab_assets.py::_dae_export_axes/_convert_visual_mesh`、`tests/test_multirobot_acceptance.py::test_go2_z_up_dae_visual_meshes_follow_leg_link_frames` | 按 Collada `<up_axis>` 选择导出轴并升级 DAE cache key；静态模型检查四条 Go2 calf mesh 都位于 link-local `-Z`，不再偏到侧面。 |
+| `tests/test_multirobot_acceptance.py`、`tests/test_replay_buffer.py` | 持久化编译/运行时关节顺序、Go2 固定速度命令到达 Goal 和 Actor action target name 对齐、M1 数据完整性/观测和奖励 parity、Go2 站立/termination、WM backward、32-step Actor BPTT；另用 CPU 测试锁定 Replay terminal label 对齐。 |
 | `src/supermimic/robots/mjlab_assets.py::_convert_visual_mesh/_m1_visual_rpy/_m1_stl_counterpart`、`tests/test_multirobot_acceptance.py::test_m1_visual_meshes_follow_link_frames_and_piper_stls_are_visible` | STL 转换保持 link-local 坐标；M1 `zg_m1` 重复 visual roll 归零；Piper-X 可用 STL 加入 visible geometry 并挂在 URDF 对应 link body。 |
 
 ## 复现命令与结果
@@ -214,4 +216,18 @@ PYTHONPATH=src /home/yifeiy/miniconda3/envs/supermimic/bin/python scripts/play.p
 
 结果：视觉资源测试 **1 passed**；Play 在 1 env 下启动成功，实际加载 M1-Piper URDF，22 actions、720D observation，并从第一条 clip 开始。截图中 M1 quadruped STL 和 Piper-X `base_link/Link1..Link6` 可见；STL 是无纹理网格，显示颜色由 URDF rgba 决定。该视觉检查与短训练策略成功率分开记录。
 
-同日 Go2 checkpoint 也用 `play.py` 运行过（`logs/multirobot_diagnostics/play_go2_15m_checkpoint_after_m1.log`，屏幕记录 `/tmp/supermimic_play_go2_after_m1.png`）。用户指出画面中 Go2 关节错位、机体悬浮且没有前进；本轮改动只处理 M1 STL，未宣称 Go2 Play 通过。
+## Go2 Play DAE 修复与 G1 回归复验（2026-10-26）
+
+Go2 DAE 的 `<asset><up_axis>` 均为 `Z_UP`。旧转换把每个 DAE 都用 Blender `axis_forward="-Z", axis_up="Y"` 导出，导致 `calf.dae` 网格中心的侧向分量约 `-0.1554 m`。`_dae_export_axes()` 现在读取 DAE up-axis：`Z_UP` 用保持 link frame 的 `Y/Z` 导出，其他/缺省轴向保留旧映射。DAE 缓存指纹升至 `v4` 并包含所用轴向，运行时不会复用旧的错位 OBJ。MuJoCo EGL 静态渲染确认默认站立姿态的 Go2 机体及四腿连续可见；碰撞、关节、执行器和动作映射没有随视觉修正改变。
+
+原 Go2 checkpoint 是 15 分钟短训练产物，保存于 iteration `1600`，训练日志最后 Actor ramp scale 为 `0.424`。单环境评估使用固定前进命令 `(0.3,0,0)`，关闭噪声和随机化，运行 `300` 个控制步（`6.0 s`）：策略输出非零动作并改变关节状态；root 水平位移 `(-0.00064, 0.00058) m`、高度由 `0.420` 降到 `0.268 m`，未触发 termination。由此定位到运动失败来自短训策略，不是 Play 未收到命令或动作。
+
+为验证 Actor ramp 完成后的行为，从原 checkpoint 恢复并追加一次 15 分钟、3072-env 短训。Replay Buffer 未存入 checkpoint，因此本次运行仅将 warmup 临时设为恢复 iteration `1600+40`，先重新积累 WM window；其余 reward 和训练配置加载 checkpoint 保存值。续训在 iteration `3250` 停止并保存到 `logs/go2_blindlocomotion_resume_15m_b3072_20261026/ckpt_latest.pt`，Actor updates 为 `1068`、ramp 达 `1.0`。使用相同无噪声单环境评估运行 `300` 步：root 位移 `(0.05937,0.02594,-0.20017) m`，机体 forward 速度首/末 50 步均值 `0.07535/-0.00057 m/s`，未 termination。该结果只有轻微位移，height 触及约 `0.22 m`，仍明显达不到 `0.3 m/s` 指令，需后续继续查策略学习表现；本次不改奖励或物理参数，也不把 Play 行走验收标为通过。
+
+同一轮重新执行 Go2 visual-frame、三机器人编译 joint-order，以及 G1 FK、analytic reward/observation、World Model replay 回归：
+
+~~~bash
+PYTHONPATH=src /home/yifeiy/miniconda3/envs/supermimic/bin/python -m pytest -q --disable-warnings tests/test_multirobot_acceptance.py::test_go2_z_up_dae_visual_meshes_follow_leg_link_frames tests/test_multirobot_acceptance.py::test_go2_play_velocity_command_and_actor_joint_order tests/test_multirobot_acceptance.py::test_compiled_robot_joint_order_matches_robot_spec tests/test_g1_fk.py tests/test_analytic_heads.py tests/test_world_model.py
+~~~
+
+结果：**14 passed**。其中 G1 三组回归文件共 **10 passed**；Go2 DAE frame、Go2 Play command/action order、G1/Go2/M1 编译关节顺序检查另 **4 passed**。测试运行于 `/home/yifeiy/miniconda3/envs/supermimic`、RTX 4070 SUPER；MuJoCo-Warp 报告 CUDA driver 12.2，因此 CUDA Graphs 按框架设置关闭。

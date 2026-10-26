@@ -2,9 +2,9 @@
 
 ## 状态
 
-6 条动作数据已加载，M1 观察、奖励一致性与物理接口验收通过。4096 和 3072 env 在 MuJoCo Warp 凸碰撞/CCD 临时数组分配时 OOM。2048 env 可以启动仿真，但首次试跑发现 Actor 在 WM 拟合前启动，`H=32` imagination survival 只有 `1.57e-9`；按停止条件中止后增加了 300 次 M1 WM-only warmup。加入 warmup 后的 2048 env / 15 分钟短训正在运行；最终指标将在训练停止后补记。
+6 条动作数据已加载，M1 观察、奖励一致性与物理接口验收通过。4096 和 3072 env 在 MuJoCo Warp 凸碰撞/CCD 临时数组分配时 OOM。2048 env 首次试跑因 Actor 在 WM 拟合前启动，iteration 50 时 `H=32` imagination survival 只有 `1.57e-9`；随后增加 300 次 M1 WM-only warmup。第二次 2048 env 短训运行到 iteration 1050 后正常停止、保存并加载 checkpoint 完成逐条评测。六条动作都能播放结束，但严格跟踪 success rate 为 0%，这轮只验证训练与评测链路，不代表策略已经学会动作。
 
-M1 4096、3072 OOM 日志分别在 `logs/m1_piper_motion_C_4096_15m/diagnostic_stop.json`、`logs/m1_piper_motion_C_3072_15m/diagnostic_stop.json` 和 `logs/m1_piper_motion_C_3072_15m_r3/diagnostic_stop.json`。这些 OOM 均发生在物理仿真碰撞阶段，没有做 WM 或 Actor optimizer 更新。`logs/m1_piper_motion_C_2048_15m/diagnostic_stop.json` 记录了首次 2048 试跑的近零 survival。原先物理检查过的 M1 容量 `nconmax=256, njmax=1024` 已恢复。
+M1 4096、3072 OOM 日志分别在 `logs/m1_piper_motion_C_4096_15m/diagnostic_stop.json`、`logs/m1_piper_motion_C_3072_15m/diagnostic_stop.json` 和 `logs/m1_piper_motion_C_3072_15m_r3/diagnostic_stop.json`。这些 OOM 均发生在物理仿真碰撞阶段，没有做 WM 或 Actor optimizer 更新。`logs/m1_piper_motion_C_2048_15m/diagnostic_stop.json` 记录了首次 2048 试跑的近零 survival；第二次 2048 短训和评测摘要见 `logs/m1_piper_motion_C_2048_wm300_15m/run_summary.json`。原先物理检查过的 M1 容量 `nconmax=256, njmax=1024` 已恢复。
 
 ## 动作集、Goal 和状态接口
 
@@ -55,7 +55,7 @@ M1 诊断记录总的 root position/orientation、arm joint、TCP 误差和每�
 - 4096 env：Warp convex narrowphase 分配约 1.86 GB CCD 临时缓冲失败。
 - 3072 env：初始化/forward 阶段仍 OOM；另一次只为测容量而把 M1 `nconmax` 降到 64，立即被模型报告的 216 个初始接触拒绝。将容量暂时设为最低可启动值 216 后，第一次 simulation step 仍在约 589 MB `multiccd_face2` 分配时 OOM，随后已恢复 `nconmax=256,njmax=1024`。
 
-训练配置现在将 `env.num_envs` 设为可选值：未显式传参时，`Trainer` 为 M1 默认选择 2048，为 Go2/G1 默认选择 4096；CLI 显式传入的数值保持不变。M1 与 Go2 的资源表现不同：M1 22 关节、更多凸碰撞 geometry，模型的初始 contact 数量级也明显更高；Warp 会按 world 数量扩展 contact/CCD 数据。以上错误发生在物理仿真碰撞阶段，不是 Replay Buffer、World Model、Actor 的 batch 或 loss 导致。下一次有效资源调整为 2048 并行环境，不降低 contact 容量、不禁用碰撞几何。
+训练配置现在将 `env.num_envs` 设为可选值：未显式传参时，`Trainer` 为 M1 默认选择 2048，为 Go2/G1 默认选择 4096；CLI 显式传入的数值保持不变。M1 与 Go2 的资源表现不同：M1 22 关节、更多凸碰撞 geometry，模型的初始 contact 数量级也明显更高；Warp 会按 world 数量扩展 contact/CCD 数据。以上错误发生在物理仿真碰撞阶段，不是 Replay Buffer、World Model、Actor 的 batch 或 loss 导致。M1 当前默认使用 2048 并行环境，不降低 contact 容量、不禁用碰撞几何。
 
 ## 训练命令
 
@@ -119,7 +119,7 @@ PYTHONPATH=src python -m supermimic.scripts.evaluate_m1 \
 
 - M1 6 条选定 motion、joint order、wheel masking、实际/想象 observation parity、reward parity、Go2 reward parity/OU/replay 和物理目标检查通过。
 - `tests/test_multirobot_acceptance.py -k 'not m1_eight_step_wm_backward_and_32_step_actor_gradient'`：6 passed，1 deselected；`tests/test_velocity_training.py`：4 passed。
-- M1 八步 WM backward/32 步 Actor gradient 集成测试没有在 8/几十个环境上单独跑，因为训练资源要求指定了 4096/3072（后续调为2048）；OOM 启动尝试没有产生有效 optimizer update。
+- M1 八步 WM backward/32 步 Actor gradient 集成测试没有单独用低环境数启动训练；4096/3072 OOM 尝试没有 optimizer update。2048 短训实际完成了 104 次 Actor 更新，但只验证了有限的短程梯度链路。
 - 4096 和 3072 均未完成训练；2048 首次试跑在 iteration 50 因近零 survival 停止且没有 checkpoint。第二次 2048 短训完成 300 次 WM-only warmup、104 次 Actor 更新，保存并载入 checkpoint 做了逐条评测；六条播放完成但 success rate 0.0，不得描述为 M1 已学会这些动作。
 
 ## 下一步

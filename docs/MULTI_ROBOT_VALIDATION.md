@@ -15,6 +15,9 @@
 | 仍未验证 | Go2 真实跌倒阈值边界 | `0.17 m` 低高度和 70° 倾斜的阈值实现已通过合成状态检查，但尚未扫描真实下蹲/趴伏/跌倒的稳定边界；不改初始高度、Kp/Kd 或 effort limit。 |
 | 已修复并在短训练中产生自然正类 | Replay done 标签与 Go2 Termination Head | `sample_windows()` 将 transition row 的 `done_next` 对齐到该动作预测的 successor state；Go2 短训练中真实跌倒自然产生 terminal labels。Head 的概率与样本正类比例接近，但正类稀少，召回率和校准仍未充分验证。 |
 | 已启动并完成短训练 | Go2 当前 velocity reward | 使用现有 11 项 velocity reward core 完成一次 15 分钟有界训练；训练结果和失败样本统计见下文。没有在本轮修改 reward 权重。 |
+| 已完成短训练；策略验收未通过 | M1-Piper Motion Tracking | 后续 15 分钟运行在 2048 env 下完成并保存 checkpoint；六条 clip 均播完，但 success rate 为 0，不能称为已收敛。 |
+| 已修复并可见性验收 | M1 Play STL visual frame | 修正 quadruped STL 的重复 -90° visual roll；Play 使用匹配的 Piper-X Link STL。真实关节/碰撞/action 未改。 |
+| Play 验收未通过，待修 | Go2 视觉与前进表现 | 用户观察到 Go2 关节错位、机体悬浮且不前进。Go2 使用 DAE visuals，本轮 M1 STL 修复不覆盖 Go2；仍需单独核对 Go2 URDF、mesh frame 和策略命令响应。 |
 | 留待下一轮 | M1 多轨迹 Tracking Reward | M1 继续使用现有 8 项 tracking terms，本轮不重新设计权重。 |
 
 ## 环境、代码基准与日志
@@ -34,6 +37,7 @@
 | `src/supermimic/data/replay_buffer.py::ReplayBuffer.sample_windows` | 使用动作源行的 `done_next` 标注该动作预测的 successor；不再从 successor 行读入前一转移的标签。 |
 | `src/supermimic/scripts/diagnose_multirobot.py` | 短采集、Replay 正类覆盖率、8-step WM 误差/BCE/概率分布、WM warmup 前后、H=8/32 survival/Actor grad/imagined return、仿真 return。Actor optimizer step 固定为 0；CLI 环境数限制为 8 或 16。 |
 | `tests/test_multirobot_acceptance.py`、`tests/test_replay_buffer.py` | 持久化编译/运行时关节顺序、M1 数据完整性/观测和奖励 parity、Go2 站立/termination、WM backward、32-step Actor BPTT；另用 CPU 测试锁定 Replay terminal label 对齐。 |
+| `src/supermimic/robots/mjlab_assets.py::_convert_visual_mesh/_m1_visual_rpy/_m1_stl_counterpart`、`tests/test_multirobot_acceptance.py::test_m1_visual_meshes_follow_link_frames_and_piper_stls_are_visible` | STL 转换保持 link-local 坐标；M1 `zg_m1` 重复 visual roll 归零；Piper-X 可用 STL 加入 visible geometry 并挂在 URDF 对应 link body。 |
 
 ## 复现命令与结果
 
@@ -174,7 +178,7 @@ python -m supermimic.scripts.train \
 
 这轮训练说明真实失败会自然进入 Replay：早期一批 episode 在约 14 个控制步后跌倒，后续成批 episode 则走完 500 步。WM 采到的 terminal-label 比例约 `1.6e-5`，预测概率均值约 `1.9e-5`；H=32 survival 因此接近 1。该短训练说明标签链路能处理自然正类，不能据低 BCE 单独断言 Head 已学会所有跌倒形态。Actor grad norm 非零；it 1600 的 actor ramp scale 为 `0.424`，`policy_grad_norm` 是 clip 前的 Actor 参数梯度范数。
 
-第一次使用默认 imagination batch `4096` 时，切入 Actor 的 BPTT 更新发生 CUDA OOM，没有 checkpoint（日志：`logs/multirobot_diagnostics/go2_blindlocomotion_validation_15m_20261026.log`）。第二次将 batch 改为 `2048` 后越过 Actor 编译，但在 it 850 的 MuJoCo-Warp CCD 临时分配 `75,497,472 bytes` 失败，也没有 checkpoint（日志：`logs/multirobot_diagnostics/go2_blindlocomotion_validation_15m_b2048_20261026.log`）。最终使用 batch `1024` 和 `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True` 完成上述训练。checkpoint 为本机 `logs/go2_blindlocomotion_validation_15m_b1024_20261026/ckpt_latest.pt`；运行日志为 `logs/multirobot_diagnostics/go2_blindlocomotion_validation_15m_b1024_20261026.log`。另一次 M1-Piper 2048-env 短训练在 MuJoCo-Warp CCD 分配 `465,567,744 bytes` 时 OOM，未生成 checkpoint（日志：`logs/multirobot_diagnostics/m1_piper_validation_15m_20261026.log`）；不能据此声称 M1 已完成训练验收。
+第一次使用默认 imagination batch `4096` 时，切入 Actor 的 BPTT 更新发生 CUDA OOM，没有 checkpoint（日志：`logs/multirobot_diagnostics/go2_blindlocomotion_validation_15m_20261026.log`）。第二次将 batch 改为 `2048` 后越过 Actor 编译，但在 it 850 的 MuJoCo-Warp CCD 临时分配 `75,497,472 bytes` 失败，也没有 checkpoint（日志：`logs/multirobot_diagnostics/go2_blindlocomotion_validation_15m_b2048_20261026.log`）。最终使用 batch `1024` 和 `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True` 完成上述训练。checkpoint 为本机 `logs/go2_blindlocomotion_validation_15m_b1024_20261026/ckpt_latest.pt`；运行日志为 `logs/multirobot_diagnostics/go2_blindlocomotion_validation_15m_b1024_20261026.log`。较早一次 M1-Piper 2048-env 运行在 MuJoCo-Warp CCD 临时分配 `465,567,744 bytes` 时 OOM（日志：`logs/multirobot_diagnostics/m1_piper_validation_15m_20261026.log`）；后续有界 M1 训练和策略验收见本文件的“M1 15 分钟短训练与 Play mesh follow-up”。
 
 ## G1 回归、限制与待定项
 
@@ -183,3 +187,31 @@ python -m supermimic.scripts.train \
 - WM loss 和 32-step Actor 梯度在多机器人 acceptance 中做 backward smoke；诊断期间 `policy_optimizer_steps=0`。
 - Go2 当前 11 项 velocity reward 已用于上述短训练；15 分钟结果不代表长程收敛或课程晋级通过。M1 多轨迹 reward 设计留待下一轮。
 - 没有进行数小时长程训练、完整课程晋级验收、复杂地形/LiDAR 测试或抓取实验。
+
+## M1 15 分钟短训练与 Play mesh follow-up
+
+按用户指定先完成 M1 的 15 分钟短训练，再用 Play 检查 M1 与 Go2。M1 配置是 2048 env、Motion Set C 的六条白名单 clip、32-step imagination、batch 128、300 次 WM-only 更新后开始 Actor/Critic；时间上限触发时在 iteration 1000 保存 checkpoint。实际产生约 `1000×2048=2,048,000` 个真实控制 transition，共 384 次更新（300 次 WM-only、84 次 Actor/Critic）。本机产物：
+
+- checkpoint：`logs/m1_piper_motion_C_2048_safe_15m_20261026/ckpt_latest.pt`
+- 训练日志：`logs/multirobot_diagnostics/m1_piper_motion_C_2048_safe_15m_20261026.log`
+- Play 数值评估：`logs/m1_piper_motion_C_2048_safe_15m_20261026/eval_C.json`
+- Play 截图：`/tmp/supermimic_play_m1_stl_fixed.png`
+
+该 checkpoint 的 8-step WM NSE 为 `0.1343`、Term BCE `0.0932`、H=32 survival `0.1021`、imagined return `0.9943`、Actor grad norm `0.0297`。六条 reference clip 均完成播放，但 success rate 为 `0.0`；root position error 范围 `0.104–0.175 m`，Piper arm joint error `0.253–0.602 rad`，TCP error `0.365–0.549 m`。因此策略尚未达到 tracking 成功标准，Play 中的动作姿态偏差不能归咎为 STL 位姿故障，也不能把该短训练称为训练收敛。
+
+Play mesh 修复在 `robots/mjlab_assets.py`，不需要改 `scripts/play.py` 的动作或训练逻辑：
+
+1. 超大 `BASE_LINK.STL` 转 OBJ 时，Blender STL 导出使用保留坐标的 `Y/Z` 轴定义；缓存版本改为 `v4`，旧缓存不再复用。新 OBJ 顶点包围盒和原 STL 的三轴边界最大差 `6.2e-5 m`（网格 decimation 误差）。DAE 仍沿用原转换和缓存。
+2. M1 四足 `meshes/zg_m1/*.STL` 的原始长轴、负 Z 膝关节位移和 collision link frame 一致；源 URDF 上重复的 `roll=-90°` 会把腿部视觉 mesh 转向侧面。Play/FK 编译模型只对这些视觉 STL 将该 roll 设为 0，不改 collision geom、关节坐标、RobotSpec 或 action。
+3. Piper-X 集成 URDF 的视觉引用以 DAE 为主，但同目录提供 `base_link.STL`、`Link1..Link6.STL`。对存在对应 STL 的 visual mesh，加载器使用对应 STL；gripper DAE 无同目录 STL 对应时仍保留 Blender DAE 转换。`test_m1_visual_meshes_follow_link_frames_and_piper_stls_are_visible` 检查编译后 mesh geom 处于 visible group 且挂在对应 link body。对照 URDF 递归 FK 与编译模型，43 个 body frame 的最大位置差约 `2.23e-16 m`。
+
+定点验收命令：
+
+~~~bash
+PYTHONPATH=src /home/yifeiy/miniconda3/envs/supermimic/bin/python -m pytest -q tests/test_multirobot_acceptance.py::test_m1_visual_meshes_follow_link_frames_and_piper_stls_are_visible
+PYTHONPATH=src /home/yifeiy/miniconda3/envs/supermimic/bin/python scripts/play.py --ckpt logs/m1_piper_motion_C_2048_safe_15m_20261026/ckpt_latest.pt --num-envs 1 --viewer native --ghost False
+~~~
+
+结果：视觉资源测试 **1 passed**；Play 在 1 env 下启动成功，实际加载 M1-Piper URDF，22 actions、720D observation，并从第一条 clip 开始。截图中 M1 quadruped STL 和 Piper-X `base_link/Link1..Link6` 可见；STL 是无纹理网格，显示颜色由 URDF rgba 决定。该视觉检查与短训练策略成功率分开记录。
+
+同日 Go2 checkpoint 也用 `play.py` 运行过（`logs/multirobot_diagnostics/play_go2_15m_checkpoint_after_m1.log`，屏幕记录 `/tmp/supermimic_play_go2_after_m1.png`）。用户指出画面中 Go2 关节错位、机体悬浮且没有前进；本轮改动只处理 M1 STL，未宣称 Go2 Play 通过。

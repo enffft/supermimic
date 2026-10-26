@@ -64,6 +64,63 @@ def test_compiled_robot_joint_order_matches_robot_spec():
     assert tuple(m1.joint_names[i] for i in (3, 7, 11, 15)) == m1.wheel_joint_names
 
 
+def test_m1_visual_meshes_follow_link_frames_and_piper_stls_are_visible():
+    import mujoco
+
+    from supermimic.robots.mjlab_assets import (
+        _m1_stl_counterpart,
+        _m1_visual_rpy,
+        load_robot_spec_model,
+    )
+    from supermimic.robots.spec import get_robot_spec
+
+    robot = get_robot_spec("m1_piper")
+    if robot.model_path is None or not robot.model_path.is_file():
+        pytest.skip("the local M1-Piper URDF and mesh assets are not available")
+
+    # The integrated URDF puts a redundant -90 degree roll on the quadruped
+    # visuals even though these STL vertices and the joint/collision frames are
+    # already z-up. Piper-X retains its own origin (including Link6's offset).
+    assert _m1_visual_rpy(
+        Path("meshes/zg_m1/FAR_HIP_LINK.STL"), (-math.pi / 2, 0, 0)
+    ) == (0, 0, 0)
+    assert _m1_visual_rpy(Path("meshes/piper_x/Link6.STL"), (0, 0, 0)) == (0, 0, 0)
+
+    for link, expected in (
+        ("piper_x_base_link", "base_link.STL"),
+        ("piper_x_link1", "Link1.STL"),
+        ("piper_x_link2", "Link2.STL"),
+        ("piper_x_link3", "Link3.STL"),
+        ("piper_x_link4", "Link4.STL"),
+        ("piper_x_link5", "Link5.STL"),
+    ):
+        stem = (
+            "base_link"
+            if link == "piper_x_base_link"
+            else f"J{link.removeprefix('piper_x_link')}"
+        )
+        uri = Path("meshes/piper_x/dae") / f"{stem}.dae"
+        counterpart = _m1_stl_counterpart(uri, robot.model_path.parent)
+        assert counterpart is not None and counterpart.name == expected
+
+    model = load_robot_spec_model("m1_piper")
+    visible_links = (
+        "BASE_LINK", "FAR_ABAD_LINK", "FAR_HIP_LINK", "FAR_KNEE_LINK", "FAR_FOOT_LINK",
+        "FBL_ABAD_LINK", "FBL_HIP_LINK", "FBL_KNEE_LINK", "FBL_FOOT_LINK",
+        "RAR_ABAD_LINK", "RAR_HIP_LINK", "RAR_KNEE_LINK", "RAR_FOOT_LINK",
+        "RBL_ABAD_LINK", "RBL_HIP_LINK", "RBL_KNEE_LINK", "RBL_FOOT_LINK",
+        "piper_x_base_link", "piper_x_link1", "piper_x_link2", "piper_x_link3",
+        "piper_x_link4", "piper_x_link5", "piper_x_link6", "piper_x_gripper_base",
+    )
+    for link in visible_links:
+        geom_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_GEOM, f"visual_{link}_0")
+        assert geom_id >= 0, f"missing visual geometry for {link}"
+        assert model.geom_group[geom_id] == 1
+        assert model.geom_type[geom_id] == mujoco.mjtGeom.mjGEOM_MESH
+        body_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, link)
+        assert model.geom_bodyid[geom_id] == body_id
+
+
 def test_m1_first_phase_manifest_and_conversion_integrity():
     """The six approved NPZs still match their 79-D source and wheel sidecars."""
     from scipy.spatial.transform import Rotation

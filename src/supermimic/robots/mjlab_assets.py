@@ -41,7 +41,22 @@ def _stl_face_count(path: Path) -> int:
 def _convert_visual_mesh(path: Path, *, max_faces: int = 160_000) -> Path:
     """Convert DAE or an oversized STL visual to a MuJoCo-friendly OBJ."""
     path = path.resolve()
-    fingerprint = f"v3:{path}:{path.stat().st_size}:{path.stat().st_mtime_ns}:{max_faces}"
+    suffix = path.suffix.lower()
+    # URDF mesh vertices are already expressed in the mesh's local frame.  In
+    # particular, Blender's STL importer preserves that frame, so exporting an
+    # STL with the Collada axis conversion rotates the mesh a second time before
+    # the URDF visual origin is applied.  Collada needs the existing conversion
+    # because its imported scene uses a different up/forward convention.
+    axis_forward, axis_up = ("-Z", "Y") if suffix == ".dae" else ("Y", "Z")
+    if suffix == ".dae":
+        # Keep valid Collada conversions cached; only STL's coordinate handling
+        # changed, so those entries must not reuse the old rotated mesh.
+        fingerprint = f"v3:{path}:{path.stat().st_size}:{path.stat().st_mtime_ns}:{max_faces}"
+    else:
+        fingerprint = (
+            f"v4:{path}:{path.stat().st_size}:{path.stat().st_mtime_ns}:"
+            f"{max_faces}:{axis_forward}:{axis_up}"
+        )
     key = hashlib.sha1(fingerprint.encode()).hexdigest()[:16]
     cache_dir = Path.home() / ".cache" / "supermimic" / "dae_visuals"
     output = cache_dir / f"{path.stem}_{key}.obj"
@@ -59,6 +74,7 @@ def _convert_visual_mesh(path: Path, *, max_faces: int = 160_000) -> Path:
 from pathlib import Path
 args = sys.argv[sys.argv.index("--") + 1:]
 source, output, max_faces = Path(args[0]).resolve(), Path(args[1]).resolve(), int(args[2])
+axis_forward, axis_up = ("-Z", "Y") if source.suffix.lower() == ".dae" else ("Y", "Z")
 bpy.ops.object.select_all(action="SELECT")
 bpy.ops.object.delete(use_global=False)
 if source.suffix.lower() == ".dae":
@@ -80,9 +96,9 @@ for obj in meshes:
 bpy.context.view_layer.objects.active = meshes[0]
 bpy.ops.export_scene.obj(filepath=str(output), use_selection=True,
                          use_materials=True, use_triangles=True,
-                         # Blender's default (-Z forward, Y up) preserves the
-                         # imported Collada vertex axes used by the URDF joints.
-                         axis_forward="-Z", axis_up="Y")
+                         # Keep STL mesh-local coordinates intact; Collada's
+                         # imported axis convention needs its established mapping.
+                         axis_forward=axis_forward, axis_up=axis_up)
 '''
     with tempfile.TemporaryDirectory(prefix="sm_dae_", dir=cache_dir) as tmp:
         tmp_obj = Path(tmp) / output.name
@@ -150,7 +166,37 @@ def _quat_from_urdf_rpy(rpy: tuple[float, float, float]) -> tuple[float, float, 
     )
 
 
-def _add_urdf_visuals(spec: mujoco.MjSpec, root: ET.Element, urdf_dir: Path) -> None:
+def _m1_stl_counterpart(uri: Path, urdf_dir: Path) -> Path | None:
+    """Return the source Piper-X STL matching a DAE visual, when one exists."""
+    if uri.suffix.lower() != ".dae":
+        return None
+    stem = uri.stem
+    if stem.startswith("J") and stem[1:].isdigit():
+        stem = f"Link{stem[1:]}"
+    candidate = (urdf_dir / uri.parent.parent / f"{stem}.STL").resolve()
+    return candidate if candidate.is_file() else None
+
+
+def _m1_visual_rpy(uri: Path, rpy: tuple[float, float, float]) -> tuple[float, float, float]:
+    """Correct the redundant quarter-turn on the M1 z-up quadruped STLs."""
+    if (
+        uri.suffix.lower() == ".stl"
+        and "zg_m1" in uri.parts
+        and math.isclose(rpy[0], -math.pi / 2, abs_tol=1e-5)
+        and math.isclose(rpy[1], 0.0, abs_tol=1e-5)
+        and math.isclose(rpy[2], 0.0, abs_tol=1e-5)
+    ):
+        return (0.0, 0.0, 0.0)
+    return rpy
+
+
+def _add_urdf_visuals(
+    spec: mujoco.MjSpec,
+    root: ET.Element,
+    urdf_dir: Path,
+    *,
+    prefer_m1_stl_visuals: bool = False,
+) -> None:
     """Add URDF visuals explicitly; MuJoCo's URDF reader imports collisions only."""
     mesh_names: dict[tuple[Path, tuple[float, float, float]], str] = {}
     for link in root.findall("link"):
@@ -163,9 +209,7 @@ def _add_urdf_visuals(spec: mujoco.MjSpec, root: ET.Element, urdf_dir: Path) -> 
                 continue
             origin = visual.find("origin")
             pos = _urdf_xyz(origin.attrib.get("xyz") if origin is not None else None)
-            quat = _quat_from_urdf_rpy(
-                _urdf_xyz(origin.attrib.get("rpy") if origin is not None else None)
-            )
+            rpy = _urdf_xyz(origin.attrib.get("rpy") if origin is not None else None)
             color_node = visual.find("./material/color")
             rgba = tuple(float(x) for x in color_node.attrib["rgba"].split()) if color_node is not None else (0.7, 0.7, 0.7, 1.0)
             if len(rgba) != 4:
@@ -174,7 +218,21 @@ def _add_urdf_visuals(spec: mujoco.MjSpec, root: ET.Element, urdf_dir: Path) -> 
             mesh_node = geometry.find("mesh")
             if mesh_node is not None:
                 uri = Path(mesh_node.attrib["filename"])
+                # In the M1 quadruped portion, the STL vertices already use the
+                # z-up link frame: their long hip/knee axes follow the URDF's
+                # negative-z joint offsets, and collision proxies are defined in
+                # that same frame. The source URDF repeats a -90 degree visual
+                # roll, which turns those meshes sideways relative to the joints.
+                if prefer_m1_stl_visuals:
+                    rpy = _m1_visual_rpy(uri, rpy)
+                quat = _quat_from_urdf_rpy(rpy)
                 mesh_path = uri if uri.is_absolute() else urdf_dir / uri
+                if prefer_m1_stl_visuals:
+                    # The M1 package ships corresponding Piper-X STL assets next
+                    # to the DAE visuals. They use the URDF link frame directly;
+                    # load them as renderable geoms instead of hiding them as
+                    # collision proxies while trying to render the DAE meshes.
+                    mesh_path = _m1_stl_counterpart(uri, urdf_dir) or mesh_path
                 dae_visual = mesh_path.suffix.lower() == ".dae"
                 mesh_path = _renderable_visual_path(mesh_path.resolve())
                 # The Go2 URDF paints every Collada mesh white, while the DAE
@@ -207,6 +265,8 @@ def _add_urdf_visuals(spec: mujoco.MjSpec, root: ET.Element, urdf_dir: Path) -> 
                     group=1,
                 )
                 continue
+
+            quat = _quat_from_urdf_rpy(rpy)
 
             box = geometry.find("box")
             sphere = geometry.find("sphere")
@@ -294,7 +354,7 @@ def _m1_urdf_spec(path: Path) -> mujoco.MjSpec:
     spec.compiler.discardvisual = False
     spec.compiler.fusestatic = False
     root_body.add_freejoint(name="root")
-    _add_urdf_visuals(spec, visual_root, path.parent)
+    _add_urdf_visuals(spec, visual_root, path.parent, prefer_m1_stl_visuals=True)
     return spec
 
 

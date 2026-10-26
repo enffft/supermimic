@@ -75,7 +75,7 @@ M1 的单帧 observation 维数仍按 22 个关节计算，但 wheel joint posit
 - 模型：/home/yifeiy/AMP-LOCO-M1/resources/robots/zg_m1_piper_x/zg_m1_piper_x.urdf。策略顺序为 FAR、FBL、RAR、RBL 四条腿各 ABAD/HIP/KNEE/FOOT，然后 piper_x_joint1..6（[robots/spec.py](../src/supermimic/robots/spec.py#L75)、[robots/spec.py](../src/supermimic/robots/spec.py#L138)）。
 - 混合 action 同序 22 维：12 个非 FOOT 腿位置控制，4 个 FOOT 轮速控制，6 个 Piper 位置控制。leg Kp/Kd=250/9，轮 damping=0.5，arm Kp/Kd=32/1；position scale=0.25，wheel velocity scale=5.0（[robots/spec.py](../src/supermimic/robots/spec.py#L140)、[robots/mjlab_assets.py](../src/supermimic/robots/mjlab_assets.py#L133)、[envs/actions.py](../src/supermimic/envs/actions.py#L59)）。
 - Full Dynamics State 是 22 关节，但 motion source 只有 18 个 AMP 关节有效参考（12 腿关节+6 arm）。每帧 Goal 为 18 关节位置误差与速度（36）+ gravity（3）+ body angular velocity（3）+ heading-frame linear velocity（3）+ height（1）=46；10 帧 460，默认再拼 anchor pose 的 pos3+rot6d6 得 469。M1 reference 不包含可普遍使用的 wheel 角度/速度目标。
-- TCP tracked body 是 piper_x_link7。模型加载保留 fixed link；MuJoCo 不解 DAE，加载时将有 STL 对应的 mesh 指向 STL，无 STL 对应的固定夹爪碰撞 mesh 被省略，供应商原 URDF 保持只读（[robots/mjlab_assets.py](../src/supermimic/robots/mjlab_assets.py#L23)）。
+- TCP tracked body 是 piper_x_link7。Play 和 FK 共用 `_m1_urdf_spec()`：M1 四足 STL 原始顶点已经是 z-up link frame，因此将源 URDF 对 `zg_m1/*.STL` 重复设置的 `roll=-90°` 视觉旋转归零；这只改视觉 geom，不改 collision、关节或 action。Piper-X 的 `base_link.dae`、`J1..J5.dae` 在有同名对应文件时改读 `base_link.STL`、`Link1..Link5.STL`，`Link6.STL` 直接读取；这些 STL 和 gripper DAE 各自保留 URDF origin。STL 本身不含纹理，颜色来自 URDF rgba。没有 STL 对应文件的 gripper DAE 仍由 Blender 转 OBJ 显示，供应商原 URDF 保持只读（[robots/mjlab_assets.py](../src/supermimic/robots/mjlab_assets.py#L41)、[robots/mjlab_assets.py](../src/supermimic/robots/mjlab_assets.py#L166)）。
 
 ## 3. 环境控制一步与数据采集
 

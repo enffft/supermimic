@@ -13,7 +13,7 @@ from supermimic.tasks.velocity_reward import (
     velocity_reward_terms,
     velocity_reward_total,
 )
-from supermimic.training.schedule import actor_ramp_scale
+from supermimic.training.schedule import actor_ramp_scale, scheduled_lr
 
 
 def _params(n: int = 12) -> VelocityRobotParams:
@@ -87,11 +87,33 @@ def test_real_measurements_use_the_same_reward_core_without_proxy_terms():
         torch.testing.assert_close(imagined_api[name], direct[name] * params.dt)
 
 
-def test_actor_ramp_starts_after_warmup_and_does_not_change_wm_schedule():
-    assert actor_ramp_scale(300, 300, 1000) == pytest.approx(0.001)
-    assert actor_ramp_scale(799, 300, 1000) == pytest.approx(0.5)
-    assert actor_ramp_scale(1299, 300, 1000) == 1.0
-    assert actor_ramp_scale(500, 300, 0) == 1.0
+def test_actor_ramp_counts_real_optimizer_updates_and_lr_mode_is_explicit():
+    assert actor_ramp_scale(1, 1000) == pytest.approx(0.001)
+    assert actor_ramp_scale(500, 1000) == pytest.approx(0.5)
+    assert actor_ramp_scale(1000, 1000) == 1.0
+    assert actor_ramp_scale(500, 0) == 1.0
+    assert scheduled_lr("constant", 90_000, 80_000, 2e-4) == pytest.approx(2e-4)
+    # max_hours changes runtime only; the configured 80k-step curve is identical.
+    from supermimic.config import ScheduleCfg
+
+    short = ScheduleCfg(total_iterations=80_000, max_hours=0.5)
+    long = ScheduleCfg(total_iterations=80_000, max_hours=None)
+    assert scheduled_lr("cosine", 1000, short.total_iterations, 2e-4) == pytest.approx(
+        scheduled_lr("cosine", 1000, long.total_iterations, 2e-4)
+    )
+
+
+def test_multirobot_defaults_keep_m1_2048_go2_3072_and_g1_unchanged():
+    from supermimic.config import ScheduleCfg
+    from supermimic.training.loop import Trainer
+
+    assert ScheduleCfg().wm_only_iterations == 200
+    assert ScheduleCfg().m1_wm_only_iterations == 200
+    assert ScheduleCfg().lr_schedule == "cosine"
+    assert Trainer._resolved_num_envs("m1_piper") == 2048
+    assert Trainer._resolved_num_envs("go2") == 3072
+    assert Trainer._resolved_num_envs("g1") == 4096
+    assert Trainer._resolved_num_envs("go2", 128) == 128
 
 
 def test_velocity_command_ranges_and_two_window_curriculum_promotion():
@@ -144,3 +166,18 @@ def test_velocity_command_ranges_and_two_window_curriculum_promotion():
     restored.stage = 0
     restored.load_state_dict(saved)
     assert restored.stage == 1 and restored.promotion_count == 1
+
+
+def test_go2_fixed_play_command_survives_command_resampling():
+    from supermimic.envs.mdp.commands import VelocityCommand, VelocityCommandCfg
+
+    command = object.__new__(VelocityCommand)
+    command.cfg = VelocityCommandCfg(fixed_command=(0.3, 0.0, 0.5))
+    from types import SimpleNamespace
+
+    command._env = SimpleNamespace(device=torch.device("cpu"))
+    command._command = torch.zeros(4, 3)
+    command.stage = 0
+    command._sample_commands = lambda n, stage: pytest.fail("fixed playback must not resample")
+    for _ in range(3):
+        torch.testing.assert_close(command._commands_for_reset(4), torch.tensor([[0.3, 0.0, 0.5]]).expand(4, -1))

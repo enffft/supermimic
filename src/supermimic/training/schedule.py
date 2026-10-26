@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+from typing import Literal
 
 
 def cosine_lr(step: int, total_steps: int, base_lr: float, final_ratio: float = 0.03, decay_fraction: float = 250_000 / 320_000) -> float:
@@ -13,9 +14,24 @@ def cosine_lr(step: int, total_steps: int, base_lr: float, final_ratio: float = 
     return base_lr * (final_ratio + (1.0 - final_ratio) * cos)
 
 
-def actor_ramp_scale(iteration: int, actor_start_iteration: int, ramp_iterations: int) -> float:
-    """Linear actor LR ramp measured from the first post-warmup actor iteration."""
-    if ramp_iterations <= 0:
+def scheduled_lr(
+    mode: Literal["cosine", "constant"],
+    step: int,
+    total_steps: int,
+    base_lr: float,
+    final_ratio: float = 0.03,
+    decay_fraction: float = 250_000 / 320_000,
+) -> float:
+    """Select the configured LR schedule; max_hours never changes total_steps."""
+    if mode == "cosine":
+        return cosine_lr(step, total_steps, base_lr, final_ratio, decay_fraction)
+    if mode == "constant":
+        return base_lr
+    raise ValueError(f"unknown learning-rate schedule {mode!r}; use 'cosine' or 'constant'")
+
+
+def actor_ramp_scale(actor_updates_completed: int, ramp_updates: int) -> float:
+    """Linear Actor LR ramp indexed by actual optimizer updates (1-based progress)."""
+    if ramp_updates <= 0:
         return 1.0
-    progress = (iteration - actor_start_iteration + 1) / ramp_iterations
-    return min(1.0, max(0.0, progress))
+    return min(1.0, max(0.0, actor_updates_completed / ramp_updates))

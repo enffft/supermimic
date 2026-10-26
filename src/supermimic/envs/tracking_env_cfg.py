@@ -116,6 +116,9 @@ class SuperMimicEnvCfgArgs:
     velocity_stage_b_max_vel_rmse: float = 0.20
     velocity_stage_b_max_yaw_rmse: float = 0.20
     velocity_resample_seconds: float = 10.0
+    velocity_fixed_command: tuple[float, float, float] | None = None
+    velocity_debug_vis: bool = False
+    velocity_show_actual_velocity: bool = False
     velocity_min_safe_height: float = 0.22
     velocity_fall_height: float = 0.17
     velocity_fall_tilt_deg: float = 70.0

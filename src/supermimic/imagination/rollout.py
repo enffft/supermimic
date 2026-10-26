@@ -24,6 +24,9 @@ class ImagRollout:
     survival: torch.Tensor  # (H+1, n), c_t
     goals: torch.Tensor  # (H+1, n, G)
     e_root: torch.Tensor  # (H+1, n, 4); zeros for reference-free tasks
+    term_features: torch.Tensor  # (H+1, n, 2), raw height/tilt feature pair
+    root_height: torch.Tensor  # (H+1, n), absolute world-frame root height
+    tilt: torch.Tensor  # (H+1, n), second termination feature
     frames: torch.Tensor  # (H+1, n)
     reward_terms: dict[str, float]
 
@@ -83,6 +86,7 @@ def imagine(
     states = [s]
     actions, rewards = [], []
     dhats, survivals, frames = [torch.zeros(n, device=device)], [c], [frame]
+    term_features, root_heights, tilts = [], [], []
     ai = wm.heads.anchor_index
 
     if is_motion:
@@ -132,6 +136,16 @@ def imagine(
         e_root = torch.zeros(n, 4, device=device, dtype=s.dtype)
         reward_names = task.reward_term_names
 
+    with torch.no_grad():
+        initial_features = (
+            wm.heads.termination_features(s[..., 0:3], s[..., 3:7], ref)
+            if is_motion
+            else wm.heads.free_termination_features(s[..., 0:3], s[..., 3:7], wm.cfg.termination_base_height)
+        )
+    term_features.append(initial_features)
+    root_heights.append(s[..., 2])
+    tilts.append(initial_features[..., 1])
+
     goals = [goal]
     e_roots = [e_root]
     term_sum = torch.zeros(len(reward_names), device=device)
@@ -141,7 +155,8 @@ def imagine(
         a = policy(obs_flat, goals[-1])
         if is_motion:
             assert ref is not None
-            s_next, r, term_vec, logits, obs_clean, anchor_pose = step_fn(s, a, a_prev, start.xi, ref)
+            transition_ref = ref
+            s_next, r, term_vec, logits, obs_clean, anchor_pose = step_fn(s, a, a_prev, start.xi, transition_ref)
             frame = frames_all[t + 1]
             ref = ref_at(t + 1)
             goal_next = motion_goal(frame, ref, anchor_pose)
@@ -153,6 +168,16 @@ def imagine(
 
         d = torch.sigmoid(logits)
         c = c * (1.0 - d)
+        with torch.no_grad():
+            if is_motion:
+                features = wm.heads.termination_features(s_next[..., 0:3], s_next[..., 3:7], transition_ref)
+            else:
+                features = wm.heads.free_termination_features(
+                    s_next[..., 0:3], s_next[..., 3:7], wm.cfg.termination_base_height
+                )
+        term_features.append(features)
+        root_heights.append(s_next[..., 2].detach())
+        tilts.append(features[..., 1])
         term_sum += term_vec.detach().mean(-1)
         hist = hist[1:] + [noisy(obs_clean)]
         a_prev, s = a, s_next
@@ -169,5 +194,8 @@ def imagine(
         states=torch.stack(states), actions=torch.stack(actions), rewards=torch.stack(rewards),
         dhat=torch.stack(dhats), survival=torch.stack(survivals), goals=torch.stack(goals),
         e_root=torch.stack(e_roots), frames=torch.stack(frames),
+        term_features=torch.stack(term_features),
+        root_height=torch.stack(root_heights),
+        tilt=torch.stack(tilts),
         reward_terms={k: float(v / horizon) for k, v in zip(reward_names, term_sum.tolist())},
     )

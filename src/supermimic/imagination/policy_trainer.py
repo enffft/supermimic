@@ -43,6 +43,7 @@ class PolicyTrainer:
         if isinstance(task, MotionLibrary):
             task = MotionTrackingTask(task, future_frames=cfg.future_frames, anchor_obs=cfg.anchor_obs)
         self.wm, self.policy, self.critic, self.task, self.cfg = wm, policy, critic, task, cfg
+        self.last_imag_diagnostics: dict[str, list[float] | float] = {}
         self.lib = task.library if isinstance(task, MotionTrackingTask) else None
         self.opt = torch.optim.Adam(policy.parameters(), lr=cfg.lr, betas=cfg.betas)
         self.critic_opt = torch.optim.Adam(critic.parameters(), lr=cfg.critic_lr)
@@ -76,6 +77,14 @@ class PolicyTrainer:
         self.critic.requires_grad_(False)
         try:
             ro = imagine(self.wm, self.policy, self.task, start, cfg.horizon, cfg.future_frames, obs_noise=cfg.obs_noise, step_fn=self.step_fn, anchor_obs=cfg.anchor_obs)
+            with torch.no_grad():
+                self.last_imag_diagnostics = {
+                    "real_replay_state_termination_probability": float(torch.sigmoid(self.wm.term_head(ro.term_features[0])).mean()),
+                    "termination_probability": [float(x) for x in torch.sigmoid(self.wm.term_head(ro.term_features[1:])).mean(dim=1)],
+                    "survival": [float(x) for x in ro.survival[1:].mean(dim=1)],
+                    "root_height_m": [float(x) for x in ro.root_height[1:].mean(dim=1)],
+                    "tilt_feature": [float(x) for x in ro.tilt[1:].mean(dim=1)],
+                }
             feat, goals, e_root = self._critic_inputs(ro)
             if cfg.use_critic:
                 v_H = self.critic(feat[-1], goals[-1], xi_norm, e_root[-1])

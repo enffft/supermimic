@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import math
+import os
 import time
 from dataclasses import asdict
 from pathlib import Path
@@ -21,7 +22,7 @@ from supermimic.policy.nets import Critic, Policy
 from supermimic.robots.mjlab_assets import load_robot_spec_model
 from supermimic.robots.spec import get_robot_spec
 from supermimic.training.distributed import allreduce_mean, broadcast_params, finalize, init_distributed, world_size
-from supermimic.training.schedule import actor_ramp_scale, cosine_lr
+from supermimic.training.schedule import actor_ramp_scale, scheduled_lr
 from supermimic.world_model.heads import AnalyticHeads
 from supermimic.world_model.wm_trainer import WorldModelTrainer
 from supermimic.world_model.world_model import WorldModel
@@ -45,11 +46,17 @@ M1_FIRST_PHASE_MANIFEST = Path("configs/m1_piper_first6.csv")
 
 
 class Trainer:
+    @staticmethod
+    def _resolved_num_envs(robot_name: str, requested: int | None = None) -> int:
+        if requested is not None:
+            return requested
+        name = get_robot_spec(robot_name).name
+        return 2048 if name == "m1_piper" else 3072 if name == "go2" else 4096
+
     def __init__(self, cfg: TrainConfig):
         self.cfg = cfg
         robot_spec = get_robot_spec(cfg.env.robot_name)
-        if cfg.env.num_envs is None:
-            cfg.env.num_envs = 2048 if robot_spec.name == "m1_piper" else 4096
+        cfg.env.num_envs = self._resolved_num_envs(robot_spec.name, cfg.env.num_envs)
         is_motion = cfg.env.task_name == "motion_tracking"
         if cfg.env.task_name not in ("motion_tracking", "velocity_command"):
             raise ValueError(f"unknown task {cfg.env.task_name!r}")
@@ -290,6 +297,16 @@ class Trainer:
 
     # ------------------------------------------------------------------ checkpoints
 
+    @staticmethod
+    def _tree_is_finite(value) -> bool:
+        if isinstance(value, torch.Tensor):
+            return not (value.is_floating_point() or value.is_complex()) or bool(torch.isfinite(value).all())
+        if isinstance(value, dict):
+            return all(Trainer._tree_is_finite(v) for v in value.values())
+        if isinstance(value, (tuple, list)):
+            return all(Trainer._tree_is_finite(v) for v in value)
+        return True
+
     def save(self, name: str = "ckpt_latest.pt") -> None:
         if not self.is_main:
             return
@@ -311,6 +328,9 @@ class Trainer:
         }
         if torch.cuda.is_available():
             state["cuda_rng_state"] = torch.cuda.get_rng_state(self.device)
+        if not all(self._tree_is_finite(state[k]) for k in ("wm", "policy", "critic", "wm_opt", "policy_opt", "critic_opt")):
+            print(f"[WARN] skipped {name}: model or optimizer state contains NaN/Inf; keeping the previous valid checkpoint", flush=True)
+            return
         if hasattr(self.command, "bin_return"):
             state["bin_return"] = self.command.bin_return
             state["bin_memory"] = self.command.bin_memory
@@ -319,7 +339,14 @@ class Trainer:
         action_term = self.recorder.action_term
         if hasattr(action_term, "state_dict"):
             state["action_state"] = action_term.state_dict()
-        torch.save(state, self.log_dir / name)
+        path = self.log_dir / name
+        tmp_path = path.with_name(path.name + ".tmp")
+        try:
+            torch.save(state, tmp_path)
+            os.replace(tmp_path, path)
+        finally:
+            if tmp_path.exists():
+                tmp_path.unlink()
 
     def load(self, path: Path) -> None:
         ck = torch.load(path, map_location=self.device, weights_only=False)
@@ -470,9 +497,9 @@ class Trainer:
                 self._utd_acc += sch.updates_per_env_step
                 while self._utd_acc >= 1.0:
                     self._utd_acc -= 1.0
-                    wm_lr = cosine_lr(self.iteration, sch.total_iterations, cfg.wm_trainer.lr, sch.lr_final_ratio, sch.lr_decay_fraction)
-                    actor_scheduled_lr = cosine_lr(self.iteration, sch.total_iterations, cfg.policy_trainer.lr, sch.lr_final_ratio, sch.lr_decay_fraction)
-                    critic_lr = cosine_lr(self.iteration, sch.total_iterations, cfg.policy_trainer.critic_lr, sch.lr_final_ratio, sch.lr_decay_fraction)
+                    wm_lr = scheduled_lr(sch.lr_schedule, self.iteration, sch.total_iterations, cfg.wm_trainer.lr, sch.lr_final_ratio, sch.lr_decay_fraction)
+                    actor_scheduled_lr = scheduled_lr(sch.lr_schedule, self.iteration, sch.total_iterations, cfg.policy_trainer.lr, sch.lr_final_ratio, sch.lr_decay_fraction)
+                    critic_lr = scheduled_lr(sch.lr_schedule, self.iteration, sch.total_iterations, cfg.policy_trainer.critic_lr, sch.lr_final_ratio, sch.lr_decay_fraction)
                     self.wm_trainer.set_lr(wm_lr)
                     t0 = time.perf_counter()
                     m_wm = self.wm_trainer.update(self.buffer)
@@ -497,15 +524,15 @@ class Trainer:
                                         "(configured review threshold 0.5); see wm/actor_start_nse8",
                                         flush=True,
                                     )
-                        ramp_updates = max(int(sch.actor_ramp_iterations), 0)
-                        if self.is_go2_velocity and ramp_updates > 0:
-                            ramp_scale = actor_ramp_scale(self.iteration, self.actor_start_iteration, ramp_updates)
-                        else:
-                            ramp_scale = 1.0
-                        actor_lr = actor_scheduled_lr * ramp_scale
-                        self.policy_trainer.set_lr(actor_lr, critic_lr)
                         t0 = time.perf_counter()
                         for _ in range(sch.policy_updates_per_wm_update):
+                            ramp_updates = max(int(sch.actor_ramp_iterations), 0)
+                            if self.is_go2_velocity and ramp_updates > 0:
+                                ramp_scale = actor_ramp_scale(self.actor_updates + 1, ramp_updates)
+                            else:
+                                ramp_scale = 1.0
+                            actor_lr = actor_scheduled_lr * ramp_scale
+                            self.policy_trainer.set_lr(actor_lr, critic_lr)
                             m_pi = self.policy_trainer.update(self.buffer)
                             self.actor_updates += 1
                         if sch.policy_updates_per_wm_update:
@@ -545,8 +572,18 @@ class Trainer:
                     finished_falls = []
                     timers = {k: 0.0 for k in timers}
                 elif agg_n > 0:
+                    last_value_keys = (
+                        "policy/actor_lr", "policy/critic_lr", "policy/actor_ramp_scale",
+                        "wm/lr", "schedule/wm_only_updates",
+                    )
                     for k, v in agg.items():
-                        self.writer.add_scalar(k, v / (agg_n if k not in ("policy/actor_lr", "policy/critic_lr", "wm/lr", "schedule/wm_only_updates") else 1), it)
+                        self.writer.add_scalar(k, v / (1 if k in last_value_keys else agg_n), it)
+                if self.is_main and self.policy_trainer.last_imag_diagnostics:
+                    self.writer.add_text(
+                        "imag/step_diagnostics",
+                        json.dumps(self.policy_trainer.last_imag_diagnostics, sort_keys=True),
+                        it,
+                    )
                 if not self.is_main:
                     tr = float("nan")
                 elif finished_returns:
@@ -616,7 +653,7 @@ class Trainer:
                         f"train_ret {tr:.3f} (n={n_finished}) | "
                         f"wm nse1 {agg.get('wm/nse_1step', float('nan'))/max(agg_n,1):.4f} nse8 {(float(err[-1]) if err is not None else float('nan')):.4f} | "
                         f"imag_ret {agg.get('policy/imag_return_undisc', float('nan'))/max(agg_n,1):.3f} surv {agg.get('policy/imag_survival_H', float('nan'))/max(agg_n,1):.3f} | "
-                        f"WM-only {self.wm_only_updates}/{wm_only_target} actor-ramp {agg.get('policy/actor_ramp_scale', 0.0)/max(agg_n,1):.3f} | "
+                        f"WM-only {self.wm_only_updates}/{wm_only_target} actor-ramp {agg.get('policy/actor_ramp_scale', 0.0):.3f} | "
                         f"t sim/wm/pi {timers['sim']:.1f}/{timers['wm']:.1f}/{timers['policy']:.1f}s"
                     )
                     print(msg, flush=True)

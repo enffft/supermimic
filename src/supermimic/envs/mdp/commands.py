@@ -374,22 +374,38 @@ class MultiClipMotionCommand(CommandTerm):
             import copy
 
             m = copy.deepcopy(self._env.sim.mj_model)
+            has_visual_geoms = bool(((m.geom_contype == 0) & (m.geom_conaffinity == 0)).any())
             for gi in range(m.ngeom):
-                if m.geom_contype[gi] != 0 or m.geom_conaffinity[gi] != 0:
+                # Some imported URDFs (M1-Piper) provide collision geoms but no
+                # separate visual meshes. In that case the collision shapes are
+                # the only usable reference model and must remain visible.
+                if has_visual_geoms and (m.geom_contype[gi] != 0 or m.geom_conaffinity[gi] != 0):
                     m.geom_rgba[gi, 3] = 0  # hide collision geoms
                 else:
                     m.geom_rgba[gi] = (0.2, 0.6, 1.0, 0.45)
             self._ghost_model = m
         indexing = self.robot.indexing
-        free_q = indexing.free_joint_q_adr.cpu().numpy()
-        joint_q = indexing.joint_q_adr.cpu().numpy()
+        free_q = indexing.free_joint_q_adr.cpu().numpy().reshape(-1)
+        joint_q = indexing.joint_q_adr.cpu().numpy().reshape(-1)
+        if free_q.size != 7 or joint_q.size != self.library.num_joints:
+            raise RuntimeError(
+                f"ghost qpos indexing mismatch: free={free_q.size}, joints={joint_q.size}, "
+                f"expected 7 and {self.library.num_joints}"
+            )
         root_pos = self.root_pos_w.cpu().numpy()
         root_quat = self.root_quat_w.cpu().numpy()
-        joint_pos = self.joint_pos.cpu().numpy()
+        joint_pos_t = self.joint_pos
+        valid = self.library.joint_valid
+        if valid is not None:
+            # Invalid M1 wheel reference samples are visualized at the robot's
+            # documented default wheel angle; they are not added to Goal targets.
+            defaults = self.robot.data.default_joint_pos
+            joint_pos_t = torch.where(valid[self.frame], joint_pos_t, defaults)
+        joint_pos = joint_pos_t.cpu().numpy()
         import numpy as np
 
         for e in env_indices:
-            qpos = np.zeros(self._ghost_model.nq)
+            qpos = self._ghost_model.qpos0.copy()
             qpos[free_q[0:3]] = root_pos[e]
             qpos[free_q[3:7]] = root_quat[e]
             qpos[joint_q] = joint_pos[e]
@@ -503,7 +519,7 @@ class VelocityCommand(CommandTerm):
         self._finish_episodes(env_ids)
         ids = env_ids
         n = len(ids)
-        self._command[ids] = self._sample_commands(n, self.stage)
+        self._command[ids] = self._commands_for_reset(n)
         self._episode_stage[ids] = self.stage
         self._episode_command[ids] = self._command[ids]
         self._episode_steps[ids] = 0
@@ -558,6 +574,13 @@ class VelocityCommand(CommandTerm):
         if keep_b.any():
             out[keep_b] = self._sample_b(int(keep_b.sum()))
         return out
+
+    def _commands_for_reset(self, n: int) -> torch.Tensor:
+        """Return either the persistent play command or a newly sampled train goal."""
+        if self.cfg.fixed_command is None:
+            return self._sample_commands(n, self.stage)
+        fixed = torch.as_tensor(self.cfg.fixed_command, dtype=self._command.dtype, device=self.device)
+        return fixed.expand(n, 3).clone()
 
     @staticmethod
     def _command_bins(command: torch.Tensor) -> tuple[int, int]:
@@ -686,6 +709,59 @@ class VelocityCommand(CommandTerm):
         # A sampled command is held exactly constant until the next resampling event.
         return
 
+    def _debug_vis_impl(self, visualizer: DebugVisualizer) -> None:
+        """Draw body-frame commanded/actual velocity in world coordinates.
+
+        The yaw cue is a short curved arrow around the base; its radius is fixed so
+        yaw rate is never mistaken for translational velocity.
+        """
+        import numpy as np
+
+        env_indices = visualizer.get_env_indices(self.num_envs)
+        if not env_indices:
+            return
+        root_pos = self.robot.data.root_link_pos_w
+        root_quat = self.robot.data.root_link_quat_w
+        base = root_pos + root_pos.new_tensor([0.0, 0.0, 0.32])
+        cmd_world = quat_apply(
+            root_quat,
+            torch.cat([self._command[:, :2], torch.zeros_like(self._command[:, :1])], dim=-1),
+        )
+        actual_body = self.robot.data.root_link_lin_vel_b
+        actual_world = quat_apply(root_quat, actual_body)
+        for e in env_indices:
+            origin = base[e].detach().cpu().numpy()
+            speed = float(torch.linalg.vector_norm(self._command[e, :2]))
+            if speed > 1e-4:
+                direction = cmd_world[e].detach().cpu().numpy()
+                length = min(1.2, max(0.12, speed * 0.8))
+                end = origin + direction / max(float(np.linalg.norm(direction)), 1e-8) * length
+                visualizer.add_arrow(origin, end, (0.1, 0.9, 0.2, 1.0), width=0.025, label=f"command_{e}")
+            if self.cfg.show_actual_velocity:
+                actual_speed = float(torch.linalg.vector_norm(actual_world[e, :2]))
+                if actual_speed > 1e-4:
+                    direction = actual_world[e].detach().cpu().numpy()
+                    length = min(1.2, max(0.12, actual_speed * 0.8))
+                    end = origin + direction / max(float(np.linalg.norm(direction)), 1e-8) * length
+                    visualizer.add_arrow(origin, end, (0.1, 0.55, 1.0, 1.0), width=0.018, label=f"actual_{e}")
+
+            yaw_rate = float(self._command[e, 2])
+            if abs(yaw_rate) > 1e-4:
+                # Three tangent segments make a compact curved indicator. Positive
+                # yaw follows +z; negative yaw follows -z. Radius does not depend
+                # on linear command magnitude.
+                radius = 0.18
+                extent = min(1.35, max(0.25, abs(yaw_rate) * 0.9))
+                sign = 1.0 if yaw_rate > 0 else -1.0
+                angle0 = -0.5 * extent
+                points = []
+                for j in range(4):
+                    angle = angle0 + sign * extent * j / 3.0
+                    local = np.array([radius * np.cos(angle), radius * np.sin(angle), 0.08])
+                    points.append(origin + local)
+                for j in range(3):
+                    visualizer.add_arrow(points[j], points[j + 1], (1.0, 0.65, 0.05, 1.0), width=0.018, label=f"yaw_{e}")
+
     def state_dict(self) -> dict:
         return {
             "stage": self.stage,
@@ -736,6 +812,8 @@ class VelocityCommandCfg(CommandTermCfg):
     stage_b_max_vel_rmse: float = 0.20
     stage_b_max_yaw_rmse: float = 0.20
     resampling_time_range: tuple[float, float] = (10.0, 10.0)
+    fixed_command: tuple[float, float, float] | None = None
+    show_actual_velocity: bool = False
 
     def __post_init__(self):
         fractions = (
@@ -763,6 +841,8 @@ class VelocityCommandCfg(CommandTermCfg):
             raise ValueError("curriculum evaluation windows must be positive")
         if self.fixed_stage is not None and self.fixed_stage not in (0, 1, 2):
             raise ValueError("fixed_stage must be A=0, B=1, or C=2")
+        if self.fixed_command is not None and (len(self.fixed_command) != 3 or not all(math.isfinite(float(x)) for x in self.fixed_command)):
+            raise ValueError("fixed_command must contain finite (vx, vy, yaw_rate) values")
 
     def build(self, env: ManagerBasedRlEnv) -> VelocityCommand:
         return VelocityCommand(self, env)

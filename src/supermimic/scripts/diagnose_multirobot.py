@@ -5,7 +5,7 @@ few configured World Model updates, computes Actor gradients without stepping th
 optimizer, and writes a JSON report. Example:
 
   PYTHONPATH=src python -m supermimic.scripts.diagnose_multirobot --robot m1_piper
-  PYTHONPATH=src python -m supermimic.scripts.diagnose_multirobot --robot go2 --num-envs 4096 --action-noise 0
+  PYTHONPATH=src python -m supermimic.scripts.diagnose_multirobot --robot go2 --num-envs 16 --action-noise 0
 """
 
 from __future__ import annotations
@@ -44,19 +44,57 @@ def _reference_steps(trainer: Trainer, window):
 
 
 @torch.no_grad()
+def _replay_termination_coverage(trainer: Trainer, window: int = 8) -> dict[str, float | int]:
+    """Measure how often uniform valid windows can expose a positive done label."""
+    buffer = trainer.buffer
+    valid_windows = buffer.window_mask(window)
+    positive_offsets = [buffer._rolled(buffer.done > 0.5, j) for j in range(window)]
+    labels_per_window = torch.stack(positive_offsets).sum(0)
+    sampleable_positive = valid_windows & (labels_per_window > 0)
+    num_windows = int(valid_windows.sum())
+    positive_window_count = int(sampleable_positive.sum())
+    total_labels = num_windows * window
+    positive_labels = int((labels_per_window * valid_windows).sum())
+    return {
+        "recorded_terminal_transition_rows": int((buffer.valid & ~buffer.terminal & (buffer.done > 0.5)).sum()),
+        "recorded_terminal_state_rows": int((buffer.valid & buffer.terminal & (buffer.done > 0.5)).sum()),
+        "recorded_timeout_terminal_state_rows": int((buffer.valid & buffer.terminal & (buffer.done <= 0.5)).sum()),
+        "sampleable_windows": num_windows,
+        "sampleable_windows_with_positive_label": positive_window_count,
+        "sampleable_positive_window_fraction": positive_window_count / max(num_windows, 1),
+        "positive_transition_labels_in_sampleable_windows": positive_labels,
+        "positive_label_fraction_under_uniform_window_sampling": positive_labels / max(total_labels, 1),
+    }
+
+
+@torch.no_grad()
 def _termination_report(trainer: Trainer, sample_windows: int) -> dict[str, object]:
     wm = trainer.wm
     window = trainer.buffer.sample_windows(sample_windows, 8)
     refs = _reference_steps(trainer, window)
     state = window.states[0]
-    probability, labels, nse = [], [], []
+    probability, replay_probability, survival, root_height, tilt = [], [], [], [], []
+    labels, nse = [], []
+    cumulative_survival = torch.ones(state.shape[0], device=state.device)
     for j in range(8):
         state = wm.step(state, window.a_exec[j], window.xi)
         logits = wm.termination_logits(state, refs[j])
         probability.append(torch.sigmoid(logits))
+        real_logits = wm.termination_logits(window.states[j + 1], refs[j])
+        replay_probability.append(torch.sigmoid(real_logits))
+        cumulative_survival = cumulative_survival * (1.0 - torch.sigmoid(logits))
+        survival.append(cumulative_survival)
+        if refs[j] is None:
+            feats = wm.heads.free_termination_features(state[..., :3], state[..., 3:7], wm.cfg.termination_base_height)
+        else:
+            feats = wm.heads.termination_features(state[..., :3], state[..., 3:7], refs[j])
+        root_height.append(state[..., 2])
+        tilt.append(feats[..., 1])
         labels.append(window.done[j])
         nse.append(wm.spec.normalized_sq_error(state, window.states[j + 1]))
-    p = torch.stack(probability).reshape(-1)
+    p_steps = torch.stack(probability)
+    p = p_steps.reshape(-1)
+    p_real_steps = torch.stack(replay_probability)
     y = torch.stack(labels).reshape(-1).bool()
     nse_t = torch.stack(nse)
     bce = F.binary_cross_entropy(p.clamp(1e-7, 1 - 1e-7), y.float())
@@ -69,13 +107,20 @@ def _termination_report(trainer: Trainer, sample_windows: int) -> dict[str, obje
         "accuracy_at_0_5": float(((p >= 0.5) == y).float().mean()),
         "bce": float(bce),
         "probability_quantiles_0_50_90_99_100": [float(x) for x in qs],
+        "replay_state_probability_mean_by_step": [float(x) for x in p_real_steps.mean(dim=1)],
+        "predicted_state_probability_mean_by_step": [float(x) for x in p_steps.mean(dim=1)],
+        "predicted_survival_mean_by_step": [float(x) for x in torch.stack(survival).mean(dim=1)],
+        "replay_root_height_mean_by_step_m": [float(x) for x in window.states[1:, :, 2].mean(dim=1)],
+        "predicted_root_height_mean_by_step_m": [float(x) for x in torch.stack(root_height).mean(dim=1)],
+        "predicted_tilt_feature_mean_by_step": [float(x) for x in torch.stack(tilt).mean(dim=1)],
+        "steps_correspond_to": "step_00 through step_07 (first through eighth transition)",
         "nse_1step": float(nse_t[0].mean()),
         "nse_8step": float(nse_t[-1].mean()),
         "label_status": "both_classes_present" if y.any() and (~y).any() else "one_class_only",
     }
 
 
-def _imagination_report(trainer: Trainer, start, horizon: int) -> dict[str, float]:
+def _imagination_report(trainer: Trainer, start, horizon: int) -> dict[str, object]:
     cfg = trainer.cfg.policy_trainer
     wm, policy, critic = trainer.wm, trainer.policy, trainer.critic
     wm.requires_grad_(False)
@@ -101,6 +146,13 @@ def _imagination_report(trainer: Trainer, start, horizon: int) -> dict[str, floa
             "survival_H_mean": float(rollout.survival[-1].mean().detach()),
             "survival_H_min": float(rollout.survival[-1].min().detach()),
             "termination_probability_mean": float(rollout.dhat[1:].mean().detach()),
+            "replay_state_termination_probability": float(
+                torch.sigmoid(wm.term_head(rollout.term_features[0])).mean().detach()
+            ),
+            "termination_probability_by_step": [float(x) for x in rollout.dhat[1:].mean(dim=1).detach()],
+            "survival_by_step": [float(x) for x in rollout.survival[1:].mean(dim=1).detach()],
+            "root_height_mean_by_step_m": [float(x) for x in rollout.root_height[1:].mean(dim=1).detach()],
+            "tilt_feature_mean_by_step": [float(x) for x in rollout.tilt[1:].mean(dim=1).detach()],
         }
     finally:
         policy.zero_grad(set_to_none=True)
@@ -199,14 +251,26 @@ def run(args: argparse.Namespace) -> dict[str, object]:
                 "increase --steps or --num-envs"
             )
         before = _termination_report(trainer, args.diagnostic_windows)
+        replay_termination_coverage = _replay_termination_coverage(trainer, 8)
         wm_updates = []
         for _ in range(args.wm_updates):
             wm_updates.append(trainer.wm_trainer.update(trainer.buffer))
         after = _termination_report(trainer, args.diagnostic_windows)
         starts = trainer.buffer.sample_starts(args.imag_batch, cfg.env.history_length)
         imagination = [_imagination_report(trainer, starts, h) for h in (8, 32)]
+        unfinished = lengths > 0
+        partial_returns = env_returns[unfinished].detach().cpu().tolist()
+        partial_lengths = lengths[unfinished].to(torch.int64).cpu().tolist()
+        partial_normalized_returns = (
+            [
+                float(ret / (trainer.max_step_reward * max(length, 1)))
+                for ret, length in zip(partial_returns, partial_lengths, strict=True)
+            ]
+            if args.robot == "m1_piper" else []
+        )
         result: dict[str, object] = {
             "git_commit": _git_commit(),
+            "git_worktree_dirty": bool(subprocess.call(["git", "diff", "--quiet"]) != 0),
             "robot": args.robot,
             "seed": args.seed,
             "device": args.device,
@@ -218,6 +282,7 @@ def run(args: argparse.Namespace) -> dict[str, object]:
             "world_model_updates": wm_updates,
             "termination_before_warmup": before,
             "termination_after_warmup": after,
+            "replay_termination_coverage": replay_termination_coverage,
             "imagination": imagination,
             "real_simulation_episode_return_mean": (
                 sum(real_episode_returns) / len(real_episode_returns) if real_episode_returns else None
@@ -229,6 +294,17 @@ def run(args: argparse.Namespace) -> dict[str, object]:
             "real_simulation_episode_count": len(real_episode_returns),
             "real_simulation_episode_length_mean": (
                 sum(real_episode_lengths) / len(real_episode_lengths) if real_episode_lengths else None
+            ),
+            "real_simulation_partial_return_mean": (
+                sum(partial_returns) / len(partial_returns) if partial_returns else None
+            ),
+            "real_simulation_partial_normalized_return_mean": (
+                sum(partial_normalized_returns) / len(partial_normalized_returns)
+                if partial_normalized_returns else None
+            ),
+            "real_simulation_partial_env_count": len(partial_returns),
+            "real_simulation_partial_length_mean": (
+                sum(partial_lengths) / len(partial_lengths) if partial_lengths else None
             ),
             "real_return_semantics": (
                 "M1 physical tracking reward" if args.robot == "m1_piper"
@@ -252,7 +328,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--robot", choices=("go2", "m1_piper"), default="m1_piper")
     parser.add_argument("--device", default="cuda:0")
-    parser.add_argument("--num-envs", type=int, default=4096)
+    parser.add_argument("--num-envs", type=int, choices=(8, 16), default=16)
     parser.add_argument("--steps", type=int, default=256)
     parser.add_argument("--wm-updates", type=int, default=8)
     parser.add_argument("--window-batch", type=int, default=64)

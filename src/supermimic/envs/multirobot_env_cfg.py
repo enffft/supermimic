@@ -108,6 +108,7 @@ def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
                 velocity_range={"x": (-0.5, 0.5), "y": (-0.5, 0.5), "z": (-0.2, 0.2), "roll": (-0.52, 0.52), "pitch": (-0.52, 0.52), "yaw": (-0.78, 0.78)} if a.reset_noise else {},
                 joint_position_range=(-0.1, 0.1) if a.reset_noise else (0.0, 0.0),
                 sampling_mode=a.sampling_mode, compact_library=False,
+                debug_vis=a.debug_vis,
             )
         }
         rewards = {
@@ -136,6 +137,7 @@ def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
                 entity_name="robot",
                 resampling_time_range=(a.velocity_resample_seconds, a.velocity_resample_seconds),
                 auto_curriculum=a.velocity_curriculum,
+                debug_vis=a.velocity_debug_vis,
                 initial_stage=a.velocity_curriculum_initial_stage,
                 fixed_stage=a.velocity_curriculum_fixed_stage,
                 stage_a_vx_range=a.velocity_stage_a_vx_range,
@@ -160,6 +162,8 @@ def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
                 stage_a_max_static_speed=a.velocity_stage_a_max_static_speed,
                 stage_b_max_vel_rmse=a.velocity_stage_b_max_vel_rmse,
                 stage_b_max_yaw_rmse=a.velocity_stage_b_max_yaw_rmse,
+                fixed_command=a.velocity_fixed_command,
+                show_actual_velocity=a.velocity_show_actual_velocity,
             )
         }
         # Every adapter calls the same pure reward core; RewardManager applies dt once.

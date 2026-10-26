@@ -461,6 +461,15 @@ def test_go2_zero_action_stand_and_termination_features():
             "root_ang_vel_last_100_max": float(ang_vel_hist[-100:].max()),
             "actuator_force_abs_max": float(force_tensor_hist.max()),
             "torque_saturation_fraction": saturation_fraction,
+            "joint_pos_mean_rad": {
+                name: float(robot.data.joint_pos[:, i].mean()) for i, name in enumerate(spec.joint_names)
+            },
+            "joint_pos_default_rad": {
+                name: float(robot.data.default_joint_pos[:, i].mean()) for i, name in enumerate(spec.joint_names)
+            },
+            "max_joint_position_error_from_default_rad": float(
+                (robot.data.joint_pos - robot.data.default_joint_pos).abs().max()
+            ),
             "foot_body_z_mean": float(final_foot_z.mean()),
             "min_soft_joint_limit_margin_rad": float(joint_margin.min()),
             "ground_contact_geoms": ground_contact_names,

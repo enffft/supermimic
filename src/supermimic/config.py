@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Literal
 
 from supermimic.imagination.policy_trainer import PolicyTrainerCfg
 from supermimic.policy.nets import CriticCfg, PolicyCfg
@@ -25,9 +26,7 @@ class DataCfg:
 class EnvCfg:
     robot_name: str = "g1"  # g1 | go2 | m1_piper
     task_name: str = "motion_tracking"  # motion_tracking | velocity_command
-    # The trainer resolves this by robot when omitted: 2048 for M1-Piper's
-    # larger convex-collision model, 4096 for Go2/G1. CLI overrides remain explicit.
-    num_envs: int | None = None
+    num_envs: int | None = None  # Defaults: Go2 3072, M1-Piper 2048, G1 4096; CLI overrides remain explicit.
     episode_length_s: float = 10.0
     action_noise_std: float = 0.1
     obs_noise: bool = True
@@ -81,9 +80,10 @@ class ScheduleCfg:
     updates_per_env_step: float = 0.4  # UTD
     policy_updates_per_wm_update: int = 1
     warmup_iterations: int = 40  # env steps before the first update (fills k-step windows)
-    wm_only_iterations: int = 300  # WM update events before Go2 actor/critic updates
-    m1_wm_only_iterations: int = 300  # let the M1 WM fit the selected motion bank before BPTT
-    actor_ramp_iterations: int = 1000  # actor optimizer updates after WM-only warmup
+    wm_only_iterations: int = 200  # WM update events before Go2 actor/critic updates
+    m1_wm_only_iterations: int = 200  # let the M1 WM fit the selected motion bank before BPTT
+    actor_ramp_iterations: int = 1000  # actual Actor optimizer updates after WM-only warmup
+    lr_schedule: Literal["cosine", "constant"] = "cosine"
     lr_final_ratio: float = 0.03
     lr_decay_fraction: float = 250_000 / 320_000
     log_interval: int = 50  # iterations

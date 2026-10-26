@@ -22,7 +22,7 @@ class WindowBatch:
     a_clean: torch.Tensor  # (k, n, A)
     xi: torch.Tensor  # (n, X) context at the window start (constant inside an episode)
     reward: torch.Tensor  # (k, n)
-    done: torch.Tensor  # (k, n) termination label of states 1..k
+    done: torch.Tensor  # (k, n) whether each transition reaches a terminal state
     frame: torch.Tensor  # (k, n) target frame of each transition
 
 
@@ -101,7 +101,11 @@ class ReplayBuffer:
 
     @torch.no_grad()
     def window_mask(self, k: int) -> torch.Tensor:
-        """(E,T) True where rows t..t+k are valid, same episode, and t..t+k-1 are non-terminal."""
+        """(E,T) True where rows t..t+k are valid and same-episode.
+
+        The terminal state may appear only as the final target row. A terminal transition
+        is allowed as the final action row so its positive label can train the WM head.
+        """
         ok = self.valid & ~self.terminal
         ep0 = self.ep_id
         for j in range(1, k + 1):
@@ -138,7 +142,9 @@ class ReplayBuffer:
             a_clean=self.a[ee[:-1], tt[:-1]],
             xi=self.xi[e, t],
             reward=self.r[ee[:-1], tt[:-1]],
-            done=self.done[ee[1:], tt[1:]],
+            # Recorder stores done_next beside the source state/action row. Align each
+            # label with the corresponding predicted successor states[j + 1].
+            done=self.done[ee[:-1], tt[:-1]],
             frame=self.frame[ee[:-1], tt[:-1]],
         )
 

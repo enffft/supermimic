@@ -122,7 +122,8 @@ class MotionLibrary:
         clips: list[ClipInfo] = []
         start = 0
         body_idx = root_idx = None
-        ref_chunks: list[np.ndarray] = []
+        ref_chunks: list[np.ndarray] | None = []
+        joint_valid_chunks: list[np.ndarray] = []
         body_chunks = {"pos": [], "quat": [], "lin": [], "ang": []}
         # A single packed cache (build_library.py) can stand in for the npz list (compact mode only).
         if len(npz_files) == 1 and str(npz_files[0]).endswith(".pt"):
@@ -141,6 +142,7 @@ class MotionLibrary:
                 n = int(d["joint_pos"].shape[0])
                 joint_pos = d["joint_pos"]
                 joint_vel = d["joint_vel"]
+                valid = np.ones((n, self.num_joints), dtype=bool)
                 if self.joint_names is not None:
                     if "joint_names" not in d:
                         raise ValueError(f"{f}: joint_names metadata is required for name-based reference mapping")
@@ -155,8 +157,9 @@ class MotionLibrary:
                     reorder = [source_joint_names.index(name) for name in self.joint_names]
                     joint_pos = joint_pos[:, reorder]
                     joint_vel = joint_vel[:, reorder]
-                    if "joint_valid" in d and self.goal_joint_indices is not None:
+                    if "joint_valid" in d:
                         valid = np.asarray(d["joint_valid"], dtype=bool)[:, reorder]
+                    if "joint_valid" in d and self.goal_joint_indices is not None:
                         required = self.goal_joint_indices.detach().cpu().numpy()
                         if not valid[:, required].all():
                             invalid = [self.joint_names[i] for i in required if not valid[:, i].all()]
@@ -166,6 +169,7 @@ class MotionLibrary:
                     [bp[:, root_idx], bq[:, root_idx], joint_pos, blv[:, root_idx], bav[:, root_idx], joint_vel], axis=1
                 ).astype(np.float32)
                 ref_chunks.append(ref)
+                joint_valid_chunks.append(valid)
                 if not compact:
                     body_chunks["pos"].append(bp[:, body_idx])
                     body_chunks["quat"].append(bq[:, body_idx])
@@ -182,7 +186,11 @@ class MotionLibrary:
             if ref_np.shape[1] != self.ref_dim:
                 raise ValueError(f"reference state dim {ref_np.shape[1]} != expected {self.ref_dim}")
             self._ref = torch.as_tensor(ref_np, device=self.device, dtype=store_dtype if compact else dtype)
+            self.joint_valid = torch.as_tensor(np.concatenate(joint_valid_chunks, 0), device=self.device, dtype=torch.bool)
             del ref_np, ref_chunks
+        else:
+            # Packed references predate validity metadata; they are treated as fully valid.
+            self.joint_valid = None
         if not compact:
             t = lambda arrs: torch.as_tensor(np.concatenate(arrs, 0), dtype=dtype, device=self.device)  # noqa: E731
             self.body_pos_w = t(body_chunks["pos"])

@@ -29,6 +29,7 @@ class ImagStep:
     def __init__(self, wm: WorldModel, default_joint_pos: torch.Tensor, compile_mode: str | None = None):
         self.wm = wm
         self.q0 = default_joint_pos
+        self.wheel_indices = wm.spec.wheel_indices
         self._fn = self._step
         if compile_mode:
             mode = None if compile_mode == "default" else compile_mode
@@ -38,11 +39,12 @@ class ImagStep:
         ref = ReferenceFrame(ref_body_pos, ref_body_quat, ref_body_lin, ref_body_ang, ref_root_pos, ref_root_quat)
         s_next = self.wm.step(s, a, xi)
         bodies = self.wm.heads.robot_bodies(s_next)
-        terms = self.wm.heads.reward(s_next, a, a_prev, ref, bodies)
+        anchor_state = s if self.wm.heads.reward_anchor_at_start else None
+        terms = self.wm.heads.reward(s_next, a, a_prev, ref, bodies, anchor_state=anchor_state)
         r = terms["total"]
         term_vec = torch.stack([terms[k] for k in REWARD_TERM_NAMES], dim=0)  # (8, n)
         logits = self.wm.termination_logits(s_next, ref)
-        obs_clean = analytic_observation(s_next, a, xi, self.q0)
+        obs_clean = analytic_observation(s_next, a, xi, self.q0, self.wheel_indices)
         ai = self.wm.heads.anchor_index
         anchor_pose = torch.cat([bodies["pos"][..., ai, :], bodies["quat"][..., ai, :]], dim=-1)  # (n, 7)
         return s_next, r, term_vec, logits, obs_clean, anchor_pose
@@ -58,6 +60,7 @@ class VelocityImagStep:
         self.wm = wm
         self.task = task
         self.q0 = default_joint_pos
+        self.wheel_indices = wm.spec.wheel_indices
         self._fn = self._step
         if compile_mode:
             mode = None if compile_mode == "default" else compile_mode
@@ -67,7 +70,7 @@ class VelocityImagStep:
         s_next = self.wm.step(s, a, xi)
         reward = self.task.reward(s_next, goal, self.wm.spec.nj, self.wm.spec.dt)
         logits = self.wm.termination_logits(s_next, None)
-        obs_clean = analytic_observation(s_next, a, xi, self.q0)
+        obs_clean = analytic_observation(s_next, a, xi, self.q0, self.wheel_indices)
         bodies = self.wm.heads.robot_bodies(s_next)
         ai = self.wm.heads.anchor_index
         anchor_pose = torch.cat([bodies["pos"][..., ai, :], bodies["quat"][..., ai, :]], dim=-1)

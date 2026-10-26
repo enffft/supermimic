@@ -139,9 +139,31 @@ class MotionLibrary:
                     body_idx = np.array([names.index(n) for n in self.body_names])
                     root_idx = names.index(self.root_body_name)
                 n = int(d["joint_pos"].shape[0])
+                joint_pos = d["joint_pos"]
+                joint_vel = d["joint_vel"]
+                if self.joint_names is not None:
+                    if "joint_names" not in d:
+                        raise ValueError(f"{f}: joint_names metadata is required for name-based reference mapping")
+                    source_joint_names = tuple(str(name) for name in d["joint_names"])
+                    if len(set(source_joint_names)) != len(source_joint_names):
+                        raise ValueError(f"{f}: joint_names metadata contains duplicates")
+                    if set(source_joint_names) != set(self.joint_names):
+                        raise ValueError(
+                            f"{f}: joint names differ; missing={set(self.joint_names)-set(source_joint_names)}, "
+                            f"extra={set(source_joint_names)-set(self.joint_names)}"
+                        )
+                    reorder = [source_joint_names.index(name) for name in self.joint_names]
+                    joint_pos = joint_pos[:, reorder]
+                    joint_vel = joint_vel[:, reorder]
+                    if "joint_valid" in d and self.goal_joint_indices is not None:
+                        valid = np.asarray(d["joint_valid"], dtype=bool)[:, reorder]
+                        required = self.goal_joint_indices.detach().cpu().numpy()
+                        if not valid[:, required].all():
+                            invalid = [self.joint_names[i] for i in required if not valid[:, i].all()]
+                            raise ValueError(f"{f}: invalid reference joints are selected for Goal: {invalid}")
                 bp, bq, blv, bav = d["body_pos_w"], d["body_quat_w"], d["body_lin_vel_w"], d["body_ang_vel_w"]
                 ref = np.concatenate(
-                    [bp[:, root_idx], bq[:, root_idx], d["joint_pos"], blv[:, root_idx], bav[:, root_idx], d["joint_vel"]], axis=1
+                    [bp[:, root_idx], bq[:, root_idx], joint_pos, blv[:, root_idx], bav[:, root_idx], joint_vel], axis=1
                 ).astype(np.float32)
                 ref_chunks.append(ref)
                 if not compact:

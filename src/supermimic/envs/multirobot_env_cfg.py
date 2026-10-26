@@ -90,8 +90,8 @@ def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
         scale = dict(zip(robot.joint_names, robot.action_scales))
         actions = {
             "joint_pos": NoisyJointPositionActionCfg(
-                entity_name="robot", actuator_names=(".*_joint",), scale=scale,
-                use_default_offset=True, noise_std=a.action_noise_std,
+                entity_name="robot", actuator_names=robot.joint_names, scale=scale,
+                preserve_order=True, use_default_offset=True, noise_std=a.action_noise_std,
             )
         }
         action_name = "joint_pos"
@@ -182,7 +182,7 @@ def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
         rewards=rewards, terminations=terminations, recorders=recorders,
         viewer=ViewerConfig(origin_type=ViewerConfig.OriginType.ASSET_BODY, entity_name="robot", body_name=robot.root_body_name, distance=2.8, fovy=55.0, elevation=-5.0, azimuth=120.0),
         # Warp's initial contact capacity is for the whole vectorized model, not one env.
-        sim=QuietSimulationCfg(nconmax=max(128, a.num_envs * 16), njmax=max(512, a.num_envs * 128), mujoco=MujocoCfg(timestep=0.005, iterations=10, ls_iterations=20)),
+        sim=QuietSimulationCfg(nconmax=max(256, a.num_envs * 16), njmax=max(512, a.num_envs * 128), mujoco=MujocoCfg(timestep=0.005, iterations=10, ls_iterations=20)),
         decimation=4, episode_length_s=a.episode_length_s, seed=a.seed,
     )
 

@@ -82,8 +82,8 @@ M1 的单帧 observation 维数仍按 22 个关节计算，但 wheel joint posit
 
 1. Trainer.act() 将 (E, history_obs) 和 (E, goal) 输入 Actor，得到 (E,A) clean action。
 2. env.step(action) 的 action term 处理噪声/clip，并转换为关节 actuator target。M1 的 MixedM1Action 按 joint name 拆位置目标和轮速目标；Go2 使用 position action。
-3. mjlab 运行 4 个 MuJoCo substeps（dt=0.005 s），完成 0.02 s 控制步。命令/reference 更新，计算仿真 reward 与 termination/time-out。
-4. Recorder 记录 (s_t,a_clean,a_exec,xi,r,done,frame/clip/goal)；终止环境另追加 terminal state 行，并更新 episode id。下一步 observation 进入下一轮。
+3. mjlab 运行 4 个 MuJoCo substeps（dt=0.005 s），完成 0.02 s 控制步；先算 termination/reward。auto-reset 后调用 sim.forward，再推进命令/reference 并计算新 observation。
+4. Recorder 记录 (s_t,a_clean,a_exec,xi,r,done,frame/clip/goal)；终止环境在 reset 前另追加 terminal state 行，随后记录 reset 后状态。下一步 observation 进入下一轮。
 5. warmup 后由 UTD 累加器决定是否执行 World Model 和 Actor/Critic 更新。
 
 StateIO.read() 返回 (E,13+2n) 并扣除每个 env 的 world origin；SimContext.read() 返回 xi=[foot friction(1), encoder bias(n), COM offset xyz(3)]，shape (E,n+4)（[envs/state_io.py](../src/supermimic/envs/state_io.py#L12)、[envs/sim_context.py](../src/supermimic/envs/sim_context.py#L11)）。
@@ -110,6 +110,8 @@ ReplayBuffer 是每个并行 env 自己的环形在线经验，shape 前缀 (E,T
 MotionLibrary 则是静态离线参考库：按全局 frame 查 root/joint state、tracked-body FK、future Goal 和 clip/bin 边界，用于 reset、tracking 和 return-based sampling（[envs/mdp/motion_library.py](../src/supermimic/envs/mdp/motion_library.py#L81)）。它表示“目标运动”，Replay 表示“仿真器实际经历”。Go2 无 MotionLibrary。
 
 M1 转换入口 [data/m1_motion_convert.py](../src/supermimic/data/m1_motion_convert.py#L45)，输出 data/npz/m1_piper/*.npz。转换器做 xyzw→wxyz、body-frame root linear velocity→world、名称映射、50 Hz 重采样和 FK；保存 joint_valid/wheel_reference_valid、category、源文件和 hash。没有有效 wheel sidecar 时 mask=false，不把推断 wheel 值作为目标。
+
+`joint_valid` / `wheel_reference_valid` 的用途要区分：MotionLibrary 会把 NPZ joint state 按 `joint_names` 重排，并检查选入 Goal 的 `goal_joint_names` 全部有效；它不会用 `wheel_reference_valid` 从实时 tracking reward 中逐帧剔除 wheel joint。M1 当前 Goal 明确只使用 18 个 AMP 非轮关节，四轮仍在完整 22 维动力学状态和 22 维 action 中。不要据此声称有 wheel angle tracking reward mask。
 
 ## 5. 连续 8-step Window 和 Imagination Starts
 
@@ -183,3 +185,24 @@ Return sampler 仅供 motion task：将每步 reward 归到当前 reference 所�
 4. 选定真实 reward 前不能启用 policy optimization。Go2 默认 guard 在 [imagination/policy_trainer.py](../src/supermimic/imagination/policy_trainer.py#L69)。
 
 下一阶段代码入口：Go2 在 multirobot_env_cfg.py velocity rewards/terminations、imagination/tasks.py::VelocityCommandTask.reward()、imagination/compiled.py::VelocityImagStep；M1 在 multirobot_env_cfg.py motion reward terms、world_model/heads.py::AnalyticHeads.reward()、envs/mdp/rewards.py::tracking_reward_terms()、envs/mdp/motion_library.py::goal_features()。
+
+## 9. 本轮训练前接口验收更新
+
+### 关节顺序和显式映射
+
+- `load_robot_spec_model()` 按 MuJoCo `jnt_qposadr` 排列 scalar joints，检查完整顺序等于 RobotSpec，并检查 free base 后的 qpos/qvel 地址连续。只比较 name set 不再算通过。
+- M1 的运行时 mjlab model 会把 joint 名写作 `robot/FAR_ABAD_JOINT`；`StateIO` 去掉实体 namespace 后建立 joint-name → qpos/dof address 映射，再按 RobotSpec 顺序读写。不会把原始 MuJoCo 地址顺序误当成 Actor 顺序。
+- Trainer 检查运行时 articulation joint order；M1 action term 用 `find_joints(..., preserve_order=True)` 并校验顺序；Go2 position action 使用 RobotSpec 的 `actuator_names` 并要求保序。
+- M1 的 wheel joints 索引为 3、7、11、15。持久化验收给一个 wheel 和一个 Piper 关节不同非零 action，检查只有对应 velocity/position target 改变。
+
+### M1 observation 和 imagination
+
+`analytic_observation(..., wheel_indices)` 将轮角从 joint-position error 特征中 mask 掉，但不裁剪动力学 state；joint velocity 与 clean previous action 不变。`ImagStep` 和 rollout 从 `StateSpec.wheel_indices` 传值。encoder bias 仍来自同一 `xi`，mask 发生在 `q + bias - default_joint_pos` 后，与 `joint_pos_rel_masked()` 对齐。关闭 observation corruption 后，M1 单帧与 720D term-major history 的持久化测试都通过数值精度比较；G1/Go2 的空 wheel index 分支保持原行为。
+
+### M1 reward reanchor 时间点
+
+环境在控制步结束时先算 RewardManager，再更新命令/reference 缓存。M1 imagined reward 现在可以使用本步 action 执行前的 anchor state 来重建 body-relative reference，和真实 `MotionCommand` 缓存语义一致；由 `reward_anchor_at_start` 显式控制，默认为关闭，因此 G1 原路径不改。真实/解析项的剩余小差异来自 mjlab reward 计算时 link 派生量有一个 physics substep 的缓存延迟。
+
+### 第一阶段 M1 数据白名单
+
+`configs/m1_piper_first6.csv` 保留本机 PhysX tracking pass 的六条 clip。`Trainer` 默认只读取这六条，并拒绝配置其它 clip 或用 packed library 绕过 manifest。NPZ 文件在本地只读验收，没有删除、重转换或覆盖 Motion Bank。

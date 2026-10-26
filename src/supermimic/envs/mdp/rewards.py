@@ -88,13 +88,22 @@ def tracking_reward_terms(
     joint_pos: torch.Tensor,
     soft_limits: torch.Tensor,  # (29, 2) or (N, 29, 2)
     cfg: TrackingRewardCfg,
+    reanchor_pos_w: torch.Tensor | None = None,
+    reanchor_quat_w: torch.Tensor | None = None,
 ) -> dict[str, torch.Tensor]:
     """Per-term weighted, dt-scaled rewards (N,) plus 'total'."""
     ra_pos = robot_body_pos_w[..., anchor_index, :]
     ra_quat = robot_body_quat_w[..., anchor_index, :]
     ma_pos = ref_body_pos_w[..., anchor_index, :]
     ma_quat = ref_body_quat_w[..., anchor_index, :]
-    rel_pos, rel_quat = reanchor_reference(ref_body_pos_w, ref_body_quat_w, ma_pos, ma_quat, ra_pos, ra_quat)
+    # By default the reference is reanchored to this (reward-state) robot anchor. M1's
+    # simulator reward cache is refreshed at the beginning of each control step, so its
+    # matching imagined reward supplies the pre-action anchor explicitly.
+    reanchor_pos = ra_pos if reanchor_pos_w is None else reanchor_pos_w
+    reanchor_quat = ra_quat if reanchor_quat_w is None else reanchor_quat_w
+    rel_pos, rel_quat = reanchor_reference(
+        ref_body_pos_w, ref_body_quat_w, ma_pos, ma_quat, reanchor_pos, reanchor_quat
+    )
 
     e_root_pos = ((ma_pos - ra_pos) ** 2).sum(-1)
     e_root_ori = _sq_quat_err(ma_quat, ra_quat)

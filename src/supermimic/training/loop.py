@@ -26,6 +26,17 @@ from supermimic.world_model.wm_trainer import WorldModelTrainer
 from supermimic.world_model.world_model import WorldModel
 
 
+M1_FIRST_PHASE_CLIPS = (
+    "a_wheel_000000",
+    "a_wheel_000002",
+    "b_arm_000006",
+    "c_assisted_000029",
+    "c_assisted_000039",
+    "c_assisted_000149",
+)
+M1_FIRST_PHASE_MANIFEST = Path("configs/m1_piper_first6.csv")
+
+
 class Trainer:
     def __init__(self, cfg: TrainConfig):
         self.cfg = cfg
@@ -41,6 +52,19 @@ class Trainer:
             raise ValueError("velocity_command is currently supported only for Go2")
         if cfg.env.anchor_obs is None:
             cfg.env.anchor_obs = robot_spec.name == "m1_piper"
+        if robot_spec.name == "m1_piper" and is_motion:
+            if cfg.data.library is not None:
+                raise ValueError("M1 packed libraries bypass the first-phase validated clip manifest")
+            if cfg.data.clips is None:
+                cfg.data.clips = list(M1_FIRST_PHASE_CLIPS)
+            unapproved = set(cfg.data.clips) - set(M1_FIRST_PHASE_CLIPS)
+            if unapproved:
+                raise ValueError(
+                    f"M1 first-phase training only allows clips from {M1_FIRST_PHASE_MANIFEST}: "
+                    f"{sorted(unapproved)}"
+                )
+            if cfg.data.manifest is None:
+                cfg.data.manifest = M1_FIRST_PHASE_MANIFEST
 
         # Build every network dimension from the selected robot/task while leaving the
         # default G1 values and initialization path unchanged.
@@ -102,7 +126,6 @@ class Trainer:
                 if any(not (npz_dir / f"{name}.npz").exists() for name in selected):
                     convert_m1_motion_bank(DEFAULT_BANK, npz_dir, names=selected)
                 cfg.data.npz_dir = npz_dir
-                cfg.data.manifest = None
             files = discover_npz(cfg.data.npz_dir, limit=cfg.data.limit, names=cfg.data.clips, manifest=cfg.data.manifest)
         if is_motion and not files:
             raise FileNotFoundError(f"no clips under {cfg.data.npz_dir}")
@@ -134,12 +157,18 @@ class Trainer:
         self.recorder = env.recorder_manager.get_term("replay")
         self.buffer = self.recorder.buffer
         robot = env.scene["robot"]
+        if tuple(robot.joint_names) != tuple(robot_spec.joint_names):
+            raise ValueError(
+                f"{robot_spec.name}: mjlab entity order {tuple(robot.joint_names)} "
+                f"does not match Actor/RobotSpec order {tuple(robot_spec.joint_names)}"
+            )
 
         fk = G1Kinematics(load_robot_spec_model(robot_spec.name), device=self.device)
         heads = AnalyticHeads(
             fk, robot_spec.tracked_body_names, robot_spec.anchor_body_name, robot_spec.root_body_name,
             robot.data.soft_joint_pos_limits[0].clone(), robot.data.default_joint_pos[0].clone(),
             default_base_height=robot_spec.default_base_height,
+            reward_anchor_at_start=robot_spec.name == "m1_piper",
         )
         self.wm = WorldModel(cfg.world_model, heads, self.device)
         self.policy = Policy(cfg.policy).to(self.device)

@@ -28,7 +28,11 @@ def split_state(s: torch.Tensor):
 
 
 def analytic_observation(
-    s: torch.Tensor, prev_action: torch.Tensor, xi: torch.Tensor, default_joint_pos: torch.Tensor
+    s: torch.Tensor,
+    prev_action: torch.Tensor,
+    xi: torch.Tensor,
+    default_joint_pos: torch.Tensor,
+    wheel_indices: tuple[int, ...] = (),
 ) -> torch.Tensor:
     """Noise-free 93-d proprioceptive observation (paper Table A.1) from state + context.
 
@@ -40,7 +44,13 @@ def analytic_observation(
     ang_b = s[..., 10 + nj:13 + nj]
     qd = s[..., 13 + nj:13 + 2 * nj]
     bias = xi[..., 1:1 + nj]
-    return torch.cat([q + bias - default_joint_pos, qd, ang_b, projected_gravity(root_quat), prev_action], dim=-1)
+    joint_pos_error = q + bias - default_joint_pos
+    if wheel_indices:
+        if any(i < 0 or i >= nj for i in wheel_indices):
+            raise ValueError(f"wheel indices {wheel_indices} are outside a {nj}-joint observation")
+        joint_pos_error = joint_pos_error.clone()
+        joint_pos_error[..., list(wheel_indices)] = 0.0
+    return torch.cat([joint_pos_error, qd, ang_b, projected_gravity(root_quat), prev_action], dim=-1)
 
 
 def anchor_relative_obs(robot_anchor_pos: torch.Tensor, robot_anchor_quat: torch.Tensor, ref_anchor_pos: torch.Tensor, ref_anchor_quat: torch.Tensor) -> torch.Tensor:
@@ -95,6 +105,7 @@ class AnalyticHeads:
         default_joint_pos: torch.Tensor,
         reward_cfg: TrackingRewardCfg | None = None,
         default_base_height: float = 0.76,
+        reward_anchor_at_start: bool = False,
     ):
         self.fk = fk
         self.tracked_idx = fk.body_indices(tracked_body_names)
@@ -105,6 +116,7 @@ class AnalyticHeads:
         self.num_joints = int(default_joint_pos.numel())
         self.default_base_height = float(default_base_height)
         self.reward_cfg = reward_cfg or TrackingRewardCfg()
+        self.reward_anchor_at_start = bool(reward_anchor_at_start)
 
     def robot_bodies(self, s: torch.Tensor) -> dict[str, torch.Tensor]:
         nq = 7 + self.num_joints
@@ -119,9 +131,22 @@ class AnalyticHeads:
             "root_quat": out["quat"][..., self.root_fk_index, :],
         }
 
-    def reward(self, s_next: torch.Tensor, action: torch.Tensor, prev_action: torch.Tensor, ref: ReferenceFrame, bodies=None):
+    def reward(
+        self,
+        s_next: torch.Tensor,
+        action: torch.Tensor,
+        prev_action: torch.Tensor,
+        ref: ReferenceFrame,
+        bodies=None,
+        anchor_state: torch.Tensor | None = None,
+    ):
         """Reward r_{t+1} of reaching s_next (= s_{t+1}) under target frame g_t. Returns dict with 'total'."""
         b = bodies if bodies is not None else self.robot_bodies(s_next)
+        reanchor_pos = reanchor_quat = None
+        if self.reward_anchor_at_start and anchor_state is not None:
+            anchor_bodies = self.robot_bodies(anchor_state)
+            reanchor_pos = anchor_bodies["pos"][..., self.anchor_index, :]
+            reanchor_quat = anchor_bodies["quat"][..., self.anchor_index, :]
         return tracking_reward_terms(
             robot_body_pos_w=b["pos"],
             robot_body_quat_w=b["quat"],
@@ -137,6 +162,8 @@ class AnalyticHeads:
             joint_pos=s_next[..., 7:7 + self.num_joints],
             soft_limits=self.soft_limits,
             cfg=self.reward_cfg,
+            reanchor_pos_w=reanchor_pos,
+            reanchor_quat_w=reanchor_quat,
         )
 
     @staticmethod

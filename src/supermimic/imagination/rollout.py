@@ -68,7 +68,14 @@ def imagine(
     def noisy(o):
         return _observation_noise(o, nj) if obs_noise else o
 
-    hist = [noisy(analytic_observation(start.hist_states[i], start.hist_actions[i], start.xi, q0)) for i in range(start.hist_states.shape[0])]
+    hist = [
+        noisy(
+            analytic_observation(
+                start.hist_states[i], start.hist_actions[i], start.xi, q0, wm.spec.wheel_indices
+            )
+        )
+        for i in range(start.hist_states.shape[0])
+    ]
     s = start.state
     frame = start.frame.clone()
     a_prev = start.prev_action

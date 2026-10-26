@@ -81,15 +81,31 @@ def load_robot_spec_model(name: str) -> mujoco.MjModel:
     else:
         model = _m1_urdf_spec(robot.model_path).compile()
 
-    names = tuple(
-        mujoco.mj_id2name(model, mujoco.mjtObj.mjOBJ_JOINT, i)
+    scalar_joints = sorted(
+        (
+            int(model.jnt_qposadr[i]),
+            int(model.jnt_dofadr[i]),
+            mujoco.mj_id2name(model, mujoco.mjtObj.mjOBJ_JOINT, i),
+        )
         for i in range(model.njnt)
         if model.jnt_type[i] != mujoco.mjtJoint.mjJNT_FREE
     )
+    names = tuple(name for _, _, name in scalar_joints)
     if model.nq != 7 + robot.num_joints or model.nv != 6 + robot.num_joints:
         raise ValueError(f"{robot.name}: compiled nq/nv={model.nq}/{model.nv}, expected {7 + robot.num_joints}/{6 + robot.num_joints}")
-    if set(names) != set(robot.joint_names):
+    if names != robot.joint_names:
+        if set(names) == set(robot.joint_names):
+            raise ValueError(
+                f"{robot.name}: compiled joint address order differs from RobotSpec; "
+                f"compiled={names}, spec={robot.joint_names}"
+            )
         raise ValueError(f"{robot.name}: URDF joints differ; missing={set(robot.joint_names)-set(names)}, extra={set(names)-set(robot.joint_names)}")
+    for i, (qadr, dadr, name) in enumerate(scalar_joints):
+        if qadr != 7 + i or dadr != 6 + i:
+            raise ValueError(
+                f"{robot.name}: non-contiguous scalar joint address for {name}: "
+                f"qpos={qadr}, qvel={dadr}, expected={7+i}/{6+i}"
+            )
     return model
 
 

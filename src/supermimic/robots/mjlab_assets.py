@@ -4,6 +4,10 @@ from __future__ import annotations
 
 import tempfile
 import xml.etree.ElementTree as ET
+import hashlib
+import math
+import shutil
+import subprocess
 from pathlib import Path
 
 import mujoco
@@ -15,36 +19,267 @@ def _name_unnamed_geoms(spec: mujoco.MjSpec) -> None:
     """The source Go2 URDF leaves collision geom names blank; name by owning link."""
     for body in spec.bodies:
         for i, geom in enumerate(body.geoms):
+            # Keep collision proxies in a viewer-hidden group. They remain active
+            # for physics, while the separately added visual mesh is what users see.
+            geom.group = 3
             if not geom.name:
                 suffix = "_collision" if len(body.geoms) == 1 else f"_collision_{i}"
                 geom.name = f"{body.name}{suffix}"
 
 
-def _m1_urdf_spec(path: Path) -> mujoco.MjSpec:
-    """Read the source M1 URDF without editing it; MuJoCo has no DAE decoder.
+def _stl_face_count(path: Path) -> int:
+    """Count triangles in either binary or ASCII STL without decoding the mesh."""
+    with path.open("rb") as stream:
+        header = stream.read(84)
+    if len(header) == 84:
+        count = int.from_bytes(header[80:84], "little")
+        if path.stat().st_size == 84 + count * 50:
+            return count
+    return path.read_bytes().lower().count(b"facet normal")
 
-    The vendor package also ships STL equivalents for the six moving Piper links.
-    The fixed gripper meshes have no STL counterpart, so their collision meshes are
-    omitted; their URDF inertial elements and the articulated arm remain intact.
-    """
+
+def _convert_visual_mesh(path: Path, *, max_faces: int = 160_000) -> Path:
+    """Convert DAE or an oversized STL visual to a MuJoCo-friendly OBJ."""
+    path = path.resolve()
+    fingerprint = f"v3:{path}:{path.stat().st_size}:{path.stat().st_mtime_ns}:{max_faces}"
+    key = hashlib.sha1(fingerprint.encode()).hexdigest()[:16]
+    cache_dir = Path.home() / ".cache" / "supermimic" / "dae_visuals"
+    output = cache_dir / f"{path.stem}_{key}.obj"
+    material = output.with_suffix(".mtl")
+    if output.is_file() and material.is_file():
+        return output
+
+    blender = shutil.which("blender")
+    if blender is None:
+        raise RuntimeError(
+            f"Cannot render URDF visual {path}: MuJoCo does not load DAE meshes and Blender was not found."
+        )
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    converter = r'''import bpy, sys
+from pathlib import Path
+args = sys.argv[sys.argv.index("--") + 1:]
+source, output, max_faces = Path(args[0]).resolve(), Path(args[1]).resolve(), int(args[2])
+bpy.ops.object.select_all(action="SELECT")
+bpy.ops.object.delete(use_global=False)
+if source.suffix.lower() == ".dae":
+    bpy.ops.wm.collada_import(filepath=str(source))
+else:
+    bpy.ops.import_mesh.stl(filepath=str(source))
+meshes = [o for o in bpy.context.scene.objects if o.type == "MESH"]
+if not meshes:
+    raise RuntimeError("Visual mesh contains no mesh objects: " + str(source))
+for obj in meshes:
+    if len(obj.data.polygons) > max_faces:
+        modifier = obj.modifiers.new(name="mujoco_visual_decimation", type="DECIMATE")
+        modifier.ratio = max_faces / len(obj.data.polygons)
+        bpy.context.view_layer.objects.active = obj
+        bpy.ops.object.modifier_apply(modifier=modifier.name)
+bpy.ops.object.select_all(action="DESELECT")
+for obj in meshes:
+    obj.select_set(True)
+bpy.context.view_layer.objects.active = meshes[0]
+bpy.ops.export_scene.obj(filepath=str(output), use_selection=True,
+                         use_materials=True, use_triangles=True,
+                         # Blender's default (-Z forward, Y up) preserves the
+                         # imported Collada vertex axes used by the URDF joints.
+                         axis_forward="-Z", axis_up="Y")
+'''
+    with tempfile.TemporaryDirectory(prefix="sm_dae_", dir=cache_dir) as tmp:
+        tmp_obj = Path(tmp) / output.name
+        script = Path(tmp) / "convert.py"
+        script.write_text(converter)
+        result = subprocess.run(
+            [blender, "-b", "--python", str(script), "--", str(path), str(tmp_obj), str(max_faces)],
+            capture_output=True,
+            text=True,
+        )
+        tmp_mtl = tmp_obj.with_suffix(".mtl")
+        if result.returncode != 0 or not tmp_obj.is_file() or not tmp_mtl.is_file():
+            raise RuntimeError(
+                f"Failed converting URDF visual mesh {path} with Blender:\n"
+                f"{result.stdout[-2000:]}\n{result.stderr[-2000:]}"
+            )
+        # Blender's OBJ refers to the matching MTL basename. Rename both only
+        # after a complete conversion so interrupted imports cannot leave a bad cache.
+        tmp_obj.replace(output)
+        tmp_mtl.replace(material)
+    return output
+
+
+def _renderable_visual_path(path: Path) -> Path:
+    suffix = path.suffix.lower()
+    if suffix == ".dae":
+        return _convert_visual_mesh(path)
+    if suffix == ".stl" and _stl_face_count(path) > 180_000:
+        return _convert_visual_mesh(path)
+    return path
+
+
+def _obj_diffuse_color(path: Path) -> tuple[float, float, float] | None:
+    """Read the primary diffuse color Blender exported from a Collada material."""
+    material_path = path.with_suffix(".mtl")
+    if not material_path.is_file():
+        return None
+    for line in material_path.read_text(errors="ignore").splitlines():
+        if line.startswith("Kd "):
+            values = tuple(float(value) for value in line.split()[1:4])
+            if len(values) == 3:
+                return values
+    return None
+
+
+def _urdf_xyz(text: str | None, default=(0.0, 0.0, 0.0)) -> tuple[float, float, float]:
+    if not text:
+        return default
+    values = tuple(float(value) for value in text.split())
+    if len(values) != 3:
+        raise ValueError(f"Expected three URDF coordinates, got {text!r}")
+    return values
+
+
+def _quat_from_urdf_rpy(rpy: tuple[float, float, float]) -> tuple[float, float, float, float]:
+    roll, pitch, yaw = rpy
+    cr, sr = math.cos(roll / 2), math.sin(roll / 2)
+    cp, sp = math.cos(pitch / 2), math.sin(pitch / 2)
+    cy, sy = math.cos(yaw / 2), math.sin(yaw / 2)
+    return (
+        cr * cp * cy + sr * sp * sy,
+        sr * cp * cy - cr * sp * sy,
+        cr * sp * cy + sr * cp * sy,
+        cr * cp * sy - sr * sp * cy,
+    )
+
+
+def _add_urdf_visuals(spec: mujoco.MjSpec, root: ET.Element, urdf_dir: Path) -> None:
+    """Add URDF visuals explicitly; MuJoCo's URDF reader imports collisions only."""
+    mesh_names: dict[tuple[Path, tuple[float, float, float]], str] = {}
+    for link in root.findall("link"):
+        body = spec.body(link.attrib["name"])
+        if body is None:
+            continue
+        for visual_index, visual in enumerate(link.findall("visual")):
+            geometry = visual.find("geometry")
+            if geometry is None:
+                continue
+            origin = visual.find("origin")
+            pos = _urdf_xyz(origin.attrib.get("xyz") if origin is not None else None)
+            quat = _quat_from_urdf_rpy(
+                _urdf_xyz(origin.attrib.get("rpy") if origin is not None else None)
+            )
+            color_node = visual.find("./material/color")
+            rgba = tuple(float(x) for x in color_node.attrib["rgba"].split()) if color_node is not None else (0.7, 0.7, 0.7, 1.0)
+            if len(rgba) != 4:
+                raise ValueError(f"{link.attrib['name']}: visual rgba must contain four values")
+
+            mesh_node = geometry.find("mesh")
+            if mesh_node is not None:
+                uri = Path(mesh_node.attrib["filename"])
+                mesh_path = uri if uri.is_absolute() else urdf_dir / uri
+                dae_visual = mesh_path.suffix.lower() == ".dae"
+                mesh_path = _renderable_visual_path(mesh_path.resolve())
+                # The Go2 URDF paints every Collada mesh white, while the DAE
+                # contains its actual part colors. Use the primary DAE material
+                # when there is no explicit URDF color or it is plain white.
+                if dae_visual and (
+                    color_node is None or all(abs(value - 1.0) < 1e-6 for value in rgba)
+                ):
+                    diffuse = _obj_diffuse_color(mesh_path)
+                    if diffuse is not None:
+                        rgba = (*diffuse, rgba[3])
+                scale = _urdf_xyz(mesh_node.attrib.get("scale"), (1.0, 1.0, 1.0))
+                mesh_key = (mesh_path, scale)
+                mesh_name = mesh_names.get(mesh_key)
+                if mesh_name is None:
+                    key = hashlib.sha1(f"{mesh_path}:{scale}".encode()).hexdigest()[:12]
+                    mesh_name = f"visual_mesh_{key}"
+                    spec.add_mesh(name=mesh_name, file=str(mesh_path), scale=scale, smoothnormal=1)
+                    mesh_names[mesh_key] = mesh_name
+                body.add_geom(
+                    name=f"visual_{link.attrib['name']}_{visual_index}",
+                    type=mujoco.mjtGeom.mjGEOM_MESH,
+                    meshname=mesh_name,
+                    pos=pos,
+                    quat=quat,
+                    contype=0,
+                    conaffinity=0,
+                    mass=0.0,
+                    rgba=rgba,
+                    group=1,
+                )
+                continue
+
+            box = geometry.find("box")
+            sphere = geometry.find("sphere")
+            cylinder = geometry.find("cylinder")
+            if box is not None:
+                size = tuple(value / 2 for value in _urdf_xyz(box.attrib["size"]))
+                geom_type = mujoco.mjtGeom.mjGEOM_BOX
+            elif sphere is not None:
+                size = (float(sphere.attrib["radius"]),)
+                geom_type = mujoco.mjtGeom.mjGEOM_SPHERE
+            elif cylinder is not None:
+                size = (float(cylinder.attrib["radius"]), float(cylinder.attrib["length"]) / 2)
+                geom_type = mujoco.mjtGeom.mjGEOM_CYLINDER
+            else:
+                continue
+            body.add_geom(
+                name=f"visual_{link.attrib['name']}_{visual_index}",
+                type=geom_type,
+                size=size,
+                pos=pos,
+                quat=quat,
+                contype=0,
+                conaffinity=0,
+                mass=0.0,
+                rgba=rgba,
+                group=1,
+            )
+
+
+def _go2_urdf_spec(path: Path) -> mujoco.MjSpec:
+    tree = ET.parse(path)
+    spec = mujoco.MjSpec.from_file(str(path))
+    _name_unnamed_geoms(spec)
+    # URDF loading sets this flag to drop visual-only geoms during compilation.
+    # We add supported visual meshes below, so retain them in the compiled model.
+    spec.compiler.discardvisual = False
+    spec.compiler.fusestatic = False
+    root_body = spec.body("base")
+    if root_body is None:
+        raise ValueError(f"{path}: expected base root body")
+    root_body.add_freejoint(name="root")
+    _add_urdf_visuals(spec, tree.getroot(), path.parent)
+    return spec
+
+
+def _m1_urdf_spec(path: Path) -> mujoco.MjSpec:
+    """Load M1 collisions and add its visual STL/Collada meshes separately."""
+    visual_root = ET.parse(path).getroot()
     tree = ET.parse(path)
     root = tree.getroot()
     for link in root.findall("link"):
+        # MuJoCo's URDF reader does not consume <visual>; add the original visual
+        # elements below after reading the collision model.
         for visual in list(link.findall("visual")):
             link.remove(visual)
         for collision in list(link.findall("collision")):
-            mesh = collision.find("./geometry/mesh")
-            if mesh is not None and Path(mesh.attrib["filename"]).suffix.lower() == ".dae":
-                if Path(mesh.attrib["filename"]).stem in {"J7", "J8", "gripper_base_100_v2"}:
-                    link.remove(collision)
-    for mesh in root.iter("mesh"):
-        relative = Path(mesh.attrib["filename"])
-        if relative.suffix.lower() == ".dae":
-            stem = relative.stem
-            if stem.startswith("J") and stem[1:].isdigit():
-                stem = f"Link{stem[1:]}"
-            relative = relative.parent.parent / f"{stem}.STL"
-        mesh.attrib["filename"] = str((path.parent / relative).resolve())
+            for mesh in collision.iter("mesh"):
+                relative = Path(mesh.attrib["filename"])
+                if relative.suffix.lower() == ".dae":
+                    stem = relative.stem
+                    if stem.startswith("J") and stem[1:].isdigit():
+                        stem = f"Link{stem[1:]}"
+                    stl = relative.parent.parent / f"{stem}.STL"
+                    candidate = (path.parent / stl).resolve()
+                    if candidate.is_file():
+                        mesh.attrib["filename"] = str(candidate)
+                    else:
+                        # Keep the prior M1 collision policy for the fixed gripper:
+                        # these fine DAE meshes are visual-only in this model.
+                        link.remove(collision)
+                        break
+                else:
+                    mesh.attrib["filename"] = str((path.parent / relative).resolve())
     with tempfile.NamedTemporaryFile(suffix=".urdf", mode="wb") as tmp:
         tree.write(tmp, encoding="utf-8", xml_declaration=True)
         tmp.flush()
@@ -56,8 +291,10 @@ def _m1_urdf_spec(path: Path) -> mujoco.MjSpec:
         raise ValueError(f"{path}: expected BASE_LINK root body")
     _name_unnamed_geoms(spec)
     # Keep fixed gripper links (notably link7/TCP) addressable for FK and validation.
+    spec.compiler.discardvisual = False
     spec.compiler.fusestatic = False
     root_body.add_freejoint(name="root")
+    _add_urdf_visuals(spec, visual_root, path.parent)
     return spec
 
 
@@ -69,15 +306,7 @@ def load_robot_spec_model(name: str) -> mujoco.MjModel:
 
         model = load_g1_model()
     elif robot.name == "go2":
-        spec = mujoco.MjSpec.from_file(str(robot.model_path))
-        _name_unnamed_geoms(spec)
-        # Preserve the fixed foot links so reward/FK code can address the actual feet.
-        spec.compiler.fusestatic = False
-        root = spec.body(robot.root_body_name)
-        if root is None:
-            raise ValueError(f"{robot.name}: no root body {robot.root_body_name!r}")
-        root.add_freejoint(name="root")
-        model = spec.compile()
+        model = _go2_urdf_spec(robot.model_path).compile()
     else:
         model = _m1_urdf_spec(robot.model_path).compile()
 
@@ -124,11 +353,7 @@ def get_robot_entity_cfg(name: str):
     default_pos = dict(zip(robot.joint_names, robot.default_joint_pos))
     if robot.name == "go2":
         def spec_fn():
-            spec = mujoco.MjSpec.from_file(str(robot.model_path))
-            _name_unnamed_geoms(spec)
-            spec.compiler.fusestatic = False
-            spec.body(robot.root_body_name).add_freejoint(name="root")
-            return spec
+            return _go2_urdf_spec(robot.model_path)
 
         actuators = (
             BuiltinPositionActuatorCfg(
@@ -165,7 +390,7 @@ def get_robot_entity_cfg(name: str):
                 stiffness=32.0, damping=1.0, effort_limit=100.0,
             ),
         )
-        collision_cfg = CollisionCfg(geom_names_expr=(".*",), contype=1, conaffinity=1, condim=3, priority=0)
+        collision_cfg = CollisionCfg(geom_names_expr=(r".*_collision.*",), contype=1, conaffinity=1, condim=3, priority=0)
 
     return EntityCfg(
         init_state=EntityCfg.InitialStateCfg(

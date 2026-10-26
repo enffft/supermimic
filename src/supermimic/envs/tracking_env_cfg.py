@@ -70,6 +70,8 @@ FOOT_GEOM_REGEX = r"^(left|right)_foot[1-7]_collision$"
 @dataclass
 class SuperMimicEnvCfgArgs:
     npz_files: list[str]
+    robot_name: str = "g1"
+    task_name: str = "motion_tracking"
     num_envs: int = 4096
     future_frames: int = 10
     history_length: int = 10
@@ -93,6 +95,10 @@ class SuperMimicEnvCfgArgs:
 
 
 def make_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
+    if a.robot_name.lower().replace("-", "_") != "g1" or a.task_name != "motion_tracking":
+        from supermimic.envs.multirobot_env_cfg import make_multirobot_env_cfg
+
+        return make_multirobot_env_cfg(a)
     # ---------------------------------------------------------------- observations
     noise = (lambda lo, hi: Unoise(n_min=lo, n_max=hi)) if a.obs_noise else (lambda lo, hi: None)
     policy_terms = {
@@ -243,6 +249,10 @@ def make_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
 
 
 def make_env(a: SuperMimicEnvCfgArgs, device: str = "cuda:0") -> ManagerBasedRlEnv:
+    if a.robot_name.lower().replace("-", "_") != "g1" or a.task_name != "motion_tracking":
+        from supermimic.envs.multirobot_env_cfg import make_multirobot_env
+
+        return make_multirobot_env(a, device=device)
     from mjlab.utils.torch import configure_torch_backends
 
     configure_torch_backends()

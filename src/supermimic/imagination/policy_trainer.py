@@ -10,6 +10,7 @@ from supermimic.data.replay_buffer import ReplayBuffer
 from supermimic.envs.mdp.motion_library import MotionLibrary
 from supermimic.imagination.objective import gae_targets, policy_objective
 from supermimic.imagination.rollout import ImagRollout, imagine
+from supermimic.imagination.tasks import MotionTrackingTask, VelocityCommandTask
 from supermimic.policy.nets import Critic, Policy
 from supermimic.training.distributed import allreduce_grads
 from supermimic.world_model.world_model import WorldModel
@@ -38,13 +39,21 @@ class PolicyTrainerCfg:
 
 
 class PolicyTrainer:
-    def __init__(self, wm: WorldModel, policy: Policy, critic: Critic, lib: MotionLibrary, cfg: PolicyTrainerCfg):
-        self.wm, self.policy, self.critic, self.lib, self.cfg = wm, policy, critic, lib, cfg
+    def __init__(self, wm: WorldModel, policy: Policy, critic: Critic, task: MotionTrackingTask | VelocityCommandTask | MotionLibrary, cfg: PolicyTrainerCfg):
+        if isinstance(task, MotionLibrary):
+            task = MotionTrackingTask(task, future_frames=cfg.future_frames, anchor_obs=cfg.anchor_obs)
+        self.wm, self.policy, self.critic, self.task, self.cfg = wm, policy, critic, task, cfg
+        self.lib = task.library if isinstance(task, MotionTrackingTask) else None
         self.opt = torch.optim.Adam(policy.parameters(), lr=cfg.lr, betas=cfg.betas)
         self.critic_opt = torch.optim.Adam(critic.parameters(), lr=cfg.critic_lr)
-        from supermimic.imagination.compiled import ImagStep
+        from supermimic.imagination.compiled import ImagStep, VelocityImagStep
 
-        self.step_fn = ImagStep(wm, lib.default_joint_pos, compile_mode=cfg.compile)
+        if isinstance(task, MotionTrackingTask):
+            self.step_fn = ImagStep(wm, task.library.default_joint_pos, compile_mode=cfg.compile)
+        else:
+            if task.default_joint_pos is None:
+                raise ValueError("VelocityCommandTask needs the robot default_joint_pos for analytic observations")
+            self.step_fn = VelocityImagStep(wm, task, task.default_joint_pos, compile_mode=cfg.compile)
 
     def set_lr(self, lr: float) -> None:
         for g in self.opt.param_groups:
@@ -59,28 +68,32 @@ class PolicyTrainer:
 
     def update(self, buffer: ReplayBuffer, xi_norm_fn=None) -> dict[str, float]:
         cfg = self.cfg
+        if isinstance(self.task, VelocityCommandTask) and not self.task.debug_objective:
+            raise RuntimeError("Go2 policy updates are disabled until a task reward is selected; use the diagnostic objective only in smoke tests")
         start = buffer.sample_starts(cfg.batch_size, cfg.history)
         xi_norm = self.wm.spec.normalize_xi(start.xi)
 
         # ---- actor: BPTT through the frozen world model ------------------------------------
         self.wm.requires_grad_(False)
         self.critic.requires_grad_(False)
-        ro = imagine(self.wm, self.policy, self.lib, start, cfg.horizon, cfg.future_frames, obs_noise=cfg.obs_noise, step_fn=self.step_fn, anchor_obs=cfg.anchor_obs)
-        feat, goals, e_root = self._critic_inputs(ro)
-        if cfg.use_critic:
-            v_H = self.critic(feat[-1], goals[-1], xi_norm, e_root[-1])
-        else:
-            v_H = None
-        J = policy_objective(ro, v_H, cfg.gamma)
-        loss = -J / cfg.horizon
-        self.opt.zero_grad(set_to_none=True)
-        loss.backward()
-        allreduce_grads(self.policy)
-        gn = torch.nn.utils.clip_grad_norm_(self.policy.parameters(), cfg.grad_clip_norm)
-        torch.nn.utils.clip_grad_value_(self.policy.parameters(), cfg.grad_clip_value)
-        self.opt.step()
-        self.wm.requires_grad_(True)
-        self.critic.requires_grad_(True)
+        try:
+            ro = imagine(self.wm, self.policy, self.task, start, cfg.horizon, cfg.future_frames, obs_noise=cfg.obs_noise, step_fn=self.step_fn, anchor_obs=cfg.anchor_obs)
+            feat, goals, e_root = self._critic_inputs(ro)
+            if cfg.use_critic:
+                v_H = self.critic(feat[-1], goals[-1], xi_norm, e_root[-1])
+            else:
+                v_H = None
+            J = policy_objective(ro, v_H, cfg.gamma)
+            loss = -J / cfg.horizon
+            self.opt.zero_grad(set_to_none=True)
+            loss.backward()
+            allreduce_grads(self.policy)
+            gn = torch.nn.utils.clip_grad_norm_(self.policy.parameters(), cfg.grad_clip_norm)
+            torch.nn.utils.clip_grad_value_(self.policy.parameters(), cfg.grad_clip_value)
+            self.opt.step()
+        finally:
+            self.wm.requires_grad_(True)
+            self.critic.requires_grad_(True)
 
         metrics = {
             "imag_objective": float(J.detach()),

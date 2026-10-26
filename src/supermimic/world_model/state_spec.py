@@ -37,15 +37,18 @@ from supermimic.kinematics.rotations import (
     rotvec_from_quat,
 )
 
-STATE_DIM = 71
-FEAT_DIM = 71
-DELTA_DIM = 70
-NJ = 29
+NJ = 29  # backwards-compatible G1 defaults; concrete specs use StateSpec.nj.
+STATE_DIM = 13 + 2 * NJ
+FEAT_DIM = STATE_DIM
+DELTA_DIM = 12 + 2 * NJ
 
 
 @dataclass
 class StateSpecCfg:
     dt: float = 0.02
+    num_joints: int = NJ
+    # Wheel coordinates are kept in the physical state but treated as angles in errors/features.
+    wheel_indices: tuple[int, ...] = ()
     # Nominal error scales (D3) for [root pos m, root rotvec rad, root lin vel m/s, root ang vel rad/s, joint pos rad, joint vel rad/s].
     err_scale: tuple[float, ...] = (0.05, 0.1, 0.5, 1.0, 0.1, 2.0)
     # Output scales of the dynamics head for [dv_h, dw_b, dqd, dp_h, dth_b, dq].
@@ -62,23 +65,44 @@ class StateSpec:
     def __init__(self, cfg: StateSpecCfg, device, dtype=torch.float32):
         self.cfg = cfg
         self.dt = cfg.dt
+        self.nj = int(cfg.num_joints)
+        self.state_dim = 13 + 2 * self.nj
+        self.feat_dim = self.state_dim
+        self.delta_dim = 12 + 2 * self.nj
         rep = lambda scales, sizes: torch.cat([torch.full((n,), float(s)) for s, n in zip(scales, sizes)])  # noqa: E731
-        self.err_scale = rep(cfg.err_scale, (3, 3, 3, 3, NJ, NJ)).to(device=device, dtype=dtype)
-        self.out_scale = rep(cfg.out_scale, (3, 3, NJ, 3, 3, NJ)).to(device=device, dtype=dtype)
-        self.in_scale = rep(cfg.in_scale, (1, 6, 3, 3, NJ, NJ)).to(device=device, dtype=dtype)
-        self.xi_offset = torch.tensor(cfg.xi_offset, device=device, dtype=dtype)
-        self.xi_scale = torch.tensor(cfg.xi_scale, device=device, dtype=dtype)
+        self.err_scale = rep(cfg.err_scale, (3, 3, 3, 3, self.nj, self.nj)).to(device=device, dtype=dtype)
+        self.out_scale = rep(cfg.out_scale, (3, 3, self.nj, 3, 3, self.nj)).to(device=device, dtype=dtype)
+        self.in_scale = rep(cfg.in_scale, (1, 6, 3, 3, self.nj, self.nj)).to(device=device, dtype=dtype)
+        # Context is [friction, one encoder bias per joint, COM offset xyz].  Adapt the
+        # historical 29-joint defaults without changing the G1 numerical path.
+        xi_dim = self.nj + 4
+        if len(cfg.xi_offset) == 33 and self.nj != 29:
+            xi_offset = cfg.xi_offset[:1] + (0.0,) * self.nj + cfg.xi_offset[-3:]
+            xi_scale = cfg.xi_scale[:1] + (0.01,) * self.nj + cfg.xi_scale[-3:]
+        else:
+            xi_offset, xi_scale = cfg.xi_offset, cfg.xi_scale
+        if len(xi_offset) != xi_dim or len(xi_scale) != xi_dim:
+            raise ValueError(f"xi normalization must have {xi_dim} entries for {self.nj} joints")
+        self.xi_offset = torch.tensor(xi_offset, device=device, dtype=dtype)
+        self.xi_scale = torch.tensor(xi_scale, device=device, dtype=dtype)
+        self.wheel_indices = tuple(int(i) for i in cfg.wheel_indices)
+        if any(i < 0 or i >= self.nj for i in self.wheel_indices):
+            raise ValueError("wheel_indices must refer to a joint in the state")
 
     # ------------------------------------------------------------------ split / features
 
-    @staticmethod
-    def split(s: torch.Tensor):
-        return s[..., 0:3], s[..., 3:7], s[..., 7:36], s[..., 36:39], s[..., 39:42], s[..., 42:71]
+    def split(self, s: torch.Tensor):
+        j = 7 + self.nj
+        return s[..., 0:3], s[..., 3:7], s[..., 7:j], s[..., j:j + 3], s[..., j + 3:j + 6], s[..., j + 6:j + 6 + self.nj]
 
     def canonical(self, s: torch.Tensor) -> torch.Tensor:
-        """Heading-invariant, scaled network input features (…, 71)."""
+        """Heading-invariant, scaled network input features (…, 13+2*nj)."""
         p, q, qj, v, w, qd = self.split(s)
         q = quat_normalize(q)
+        if self.wheel_indices:
+            wi = torch.as_tensor(self.wheel_indices, device=qj.device)
+            qj = qj.clone()
+            qj[..., wi] = torch.atan2(torch.sin(qj[..., wi]), torch.cos(qj[..., wi]))
         hq = heading_quat(q)
         q_local = quat_canonical(quat_mul(quat_apply_inverse_quat(hq), q))
         v_h = quat_apply_inverse(hq, v)
@@ -93,7 +117,8 @@ class StateSpec:
     def integrate(self, s: torch.Tensor, delta: torch.Tensor) -> torch.Tensor:
         """Apply the (unscaled) network output ``delta`` (…, 70) to state ``s`` (…, 71)."""
         d = delta * self.out_scale
-        dv_h, dw_b, dqd, dp_h, dth_b, dq = d[..., 0:3], d[..., 3:6], d[..., 6:35], d[..., 35:38], d[..., 38:41], d[..., 41:70]
+        j = self.nj
+        dv_h, dw_b, dqd, dp_h, dth_b, dq = d[..., 0:3], d[..., 3:6], d[..., 6:6+j], d[..., 6+j:9+j], d[..., 9+j:12+j], d[..., 12+j:12+2*j]
         p, q, qj, v, w, qd = self.split(s)
         q = quat_normalize(q)
         hq = heading_quat(q)
@@ -115,7 +140,12 @@ class StateSpec:
         q1 = quat_normalize(q1)
         q2 = quat_normalize(q2)
         rot_err = rotvec_from_quat(quat_mul(quat_apply_inverse_quat(q2), q1))
-        err = torch.cat([p1 - p2, rot_err, v1 - v2, w1 - w2, qj1 - qj2, qd1 - qd2], dim=-1)
+        qj_err = qj1 - qj2
+        if self.wheel_indices:
+            wi = torch.as_tensor(self.wheel_indices, device=qj_err.device)
+            qj_err = qj_err.clone()
+            qj_err[..., wi] = torch.atan2(torch.sin(qj_err[..., wi]), torch.cos(qj_err[..., wi]))
+        err = torch.cat([p1 - p2, rot_err, v1 - v2, w1 - w2, qj_err, qd1 - qd2], dim=-1)
         return err / self.err_scale
 
     def normalized_sq_error(self, s_pred: torch.Tensor, s_true: torch.Tensor) -> torch.Tensor:

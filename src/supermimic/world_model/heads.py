@@ -34,8 +34,12 @@ def analytic_observation(
 
     xi[..., 1:30] is the encoder bias: observed joint positions are ``q + bias - q0``.
     """
-    _, root_quat, q, _, ang_b, qd = split_state(s)
-    bias = xi[..., 1:30]
+    nj = prev_action.shape[-1]
+    q = s[..., 7:7 + nj]
+    root_quat = s[..., 3:7]
+    ang_b = s[..., 10 + nj:13 + nj]
+    qd = s[..., 13 + nj:13 + 2 * nj]
+    bias = xi[..., 1:1 + nj]
     return torch.cat([q + bias - default_joint_pos, qd, ang_b, projected_gravity(root_quat), prev_action], dim=-1)
 
 
@@ -54,12 +58,13 @@ def anchor_relative_obs(robot_anchor_pos: torch.Tensor, robot_anchor_quat: torch
 ANCHOR_OBS_DIM = 9
 
 
-def flatten_history_term_major(hist: torch.Tensor) -> torch.Tensor:
+def flatten_history_term_major(hist: torch.Tensor, num_joints: int | None = None) -> torch.Tensor:
     """(H, N, 93) oldest→newest  ->  (N, 930) in mjlab's term-major layout [A_t0..A_tH-1, B_t0..]."""
     H, N, _ = hist.shape
+    nj = num_joints or ((hist.shape[-1] - 6) // 3)
     chunks = []
     start = 0
-    for _, d in OBS_TERMS:
+    for d in (nj, nj, 3, 3, nj):
         chunks.append(hist[:, :, start : start + d].permute(1, 0, 2).reshape(N, H * d))
         start += d
     return torch.cat(chunks, dim=-1)
@@ -89,6 +94,7 @@ class AnalyticHeads:
         soft_limits: torch.Tensor,
         default_joint_pos: torch.Tensor,
         reward_cfg: TrackingRewardCfg | None = None,
+        default_base_height: float = 0.76,
     ):
         self.fk = fk
         self.tracked_idx = fk.body_indices(tracked_body_names)
@@ -96,10 +102,13 @@ class AnalyticHeads:
         self.root_fk_index = fk.body_index(root_body_name)
         self.soft_limits = soft_limits
         self.default_joint_pos = default_joint_pos
+        self.num_joints = int(default_joint_pos.numel())
+        self.default_base_height = float(default_base_height)
         self.reward_cfg = reward_cfg or TrackingRewardCfg()
 
     def robot_bodies(self, s: torch.Tensor) -> dict[str, torch.Tensor]:
-        out = self.fk(s[..., :36], s[..., 36:])
+        nq = 7 + self.num_joints
+        out = self.fk(s[..., :nq], s[..., nq:])
         idx = self.tracked_idx
         return {
             "pos": out["pos"][..., idx, :],
@@ -125,7 +134,7 @@ class AnalyticHeads:
             anchor_index=self.anchor_index,
             action=action,
             prev_action=prev_action,
-            joint_pos=s_next[..., 7:36],
+            joint_pos=s_next[..., 7:7 + self.num_joints],
             soft_limits=self.soft_limits,
             cfg=self.reward_cfg,
         )
@@ -137,6 +146,13 @@ class AnalyticHeads:
         tilt = quat_apply_inverse(ref.root_quat_w, g)[..., 2] - quat_apply_inverse(root_quat, g)[..., 2]
         height = ref.root_pos_w[..., 2] - root_pos[..., 2]
         return torch.stack([height, tilt], dim=-1)
+
+    @staticmethod
+    def free_termination_features(root_pos: torch.Tensor, root_quat: torch.Tensor, base_height: float) -> torch.Tensor:
+        """Reference-free failure features: height error and gravity-axis tilt from upright."""
+        g = torch.tensor([0.0, 0.0, -1.0], dtype=root_quat.dtype, device=root_quat.device).expand(root_quat.shape[:-1] + (3,))
+        gravity_z = quat_apply_inverse(root_quat, g)[..., 2]
+        return torch.stack([base_height - root_pos[..., 2], 1.0 + gravity_z], dim=-1)
 
     def terminated(self, s: torch.Tensor, ref: ReferenceFrame, height_thr: float = 0.25, tilt_thr: float = 0.8) -> torch.Tensor:
         f = self.termination_features(s[..., 0:3], s[..., 3:7], ref)  # pelvis == free-joint root

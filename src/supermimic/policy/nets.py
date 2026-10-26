@@ -8,7 +8,6 @@ import torch
 import torch.nn as nn
 
 from supermimic.world_model.dynamics import MLP
-from supermimic.world_model.heads import OBS_TERMS
 
 GOAL_DIM = 680
 LATENT_DIM = 32
@@ -21,12 +20,15 @@ class PolicyCfg:
     decoder_hidden: tuple[int, ...] = (2048, 1024, 512, 256)
     latent_dim: int = LATENT_DIM
     history: int = 10
+    num_joints: int = 29
     # Fixed per-term observation scales (divide): joint_pos, joint_vel, base_ang_vel, projected_gravity, actions.
     obs_term_scale: tuple[float, ...] = (1.0, 5.0, 2.0, 1.0, 1.0)
     # Fixed goal feature scales: joint_pos 29, joint_vel 29, grav 3, ang_vel_b 3, lin_vel_h 3, height 1.
     goal_term_scale: tuple[float, ...] = (1.0, 5.0, 1.0, 2.0, 1.0, 1.0)
+    goal_term_sizes: tuple[int, ...] = (29, 29, 3, 3, 3, 1)
     decoder_last_gain: float = 0.01
     goal_dim: int = GOAL_DIM  # 680 (+9 with anchor_obs)
+    goal_interface: str = "motion"
 
 
 @dataclass
@@ -36,15 +38,18 @@ class CriticCfg:
 
 def _obs_scale_vector(cfg: PolicyCfg) -> torch.Tensor:
     parts = []
-    for (name, d), s in zip(OBS_TERMS, cfg.obs_term_scale):
+    sizes = (cfg.num_joints, cfg.num_joints, 3, 3, cfg.num_joints)
+    for d, s in zip(sizes, cfg.obs_term_scale):
         parts.append(torch.full((cfg.history * d,), 1.0 / s))
     return torch.cat(parts)  # term-major layout matches the flattened history
 
 
 def _goal_scale_vector(cfg: PolicyCfg, goal_dim: int) -> torch.Tensor:
-    sizes = (29, 29, 3, 3, 3, 1)
+    sizes = cfg.goal_term_sizes
+    if len(sizes) != len(cfg.goal_term_scale) or sum(sizes) == 0:
+        raise ValueError("goal_term_sizes and goal_term_scale must describe a non-empty goal layout")
     per_frame = torch.cat([torch.full((n,), 1.0 / s) for n, s in zip(sizes, cfg.goal_term_scale)])
-    k, extra = divmod(goal_dim, 68)
+    k, extra = divmod(goal_dim, sum(sizes))
     return torch.cat([per_frame.repeat(k), torch.ones(extra)])
 
 
@@ -60,9 +65,11 @@ class MotionEncoder(nn.Module):
 
 
 class Decoder(nn.Module):
-    def __init__(self, cfg: PolicyCfg, obs_dim: int = 930):
+    def __init__(self, cfg: PolicyCfg, obs_dim: int | None = None, act_dim: int | None = None):
         super().__init__()
-        self.mlp = MLP(cfg.latent_dim + obs_dim, cfg.decoder_hidden, ACT_DIM, last_gain=cfg.decoder_last_gain)
+        obs_dim = obs_dim or cfg.history * (3 * cfg.num_joints + 6)
+        act_dim = act_dim or cfg.num_joints
+        self.mlp = MLP(cfg.latent_dim + obs_dim, cfg.decoder_hidden, act_dim, last_gain=cfg.decoder_last_gain)
         self.register_buffer("scale", _obs_scale_vector(cfg))
 
     def forward(self, z: torch.Tensor, obs_hist: torch.Tensor) -> torch.Tensor:
@@ -75,10 +82,11 @@ class Policy(nn.Module):
     def __init__(self, cfg: PolicyCfg):
         super().__init__()
         self.cfg = cfg
-        self.encoders = nn.ModuleDict({"motion": MotionEncoder(cfg)})
+        self.encoders = nn.ModuleDict({cfg.goal_interface: MotionEncoder(cfg)})
         self.decoder = Decoder(cfg)
 
-    def forward(self, obs_hist: torch.Tensor, goal: torch.Tensor, interface: str = "motion") -> torch.Tensor:
+    def forward(self, obs_hist: torch.Tensor, goal: torch.Tensor, interface: str | None = None) -> torch.Tensor:
+        interface = interface or self.cfg.goal_interface
         return self.decoder(self.encoders[interface](goal), obs_hist)
 
 

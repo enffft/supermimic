@@ -22,6 +22,8 @@ class DataCfg:
 
 @dataclass
 class EnvCfg:
+    robot_name: str = "g1"  # g1 | go2 | m1_piper
+    task_name: str = "motion_tracking"  # motion_tracking | velocity_command
     num_envs: int = 4096
     episode_length_s: float = 10.0
     action_noise_std: float = 0.1
@@ -30,9 +32,11 @@ class EnvCfg:
     domain_randomization: bool = True
     sampling_mode: str = "return"
     replay_capacity: int = 1000
+    history_length: int = 10
     future_frames: int = 10
     compact_library: bool = False
-    anchor_obs: bool = False
+    anchor_obs: bool | None = None  # default: enabled for M1, disabled for G1/Go2
+    velocity_debug_objective: bool = False  # smoke-test only; not a selected Go2 reward
 
 
 @dataclass

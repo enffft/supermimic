@@ -33,7 +33,16 @@ class DynamicsMLP(nn.Module):
 
     def __init__(self, feat_dim: int = 71, act_dim: int = 29, xi_dim: int = 33, hidden=(2048, 2048, 2048), out_dim: int = 70):
         super().__init__()
+        self.feat_dim = feat_dim
+        self.act_dim = act_dim
+        self.xi_dim = xi_dim
+        self.out_dim = out_dim
         self.mlp = MLP(feat_dim + act_dim + xi_dim, tuple(hidden), out_dim, zero_last=True)
 
     def forward(self, feat: torch.Tensor, action: torch.Tensor, xi_norm: torch.Tensor) -> torch.Tensor:
+        if feat.shape[-1] != self.feat_dim or action.shape[-1] != self.act_dim or xi_norm.shape[-1] != self.xi_dim:
+            raise ValueError(
+                f"DynamicsMLP expected (...,{self.feat_dim})+(...,{self.act_dim})+(...,{self.xi_dim}), "
+                f"got {feat.shape}, {action.shape}, {xi_norm.shape}"
+            )
         return self.mlp(torch.cat([feat, action, xi_norm], dim=-1))

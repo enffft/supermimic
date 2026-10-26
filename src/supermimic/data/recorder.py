@@ -19,8 +19,8 @@ import torch
 from mjlab.managers.recorder_manager import RecorderTerm, RecorderTermCfg
 
 from supermimic.data.replay_buffer import ReplayBuffer
-from supermimic.envs.sim_context import XI_DIM, SimContext
-from supermimic.envs.state_io import STATE_DIM, StateIO
+from supermimic.envs.sim_context import SimContext
+from supermimic.envs.state_io import StateIO
 
 if TYPE_CHECKING:
     from mjlab.envs import ManagerBasedRlEnv
@@ -34,10 +34,15 @@ class ReplayRecorder(RecorderTerm):
         self.ctx = SimContext(env, p["foot_geom_regex"], p.get("com_body_name", "torso_link"))
         self.command_name = p.get("command_name", "motion")
         self.action_name = p.get("action_name", "joint_pos")
+        self.goal_dim = int(p.get("goal_dim", 0))
         n = env.num_envs
-        self.buffer = ReplayBuffer(n, int(p["capacity"]), STATE_DIM, 29, XI_DIM, env.device)
-        self.prev_s = torch.zeros(n, STATE_DIM, device=env.device)
-        self.prev_xi = torch.zeros(n, XI_DIM, device=env.device)
+        self.state_dim = self.state_io.state_dim
+        self.act_dim = int(env.action_manager.total_action_dim)
+        self.xi_dim = self.ctx.xi_dim
+        self.buffer = ReplayBuffer(n, int(p["capacity"]), self.state_dim, self.act_dim, self.xi_dim, env.device, self.goal_dim)
+        self.prev_s = torch.zeros(n, self.state_dim, device=env.device)
+        self.prev_xi = torch.zeros(n, self.xi_dim, device=env.device)
+        self.prev_goal = torch.zeros(n, self.goal_dim, device=env.device) if self.goal_dim else None
         self.prev_frame = torch.zeros(n, dtype=torch.long, device=env.device)
         self.prev_clip = torch.zeros(n, dtype=torch.long, device=env.device)
         self.ep_start = torch.ones(n, dtype=torch.bool, device=env.device)
@@ -56,8 +61,15 @@ class ReplayRecorder(RecorderTerm):
         cmd = self.command
         self.prev_s[ids] = self.state_io.read()[ids]
         self.prev_xi[ids] = self.ctx.read()[ids]
-        self.prev_frame[ids] = cmd.frame[ids]
-        self.prev_clip[ids] = cmd.library.frame_clip[cmd.frame[ids]]
+        frame = getattr(cmd, "frame", None)
+        self.prev_frame[ids] = frame[ids] if frame is not None else 0
+        lib = getattr(cmd, "library", None)
+        self.prev_clip[ids] = lib.frame_clip[frame[ids]] if lib is not None and frame is not None else 0
+        if self.prev_goal is not None:
+            goal = getattr(cmd, "goal", None)
+            if goal is None or goal.shape[-1] != self.goal_dim:
+                raise ValueError(f"command {self.command_name!r} must expose a {self.goal_dim}-D goal")
+            self.prev_goal[ids] = goal[ids]
 
     def record_post_reset(self, env_ids: torch.Tensor) -> None:
         if not self.enabled:
@@ -79,6 +91,7 @@ class ReplayRecorder(RecorderTerm):
             clip=self.prev_clip[ids],
             terminal=torch.zeros_like(done_next, dtype=torch.bool),
             ep_start=self.ep_start[ids],
+            goal=self.prev_goal[ids] if self.prev_goal is not None else None,
         )
         self.ep_start[ids] = False
 
@@ -91,7 +104,11 @@ class ReplayRecorder(RecorderTerm):
         # Terminal row: the state reached by the last action (no transition out of it).
         cmd = self.command
         s_next = self.state_io.read()[env_ids]
-        zeros_a = torch.zeros(env_ids.numel(), 29, device=env.device)
+        zeros_a = torch.zeros(env_ids.numel(), self.act_dim, device=env.device)
+        frame = getattr(cmd, "frame", None)
+        frame = frame[env_ids] if frame is not None else torch.zeros(env_ids.numel(), dtype=torch.long, device=env.device)
+        lib = getattr(cmd, "library", None)
+        clip = lib.frame_clip[frame] if lib is not None else torch.zeros_like(frame)
         self.buffer.add(
             env_ids,
             s=s_next,
@@ -100,10 +117,11 @@ class ReplayRecorder(RecorderTerm):
             xi=self.prev_xi[env_ids],
             r=torch.zeros(env_ids.numel(), device=env.device),
             done=terminated,
-            frame=cmd.frame[env_ids],
-            clip=cmd.library.frame_clip[cmd.frame[env_ids]],
+            frame=frame,
+            clip=clip,
             terminal=torch.ones(env_ids.numel(), dtype=torch.bool, device=env.device),
             ep_start=torch.zeros(env_ids.numel(), dtype=torch.bool, device=env.device),
+            goal=self.prev_goal[env_ids] if self.prev_goal is not None else None,
         )
         self.buffer.end_episode(env_ids)
 

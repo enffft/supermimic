@@ -30,8 +30,8 @@ import torch
 
 from supermimic.kinematics.rotations import projected_gravity, quat_apply_inverse, yaw_quat
 
-GOAL_FEAT_DIM = 68
-REF_DIM = 71
+GOAL_FEAT_DIM = 68  # G1 compatibility constant.
+REF_DIM = 71  # G1 compatibility constant.
 
 
 @dataclass
@@ -63,13 +63,19 @@ class RefBodies:
     ang_vel_w: torch.Tensor  # (N,B,3)
 
 
-def goal_features(ref: RefState, default_joint_pos: torch.Tensor) -> torch.Tensor:
+def goal_features(ref: RefState, default_joint_pos: torch.Tensor, joint_indices: torch.Tensor | None = None) -> torch.Tensor:
     q = ref.root_quat_w
     grav = projected_gravity(q)
     ang_b = quat_apply_inverse(q, ref.root_ang_vel_w)
     lin_h = quat_apply_inverse(yaw_quat(q), ref.root_lin_vel_w)
     height = ref.root_pos_w[..., 2:3]
-    return torch.cat([ref.joint_pos - default_joint_pos, ref.joint_vel, grav, ang_b, lin_h, height], dim=-1)
+    if joint_indices is not None:
+        ref_pos = ref.joint_pos[..., joint_indices]
+        ref_vel = ref.joint_vel[..., joint_indices]
+        default_joint_pos = default_joint_pos[joint_indices]
+    else:
+        ref_pos, ref_vel = ref.joint_pos, ref.joint_vel
+    return torch.cat([ref_pos - default_joint_pos, ref_vel, grav, ang_b, lin_h, height], dim=-1)
 
 
 class MotionLibrary:
@@ -83,6 +89,10 @@ class MotionLibrary:
         bin_frames: int = 50,
         compact: bool = False,
         store_dtype: torch.dtype = torch.float16,
+        joint_names: tuple[str, ...] | None = None,
+        goal_joint_names: tuple[str, ...] | None = None,
+        root_body_name: str = "pelvis",
+        fk_model=None,
     ):
         self.device = torch.device(device)
         self.dtype = dtype
@@ -96,6 +106,18 @@ class MotionLibrary:
         else:
             q0 = torch.as_tensor(np.asarray(default_joint_pos), dtype=dtype, device=self.device).reshape(-1)
         self.default_joint_pos = q0
+        self.joint_names = tuple(joint_names) if joint_names is not None else None
+        self.goal_joint_names = tuple(goal_joint_names) if goal_joint_names is not None else None
+        self.root_body_name = root_body_name
+        self.num_joints = int(q0.numel())
+        if self.goal_joint_names is not None:
+            if self.joint_names is None:
+                raise ValueError("joint_names is required when goal_joint_names is provided")
+            self.goal_joint_indices = torch.tensor([self.joint_names.index(n) for n in self.goal_joint_names], device=self.device, dtype=torch.long)
+        else:
+            self.goal_joint_indices = None
+        self.goal_feat_dim = 2 * (len(self.goal_joint_names) if self.goal_joint_names is not None else self.num_joints) + 10
+        self.ref_dim = 13 + 2 * self.num_joints
 
         clips: list[ClipInfo] = []
         start = 0
@@ -115,7 +137,7 @@ class MotionLibrary:
                 if body_idx is None:
                     names = [str(n) for n in d["body_names"]]
                     body_idx = np.array([names.index(n) for n in self.body_names])
-                    root_idx = names.index("pelvis")
+                    root_idx = names.index(self.root_body_name)
                 n = int(d["joint_pos"].shape[0])
                 bp, bq, blv, bav = d["body_pos_w"], d["body_quat_w"], d["body_lin_vel_w"], d["body_ang_vel_w"]
                 ref = np.concatenate(
@@ -135,7 +157,8 @@ class MotionLibrary:
 
         if ref_chunks is not None:
             ref_np = np.concatenate(ref_chunks, 0)
-            assert ref_np.shape[1] == REF_DIM
+            if ref_np.shape[1] != self.ref_dim:
+                raise ValueError(f"reference state dim {ref_np.shape[1]} != expected {self.ref_dim}")
             self._ref = torch.as_tensor(ref_np, device=self.device, dtype=store_dtype if compact else dtype)
             del ref_np, ref_chunks
         if not compact:
@@ -145,12 +168,14 @@ class MotionLibrary:
             self.body_lin_vel_w = t(body_chunks["lin"])
             self.body_ang_vel_w = t(body_chunks["ang"])
             del body_chunks
-            self.goal_feat = goal_features(self._split(self._ref), q0)
+            self.goal_feat = goal_features(self._split(self._ref), q0, self.goal_joint_indices)
         else:
-            from supermimic.data.motion_convert import load_g1_model
             from supermimic.kinematics.g1_fk import G1Kinematics
 
-            self._fk = G1Kinematics(load_g1_model(), device=self.device, dtype=dtype)
+            if fk_model is None:
+                from supermimic.data.motion_convert import load_g1_model
+                fk_model = load_g1_model()
+            self._fk = G1Kinematics(fk_model, device=self.device, dtype=dtype)
             self._tracked_idx = self._fk.body_indices(self.body_names)
 
         self.clip_start = torch.tensor([c.start for c in clips], device=self.device, dtype=torch.long)
@@ -169,14 +194,16 @@ class MotionLibrary:
 
     # ------------------------------------------------------------------ per-frame access
 
-    @staticmethod
-    def _split(r: torch.Tensor) -> RefState:
-        return RefState(r[..., 0:3], r[..., 3:7], r[..., 7:36], r[..., 36:39], r[..., 39:42], r[..., 42:71])
+    def _split(self, r: torch.Tensor) -> RefState:
+        nj = self.num_joints
+        q0 = 7 + nj
+        return RefState(r[..., 0:3], r[..., 3:7], r[..., 7:q0], r[..., q0:q0 + 3], r[..., q0 + 3:q0 + 6], r[..., q0 + 6:q0 + 6 + nj])
 
     def ref(self, frame: torch.Tensor) -> RefState:
         return self._split(self._ref[frame].to(self.dtype))
 
     def ref71(self, frame: torch.Tensor) -> torch.Tensor:
+        """Return the packed root/joint reference state (G1's historical method name)."""
         return self._ref[frame].to(self.dtype)
 
     def bodies(self, frame: torch.Tensor) -> RefBodies:
@@ -200,19 +227,19 @@ class MotionLibrary:
 
     @property
     def joint_pos(self) -> torch.Tensor:
-        return self._ref[:, 7:36].to(self.dtype)
+        return self._ref[:, 7:7 + self.num_joints].to(self.dtype)
 
     @property
     def root_lin_vel_w(self) -> torch.Tensor:
-        return self._ref[:, 36:39].to(self.dtype)
+        return self._ref[:, 7 + self.num_joints:10 + self.num_joints].to(self.dtype)
 
     @property
     def root_ang_vel_w(self) -> torch.Tensor:
-        return self._ref[:, 39:42].to(self.dtype)
+        return self._ref[:, 10 + self.num_joints:13 + self.num_joints].to(self.dtype)
 
     @property
     def joint_vel(self) -> torch.Tensor:
-        return self._ref[:, 42:71].to(self.dtype)
+        return self._ref[:, 13 + self.num_joints:13 + 2 * self.num_joints].to(self.dtype)
 
     # ------------------------------------------------------------------ queries
 
@@ -229,12 +256,12 @@ class MotionLibrary:
         offs = torch.arange(k, device=self.device)
         idx = torch.minimum(frame[:, None] + offs[None, :], last[:, None])  # (N,k)
         if not self.compact:
-            return self.goal_feat[idx].reshape(frame.shape[0], k * GOAL_FEAT_DIM)
-        feat = goal_features(self.ref(idx.reshape(-1)), self.default_joint_pos)
-        return feat.reshape(frame.shape[0], k * GOAL_FEAT_DIM)
+            return self.goal_feat[idx].reshape(frame.shape[0], k * self.goal_feat_dim)
+        feat = goal_features(self.ref(idx.reshape(-1)), self.default_joint_pos, self.goal_joint_indices)
+        return feat.reshape(frame.shape[0], k * self.goal_feat_dim)
 
     def ref_qpos_qvel(self, frame: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
-        """MuJoCo-layout reference state: qpos (N,36) and qvel (N,35; root ang vel in body frame)."""
+        """MuJoCo-layout root/joint arrays; root angular velocity is stored in world frame."""
         r = self.ref(frame)
         qpos = torch.cat([r.root_pos_w, r.root_quat_w, r.joint_pos], dim=-1)
         ang_b = quat_apply_inverse(r.root_quat_w, r.root_ang_vel_w)

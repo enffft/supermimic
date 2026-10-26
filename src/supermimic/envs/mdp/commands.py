@@ -54,6 +54,8 @@ class MultiClipMotionCommand(CommandTerm):
         self.library = MotionLibrary(
             cfg.npz_files, cfg.body_names, default_joint_pos, device=self.device, bin_frames=cfg.bin_frames,
             compact=cfg.compact_library, store_dtype=torch.float16 if cfg.library_fp16 else torch.float32,
+            joint_names=tuple(self.robot.joint_names), goal_joint_names=cfg.goal_joint_names,
+            root_body_name=cfg.root_body_name,
         )
         print(f"[INFO] {self.library.summary()}")
         lib = self.library
@@ -400,6 +402,7 @@ class MultiClipMotionCommandCfg(CommandTermCfg):
     anchor_body_name: str
     root_body_name: str = "pelvis"
     body_names: tuple[str, ...]
+    goal_joint_names: tuple[str, ...] | None = None
     entity_name: str = "robot"
     future_frames: int = 10
     bin_frames: int = 50
@@ -424,3 +427,46 @@ class MultiClipMotionCommandCfg(CommandTermCfg):
 
     def build(self, env: ManagerBasedRlEnv) -> MultiClipMotionCommand:
         return MultiClipMotionCommand(self, env)
+
+
+class VelocityCommand(CommandTerm):
+    """Body-frame ``(vx, vy, yaw_rate)`` goal resampled on reset / timeout."""
+
+    cfg: VelocityCommandCfg
+
+    def __init__(self, cfg: VelocityCommandCfg, env: ManagerBasedRlEnv):
+        super().__init__(cfg, env)
+        self._command = torch.zeros(self.num_envs, 3, device=self.device)
+        self.metrics["command_speed"] = torch.zeros(self.num_envs, device=self.device)
+
+    @property
+    def command(self) -> torch.Tensor:
+        return self._command
+
+    @property
+    def goal(self) -> torch.Tensor:
+        return self._command
+
+    def _update_metrics(self) -> None:
+        self.metrics["command_speed"] = torch.linalg.vector_norm(self._command[:, :2], dim=-1)
+
+    def _resample_command(self, env_ids: torch.Tensor) -> None:
+        ranges = torch.tensor(self.cfg.ranges, device=self.device, dtype=torch.float32)
+        u = torch.rand(len(env_ids), 3, device=self.device)
+        self._command[env_ids] = ranges[:, 0] + u * (ranges[:, 1] - ranges[:, 0])
+
+    def _update_command(self, env_ids: torch.Tensor | None) -> None:
+        # A sampled command is held exactly constant until the next resampling event.
+        return
+
+
+@dataclass(kw_only=True)
+class VelocityCommandCfg(CommandTermCfg):
+    ranges: tuple[tuple[float, float], ...] = ((-1.0, 2.5), (-0.5, 0.5), (-1.5, 1.5))
+
+    def __post_init__(self):
+        if len(self.ranges) != 3:
+            raise ValueError("velocity goal needs three ranges for vx, vy, yaw_rate")
+
+    def build(self, env: ManagerBasedRlEnv) -> VelocityCommand:
+        return VelocityCommand(self, env)

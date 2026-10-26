@@ -31,7 +31,7 @@ def reference_at(lib: MotionLibrary, frame: torch.Tensor) -> ReferenceFrame:
 
 
 class WorldModelTrainer:
-    def __init__(self, wm: WorldModel, lib: MotionLibrary, cfg: WMTrainerCfg):
+    def __init__(self, wm: WorldModel, lib: MotionLibrary | None, cfg: WMTrainerCfg):
         self.wm = wm
         self.lib = lib
         self.cfg = cfg
@@ -44,9 +44,13 @@ class WorldModelTrainer:
 
     def loss_on(self, w: WindowBatch):
         k, n = w.frame.shape
-        # Only the root pose of the references is needed for the termination features.
-        r = self.lib.ref(w.frame.reshape(-1))
-        refs = [ReferenceFrame(None, None, None, None, r.root_pos_w[j * n : (j + 1) * n], r.root_quat_w[j * n : (j + 1) * n]) for j in range(k)]
+        if self.lib is None:
+            # Reference-free tasks use base-height/upright termination features.
+            refs = [None] * k
+        else:
+            # Only the root pose of references is required for the termination features.
+            r = self.lib.ref(w.frame.reshape(-1))
+            refs = [ReferenceFrame(None, None, None, None, r.root_pos_w[j * n : (j + 1) * n], r.root_quat_w[j * n : (j + 1) * n]) for j in range(k)]
         return self.wm.window_loss(w.states, w.a_exec, w.xi, w.done, refs)
 
     def update(self, buffer: ReplayBuffer) -> dict[str, float]:

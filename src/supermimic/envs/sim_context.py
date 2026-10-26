@@ -5,13 +5,15 @@ from __future__ import annotations
 import numpy as np
 import torch
 
-XI_DIM = 33
+XI_DIM = 33  # G1 compatibility constant; concrete context dims are inferred per robot.
 
 
 class SimContext:
     def __init__(self, env, foot_geom_regex: str, com_body_name: str = "torso_link", entity_name: str = "robot"):
         self.env = env
         self.robot = env.scene[entity_name]
+        self.num_joints = len(self.robot.joint_names)
+        self.xi_dim = self.num_joints + 4
         local_ids, names = self.robot.find_geoms(foot_geom_regex)
         if len(local_ids) == 0:
             raise ValueError(f"no geoms match {foot_geom_regex}")
@@ -34,7 +36,9 @@ class SimContext:
             com = ipos[:, self.com_body_global] - self.com_nominal
         else:
             com = (ipos[self.com_body_global] - self.com_nominal).expand(n, 3)
-        bias = self.robot.data.encoder_bias
+        bias = getattr(self.robot.data, "encoder_bias", None)
+        if bias is None:
+            bias = torch.zeros(n, self.num_joints, dtype=friction.dtype, device=friction.device)
         xi = torch.cat([friction.reshape(n, 1), bias, com], dim=-1)
-        assert xi.shape == (n, XI_DIM)
+        assert xi.shape == (n, self.xi_dim), (xi.shape, self.xi_dim)
         return xi.clone()

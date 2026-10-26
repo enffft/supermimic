@@ -29,3 +29,17 @@ def bad_root_tilt(env: ManagerBasedRlEnv, command_name: str, threshold: float = 
 def clip_end(env: ManagerBasedRlEnv, command_name: str) -> torch.Tensor:
     cmd = cast(MultiClipMotionCommand, env.command_manager.get_term(command_name))
     return cmd.clip_end
+
+
+def free_root_too_low(env: ManagerBasedRlEnv, asset_cfg, threshold: float) -> torch.Tensor:
+    """Reference-free low-base failure label for locomotion tasks."""
+    asset = env.scene[asset_cfg.name]
+    return asset.data.root_link_pos_w[:, 2] < threshold
+
+
+def free_root_tilted(env: ManagerBasedRlEnv, asset_cfg, threshold: float = 0.8) -> torch.Tensor:
+    """Reference-free tilt label: upright gravity z is -1, so 1 + z measures tilt."""
+    asset = env.scene[asset_cfg.name]
+    gravity = asset.data.gravity_vec_w
+    gravity_local = quat_apply_inverse(asset.data.root_link_quat_w, gravity)
+    return (1.0 + gravity_local[:, 2]).abs() > threshold

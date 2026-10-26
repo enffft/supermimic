@@ -11,13 +11,14 @@ import torch
 from torch.utils.tensorboard import SummaryWriter
 
 from supermimic.config import TrainConfig
-from supermimic.data.motion_convert import load_g1_model
 from supermimic.envs import SuperMimicEnvCfgArgs, make_env
 from supermimic.envs.mdp.motion_library import discover_npz
-from supermimic.envs.tracking_env_cfg import ANCHOR_BODY, ROOT_BODY, TRACKED_BODIES
+from supermimic.imagination.tasks import MotionTrackingTask, VelocityCommandTask
 from supermimic.imagination.policy_trainer import PolicyTrainer
 from supermimic.kinematics.g1_fk import G1Kinematics
 from supermimic.policy.nets import Critic, Policy
+from supermimic.robots.mjlab_assets import load_robot_spec_model
+from supermimic.robots.spec import get_robot_spec
 from supermimic.training.distributed import allreduce_mean, broadcast_params, finalize, init_distributed, world_size
 from supermimic.training.schedule import cosine_lr
 from supermimic.world_model.heads import AnalyticHeads
@@ -28,8 +29,43 @@ from supermimic.world_model.world_model import WorldModel
 class Trainer:
     def __init__(self, cfg: TrainConfig):
         self.cfg = cfg
-        cfg.policy.goal_dim = cfg.env.future_frames * 68 + (9 if cfg.env.anchor_obs else 0)
+        robot_spec = get_robot_spec(cfg.env.robot_name)
+        is_motion = cfg.env.task_name == "motion_tracking"
+        if cfg.env.task_name not in ("motion_tracking", "velocity_command"):
+            raise ValueError(f"unknown task {cfg.env.task_name!r}")
+        if cfg.env.task_name == "velocity_command" and robot_spec.name != "go2":
+            raise ValueError("velocity_command is currently supported only for Go2")
+        if robot_spec.name == "go2" and is_motion:
+            raise ValueError("Go2 has no Motion Library; select env.task_name=velocity_command")
+        if robot_spec.name != "go2" and not is_motion:
+            raise ValueError("velocity_command is currently supported only for Go2")
+        if cfg.env.anchor_obs is None:
+            cfg.env.anchor_obs = robot_spec.name == "m1_piper"
+
+        # Build every network dimension from the selected robot/task while leaving the
+        # default G1 values and initialization path unchanged.
+        n_joints = robot_spec.num_joints
+        goal_term_sizes = (robot_spec.amp_dim, robot_spec.amp_dim, 3, 3, 3, 1) if is_motion else (3,)
+        goal_term_scale = (1.0, 5.0, 1.0, 2.0, 1.0, 1.0) if is_motion else (1.0,)
+        goal_dim = cfg.env.future_frames * (2 * robot_spec.amp_dim + 10) + (9 if cfg.env.anchor_obs else 0) if is_motion else 3
+        cfg.policy.num_joints = n_joints
+        cfg.policy.history = cfg.env.history_length
+        cfg.policy.goal_dim = goal_dim
+        cfg.policy.goal_interface = "motion" if is_motion else "velocity"
+        cfg.policy.goal_term_sizes = goal_term_sizes
+        cfg.policy.goal_term_scale = goal_term_scale
         cfg.policy_trainer.anchor_obs = cfg.env.anchor_obs
+        cfg.policy_trainer.future_frames = cfg.env.future_frames
+        cfg.world_model.num_joints = n_joints
+        cfg.world_model.action_dim = n_joints
+        cfg.world_model.xi_dim = n_joints + 4
+        cfg.world_model.termination_base_height = robot_spec.default_base_height
+        cfg.world_model.state_spec.num_joints = n_joints
+        cfg.world_model.state_spec.dt = robot_spec.control_dt
+        cfg.world_model.state_spec.wheel_indices = tuple(robot_spec.joint_names.index(name) for name in robot_spec.wheel_joint_names)
+        cfg.world_model.state_spec.xi_offset = (0.75,) + (0.0,) * n_joints + (0.0,) * 3
+        cfg.world_model.state_spec.xi_scale = (0.45,) + (0.01,) * n_joints + (0.05,) * 3
+
         self.rank, local_rank, self.world = init_distributed()
         self.is_main = self.rank == 0
         if self.world > 1:
@@ -46,17 +82,37 @@ class Trainer:
             (self.log_dir / "config.json").write_text(json.dumps(asdict(cfg), indent=2, default=str))
         self.writer = SummaryWriter(str(self.log_dir / "tb")) if self.is_main else None
 
-        if cfg.data.library is not None:
+        if not is_motion:
+            files = []
+            if cfg.data.library is not None:
+                raise ValueError("Go2 velocity-command task does not consume a motion library")
+        elif cfg.data.library is not None:
             files = [cfg.data.library]
             cfg.env.compact_library = True
         else:
+            npz_dir = cfg.data.npz_dir
+            if robot_spec.name == "m1_piper" and npz_dir == Path("data/npz/lafan1"):
+                from supermimic.data.m1_motion_convert import DEFAULT_BANK, DEFAULT_OUTPUT, convert_m1_motion_bank
+
+                npz_dir = DEFAULT_OUTPUT
+                source_names = sorted(p.stem for p in (DEFAULT_BANK / "motions").glob("*.txt"))
+                selected = [name for name in source_names if cfg.data.clips is None or name in set(cfg.data.clips)]
+                if cfg.data.limit is not None:
+                    selected = selected[: cfg.data.limit]
+                if any(not (npz_dir / f"{name}.npz").exists() for name in selected):
+                    convert_m1_motion_bank(DEFAULT_BANK, npz_dir, names=selected)
+                cfg.data.npz_dir = npz_dir
+                cfg.data.manifest = None
             files = discover_npz(cfg.data.npz_dir, limit=cfg.data.limit, names=cfg.data.clips, manifest=cfg.data.manifest)
-        if not files:
+        if is_motion and not files:
             raise FileNotFoundError(f"no clips under {cfg.data.npz_dir}")
         self.env = make_env(
             SuperMimicEnvCfgArgs(
                 npz_files=[str(f) for f in files],
+                robot_name=robot_spec.name,
+                task_name=cfg.env.task_name,
                 num_envs=cfg.env.num_envs,
+                history_length=cfg.env.history_length,
                 future_frames=cfg.env.future_frames,
                 episode_length_s=cfg.env.episode_length_s,
                 action_noise_std=cfg.env.action_noise_std,
@@ -72,21 +128,34 @@ class Trainer:
             device=self.device,
         )
         env = self.env
-        self.command = env.command_manager.get_term("motion")
-        self.lib = self.command.library
+        command_name = "motion" if is_motion else "velocity"
+        self.command = env.command_manager.get_term(command_name)
+        self.lib = getattr(self.command, "library", None)
         self.recorder = env.recorder_manager.get_term("replay")
         self.buffer = self.recorder.buffer
         robot = env.scene["robot"]
 
-        fk = G1Kinematics(load_g1_model(), device=self.device)
-        heads = AnalyticHeads(fk, TRACKED_BODIES, ANCHOR_BODY, ROOT_BODY, robot.data.soft_joint_pos_limits[0].clone(), robot.data.default_joint_pos[0].clone())
+        fk = G1Kinematics(load_robot_spec_model(robot_spec.name), device=self.device)
+        heads = AnalyticHeads(
+            fk, robot_spec.tracked_body_names, robot_spec.anchor_body_name, robot_spec.root_body_name,
+            robot.data.soft_joint_pos_limits[0].clone(), robot.data.default_joint_pos[0].clone(),
+            default_base_height=robot_spec.default_base_height,
+        )
         self.wm = WorldModel(cfg.world_model, heads, self.device)
         self.policy = Policy(cfg.policy).to(self.device)
-        self.critic = Critic(cfg.critic, pcfg=cfg.policy).to(self.device)
+        self.critic = Critic(cfg.critic, feat_dim=self.wm.spec.feat_dim, goal_dim=goal_dim, xi_dim=n_joints + 4, pcfg=cfg.policy).to(self.device)
+        if is_motion:
+            self.task = MotionTrackingTask(self.lib, cfg.env.future_frames, cfg.env.anchor_obs)
+        else:
+            self.task = VelocityCommandTask(
+                debug_objective=cfg.env.velocity_debug_objective,
+                default_joint_pos=robot.data.default_joint_pos[0].detach().clone(),
+                dt=robot_spec.control_dt,
+            )
         for m in (self.wm, self.policy, self.critic):
             broadcast_params(m)
         self.wm_trainer = WorldModelTrainer(self.wm, self.lib, cfg.wm_trainer)
-        self.policy_trainer = PolicyTrainer(self.wm, self.policy, self.critic, self.lib, cfg.policy_trainer)
+        self.policy_trainer = PolicyTrainer(self.wm, self.policy, self.critic, self.task, cfg.policy_trainer)
         n_params = lambda m: sum(p.numel() for p in m.parameters())  # noqa: E731
         if self.is_main:
             print(f"[INFO] params: world model {n_params(self.wm)/1e6:.2f}M, policy {n_params(self.policy)/1e6:.2f}M, critic {n_params(self.critic)/1e6:.3f}M")
@@ -94,7 +163,8 @@ class Trainer:
         # Episode statistics of the training env (paper's "training return").
         self.ep_reward_sum = torch.zeros(env.num_envs, device=self.device)
         self.ep_len = torch.zeros(env.num_envs, device=self.device)
-        self.max_step_reward = heads.reward_cfg.max_step_reward
+        self.max_step_reward = heads.reward_cfg.max_step_reward if is_motion else 1.0
+        self.has_tracking_return = is_motion
         self.iteration = 0
         self.num_updates = 0
         self._utd_acc = 0.0
@@ -106,22 +176,21 @@ class Trainer:
     def save(self, name: str = "ckpt_latest.pt") -> None:
         if not self.is_main:
             return
-        torch.save(
-            {
-                "iteration": self.iteration,
-                "num_updates": self.num_updates,
-                "wm": self.wm.state_dict(),
-                "policy": self.policy.state_dict(),
-                "critic": self.critic.state_dict(),
-                "wm_opt": self.wm_trainer.opt.state_dict(),
-                "policy_opt": self.policy_trainer.opt.state_dict(),
-                "critic_opt": self.policy_trainer.critic_opt.state_dict(),
-                "bin_return": self.command.bin_return,
-                "bin_memory": self.command.bin_memory,
-                "config": asdict(self.cfg),
-            },
-            self.log_dir / name,
-        )
+        state = {
+            "iteration": self.iteration,
+            "num_updates": self.num_updates,
+            "wm": self.wm.state_dict(),
+            "policy": self.policy.state_dict(),
+            "critic": self.critic.state_dict(),
+            "wm_opt": self.wm_trainer.opt.state_dict(),
+            "policy_opt": self.policy_trainer.opt.state_dict(),
+            "critic_opt": self.policy_trainer.critic_opt.state_dict(),
+            "config": asdict(self.cfg),
+        }
+        if hasattr(self.command, "bin_return"):
+            state["bin_return"] = self.command.bin_return
+            state["bin_memory"] = self.command.bin_memory
+        torch.save(state, self.log_dir / name)
 
     def load(self, path: Path) -> None:
         ck = torch.load(path, map_location=self.device, weights_only=False)
@@ -131,8 +200,9 @@ class Trainer:
         self.wm_trainer.opt.load_state_dict(ck["wm_opt"])
         self.policy_trainer.opt.load_state_dict(ck["policy_opt"])
         self.policy_trainer.critic_opt.load_state_dict(ck["critic_opt"])
-        self.command.bin_return.copy_(ck["bin_return"])
-        self.command.bin_memory.copy_(ck["bin_memory"])
+        if hasattr(self.command, "bin_return") and "bin_return" in ck:
+            self.command.bin_return.copy_(ck["bin_return"])
+            self.command.bin_memory.copy_(ck["bin_memory"])
         self.iteration = ck["iteration"]
         self.num_updates = ck["num_updates"]
         print(f"[INFO] resumed from {path} at iteration {self.iteration}")
@@ -167,8 +237,9 @@ class Trainer:
             if done.any():
                 ids = done.nonzero().squeeze(-1)
                 lens = self.ep_len[ids]
-                norm_ret = self.ep_reward_sum[ids] / (self.max_step_reward * lens.clamp_min(1))
-                finished_returns.extend(norm_ret.tolist())
+                if self.has_tracking_return:
+                    norm_ret = self.ep_reward_sum[ids] / (self.max_step_reward * lens.clamp_min(1))
+                    finished_returns.extend(norm_ret.tolist())
                 finished_lens.extend(lens.tolist())
                 self.ep_reward_sum[ids] = 0.0
                 self.ep_len[ids] = 0.0
@@ -189,10 +260,12 @@ class Trainer:
                     torch.cuda.synchronize()
                     timers["wm"] += time.perf_counter() - t0
                     t0 = time.perf_counter()
+                    m_pi = {}
                     for _ in range(sch.policy_updates_per_wm_update):
                         m_pi = self.policy_trainer.update(self.buffer)
-                    torch.cuda.synchronize()
-                    timers["policy"] += time.perf_counter() - t0
+                    if sch.policy_updates_per_wm_update:
+                        torch.cuda.synchronize()
+                        timers["policy"] += time.perf_counter() - t0
                     self.num_updates += 1
                     for k, v in m_wm.items():
                         agg[f"wm/{k}"] = agg.get(f"wm/{k}", 0.0) + v
@@ -224,7 +297,8 @@ class Trainer:
                     tr = float("nan")
                 elif finished_returns:
                     tr = sum(finished_returns) / len(finished_returns)
-                    self.writer.add_scalar("train/episode_norm_return", tr, it)
+                    if self.cfg.env.task_name == "motion_tracking":
+                        self.writer.add_scalar("train/episode_norm_return", tr, it)
                     self.writer.add_scalar("train/episode_len", sum(finished_lens) / max(len(finished_lens), 1), it)
                 else:
                     tr = float("nan")
@@ -240,8 +314,10 @@ class Trainer:
                         self.writer.add_scalar(f"time/{k}_s_per_iter", v / sch.log_interval, it)
                     self.writer.add_scalar("time/hours", elapsed / 3600, it)
                     self.writer.add_scalar("time/updates", self.num_updates, it)
-                    self.writer.add_scalar("sampler/entropy", float(self.command.metrics["sampling_entropy"][0]), it)
-                    self.writer.add_scalar("sampler/bin_return_mean", float(self.command.bin_return.mean()), it)
+                    if "sampling_entropy" in self.command.metrics:
+                        self.writer.add_scalar("sampler/entropy", float(self.command.metrics["sampling_entropy"][0]), it)
+                    if hasattr(self.command, "bin_return"):
+                        self.writer.add_scalar("sampler/bin_return_mean", float(self.command.bin_return.mean()), it)
                     dt_log = time.time() - last_log
                     last_log = time.time()
                     msg = (

@@ -1,6 +1,6 @@
 # 多机器人训练前验收记录
 
-本轮按训练前工程验收范围检查 Go2 Blind Locomotion 与 M1-Piper Motion Tracking。没有启动长程训练、没有重新生成/转换 Motion Bank，也没有改正式 Reward 权重。测试使用 Conda `supermimic`，MuJoCo-Warp CUDA，GPU 验收最多 16 个环境。
+本轮按训练前工程验收范围检查 Go2 Blind Locomotion 与 M1-Piper Motion Tracking；之后按用户要求补跑了一次 15 分钟 Go2 短训练。没有启动数小时长程训练、没有重新生成/转换 Motion Bank，也没有改 Reward 权重。回归验收使用最多 16 个环境；Go2 短训练使用 3072 个环境。
 
 ## 验收结论
 
@@ -13,8 +13,9 @@
 | 已验证 | M1 real/analytic reward parity | 8 个启用的 Reward Term 逐项比对；最大绝对误差 `1.996e-4`，最大平均相对误差 `0.514%`。 |
 | 已验证 | Go2 零动作站立及阈值实现 | 16 env × 400 control steps；站稳高度 `0.28271 m`，四足接触，无 hip/thigh/calf 地面接触、无 reset、无力矩饱和。低高度与倾斜 termination 的真实布尔规则和解析 feature 语义一致。 |
 | 仍未验证 | Go2 真实跌倒阈值边界 | `0.17 m` 低高度和 70° 倾斜的阈值实现已通过合成状态检查，但尚未扫描真实下蹲/趴伏/跌倒的稳定边界；不改初始高度、Kp/Kd 或 effort limit。 |
-| 已修复，正类仍未验证 | Replay done 标签对齐 | `sample_windows()` 现在将 transition row 的 `done_next` 对齐到该动作预测的 successor state，修复提前一帧读取；CPU 回归测试覆盖终止边界。当前短仿真无真实跌倒正类，无法验收 Termination Head 的正类区分能力。 |
-| 留待下一轮 | Go2 正式 Reward、M1 多轨迹 Tracking Reward | Go2 有代码级首版 velocity reward 原型，尚未由团队确定为正式目标；M1 继续使用现有 8 项 tracking terms，本轮不重新设计权重。 |
+| 已修复并在短训练中产生自然正类 | Replay done 标签与 Go2 Termination Head | `sample_windows()` 将 transition row 的 `done_next` 对齐到该动作预测的 successor state；Go2 短训练中真实跌倒自然产生 terminal labels。Head 的概率与样本正类比例接近，但正类稀少，召回率和校准仍未充分验证。 |
+| 已启动并完成短训练 | Go2 当前 velocity reward | 使用现有 11 项 velocity reward core 完成一次 15 分钟有界训练；训练结果和失败样本统计见下文。没有在本轮修改 reward 权重。 |
+| 留待下一轮 | M1 多轨迹 Tracking Reward | M1 继续使用现有 8 项 tracking terms，本轮不重新设计权重。 |
 
 ## 环境、代码基准与日志
 
@@ -139,14 +140,46 @@ Tracked body order、reference frame、root/anchor pose、quaternion convention�
 | H=32 survival / Actor grad norm / imagined return | `8.351e-10 / 1.601e-7 / 0.1942` | `3.033e-10 / 3.367e-6 / 0.1133` |
 | Real simulation return | 16 完成 episodes：raw `16.765`，normalized `0.9300` | 无完成 episode；未结束 16 env 的 256-step 原型 reward 累计均值 `14.387`，不是正式任务回报 |
 
-解释：负标签代表“这次转移没有真实 termination”，即存活；timeout/clip end 会结束仿真 episode，但不会把 `reset_terminated=0` 错标成跌倒。短诊断里全负类是预期数据事实，不是“机器人全死了”。无需人为构造失败样本；正式采集时，真实低高度/侧翻触发 termination 后会自然写入正标签。当前短 smoke 只能说明正类识别能力尚未验证，不能据此阻止训练。BCE 下降和负类 accuracy 不作为 Term Head 已学好的证据。初始概率接近 0.5 会使 `(1-d)` 在 32 步连乘而把 survival 压到约 `1e-10`；该诊断也没有稳定 Actor 梯度。
+解释：负标签代表“这次转移没有真实 termination”，即存活；timeout/clip end 会结束仿真 episode，但不会把 `reset_terminated=0` 错标成跌倒。16-env 短诊断全负类是预期数据事实，不是“机器人全死了”。无需人为构造失败样本；后面的 Go2 训练中真实低高度/倾斜触发 termination 后自然写入正标签。短诊断里初始 Term Head 概率接近 0.5 会使 `(1-d)` 在 32 步连乘而把 survival 压到约 `1e-10`；正式 Go2 短训练的 Head 后来收敛到很低的概率，指标见下一节。Replay 的 off-by-one 标签读取已修复并有 `tests/test_replay_buffer.py` 覆盖。
 
-Replay 的 off-by-one 标签读取已修复并有 `tests/test_replay_buffer.py` 覆盖。当前 termination head 正类仍需包含真实跌倒/侧翻 transition 的数据才能验收。单纯增加 WM-only updates、但不产生正类数据，不能解决正类缺失。
+16-env 诊断不能验收正类区分能力；Go2 短训练只提供了有限的自然跌倒样本，尚不足以证明 Head 对不同跌倒模式的召回率。
+
+## Go2 15 分钟短训练
+
+按用户要求使用仓库当前的 Go2 velocity reward 启动训练；训练受 `max_hours=0.25` 限制，未进行数小时长程训练。最终运行设置为 3072 个真实仿真环境、32 步 imagination、每次 Actor 更新抽取 1024 个起点、200 次 WM-only 更新后开始 Actor/Critic 更新。batch size 只控制一次 imagination 更新的起点数，没有改 reward、WM 损失、32-step horizon 或 BPTT。
+
+~~~bash
+PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True \
+PYTHONPATH=src conda run --no-capture-output -n supermimic \
+python -m supermimic.scripts.train \
+  --run-name go2_blindlocomotion_validation_15m_b1024_20261026 \
+  --env.robot-name go2 --env.num-envs 3072 --env.task-name velocity_command \
+  --policy-trainer.batch-size 1024 \
+  --schedule.max-hours 0.25 --schedule.log-interval 50
+~~~
+
+最终运行在 1600 个向量控制步、624 次总更新后按时间上限正常退出并保存 checkpoint。真实 transition 数为 `1600 × 3072 = 4,915,200`；其中 200 次 WM-only 更新，之后 424 次 Actor/Critic 更新。每个 Actor 更新使用 1024 个起点并沿模型展开 32 步。训练没有合成或注入失败样本。
+
+| 指标 | 结果 |
+|---|---:|
+| 8-step WM NSE，it 50 → it 1600 | `0.5046 → 0.00541` |
+| 最后记录的 1-step WM NSE | `0.00442` |
+| Termination label ratio / probability mean（it 1600） | `1.617e-5 / 1.903e-5` |
+| Termination BCE（it 1600） | `2.5485e-4` |
+| 32-step mean survival（it 1600） | `0.99943` |
+| Imagined return（it 1600） | `1.736` |
+| Actor grad norm（it 1600） | `0.0252` |
+| Real episode return | `26.62`（it 1000，3072 个 500-step timeout episodes）；`26.54`（it 1500，2724 个 timeout episodes）；`26.44`（it 1550，348 个 timeout episodes） |
+| 自然失败样本 | it 1050 有 348 个提前终止 episode，平均长度 `14.40` 步、raw return `0.376`、fall rate `1.0`；后续 it 1500/1550 评估 fall rate 为 `0.0` |
+
+这轮训练说明真实失败会自然进入 Replay：早期一批 episode 在约 14 个控制步后跌倒，后续成批 episode 则走完 500 步。WM 采到的 terminal-label 比例约 `1.6e-5`，预测概率均值约 `1.9e-5`；H=32 survival 因此接近 1。该短训练说明标签链路能处理自然正类，不能据低 BCE 单独断言 Head 已学会所有跌倒形态。Actor grad norm 非零；it 1600 的 actor ramp scale 为 `0.424`，`policy_grad_norm` 是 clip 前的 Actor 参数梯度范数。
+
+第一次使用默认 imagination batch `4096` 时，切入 Actor 的 BPTT 更新发生 CUDA OOM，没有 checkpoint（日志：`logs/multirobot_diagnostics/go2_blindlocomotion_validation_15m_20261026.log`）。第二次将 batch 改为 `2048` 后越过 Actor 编译，但在 it 850 的 MuJoCo-Warp CCD 临时分配 `75,497,472 bytes` 失败，也没有 checkpoint（日志：`logs/multirobot_diagnostics/go2_blindlocomotion_validation_15m_b2048_20261026.log`）。最终使用 batch `1024` 和 `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True` 完成上述训练。checkpoint 为本机 `logs/go2_blindlocomotion_validation_15m_b1024_20261026/ckpt_latest.pt`；运行日志为 `logs/multirobot_diagnostics/go2_blindlocomotion_validation_15m_b1024_20261026.log`。另一次 M1-Piper 2048-env 短训练在 MuJoCo-Warp CCD 分配 `465,567,744 bytes` 时 OOM，未生成 checkpoint（日志：`logs/multirobot_diagnostics/m1_piper_validation_15m_20261026.log`）；不能据此声称 M1 已完成训练验收。
 
 ## G1 回归、限制与待定项
 
 - `tests/test_analytic_heads.py tests/test_world_model.py`：**6 passed**；原 G1 analytic reward/observation 与 WM replay regression 通过。
 - `tests/test_multirobot_acceptance.py`：**7 passed**；额外 CPU Replay done-alignment 测试：**1 passed**。
 - WM loss 和 32-step Actor 梯度在多机器人 acceptance 中做 backward smoke；诊断期间 `policy_optimizer_steps=0`。
-- Go2 首版 velocity reward 当前有代码实现和 RewardManager 接线，但正式目标、权重与验收标准待团队确定；M1 多轨迹 reward 设计也留待下一轮。
-- 没有进行长程训练、课程学习验收、复杂地形/LiDAR 测试或抓取实验。
+- Go2 当前 11 项 velocity reward 已用于上述短训练；15 分钟结果不代表长程收敛或课程晋级通过。M1 多轨迹 reward 设计留待下一轮。
+- 没有进行数小时长程训练、完整课程晋级验收、复杂地形/LiDAR 测试或抓取实验。

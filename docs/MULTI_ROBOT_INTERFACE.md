@@ -1,6 +1,6 @@
 # SuperMimic 多机器人接口说明
 
-本文根据当前工作区源码说明 G1、Go2、M1-Piper 如何使用同一套采集、World Model 和 imagination/BPTT 训练链路。它是工程接口说明；Go2 尚未选定正式训练 reward。
+本文根据当前工作区源码说明 G1、Go2、M1-Piper 如何使用同一套采集、World Model 和 imagination/BPTT 训练链路。Go2 当前 velocity reward 已接入并用于一次 15 分钟有界短训练；结果见[验收记录](MULTI_ROBOT_VALIDATION.md#go2-15-分钟短训练)。
 
 ## 1. 代码结构与接入路径
 
@@ -68,7 +68,7 @@ M1 的单帧 observation 维数仍按 22 个关节计算，但 wheel joint posit
 - 12 路 position action，scale 0.25；Kp=40、Kd=1、effort limit=23.5。控制 dt=0.02 s，由 4 个 0.005 s physics substep 组成（[robots/mjlab_assets.py](../src/supermimic/robots/mjlab_assets.py#L117)、[envs/multirobot_env_cfg.py](../src/supermimic/envs/multirobot_env_cfg.py#L179)）。
 - 训练时 low-height termination 为 `root_z < 0.17 m`，tilt 为 `abs(1+g_local_z) > 1-cos(70°)`。16 env 零动作 8 秒测试的稳态 root z 是 `0.28271 m`；四足均接触、无腿部碰撞和力矩饱和。此结果验证静止支撑，不代表已测准真实跌倒边界（详见 [验收记录](MULTI_ROBOT_VALIDATION.md#p0-cgo2-站立与真实-termination-阈值)）。
 - Goal 为 body-frame 速度命令 `(vx,vy,yaw_rate)`，reset 时采样，并在固定的 10 秒 resample 周期内保持不变。当前配置默认启用 A/B/C command curriculum，从 A 开始；A 主要采样 `vx=[0.15,0.55] m/s`，15% 为静止命令，B/C 的范围和保留比例可在 `EnvCfg` 配置（[config.py](../src/supermimic/config.py#L46)、[envs/mdp/commands.py](../src/supermimic/envs/mdp/commands.py#L535)）。该课程逻辑在当前验收中没有做长程晋级验证。Go2 不使用 Motion Library、LiDAR 或地形输入。
-- Go2 有首版 11 项 velocity reward core，并通过 `RewardManager` 使用 `weight=1`、再由 manager 乘控制 `dt`；imagination 使用同一个计算模块，但 MuJoCo measured torque/joint acceleration 缺失时会用可微 proxy（[tasks/velocity_reward.py](../src/supermimic/tasks/velocity_reward.py#L78)、[envs/multirobot_env_cfg.py](../src/supermimic/envs/multirobot_env_cfg.py#L169)）。团队尚未确定它为正式 blind-locomotion Reward，本轮也不验收其目标设计或长程效果。
+- Go2 使用 11 项 velocity reward core，并通过 `RewardManager` 使用 `weight=1`、再由 manager 乘控制 `dt`；imagination 使用同一个计算模块，但 MuJoCo measured torque/joint acceleration 缺失时会用可微 proxy（[tasks/velocity_reward.py](../src/supermimic/tasks/velocity_reward.py#L78)、[envs/multirobot_env_cfg.py](../src/supermimic/envs/multirobot_env_cfg.py#L169)）。这套当前 reward 已用于 3072-env、15 分钟短训练；该运行记录工程链路和短期行为，不代表长程收敛或课程晋级验收。
 
 ### M1-Piper
 

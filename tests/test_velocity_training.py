@@ -59,7 +59,7 @@ def test_velocity_reward_terms_have_dt_once_and_differentiate_state_and_action()
     assert s1.grad is not None and torch.isfinite(s1.grad).all() and s1.grad.abs().sum() > 0
     assert action.grad is not None and torch.isfinite(action.grad).all() and action.grad.abs().sum() > 0
     # The core returns rates; only VelocityCommandTask / RewardManager adds control dt.
-    torch.testing.assert_close(terms["track_lin_vel_xy"], torch.full((batch,), 2.0 * math.exp(-0.09 / 0.25)))
+    torch.testing.assert_close(terms["track_lin_vel_xy"], torch.full((batch,), 3.0 * math.exp(-0.09 / 0.25)))
 
 
 def test_real_measurements_use_the_same_reward_core_without_proxy_terms():
@@ -87,6 +87,33 @@ def test_real_measurements_use_the_same_reward_core_without_proxy_terms():
         torch.testing.assert_close(imagined_api[name], direct[name] * params.dt)
 
 
+def test_direction_reward_handles_forward_reverse_sideways_and_zero_commands():
+    params = _params()
+    state, _ = _states(batch=4)
+    # State's world-frame base linear velocity begins at 19 for 12 joints.
+    state[:, 19:22] = torch.tensor([[0.4, 0.0, 0.0], [-0.4, 0.0, 0.0], [0.0, 0.4, 0.0], [0.4, 0.0, 0.0]])
+    goals = torch.tensor([[0.3, 0.0, 0.0], [-0.3, 0.0, 0.0], [0.0, 0.3, 0.0], [0.0, 0.0, 0.0]])
+    terms = velocity_reward_terms(state, state, goals, torch.zeros(4, 12), torch.zeros(4, 12), params)
+    direction = terms["command_direction"]
+    assert torch.all(direction[:3] > 0)
+    assert direction[3] == 0
+    assert torch.all(direction.abs() <= params.cfg.command_direction)
+
+
+def test_analytic_go2_termination_is_near_zero_standing_and_differentiable_at_failure_margin():
+    from supermimic.imagination.tasks import VelocityCommandTask
+
+    task = VelocityCommandTask(fall_height=0.17, tilt_feature_threshold=1.0 - math.cos(math.radians(70.0)))
+    state = torch.zeros(2, 37, requires_grad=True)
+    state.data[:, 2] = torch.tensor([0.29, 0.16])
+    state.data[:, 3] = 1.0
+    p = task.termination_probability(state)
+    assert float(p[0].detach()) < 1e-3
+    assert float(p[1].detach()) > 0.5
+    p.sum().backward()
+    assert state.grad is not None and torch.isfinite(state.grad).all()
+
+
 def test_actor_ramp_counts_real_optimizer_updates_and_lr_mode_is_explicit():
     assert actor_ramp_scale(1, 1000) == pytest.approx(0.001)
     assert actor_ramp_scale(500, 1000) == pytest.approx(0.5)
@@ -101,6 +128,20 @@ def test_actor_ramp_counts_real_optimizer_updates_and_lr_mode_is_explicit():
     assert scheduled_lr("cosine", 1000, short.total_iterations, 2e-4) == pytest.approx(
         scheduled_lr("cosine", 1000, long.total_iterations, 2e-4)
     )
+
+
+def test_critic_bootstrap_value_clip_is_optional_and_task_configurable():
+    from supermimic.imagination.policy_trainer import _clip_bootstrap_values
+
+    value = torch.tensor([-20.0, -0.5, 0.25, 30.0])
+    unchanged, fraction = _clip_bootstrap_values(value, None)
+    torch.testing.assert_close(unchanged, value)
+    assert fraction == 0
+    clipped, fraction = _clip_bootstrap_values(value, 5.0)
+    torch.testing.assert_close(clipped, torch.tensor([-5.0, -0.5, 0.25, 5.0]))
+    assert float(fraction) == pytest.approx(0.5)
+    with pytest.raises(ValueError, match="positive"):
+        _clip_bootstrap_values(value, 0.0)
 
 
 def test_multirobot_defaults_keep_m1_2048_go2_3072_and_g1_unchanged():

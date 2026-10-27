@@ -10,6 +10,7 @@ import torch.nn.functional as F
 
 from supermimic.world_model.dynamics import MLP, DynamicsMLP
 from supermimic.world_model.heads import AnalyticHeads, ReferenceFrame
+from supermimic.world_model.normalization import WorldModelNormalizer
 from supermimic.world_model.state_spec import StateSpec, StateSpecCfg
 
 
@@ -26,6 +27,9 @@ class WorldModelCfg:
     height_threshold: float = 0.25
     tilt_threshold: float = 0.8
     termination_base_height: float = 0.76
+    # False preserves the exact fixed-StateSpec behavior and old state-dict keys.
+    running_normalization: bool = False
+    running_norm_min_std: float = 1e-2
 
 
 class TerminationHead(nn.Module):
@@ -54,6 +58,10 @@ class WorldModel(nn.Module):
             hidden=cfg.hidden,
             out_dim=self.spec.delta_dim,
         )
+        self.normalizer = (
+            WorldModelNormalizer(self.spec.feat_dim, self.spec.delta_dim, cfg.running_norm_min_std)
+            if cfg.running_normalization else None
+        )
         self.term_head = TerminationHead(cfg.term_hidden, cfg.height_threshold, cfg.tilt_threshold)
         self.heads = heads  # analytic observation / reward / FK (no parameters)
         self.to(device)
@@ -63,8 +71,19 @@ class WorldModel(nn.Module):
     def step(self, s: torch.Tensor, action: torch.Tensor, xi: torch.Tensor) -> torch.Tensor:
         """s_{t+1} = integrate(s_t, f(s_t, a_t, xi))."""
         feat = self.spec.canonical(s)
+        if self.normalizer is not None:
+            feat = self.normalizer.input.normalize(feat)
         delta = self.dynamics(feat, action, self.spec.normalize_xi(xi))
+        if self.normalizer is not None:
+            delta = self.normalizer.delta.denormalize(delta)
         return self.spec.integrate(s, delta)
+
+    @torch.no_grad()
+    def update_real_transition(self, s: torch.Tensor, s_next: torch.Tensor) -> None:
+        """Update moments once from a newly collected, real simulator transition."""
+        if self.normalizer is None:
+            return
+        self.normalizer.update_real(self.spec.canonical(s), self.spec.delta_target(s, s_next))
 
     def termination_logits(self, s_next: torch.Tensor, ref: ReferenceFrame | None = None) -> torch.Tensor:
         # The root is the free-joint body, so its pose is in the state and needs no FK.

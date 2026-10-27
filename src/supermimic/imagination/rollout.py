@@ -9,9 +9,9 @@ import torch
 from supermimic.data.replay_buffer import StartBatch
 from supermimic.envs.mdp.motion_library import MotionLibrary
 from supermimic.imagination.compiled import REWARD_TERM_NAMES, ImagStep, VelocityImagStep
-from supermimic.imagination.tasks import MotionTrackingTask, VelocityCommandTask
+from supermimic.imagination.tasks import MotionTrackingTask, VelocityCommandTask, WorldPointReachTask
 from supermimic.policy.nets import Policy
-from supermimic.world_model.heads import ReferenceFrame, analytic_observation, anchor_relative_obs, flatten_history_term_major
+from supermimic.world_model.heads import ReferenceFrame, analytic_observation, anchor_orientation_relative_obs, anchor_relative_obs, flatten_history_term_major
 from supermimic.world_model.wm_trainer import reference_at
 from supermimic.world_model.world_model import WorldModel
 
@@ -39,23 +39,25 @@ def _observation_noise(obs: torch.Tensor, num_joints: int) -> torch.Tensor:
 def imagine(
     wm: WorldModel,
     policy: Policy,
-    task: MotionTrackingTask | VelocityCommandTask | MotionLibrary,
+    task: MotionTrackingTask | VelocityCommandTask | WorldPointReachTask | MotionLibrary,
     start: StartBatch,
     horizon: int,
     future_frames: int = 10,
     obs_noise: bool = True,
     step_fn: ImagStep | VelocityImagStep | None = None,
     anchor_obs: bool = False,
+    anchor_orientation_obs: bool = False,
 ) -> ImagRollout:
     """Roll H steps, calling the Actor at each newly predicted observation.
 
     ``MotionLibrary`` is accepted for compatibility with the existing G1 benchmark and
-    is wrapped as a ``MotionTrackingTask``. Velocity tasks keep the sampled replay Goal
-    fixed for all H steps and do not synthesize a reference frame.
+    is wrapped as a ``MotionTrackingTask``. Reference-free tasks keep the sampled task
+    Goal fixed; world-point Actor goals are re-expressed against each predicted base pose.
     """
     if isinstance(task, MotionLibrary):
-        task = MotionTrackingTask(task, future_frames=future_frames, anchor_obs=anchor_obs)
+        task = MotionTrackingTask(task, future_frames=future_frames, anchor_obs=anchor_obs, anchor_orientation_obs=anchor_orientation_obs)
     is_motion = isinstance(task, MotionTrackingTask)
+    is_world_point = isinstance(task, WorldPointReachTask)
     device = start.state.device
     n = start.state.shape[0]
     q0 = task.library.default_joint_pos if is_motion else task.default_joint_pos
@@ -64,7 +66,11 @@ def imagine(
             step_fn = ImagStep(wm, q0)
         else:
             step_fn = VelocityImagStep(wm, task, q0)
-    if anchor_obs and not is_motion:
+    anchor_obs = bool(anchor_obs or (is_motion and task.anchor_obs))
+    anchor_orientation_obs = bool(anchor_orientation_obs or (is_motion and task.anchor_orientation_obs))
+    if anchor_obs and anchor_orientation_obs:
+        raise ValueError("choose position+orientation Anchor or orientation-only Anchor")
+    if (anchor_obs or anchor_orientation_obs) and not is_motion:
         raise ValueError("anchor-relative motion observations are unavailable for velocity-command tasks")
 
     nj = wm.spec.nj
@@ -104,19 +110,23 @@ def imagine(
 
         def motion_goal(frame_t, ref_t, anchor_pose):
             g = lib.goal_window(frame_t, task.future_frames)
-            if not task.anchor_obs:
+            if not (task.anchor_obs or task.anchor_orientation_obs):
                 return g
-            rel = anchor_relative_obs(
-                anchor_pose[..., :3], anchor_pose[..., 3:7],
-                ref_t.body_pos_w[..., ai, :], ref_t.body_quat_w[..., ai, :],
-            )
-            if obs_noise:
+            if task.anchor_orientation_obs:
+                rel = anchor_orientation_relative_obs(anchor_pose[..., 3:7], ref_t.body_quat_w[..., ai, :])
+                half = rel.new_tensor([0.05] * 6)
+            else:
+                rel = anchor_relative_obs(
+                    anchor_pose[..., :3], anchor_pose[..., 3:7],
+                    ref_t.body_pos_w[..., ai, :], ref_t.body_quat_w[..., ai, :],
+                )
                 half = rel.new_tensor([0.25] * 3 + [0.05] * 6)
+            if obs_noise:
                 rel = rel + (torch.rand_like(rel) * 2 - 1) * half
             return torch.cat([g, rel], dim=-1)
 
         ref = ref_at(0)
-        if task.anchor_obs:
+        if task.anchor_obs or task.anchor_orientation_obs:
             body0 = wm.heads.robot_bodies(s)
             anchor_pose = torch.cat([body0["pos"][..., ai, :], body0["quat"][..., ai, :]], dim=-1)
         else:
@@ -126,10 +136,11 @@ def imagine(
         reward_names = REWARD_TERM_NAMES
     else:
         if start.goal is None:
-            raise ValueError("velocity-command imagination requires the Goal snapshot stored in ReplayBuffer")
-        goal = start.goal
+            raise ValueError("reference-free imagination requires the task Goal snapshot stored in ReplayBuffer")
+        task_goal = start.goal
+        goal = task.actor_goal(s, task_goal) if is_world_point else task_goal
         if goal.shape[-1] != task.goal_dim:
-            raise ValueError(f"velocity Goal has {goal.shape[-1]} features; task expects {task.goal_dim}")
+            raise ValueError(f"task Goal has {goal.shape[-1]} features; task expects {task.goal_dim}")
         frames_all = frame[None, :].expand(horizon + 1, n)
         ref = None
         anchor_pose = None
@@ -140,6 +151,7 @@ def imagine(
         initial_features = (
             wm.heads.termination_features(s[..., 0:3], s[..., 3:7], ref)
             if is_motion
+            else task.termination_features(s) if hasattr(task, "termination_features")
             else wm.heads.free_termination_features(s[..., 0:3], s[..., 3:7], wm.cfg.termination_base_height)
         )
     term_features.append(initial_features)
@@ -162,8 +174,8 @@ def imagine(
             goal_next = motion_goal(frame, ref, anchor_pose)
             e_root = wm.heads.root_error_features(s_next, ref)
         else:
-            s_next, r, term_vec, logits, obs_clean, anchor_pose = step_fn(s, a, a_prev, start.xi, goal)
-            goal_next = goal
+            s_next, r, term_vec, logits, obs_clean, anchor_pose = step_fn(s, a, a_prev, start.xi, task_goal)
+            goal_next = task.actor_goal(s_next, task_goal) if is_world_point else task_goal
             e_root = torch.zeros(n, 4, device=device, dtype=s.dtype)
 
         d = torch.sigmoid(logits)
@@ -171,6 +183,8 @@ def imagine(
         with torch.no_grad():
             if is_motion:
                 features = wm.heads.termination_features(s_next[..., 0:3], s_next[..., 3:7], transition_ref)
+            elif hasattr(task, "termination_features"):
+                features = task.termination_features(s_next)
             else:
                 features = wm.heads.free_termination_features(
                     s_next[..., 0:3], s_next[..., 3:7], wm.cfg.termination_base_height

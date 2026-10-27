@@ -112,6 +112,35 @@ class StateSpec:
     def normalize_xi(self, xi: torch.Tensor) -> torch.Tensor:
         return (xi - self.xi_offset) / self.xi_scale
 
+    def delta_target(self, s: torch.Tensor, s_next: torch.Tensor) -> torch.Tensor:
+        """Invert ``integrate`` and return its pre-``out_scale`` real-transition target.
+
+        This is used only to update optional RunningNorm statistics from newly
+        collected simulator transitions. Keeping the fixed ``out_scale`` outside
+        this target means the learned normalized delta is first denormalized back
+        to the exact units consumed by ``integrate``.
+        """
+        j = self.nj
+        p, q, qj, v, w, qd = self.split(s)
+        p1, q1, qj1, v1, w1, qd1 = self.split(s_next)
+        q = quat_normalize(q)
+        q1 = quat_normalize(q1)
+        hq = heading_quat(q)
+        dt = self.dt if self.cfg.explicit_integration else 0.0
+
+        dv_h = quat_apply_inverse(hq, v1 - v)
+        dw_b = w1 - w
+        dqd = qd1 - qd
+        dp_h = quat_apply_inverse(hq, p1 - p - dt * v1)
+        dtheta = rotvec_from_quat(quat_mul(quat_apply_inverse_quat(q), q1)) - dt * w1
+        dq = qj1 - qj - dt * qd1
+        if self.wheel_indices:
+            wi = torch.as_tensor(self.wheel_indices, device=dq.device)
+            dq = dq.clone()
+            dq[..., wi] = torch.atan2(torch.sin(dq[..., wi]), torch.cos(dq[..., wi]))
+        physical = torch.cat([dv_h, dw_b, dqd, dp_h, dtheta, dq], dim=-1)
+        return physical / self.out_scale
+
     # ------------------------------------------------------------------ integration
 
     def integrate(self, s: torch.Tensor, delta: torch.Tensor) -> torch.Tensor:

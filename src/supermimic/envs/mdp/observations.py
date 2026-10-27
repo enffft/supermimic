@@ -6,6 +6,7 @@ import torch
 from mjlab.managers.scene_entity_config import SceneEntityCfg
 
 from supermimic.envs.mdp.commands import MultiClipMotionCommand
+from supermimic.kinematics.rotations import quat_apply_inverse
 
 if TYPE_CHECKING:
     from mjlab.envs import ManagerBasedRlEnv
@@ -20,6 +21,15 @@ def goal_future_frames(env: ManagerBasedRlEnv, command_name: str) -> torch.Tenso
 def velocity_goal(env: ManagerBasedRlEnv, command_name: str) -> torch.Tensor:
     command = env.command_manager.get_term(command_name)
     return command.goal
+
+
+def world_point_goal_body(env: ManagerBasedRlEnv, command_name: str) -> torch.Tensor:
+    """Fixed env-local world target expressed relative to the current robot base."""
+    command = env.command_manager.get_term(command_name)
+    robot = env.scene["robot"]
+    root_local = robot.data.root_link_pos_w - env.scene.env_origins
+    delta_world = command.target_position_world - root_local
+    return quat_apply_inverse(robot.data.root_link_quat_w, delta_world)
 
 
 def joint_pos_rel_masked(

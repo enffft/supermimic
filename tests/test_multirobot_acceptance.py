@@ -111,7 +111,7 @@ def test_go2_play_velocity_command_and_actor_joint_order():
             action_noise_std=0.0, velocity_gaussian_noise_std=0.0,
             velocity_ou_env_fraction=0.0, velocity_ou_noise_std=0.0,
             velocity_curriculum=False, velocity_fixed_command=(0.3, 0.0, 0.0),
-            record_transitions=False, seed=0,
+            record_transitions=True, seed=0,
         ),
         device="cuda:0",
     )
@@ -133,6 +133,9 @@ def test_go2_play_velocity_command_and_actor_joint_order():
             spec.action_scales, device=env.device
         )
         torch.testing.assert_close(robot.data.joint_pos_target, expected, atol=2e-5, rtol=0.0)
+        env.step(action)
+        replay_goal = env.recorder_manager.get_term("replay").buffer.goal[:, 0]
+        torch.testing.assert_close(replay_goal, command)
     finally:
         env.close()
 
@@ -624,8 +627,9 @@ def test_go2_reward_parity_ou_execution_and_replay_action():
             npz_files=[], robot_name="go2", task_name="velocity_command", num_envs=16,
             episode_length_s=20.0, action_noise_std=0.0, obs_noise=False, reset_noise=False,
             domain_randomization=False, record_transitions=True, seed=19,
-            velocity_gaussian_noise_std=0.1, velocity_ou_env_fraction=0.25,
-            velocity_ou_noise_std=0.3, velocity_ou_theta=2.0,
+            velocity_gaussian_noise_std=0.18, velocity_ou_env_fraction=0.30,
+            velocity_ou_noise_std=0.60, velocity_ou_theta=2.0,
+            velocity_reward_linear_tracking=3.0, velocity_reward_yaw_tracking=1.2,
             velocity_curriculum=False, velocity_curriculum_fixed_stage=0,
         ),
         device="cuda:0",
@@ -653,6 +657,8 @@ def test_go2_reward_parity_ou_execution_and_replay_action():
         # RewardManager evaluates before the final MuJoCo forward pass; use the exact
         # real simulator tensors cached at that reward timestamp for a like-for-like call.
         reward_inputs = env._supermimic_go2_reward_cache["inputs"]
+        assert reward_inputs["params"].cfg.linear_tracking == 3.0
+        assert reward_inputs["params"].cfg.yaw_tracking == 1.2
         direct = velocity_reward_terms(
             reward_inputs["state_prev"], reward_inputs["state"], reward_inputs["goal"],
             reward_inputs["action"], reward_inputs["previous_action"], reward_inputs["params"],
@@ -663,6 +669,8 @@ def test_go2_reward_parity_ou_execution_and_replay_action():
             reward_inputs["state_prev"], reward_inputs["state"], reward_inputs["goal"],
             reward_inputs["action"], reward_inputs["previous_action"], reward_inputs["params"],
         )
+        for name in ("track_lin_vel_xy", "track_yaw_rate"):
+            torch.testing.assert_close(imagined_proxy[name], direct[name], atol=1.0e-7, rtol=1.0e-6)
         parity = {}
         proxy_error = {}
         for name, expected in direct.items():
@@ -682,6 +690,9 @@ def test_go2_reward_parity_ou_execution_and_replay_action():
         torch.testing.assert_close(replay.a_exec[:, 0], term.executed_raw)
         ou_fraction = float(term._ou_mask.float().mean())
         assert 0.0 < ou_fraction < 1.0
+        assert term.noise_std == pytest.approx(0.18)
+        assert term.ou_env_fraction == pytest.approx(0.30)
+        assert term.ou_noise_std == pytest.approx(0.60)
         print("Go2 reward/action parity:", json.dumps({
             "per_term_max_abs_error": parity,
             "proxy_vs_real_per_term_mean_abs_error_rate": proxy_error,
@@ -689,6 +700,97 @@ def test_go2_reward_parity_ou_execution_and_replay_action():
             "clean_action_abs_mean": float(term.raw_action.abs().mean()),
             "executed_action_abs_mean": float(term.executed_raw.abs().mean()),
             "replay_matches_executed_action": True,
+        }, sort_keys=True))
+    finally:
+        env.close()
+
+
+def test_go2_exploration_statistics_200_control_steps():
+    """Measure the real Go2 action term, including its exact replayed action."""
+    if not torch.cuda.is_available():
+        pytest.skip("Go2 MuJoCo-Warp exploration acceptance requires CUDA")
+    from supermimic.envs import SuperMimicEnvCfgArgs, make_env
+
+    num_envs, steps = 32, 200
+    env = make_env(
+        SuperMimicEnvCfgArgs(
+            npz_files=[], robot_name="go2", task_name="velocity_command", num_envs=num_envs,
+            episode_length_s=100.0, action_noise_std=0.1, obs_noise=False, reset_noise=False,
+            domain_randomization=False, record_transitions=True, seed=33,
+            velocity_gaussian_noise_std=0.18, velocity_ou_env_fraction=0.30,
+            velocity_ou_noise_std=0.60, velocity_ou_theta=2.0,
+            velocity_curriculum=False, velocity_curriculum_fixed_stage=0,
+        ),
+        device="cuda:0",
+    )
+    try:
+        env.reset()
+        term = env.action_manager.get_term("joint_pos")
+        replay = env.recorder_manager.get_term("replay").buffer
+        clean_values, executed_values, gaussian_values, ou_values = [], [], [], []
+        clipped = 0
+        total = 0
+        terminations = 0
+        masks_seen = []
+        noise_history = []
+        env_ids = torch.arange(num_envs, device=env.device)
+        for _ in range(steps):
+            clean = (torch.rand(num_envs, term.action_dim, device=env.device) - 0.5) * 0.4
+            mask = term._ou_mask.clone()
+            ptr = replay.ptr.clone()
+            _, _, terminated, truncated, _ = env.step(clean)
+            # The transition row is written before auto-reset and stores the exact
+            # action that reached the MuJoCo actuators.
+            executed = replay.a_exec[env_ids, ptr]
+            clean_recorded = replay.a[env_ids, ptr]
+            applied_noise = term.applied_noise.clone()
+            clean_values.append(clean_recorded.flatten())
+            executed_values.append(executed.flatten())
+            if (~mask).any():
+                gaussian_values.append(applied_noise[~mask].flatten())
+            if mask.any():
+                ou_values.append(applied_noise[mask].flatten())
+            masks_seen.append(mask)
+            noise_history.append(applied_noise.clone())
+            clipped += int((executed.abs() >= 1.0 - 1.0e-7).sum())
+            total += executed.numel()
+            terminations += int(terminated.sum())
+
+        clean_std = float(torch.cat(clean_values).std())
+        executed_std = float(torch.cat(executed_values).std())
+        gaussian_std = float(torch.cat(gaussian_values).std())
+        ou_std = float(torch.cat(ou_values).std())
+        clip_fraction = clipped / total
+        termination_fraction = terminations / (steps * num_envs)
+        mask_matrix = torch.stack(masks_seen)
+        ou_env_fraction = float(mask_matrix.float().mean())
+        assert 0.15 <= ou_env_fraction <= 0.45
+        assert 0.15 <= gaussian_std <= 0.21
+        # Over 200 x 20 ms with theta=2, the OU process approaches sigma/sqrt(2 theta)=0.30.
+        assert 0.15 <= ou_std <= 0.40
+        assert clean_std > 0.05 and executed_std > clean_std
+        assert clip_fraction < 0.05
+        assert torch.isfinite(torch.tensor([clean_std, executed_std, gaussian_std, ou_std])).all()
+        ou_ids = mask_matrix[0].nonzero().squeeze(-1)
+        assert ou_ids.numel() >= 2
+        # OU trajectories are persistent within an environment, but their random
+        # increments are independently sampled per environment.
+        noise_history = torch.stack(noise_history)
+        assert not torch.equal(noise_history[:, ou_ids[0]], noise_history[:, ou_ids[1]])
+
+        env_ids0 = torch.tensor([0], device=env.device)
+        term.reset(env_ids0)
+        torch.testing.assert_close(term._ou_state[env_ids0], torch.zeros_like(term._ou_state[env_ids0]))
+        print("Go2 exploration diagnostics:", json.dumps({
+            "control_steps": steps,
+            "clean_action_std": clean_std,
+            "executed_action_std": executed_std,
+            "gaussian_noise_std_actual": gaussian_std,
+            "ou_noise_std_actual": ou_std,
+            "ou_environment_fraction": ou_env_fraction,
+            "action_clip_fraction": clip_fraction,
+            "episode_termination_fraction": termination_fraction,
+            "replay_records_executed_action": True,
         }, sort_keys=True))
     finally:
         env.close()

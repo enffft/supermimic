@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import math
 import os
 import time
@@ -15,7 +16,7 @@ from torch.utils.tensorboard import SummaryWriter
 from supermimic.config import TrainConfig
 from supermimic.envs import SuperMimicEnvCfgArgs, make_env
 from supermimic.envs.mdp.motion_library import discover_npz
-from supermimic.imagination.tasks import MotionTrackingTask, VelocityCommandTask
+from supermimic.imagination.tasks import MotionTrackingTask, VelocityCommandTask, WorldPointReachTask
 from supermimic.imagination.policy_trainer import PolicyTrainer
 from supermimic.kinematics.g1_fk import G1Kinematics
 from supermimic.policy.nets import Critic, Policy
@@ -27,6 +28,7 @@ from supermimic.world_model.heads import AnalyticHeads
 from supermimic.world_model.wm_trainer import WorldModelTrainer
 from supermimic.world_model.world_model import WorldModel
 from supermimic.tasks.velocity_reward import VelocityRewardCfg, VelocityRobotParams
+from supermimic.tasks.world_point_reward import WorldPointRobotParams
 
 
 M1_FIRST_PHASE_CLIPS = (
@@ -47,27 +49,46 @@ M1_FIRST_PHASE_MANIFEST = Path("configs/m1_piper_first6.csv")
 
 class Trainer:
     @staticmethod
-    def _resolved_num_envs(robot_name: str, requested: int | None = None) -> int:
+    def _resolved_num_envs(robot_name: str, requested: int | None = None, task_name: str | None = None) -> int:
         if requested is not None:
             return requested
         name = get_robot_spec(robot_name).name
-        return 2048 if name == "m1_piper" else 3072 if name == "go2" else 4096
+        if name == "m1_piper":
+            return 256 if task_name == "world_point_reach" else 2048
+        return 3072 if name == "go2" else 4096
 
     def __init__(self, cfg: TrainConfig):
         self.cfg = cfg
+        if cfg.resume is not None and cfg.init_wm_from is not None:
+            raise ValueError("--resume and --init-wm-from are mutually exclusive")
         robot_spec = get_robot_spec(cfg.env.robot_name)
-        cfg.env.num_envs = self._resolved_num_envs(robot_spec.name, cfg.env.num_envs)
+        self.robot_joint_names = tuple(robot_spec.joint_names)
+        self.actuator_model_version = robot_spec.actuator_model_version
+        self.robot_model_sha256 = (
+            self._checkpoint_sha256(robot_spec.model_path)
+            if robot_spec.model_path is not None and robot_spec.model_path.is_file()
+            else None
+        )
+        cfg.env.num_envs = self._resolved_num_envs(robot_spec.name, cfg.env.num_envs, cfg.env.task_name)
         is_motion = cfg.env.task_name == "motion_tracking"
-        if cfg.env.task_name not in ("motion_tracking", "velocity_command"):
+        is_velocity = cfg.env.task_name == "velocity_command"
+        is_world_point = cfg.env.task_name == "world_point_reach"
+        if cfg.env.task_name not in ("motion_tracking", "velocity_command", "world_point_reach"):
             raise ValueError(f"unknown task {cfg.env.task_name!r}")
-        if cfg.env.task_name == "velocity_command" and robot_spec.name != "go2":
+        if is_velocity and robot_spec.name != "go2":
             raise ValueError("velocity_command is currently supported only for Go2")
-        if robot_spec.name == "go2" and is_motion:
+        if is_world_point and robot_spec.name != "m1_piper":
+            raise ValueError("world_point_reach is currently supported only for M1-Piper")
+        if robot_spec.name == "go2" and not is_velocity:
             raise ValueError("Go2 has no Motion Library; select env.task_name=velocity_command")
-        if robot_spec.name != "go2" and not is_motion:
-            raise ValueError("velocity_command is currently supported only for Go2")
+        if robot_spec.name == "m1_piper" and not (is_motion or is_world_point):
+            raise ValueError("M1-Piper supports motion_tracking and world_point_reach")
         if cfg.env.anchor_obs is None:
-            cfg.env.anchor_obs = robot_spec.name == "m1_piper"
+            cfg.env.anchor_obs = robot_spec.name == "m1_piper" and is_motion
+        if cfg.env.anchor_obs and cfg.env.anchor_orientation_obs:
+            raise ValueError("choose position+orientation Anchor or orientation-only Anchor")
+        if (cfg.env.anchor_obs or cfg.env.anchor_orientation_obs) and not is_motion:
+            raise ValueError("Anchor observations are defined only for motion_tracking")
         if robot_spec.name == "m1_piper" and is_motion:
             if cfg.data.library is not None:
                 raise ValueError("M1 packed libraries bypass the first-phase validated clip manifest")
@@ -83,19 +104,36 @@ class Trainer:
             if cfg.data.manifest is None:
                 cfg.data.manifest = M1_FIRST_PHASE_MANIFEST
 
+        if is_velocity:
+            cfg.wm_trainer.batch_size = cfg.env.velocity_wm_batch_size
+            cfg.policy_trainer.batch_size = cfg.env.velocity_actor_batch_size
+        elif is_world_point:
+            cfg.wm_trainer.batch_size = cfg.env.m1_world_point_wm_batch_size
+            cfg.policy_trainer.batch_size = cfg.env.m1_world_point_actor_batch_size
+
         # Build every network dimension from the selected robot/task while leaving the
         # default G1 values and initialization path unchanged.
         n_joints = robot_spec.num_joints
         goal_term_sizes = (robot_spec.amp_dim, robot_spec.amp_dim, 3, 3, 3, 1) if is_motion else (3,)
         goal_term_scale = (1.0, 5.0, 1.0, 2.0, 1.0, 1.0) if is_motion else (1.0,)
-        goal_dim = cfg.env.future_frames * (2 * robot_spec.amp_dim + 10) + (9 if cfg.env.anchor_obs else 0) if is_motion else 3
+        anchor_dim = 9 if cfg.env.anchor_obs else 6 if cfg.env.anchor_orientation_obs else 0
+        goal_dim = cfg.env.future_frames * (2 * robot_spec.amp_dim + 10) + anchor_dim if is_motion else 3
         cfg.policy.num_joints = n_joints
         cfg.policy.history = cfg.env.history_length
         cfg.policy.goal_dim = goal_dim
-        cfg.policy.goal_interface = "motion" if is_motion else "velocity"
+        cfg.policy.goal_interface = "motion" if is_motion else "velocity" if is_velocity else "world_point_reach"
+        # Keep G1/M1 on the original encoded goal path; only Go2 gets the compact
+        # proprioception + velocity-command actor.
+        cfg.policy.goal_encoding = cfg.env.velocity_policy_encoding if is_velocity else "direct" if is_world_point else "encoded"
+        # Direct task actors must stay inside the action interval during BPTT.
+        # A smooth tanh has useful gradients near the boundary, unlike relying on
+        # a hard execution clamp after an unbounded decoder. Old checkpoints omit
+        # this setting and retain their historical identity output in Play.
+        cfg.policy.action_output = cfg.env.direct_action_output if cfg.policy.goal_encoding == "direct" else "identity"
         cfg.policy.goal_term_sizes = goal_term_sizes
         cfg.policy.goal_term_scale = goal_term_scale
         cfg.policy_trainer.anchor_obs = cfg.env.anchor_obs
+        cfg.policy_trainer.anchor_orientation_obs = cfg.env.anchor_orientation_obs
         cfg.policy_trainer.future_frames = cfg.env.future_frames
         cfg.world_model.num_joints = n_joints
         cfg.world_model.action_dim = n_joints
@@ -124,14 +162,12 @@ class Trainer:
         self.device = cfg.device
         self.log_dir = Path(cfg.log_root) / cfg.run_name
         self.log_dir.mkdir(parents=True, exist_ok=True)
-        if self.is_main:
-            (self.log_dir / "config.json").write_text(json.dumps(asdict(cfg), indent=2, default=str))
         self.writer = SummaryWriter(str(self.log_dir / "tb")) if self.is_main else None
 
         if not is_motion:
             files = []
             if cfg.data.library is not None:
-                raise ValueError("Go2 velocity-command task does not consume a motion library")
+                raise ValueError(f"{cfg.env.task_name} does not consume a motion library")
         elif cfg.data.library is not None:
             files = [cfg.data.library]
             cfg.env.compact_library = True
@@ -168,10 +204,14 @@ class Trainer:
                 replay_capacity=cfg.env.replay_capacity,
                 compact_library=cfg.env.compact_library,
                 anchor_obs=cfg.env.anchor_obs,
+                anchor_orientation_obs=cfg.env.anchor_orientation_obs,
                 velocity_gaussian_noise_std=cfg.env.velocity_gaussian_noise_std,
                 velocity_ou_env_fraction=cfg.env.velocity_ou_env_fraction,
                 velocity_ou_noise_std=cfg.env.velocity_ou_noise_std,
                 velocity_ou_theta=cfg.env.velocity_ou_theta,
+                velocity_reward_linear_tracking=cfg.env.velocity_reward_linear_tracking,
+                velocity_reward_yaw_tracking=cfg.env.velocity_reward_yaw_tracking,
+                velocity_reward_direction=cfg.env.velocity_reward_direction,
                 velocity_curriculum=cfg.env.velocity_curriculum,
                 velocity_curriculum_initial_stage=cfg.env.velocity_curriculum_initial_stage,
                 velocity_curriculum_fixed_stage=cfg.env.velocity_curriculum_fixed_stage,
@@ -201,12 +241,21 @@ class Trainer:
                 velocity_min_safe_height=cfg.env.velocity_min_safe_height,
                 velocity_fall_height=cfg.env.velocity_fall_height,
                 velocity_fall_tilt_deg=cfg.env.velocity_fall_tilt_deg,
+                m1_fall_height=cfg.env.m1_fall_height,
+                m1_success_distance=cfg.env.m1_success_distance,
+                m1_near_target_fraction=cfg.env.m1_near_target_fraction,
+                m1_near_x=cfg.env.m1_near_x,
+                m1_near_y=cfg.env.m1_near_y,
+                m1_near_z=cfg.env.m1_near_z,
+                m1_far_x=cfg.env.m1_far_x,
+                m1_far_y=cfg.env.m1_far_y,
+                m1_far_z=cfg.env.m1_far_z,
                 seed=cfg.seed + 1000 * self.rank,
             ),
             device=self.device,
         )
         env = self.env
-        command_name = "motion" if is_motion else "velocity"
+        command_name = "motion" if is_motion else "velocity" if is_velocity else "world_point"
         self.command = env.command_manager.get_term(command_name)
         self.lib = getattr(self.command, "library", None)
         self.recorder = env.recorder_manager.get_term("replay")
@@ -226,12 +275,26 @@ class Trainer:
             reward_anchor_at_start=robot_spec.name == "m1_piper",
         )
         self.wm = WorldModel(cfg.world_model, heads, self.device)
+        self.recorder.real_transition_callback = self.wm.update_real_transition
         self.policy = Policy(cfg.policy).to(self.device)
         self.critic = Critic(cfg.critic, feat_dim=self.wm.spec.feat_dim, goal_dim=goal_dim, xi_dim=n_joints + 4, pcfg=cfg.policy).to(self.device)
+        self.pretrained_wm = False
+        self.init_wm_from_path: str | None = None
+        self.init_wm_sha256: str | None = None
+        if cfg.init_wm_from is not None:
+            self._initialize_world_model(cfg.init_wm_from, robot_spec.joint_names)
         if is_motion:
-            self.task = MotionTrackingTask(self.lib, cfg.env.future_frames, cfg.env.anchor_obs)
-        else:
-            reward_cfg = VelocityRewardCfg(min_safe_height=cfg.env.velocity_min_safe_height)
+            self.task = MotionTrackingTask(
+                self.lib, cfg.env.future_frames, cfg.env.anchor_obs,
+                cfg.env.anchor_orientation_obs,
+            )
+        elif is_velocity:
+            reward_cfg = VelocityRewardCfg(
+                linear_tracking=cfg.env.velocity_reward_linear_tracking,
+                yaw_tracking=cfg.env.velocity_reward_yaw_tracking,
+                command_direction=cfg.env.velocity_reward_direction,
+                min_safe_height=cfg.env.velocity_min_safe_height,
+            )
             default_joint_pos = robot.data.default_joint_pos[0].detach().clone()
             reward_params = VelocityRobotParams(
                 default_joint_pos=default_joint_pos,
@@ -239,7 +302,7 @@ class Trainer:
                 action_scales=default_joint_pos.new_tensor(robot_spec.action_scales),
                 kp=default_joint_pos.new_tensor(robot_spec.kp),
                 kd=default_joint_pos.new_tensor(robot_spec.kd),
-                effort_limits=default_joint_pos.new_full((n_joints,), 23.5),
+                effort_limits=default_joint_pos.new_tensor(robot_spec.effort_limits),
                 dt=robot_spec.control_dt,
                 cfg=reward_cfg,
             )
@@ -247,6 +310,23 @@ class Trainer:
                 params=reward_params,
                 dt=robot_spec.control_dt,
                 reward_cfg=reward_cfg,
+                fall_height=cfg.env.velocity_fall_height,
+                tilt_feature_threshold=1.0 - math.cos(math.radians(cfg.env.velocity_fall_tilt_deg)),
+            )
+        else:
+            tcp_indices = (heads.fk.body_index("piper_x_link7"), heads.fk.body_index("piper_x_link8"))
+            world_point_params = WorldPointRobotParams(
+                default_joint_pos=robot.data.default_joint_pos[0].detach().clone(),
+                soft_joint_limits=robot.data.soft_joint_pos_limits[0].detach().clone(),
+                dt=robot_spec.control_dt,
+                fall_height=cfg.env.m1_fall_height,
+                success_distance=cfg.env.m1_success_distance,
+            )
+            self.task = WorldPointReachTask(
+                params=world_point_params,
+                fk=heads.fk,
+                tcp_body_indices=tcp_indices,
+                dt=robot_spec.control_dt,
             )
         for m in (self.wm, self.policy, self.critic):
             broadcast_params(m)
@@ -263,6 +343,8 @@ class Trainer:
         self.has_tracking_return = is_motion
         self.is_go2_velocity = robot_spec.name == "go2" and not is_motion
         self.is_m1_motion = robot_spec.name == "m1_piper" and is_motion
+        self.is_m1_world_point = robot_spec.name == "m1_piper" and is_world_point
+        self.go2_action_stats = self._empty_go2_action_stats() if self.is_go2_velocity else None
         self.motion_names = [Path(f).stem for f in files]
         self.motion_return_sum = torch.zeros(len(self.motion_names), device=self.device)
         self.motion_return_count = torch.zeros(len(self.motion_names), device=self.device)
@@ -294,8 +376,139 @@ class Trainer:
         self._utd_acc = 0.0
         if cfg.resume is not None:
             self.load(cfg.resume)
+        if self.is_main:
+            (self.log_dir / "config.json").write_text(
+                json.dumps(self._run_config_snapshot(), indent=2, default=str)
+            )
 
     # ------------------------------------------------------------------ checkpoints
+
+    @staticmethod
+    def _as_tuple(value):
+        return tuple(value) if isinstance(value, (list, tuple)) else value
+
+    @staticmethod
+    def _checkpoint_sha256(path: Path) -> str:
+        digest = hashlib.sha256()
+        with path.open("rb") as f:
+            for chunk in iter(lambda: f.read(8 * 1024 * 1024), b""):
+                digest.update(chunk)
+        return digest.hexdigest()
+
+    def _initialize_world_model(self, path: Path, joint_names: tuple[str, ...]) -> None:
+        path = Path(path).expanduser().resolve()
+        if not path.is_file():
+            raise FileNotFoundError(f"pretrained World Model checkpoint does not exist: {path}")
+        ck = torch.load(path, map_location="cpu", weights_only=False)
+        required = {"wm", "policy", "critic", "wm_opt", "policy_opt", "critic_opt", "config"}
+        missing = required - set(ck)
+        if missing:
+            raise ValueError(f"{path}: incomplete training checkpoint, missing {sorted(missing)}")
+        saved = ck["config"]
+        saved_env = saved.get("env", {})
+        saved_wm = saved.get("world_model", {})
+        saved_spec = saved_wm.get("state_spec", {})
+        if saved_env.get("robot_name") != "go2" or saved_env.get("task_name") != "velocity_command":
+            raise ValueError("--init-wm-from requires a Go2 velocity_command checkpoint")
+        saved_actuator = ck.get("actuator_model_version", saved.get("actuator_model_version"))
+        if saved_actuator != self.actuator_model_version:
+            raise ValueError(
+                "pretrained Go2 World Model actuator model is incompatible: "
+                f"saved={saved_actuator!r}, current={self.actuator_model_version!r}"
+            )
+        saved_model_hash = ck.get("robot_model_sha256", saved.get("robot_model_sha256"))
+        if saved_model_hash != self.robot_model_sha256:
+            raise ValueError(
+                "pretrained Go2 World Model robot URDF fingerprint is incompatible: "
+                f"saved={saved_model_hash!r}, current={self.robot_model_sha256!r}"
+            )
+        for key in ("running_normalization", "running_norm_min_std"):
+            old = saved_wm.get(key, False if key == "running_normalization" else 1e-2)
+            new = getattr(self.cfg.world_model, key)
+            if old != new:
+                raise ValueError(f"pretrained World Model {key} mismatch: saved={old}, current={new}")
+        expected_dims = {
+            "num_joints": 12,
+            "action_dim": 12,
+            "xi_dim": 16,
+        }
+        for key, expected in expected_dims.items():
+            actual = saved_wm.get(key)
+            if actual != expected or getattr(self.cfg.world_model, key) != expected:
+                raise ValueError(f"pretrained World Model {key} mismatch: saved={actual}, expected={expected}")
+        if 13 + 2 * expected_dims["num_joints"] != 37:
+            raise AssertionError("Go2 state dimension invariant failed")
+
+        # Old checkpoints did not persist a named joint-order table. The robot identity
+        # plus the 12-D weight layout is checked here; new checkpoints save and compare
+        # the explicit RobotSpec order below.
+        saved_joint_names = ck.get("robot_joint_names", saved.get("robot_joint_names"))
+        if saved_joint_names is not None and tuple(saved_joint_names) != tuple(joint_names):
+            raise ValueError(
+                "pretrained World Model joint order mismatch: "
+                f"saved={tuple(saved_joint_names)}, current={tuple(joint_names)}"
+            )
+        saved_dt = float(saved_spec.get("dt", float("nan")))
+        if not math.isclose(saved_dt, float(self.cfg.world_model.state_spec.dt), rel_tol=0.0, abs_tol=1.0e-12):
+            raise ValueError(f"pretrained World Model control dt mismatch: saved={saved_dt}")
+        state_fields = (
+            "dt", "num_joints", "wheel_indices", "err_scale", "out_scale", "in_scale",
+            "explicit_integration", "xi_offset", "xi_scale",
+        )
+        current_spec = asdict(self.cfg.world_model.state_spec)
+        for key in state_fields:
+            if key not in saved_spec:
+                raise ValueError(f"pretrained checkpoint has no StateSpec field {key!r}")
+            old, new = self._as_tuple(saved_spec[key]), self._as_tuple(current_spec[key])
+            if old != new:
+                raise ValueError(f"pretrained World Model StateSpec.{key} mismatch: saved={old}, current={new}")
+        if tuple(saved_wm.get("hidden", ())) != tuple(self.cfg.world_model.hidden):
+            raise ValueError("pretrained World Model Dynamics MLP hidden widths do not match")
+        if tuple(saved_wm.get("term_hidden", ())) != tuple(self.cfg.world_model.term_hidden):
+            raise ValueError("pretrained World Model Termination Head widths do not match")
+        for key in ("height_threshold", "tilt_threshold", "termination_base_height"):
+            old, new = float(saved_wm.get(key, float("nan"))), float(getattr(self.cfg.world_model, key))
+            if not math.isclose(old, new, rel_tol=0.0, abs_tol=1.0e-12):
+                raise ValueError(f"pretrained World Model {key} termination semantics mismatch: saved={old}, current={new}")
+        if not self._tree_is_finite(ck["wm"]):
+            raise ValueError("pretrained World Model contains NaN or Inf parameters")
+
+        self.wm.load_state_dict(ck["wm"], strict=True)
+        self.pretrained_wm = True
+        self.init_wm_from_path = str(path)
+        self.init_wm_sha256 = self._checkpoint_sha256(path)
+        print(
+            f"[INFO] initialized Go2 World Model from {path} "
+            f"(sha256={self.init_wm_sha256}; strict state-dict load)",
+            flush=True,
+        )
+
+    def _effective_wm_only_target(self) -> int:
+        if self.is_go2_velocity:
+            return 0 if self.pretrained_wm else int(self.cfg.schedule.wm_only_iterations)
+        if self.is_m1_motion or getattr(self, "is_m1_world_point", False):
+            return int(self.cfg.schedule.m1_wm_only_iterations)
+        return 0
+
+    def _run_config_snapshot(self) -> dict:
+        config = asdict(self.cfg)
+        config.update({
+            "robot_joint_names": self.robot_joint_names,
+            "actuator_model_version": self.actuator_model_version,
+            "robot_model_sha256": self.robot_model_sha256,
+            "robot_name": self.cfg.env.robot_name,
+            "task_name": self.cfg.env.task_name,
+            "goal_dim": self.cfg.policy.goal_dim,
+            "action_dim": self.cfg.policy.num_joints,
+            "state_dim": self.wm.spec.state_dim,
+            "policy_mode": self.cfg.policy.goal_encoding,
+            "termination_mode": "learned_reference" if self.cfg.env.task_name == "motion_tracking" else "analytic_height_tilt",
+            "pretrained_wm": self.pretrained_wm,
+            "init_wm_from": self.init_wm_from_path,
+            "init_wm_sha256": self.init_wm_sha256,
+            "effective_wm_only_updates": self._effective_wm_only_target(),
+        })
+        return config
 
     @staticmethod
     def _tree_is_finite(value) -> bool:
@@ -319,11 +532,27 @@ class Trainer:
             "wm_opt": self.wm_trainer.opt.state_dict(),
             "policy_opt": self.policy_trainer.opt.state_dict(),
             "critic_opt": self.policy_trainer.critic_opt.state_dict(),
-            "config": asdict(self.cfg),
+            "config": self._run_config_snapshot(),
             "wm_only_updates": self.wm_only_updates,
             "actor_updates": self.actor_updates,
             "actor_start_iteration": self.actor_start_iteration,
             "utd_acc": self._utd_acc,
+            "pretrained_wm": self.pretrained_wm,
+            "init_wm_from": self.init_wm_from_path,
+            "init_wm_sha256": self.init_wm_sha256,
+            "effective_wm_only_updates": self._effective_wm_only_target(),
+            "policy_mode": self.cfg.policy.goal_encoding,
+            "robot_joint_names": self.robot_joint_names,
+            "actuator_model_version": self.actuator_model_version,
+            "robot_model_sha256": self.robot_model_sha256,
+            "robot_name": self.cfg.env.robot_name,
+            "task_name": self.cfg.env.task_name,
+            "policy_encoding_mode": self.cfg.policy.goal_encoding,
+            "action_output_mode": self.cfg.policy.action_output,
+            "goal_dim": self.cfg.policy.goal_dim,
+            "action_dim": self.cfg.policy.num_joints,
+            "state_dim": self.wm.spec.state_dim,
+            "termination_mode": "learned_reference" if self.cfg.env.task_name == "motion_tracking" else "analytic_height_tilt",
             "torch_rng_state": torch.get_rng_state(),
         }
         if torch.cuda.is_available():
@@ -350,6 +579,50 @@ class Trainer:
 
     def load(self, path: Path) -> None:
         ck = torch.load(path, map_location=self.device, weights_only=False)
+        saved_config = ck.get("config", {})
+        saved_env = saved_config.get("env", {})
+        saved_robot = ck.get("robot_name", saved_config.get("robot_name", saved_env.get("robot_name")))
+        saved_task = ck.get("task_name", saved_config.get("task_name", saved_env.get("task_name")))
+        if saved_robot is not None and saved_robot != self.cfg.env.robot_name:
+            raise ValueError(f"checkpoint robot {saved_robot!r} cannot resume as {self.cfg.env.robot_name!r}")
+        if saved_task is not None and saved_task != self.cfg.env.task_name:
+            raise ValueError(f"checkpoint task {saved_task!r} cannot resume as {self.cfg.env.task_name!r}")
+        saved_actuator = ck.get("actuator_model_version", saved_config.get("actuator_model_version"))
+        if self.cfg.env.robot_name == "go2" and saved_actuator != self.actuator_model_version:
+            raise ValueError(
+                "Go2 checkpoint actuator model is incompatible with this run; "
+                "the old knee effort limit changed, so its World Model cannot be resumed"
+            )
+        saved_model_hash = ck.get("robot_model_sha256", saved_config.get("robot_model_sha256"))
+        if saved_model_hash is not None and saved_model_hash != self.robot_model_sha256:
+            raise ValueError("checkpoint robot URDF fingerprint differs from the current model")
+        saved_norm = saved_config.get("world_model", {}).get("running_normalization", False)
+        if saved_norm != self.cfg.world_model.running_normalization:
+            raise ValueError(f"checkpoint World Model running_normalization={saved_norm} differs from requested config")
+        saved_term_mode = ck.get("termination_mode")
+        current_term_mode = "learned_reference" if self.cfg.env.task_name == "motion_tracking" else "analytic_height_tilt"
+        if saved_term_mode is not None and saved_term_mode != current_term_mode:
+            raise ValueError(f"checkpoint termination mode {saved_term_mode!r} differs from {current_term_mode!r}")
+        for key, actual in (("goal_dim", self.cfg.policy.goal_dim), ("action_dim", self.cfg.policy.num_joints), ("state_dim", self.wm.spec.state_dim)):
+            expected = ck.get(key)
+            if expected is not None and expected != actual:
+                raise ValueError(f"checkpoint {key}={expected} but this run expects {actual}")
+        saved_policy_mode = ck.get(
+            "policy_mode", ck.get("config", {}).get("policy", {}).get("goal_encoding", "encoded")
+        )
+        if saved_policy_mode != self.cfg.policy.goal_encoding:
+            raise ValueError(
+                f"checkpoint Actor mode {saved_policy_mode!r} cannot resume into "
+                f"{self.cfg.policy.goal_encoding!r}; use it for evaluation or initialize only the World Model"
+            )
+        saved_action_output = ck.get(
+            "action_output_mode", ck.get("config", {}).get("policy", {}).get("action_output", "identity")
+        )
+        if saved_action_output != self.cfg.policy.action_output:
+            raise ValueError(
+                f"checkpoint action output mapping {saved_action_output!r} cannot resume into "
+                f"{self.cfg.policy.action_output!r}; start a fresh learner or use the saved mapping for evaluation"
+            )
         self.wm.load_state_dict(ck["wm"])
         self.policy.load_state_dict(ck["policy"])
         self.critic.load_state_dict(ck["critic"])
@@ -370,6 +643,9 @@ class Trainer:
         self.actor_updates = ck.get("actor_updates", 0)
         self.actor_start_iteration = ck.get("actor_start_iteration", ck.get("actor_start_update"))
         self._utd_acc = ck.get("utd_acc", 0.0)
+        self.pretrained_wm = bool(ck.get("pretrained_wm", False))
+        self.init_wm_from_path = ck.get("init_wm_from")
+        self.init_wm_sha256 = ck.get("init_wm_sha256")
         if "torch_rng_state" in ck:
             torch.set_rng_state(ck["torch_rng_state"].cpu())
         if torch.cuda.is_available() and "cuda_rng_state" in ck:
@@ -442,15 +718,81 @@ class Trainer:
             value = self.env.reward_manager.get_term(name).mean().detach()
             self.real_reward_term_sum[name] = self.real_reward_term_sum.get(name, value.new_zeros(())) + value
 
+    def _empty_go2_action_stats(self) -> dict[str, torch.Tensor]:
+        return {
+            name: torch.zeros((), device=self.device)
+            for name in (
+                "clean_sum", "clean_sq_sum", "clean_count",
+                "exec_sum", "exec_sq_sum", "exec_count",
+                "gauss_sum", "gauss_sq_sum", "gauss_count",
+                "ou_sum", "ou_sq_sum", "ou_count",
+                "clipped", "action_count", "terminated", "env_steps", "ou_envs", "env_count",
+            )
+        }
+
+    def _accumulate_go2_action_stats(
+        self,
+        clean: torch.Tensor,
+        executed: torch.Tensor,
+        applied_noise: torch.Tensor,
+        ou_mask: torch.Tensor,
+        terminated: torch.Tensor,
+    ) -> None:
+        stats = self.go2_action_stats
+        if stats is None:
+            return
+        def add_moments(prefix: str, value: torch.Tensor) -> None:
+            if value.numel() == 0:
+                return
+            stats[f"{prefix}_sum"] += value.sum()
+            stats[f"{prefix}_sq_sum"] += value.square().sum()
+            stats[f"{prefix}_count"] += value.numel()
+
+        add_moments("clean", clean)
+        add_moments("exec", executed)
+        add_moments("gauss", applied_noise[~ou_mask])
+        add_moments("ou", applied_noise[ou_mask])
+        stats["clipped"] += (executed.abs() >= 1.0 - 1.0e-7).sum()
+        stats["action_count"] += executed.numel()
+        stats["terminated"] += terminated.sum()
+        stats["env_steps"] += terminated.numel()
+        stats["ou_envs"] += ou_mask.sum()
+        stats["env_count"] += ou_mask.numel()
+
+    def _write_go2_action_stats(self, iteration: int) -> None:
+        if self.writer is None or self.go2_action_stats is None:
+            return
+        stats = self.go2_action_stats
+
+        def std(prefix: str) -> float:
+            count = stats[f"{prefix}_count"].clamp_min(1.0)
+            mean = stats[f"{prefix}_sum"] / count
+            variance = stats[f"{prefix}_sq_sum"] / count - mean.square()
+            return float(variance.clamp_min(0.0).sqrt())
+
+        self.writer.add_scalar("go2/clean_action_std", std("clean"), iteration)
+        self.writer.add_scalar("go2/executed_action_std", std("exec"), iteration)
+        self.writer.add_scalar("go2/gaussian_noise_std_actual", std("gauss"), iteration)
+        self.writer.add_scalar("go2/ou_noise_std_actual", std("ou"), iteration)
+        self.writer.add_scalar(
+            "go2/action_clip_fraction",
+            float(stats["clipped"] / stats["action_count"].clamp_min(1.0)), iteration,
+        )
+        self.writer.add_scalar(
+            "go2/episode_termination_fraction",
+            float(stats["terminated"] / stats["env_steps"].clamp_min(1.0)), iteration,
+        )
+        self.writer.add_scalar(
+            "go2/ou_environment_fraction",
+            float(stats["ou_envs"] / stats["env_count"].clamp_min(1.0)), iteration,
+        )
+        self.go2_action_stats = self._empty_go2_action_stats()
+
     def run(self) -> None:
         cfg = self.cfg
         sch = cfg.schedule
         env = self.env
-        wm_only_target = (
-            sch.wm_only_iterations if self.is_go2_velocity
-            else sch.m1_wm_only_iterations if self.is_m1_motion
-            else 0
-        )
+        wm_only_target = self._effective_wm_only_target()
         obs, _ = env.reset()
         t_start = time.time()
         timers = {"sim": 0.0, "wm": 0.0, "policy": 0.0}
@@ -466,7 +808,17 @@ class Trainer:
             t0 = time.perf_counter()
             pre_frame = self.command.frame.clone() if self.is_m1_motion else None
             action = self.act(obs)
+            action_buffer_ptr = self.buffer.ptr.clone() if self.is_go2_velocity else None
+            action_ou_mask = (
+                self.recorder.action_term._ou_mask.clone() if self.is_go2_velocity else None
+            )
             obs, rew, term, tout, extras = env.step(action)
+            if self.is_go2_velocity:
+                env_ids = torch.arange(env.num_envs, device=self.device)
+                executed = self.buffer.a_exec[env_ids, action_buffer_ptr]
+                clean = self.buffer.a[env_ids, action_buffer_ptr]
+                applied_noise = self.recorder.action_term.applied_noise.clone()
+                self._accumulate_go2_action_stats(clean, executed, applied_noise, action_ou_mask, term)
             self._record_real_reward_terms()
             self.ep_reward_sum += rew
             self.ep_len += 1
@@ -482,7 +834,7 @@ class Trainer:
                 if self.has_tracking_return:
                     norm_ret = self.ep_reward_sum[ids] / (self.max_step_reward * lens.clamp_min(1))
                     finished_returns.extend(norm_ret.tolist())
-                elif self.is_go2_velocity:
+                elif self.is_go2_velocity or self.is_m1_world_point:
                     finished_returns.extend(self.ep_reward_sum[ids].tolist())
                     finished_falls.extend(term[ids].float().tolist())
                 finished_lens.extend(lens.tolist())
@@ -592,11 +944,15 @@ class Trainer:
                         self.writer.add_scalar("train/episode_norm_return", tr, it)
                     elif self.is_go2_velocity:
                         self.writer.add_scalar("go2/real_episode_return", tr, it)
+                    elif self.is_m1_world_point:
+                        self.writer.add_scalar("m1/world_point_episode_return", tr, it)
                     self.writer.add_scalar("train/episode_len", sum(finished_lens) / max(len(finished_lens), 1), it)
                 else:
                     tr = float("nan")
                 if self.is_go2_velocity and self.is_main and finished_falls:
                     self.writer.add_scalar("go2/fall_rate", sum(finished_falls) / len(finished_falls), it)
+                if self.is_m1_world_point and self.is_main and finished_falls:
+                    self.writer.add_scalar("m1/world_point_fall_rate", sum(finished_falls) / len(finished_falls), it)
                 if self.is_go2_velocity and self.is_main:
                     self.writer.add_scalar("go2/curriculum_stage", float(self.command.stage), it)
                     self.writer.add_scalar("go2/curriculum_eval_count", float(self.command.eval_count), it)
@@ -607,6 +963,7 @@ class Trainer:
                     if hasattr(action_term, "_ou_mask"):
                         self.writer.add_scalar("go2/ou_env_fraction", float(action_term._ou_mask.float().mean()), it)
                         self.writer.add_scalar("go2/action_noise_abs_mean", float((action_term.executed_raw - action_term.raw_action).abs().mean()), it)
+                    self._write_go2_action_stats(it)
                 if self.is_m1_motion and self.is_main:
                     metric_count = float(self.m1_step_metric_count)
                     if metric_count > 0:
@@ -622,8 +979,17 @@ class Trainer:
                     total_success_count = float(self.motion_success_count.sum())
                     if total_success_count > 0:
                         self.writer.add_scalar("m1/motion_success_rate", float(self.motion_success_sum.sum() / total_success_count), it)
+                if self.is_m1_world_point and self.is_main:
+                    self.writer.add_scalar(
+                        "m1/world_point_target_distance",
+                        float(self.command.metrics["target_distance"].mean()), it,
+                    )
+                    self.writer.add_scalar(
+                        "m1/world_point_instant_success_fraction",
+                        float(self.command.metrics["success"].mean()), it,
+                    )
                 if self.is_main:
-                    task_prefix = "go2" if self.is_go2_velocity else ("m1" if self.is_m1_motion else "g1")
+                    task_prefix = "go2" if self.is_go2_velocity else ("m1" if self.is_m1_motion or self.is_m1_world_point else "g1")
                     for key, value in self.real_reward_term_sum.items():
                         self.writer.add_scalar(f"{task_prefix}/reward_real/{key}", float(value / sch.log_interval), it)
                 with torch.no_grad():

@@ -14,6 +14,7 @@ from typing import TYPE_CHECKING
 import torch
 from mjlab.envs.mdp.actions import JointPositionAction, JointPositionActionCfg
 from mjlab.managers.action_manager import ActionTerm, ActionTermCfg
+from supermimic.tasks.action_contract import clamp_executed_action
 
 if TYPE_CHECKING:
     from mjlab.envs import ManagerBasedRlEnv
@@ -25,6 +26,7 @@ class NoisyJointPositionAction(JointPositionAction):
     def __init__(self, cfg: NoisyJointPositionActionCfg, env: ManagerBasedRlEnv):
         super().__init__(cfg, env)
         self._executed_raw = torch.zeros_like(self._raw_actions)
+        self._applied_noise = torch.zeros_like(self._raw_actions)
         self.noise_std = float(cfg.noise_std)
         self.ou_env_fraction = float(cfg.ou_env_fraction)
         self.ou_noise_std = float(cfg.ou_noise_std)
@@ -38,6 +40,27 @@ class NoisyJointPositionAction(JointPositionAction):
     def executed_raw(self) -> torch.Tensor:
         return self._executed_raw
 
+    @property
+    def policy_action(self) -> torch.Tensor:
+        return self._raw_actions
+
+    @property
+    def executed_action(self) -> torch.Tensor:
+        return self._executed_raw
+
+    @property
+    def physical_setpoint(self) -> torch.Tensor:
+        return self._processed_actions
+
+    @property
+    def previous_policy_action(self) -> torch.Tensor:
+        return self._env.action_manager.prev_action
+
+    @property
+    def applied_noise(self) -> torch.Tensor:
+        """Selected Gaussian or OU perturbation before the final action clip."""
+        return self._applied_noise
+
     def process_actions(self, actions: torch.Tensor):
         self._raw_actions[:] = actions
         gaussian = self.noise_std * torch.randn_like(self._raw_actions) if self.noise_std > 0.0 else torch.zeros_like(self._raw_actions)
@@ -49,7 +72,8 @@ class NoisyJointPositionAction(JointPositionAction):
             noise = torch.where(self._ou_mask[:, None], self._ou_state, gaussian)
         else:
             noise = gaussian
-        self._executed_raw = (self._raw_actions + noise).clamp(-self.action_clip, self.action_clip)
+        self._applied_noise = noise
+        self._executed_raw = clamp_executed_action(self._raw_actions + noise, self.action_clip)
         self._processed_actions = self._executed_raw * self._scale + self._offset
         if self.cfg.clip is not None:
             self._processed_actions = torch.clamp(
@@ -107,6 +131,7 @@ class MixedM1Action(ActionTerm):
         self._action_dim = len(ids)
         self._raw_actions = torch.zeros(self.num_envs, self._action_dim, device=self.device)
         self._executed_raw = torch.zeros_like(self._raw_actions)
+        self._physical_setpoint = torch.zeros_like(self._raw_actions)
         self._scale = torch.tensor(cfg.action_scales, dtype=torch.float32, device=self.device).expand(self.num_envs, -1)
         self._noise_std = float(cfg.noise_std)
 
@@ -122,10 +147,26 @@ class MixedM1Action(ActionTerm):
     def executed_raw(self) -> torch.Tensor:
         return self._executed_raw
 
+    @property
+    def policy_action(self) -> torch.Tensor:
+        return self._raw_actions
+
+    @property
+    def executed_action(self) -> torch.Tensor:
+        return self._executed_raw
+
+    @property
+    def physical_setpoint(self) -> torch.Tensor:
+        return self._physical_setpoint
+
+    @property
+    def previous_policy_action(self) -> torch.Tensor:
+        return self._env.action_manager.prev_action
+
     def process_actions(self, actions: torch.Tensor) -> None:
         self._raw_actions[:] = actions
         noisy = actions + self._noise_std * torch.randn_like(actions) if self._noise_std > 0 else actions
-        self._executed_raw = noisy.clamp(-self.cfg.action_clip, self.cfg.action_clip)
+        self._executed_raw = clamp_executed_action(noisy, self.cfg.action_clip)
 
     def apply_actions(self) -> None:
         q0 = self._entity.data.default_joint_pos[:, self._joint_ids]
@@ -133,12 +174,16 @@ class MixedM1Action(ActionTerm):
         limits = self._entity.data.soft_joint_pos_limits[:, self._position_joint_ids]
         position_target = torch.maximum(torch.minimum(position_target, limits[..., 1]), limits[..., 0])
         wheel_target = self._executed_raw[:, self._wheel_action_idx] * self._scale[:, self._wheel_action_idx]
+        self._physical_setpoint.zero_()
+        self._physical_setpoint[:, self._position_action_idx] = position_target
+        self._physical_setpoint[:, self._wheel_action_idx] = wheel_target
         self._entity.set_joint_position_target(position_target, joint_ids=self._position_joint_ids)
         self._entity.set_joint_velocity_target(wheel_target, joint_ids=self._wheel_joint_ids)
 
     def reset(self, env_ids=None) -> None:
         self._raw_actions[env_ids] = 0.0
         self._executed_raw[env_ids] = 0.0
+        self._physical_setpoint[env_ids] = 0.0
 
 
 @dataclass(kw_only=True)

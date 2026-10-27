@@ -1,5 +1,51 @@
 # Go2 Blind Velocity Tracking：实现与短训记录
 
+## 2026-10-26 后续试验：直接速度目标、3072 环境与 Play 评估
+
+本节记录本轮最新实现和评估；下面“4096 环境短训”是此前的独立试验，不能当作本轮 checkpoint 的结果。
+
+### 本轮配置与 checkpoint 初始化
+
+- Go2 Actor 使用直接目标输入：420D proprioception 与 3D `[v_x, v_y, yaw_rate]` 分别按既有 scale 处理后拼接，Decoder 输入为 423D；不经过 motion encoder。G1 和 M1 仍使用原来的 encoded 路径。
+- 仅从 `logs/go2_blindlocomotion_resume_15m_b3072_20261026/ckpt_latest.pt` 严格载入兼容的 World Model。源 checkpoint SHA-256：`e1985fa7ba3fa67b10646a5b30c070d10803efb54f60d48ae405c87d8cc1d01e`。Actor、Critic 和优化器均重新初始化；Replay Buffer 重新采集。新 World Model 从在线更新开始继续训练。
+- Go2 探索参数：Gaussian 标准差 `0.18`；`30%` 环境使用 OU 噪声，OU `sigma=0.60`、`theta=2.0`。
+- 平面速度跟踪权重改为 `3.0`，yaw-rate 跟踪权重改为 `1.2`，其它奖励项、Termination、课程和 32 步 imagination 保持现有实现。
+- 训练使用 `3072` 个环境、Replay 容量 `256/env`、World Model `8` 步窗口和 batch `128`、Actor batch `128`、imagination horizon `32`、真实数据 warmup `40` 个向量化步。配置中的 WM-only 数值是 `200`，但由于初始化了预训练 WM，本次运行的有效 WM-only 更新数为 `0`；WM 与 Actor 在 warmup 后在线交替更新。
+
+### 15 分钟训练结果
+
+运行目录和 checkpoint：`logs/go2_direct_pretrained_3072_15m_20261026/`。训练在约 15 分钟上限正常停止于 iteration `1850`，完成 `724` 次 Actor/WM 更新，未发生 OOM。保存的 `ckpt_latest.pt` 同时包含重新训练后的 World Model、Direct Actor、Critic、优化器和训练状态。实际运行配置及预训练源校验值保存在该目录的 `config.json`。
+
+这次短训**没有学会前进**。终止时课程仍在 Stage 0，训练日志的平面速度 RMSE 约 `0.370 m/s`、平均机身高度约 `0.223 m`、Actor grad norm 约 `0.034`、32 步 survival 为 `1.0`。最后一个日志区间动作裁剪率为 `9.45%`，此前峰值约 `70.9%`；最新跌倒统计窗为 `13/15` 个 episode（样本数较少）。World Model 8 步 NSE 约 `0.0136`。这些数据表明 rollout survival 和动力学拟合不能代替真实速度跟踪验收。因此本 checkpoint 用于查看和诊断，不应视为可用的 Go2 locomotion policy。
+
+### 固定命令仿真评估
+
+使用最终 checkpoint，在无动作噪声、观测噪声和 domain randomization 的 16 个评估环境中，对每个命令运行 500 个控制步（10 秒）。完整逐项数据保存在 `logs/go2_direct_pretrained_3072_15m_20261026/fixed_velocity_eval.json`。
+
+| 固定前向命令 | 实测平均机身前向速度 | 最后 100 步平均速度 | 平面速度 RMSE | 平均/最低机身高度 | 跌倒/超时 |
+|---:|---:|---:|---:|---:|---:|
+| `0.3 m/s` | `0.0063 m/s` | `-0.00006 m/s` | `0.2953 m/s` | `0.2267 / 0.2213 m` | `0 / 0` |
+| `0.5 m/s` | `0.0063 m/s` | `-0.00006 m/s` | `0.4946 m/s` | `0.2255 / 0.2201 m` | `0 / 0` |
+
+评估结果显示机器人基本原地蹲伏，速度命令没有转化为前进；零跌倒只说明这 10 秒没有触发跌倒事件。Play 窗口已用同一 checkpoint、单环境、`vx=0.3 m/s` 启动，MuJoCo 原生 viewer 保持打开供人工观察。
+
+在仓库根目录的 `supermimic` 环境可以复现同一可视化：
+
+```bash
+PYTHONPATH=src python scripts/play.py \
+  --ckpt logs/go2_direct_pretrained_3072_15m_20261026/ckpt_latest.pt \
+  --vx 0.3 --vy 0 --yaw-rate 0 --num-envs 1 --device cuda:0 \
+  --viewer native --actual-velocity-arrow --velocity-arrow
+```
+
+Play 启动日志确认使用 Go2 URDF、12 个关节、420D observation 和 3D goal。Play 期间动作/观测/reset 噪声、domain randomization 和 Replay 记录关闭。当前窗口由本轮 Play 进程持有；关闭 viewer 窗口或按 `Esc` 即结束该评估进程。
+
+### 本轮验证
+
+- Direct Actor 结构、目标梯度和旧 encoded checkpoint 兼容：10 项 CPU 测试通过；World Model/关节顺序/G1 FK 与解析头回归：13 项通过。
+- Go2 奖励逐项真实/解析一致性、Replay 执行动作和 OU 探索诊断通过；16 环境、200 控制步诊断测得 Gaussian 噪声标准差约 `0.180`、OU 稳态标准差约 `0.300`、OU 环境占比约 `0.281`、动作裁剪率约 `0.00038`、真实跌倒率 `0`。此诊断在最终 3072 环境训练前完成，训练中的裁剪率后来明显升高。
+- `scripts/play.py` 能加载新的 Direct Go2 checkpoint，也能加载旧 encoded Go2、G1、M1 checkpoint。以上结构/加载验证不等于策略效果通过；固定速度评估明确未通过前进跟踪。
+
 ## 状态
 
 Go2 4096 环境短训运行到 900 次向量化迭代后停止。虽然真实仿真跌倒率为 0，想象 rollout 的 32 步末存活率降到 `3.59e-4`，触发本任务给出的停止条件。最新 checkpoint 是迭代 750；没有在迭代 800–900 保存 Actor checkpoint。该实验说明采集与 World Model 链路可以运行，不能证明策略学会了速度跟踪。

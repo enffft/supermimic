@@ -846,3 +846,142 @@ class VelocityCommandCfg(CommandTermCfg):
 
     def build(self, env: ManagerBasedRlEnv) -> VelocityCommand:
         return VelocityCommand(self, env)
+
+
+class WorldPointCommand(CommandTerm):
+    """Episode-fixed env-local world target for M1-Piper TCP reaching."""
+
+    cfg: WorldPointCommandCfg
+
+    def __init__(self, cfg: WorldPointCommandCfg, env: ManagerBasedRlEnv):
+        super().__init__(cfg, env)
+        self.robot = env.scene[cfg.entity_name]
+        self.target_position_world = torch.zeros(self.num_envs, 3, device=self.device)
+        self._tcp_body_ids = torch.tensor(
+            [self.robot.body_names.index("piper_x_link7"), self.robot.body_names.index("piper_x_link8")],
+            dtype=torch.long, device=self.device,
+        )
+        self.metrics["target_distance"] = torch.zeros(self.num_envs, device=self.device)
+        self.metrics["success"] = torch.zeros(self.num_envs, device=self.device)
+        self._base_trace: dict[int, list] = {}
+
+    @property
+    def goal(self) -> torch.Tensor:
+        # Recorder stores this invariant target; Actor observations are computed
+        # separately from the current robot state.
+        return self.target_position_world
+
+    @property
+    def command(self) -> torch.Tensor:
+        return self.target_position_world
+
+    def _resample_command(self, env_ids: torch.Tensor) -> None:
+        if env_ids.numel() == 0:
+            return
+        root_pos = self.robot.data.root_link_pos_w[env_ids]
+        root_quat = self.robot.data.root_link_quat_w[env_ids]
+        tcp_origins = self.robot.data.body_link_pos_w[env_ids][:, self._tcp_body_ids].mean(dim=1)
+        env_origins = self._env.scene.env_origins[env_ids]
+        count = int(env_ids.numel())
+        near = torch.rand(count, device=self.device) < self.cfg.near_target_fraction
+        offsets = torch.zeros(count, 3, device=self.device)
+        for mask, bounds in (
+            (near, (self.cfg.near_x, self.cfg.near_y, self.cfg.near_z)),
+            (~near, (self.cfg.far_x, self.cfg.far_y, self.cfg.far_z)),
+        ):
+            num = int(mask.sum().item())
+            if not num:
+                continue
+            for axis, (lo, hi) in enumerate(bounds):
+                offsets[mask, axis] = lo + torch.rand(num, device=self.device) * (hi - lo)
+        target_global = tcp_origins + quat_apply(root_quat, offsets)
+        target_local = target_global - env_origins
+        target_local[:, 2].clamp_(self.cfg.min_target_height, self.cfg.max_target_height)
+        self.target_position_world[env_ids] = target_local
+        for env_id in env_ids.tolist():
+            self._base_trace[int(env_id)] = []
+
+    def _update_command(self, env_ids: torch.Tensor | None) -> None:
+        return
+
+    def compute(self, dt: float | torch.Tensor, env_ids: torch.Tensor | None = None) -> None:
+        """Resample after reset poses have been written and forwarded to MuJoCo.
+
+        mjlab resets command terms before ``scene.write_data_to_sim`` and
+        ``sim.forward``. Sampling a TCP-relative point in ``reset`` therefore
+        sees stale body positions, especially for nonzero environment origins.
+        The zero-dt command update runs after forward; refresh only reset envs here
+        so the stored target is derived from their actual post-reset TCP.
+        """
+        super().compute(dt, env_ids)
+        if env_ids is not None:
+            if float(dt) != 0.0 or env_ids.numel() == 0:
+                return
+            reset_ids = env_ids
+        elif isinstance(dt, torch.Tensor):
+            reset_ids = (dt.reshape(-1) <= 0.0).nonzero(as_tuple=False).flatten()
+        else:
+            return
+        if reset_ids.numel() == 0:
+            return
+        self._resample_command(reset_ids)
+        self._update_metrics()
+
+    def _update_metrics(self) -> None:
+        tcp = self.robot.data.body_link_pos_w[:, self._tcp_body_ids].mean(dim=1)
+        target_global = self.target_position_world + self._env.scene.env_origins
+        self.metrics["target_distance"] = torch.linalg.vector_norm(tcp - target_global, dim=-1)
+        self.metrics["success"] = (self.metrics["target_distance"] < self.cfg.success_distance).float()
+
+    def _debug_vis_impl(self, visualizer: DebugVisualizer) -> None:
+        import numpy as np
+
+        env_indices = visualizer.get_env_indices(self.num_envs)
+        if not env_indices:
+            return
+        tcp = self.robot.data.body_link_pos_w[:, self._tcp_body_ids].mean(dim=1)
+        target = self.target_position_world + self._env.scene.env_origins
+        base = self.robot.data.root_link_pos_w
+        for env_id in env_indices:
+            e = int(env_id)
+            p_tcp = tcp[e].detach().cpu().numpy()
+            p_target = target[e].detach().cpu().numpy()
+            p_base = base[e].detach().cpu().numpy()
+            visualizer.add_sphere(p_target, radius=0.045, color=(1.0, 0.2, 0.15, 1.0), label=f"target_{e}")
+            visualizer.add_sphere(p_tcp, radius=0.025, color=(0.1, 0.8, 1.0, 1.0), label=f"tcp_{e}")
+            visualizer.add_arrow(p_tcp, p_target, (1.0, 0.8, 0.1, 1.0), width=0.012, label=f"tcp_error_{e}")
+            path = self._base_trace.setdefault(e, [])
+            if not path or np.linalg.norm(path[-1] - p_base) > 0.05:
+                path.append(p_base.copy())
+                del path[:-80]
+            for j in range(1, len(path)):
+                visualizer.add_arrow(path[j - 1], path[j], (0.25, 0.75, 0.35, 0.65), width=0.008, label=f"base_path_{e}_{j}")
+
+
+@dataclass(kw_only=True)
+class WorldPointCommandCfg(CommandTermCfg):
+    entity_name: str = "robot"
+    near_target_fraction: float = 0.6
+    near_x: tuple[float, float] = (0.05, 0.30)
+    near_y: tuple[float, float] = (-0.20, 0.20)
+    near_z: tuple[float, float] = (-0.15, 0.15)
+    far_x: tuple[float, float] = (1.00, 1.40)
+    far_y: tuple[float, float] = (-0.40, 0.40)
+    far_z: tuple[float, float] = (-0.10, 0.25)
+    min_target_height: float = 0.10
+    max_target_height: float = 1.20
+    success_distance: float = 0.08
+    resampling_time_range: tuple[float, float] = (1.0e9, 1.0e9)
+
+    def __post_init__(self):
+        if not 0.0 <= self.near_target_fraction <= 1.0:
+            raise ValueError("near_target_fraction must be within [0, 1]")
+        for name in ("near_x", "near_y", "near_z", "far_x", "far_y", "far_z"):
+            bounds = getattr(self, name)
+            if len(bounds) != 2 or bounds[0] > bounds[1]:
+                raise ValueError(f"{name} must be an ordered (min, max) pair")
+        if not 0 < self.success_distance or not 0 < self.min_target_height < self.max_target_height:
+            raise ValueError("world-point target heights and success distance are invalid")
+
+    def build(self, env: ManagerBasedRlEnv) -> WorldPointCommand:
+        return WorldPointCommand(self, env)

@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+from typing import Literal
 
 import torch
 import torch.nn as nn
@@ -29,6 +30,12 @@ class PolicyCfg:
     decoder_last_gain: float = 0.01
     goal_dim: int = GOAL_DIM  # 680 (+9 with anchor_obs)
     goal_interface: str = "motion"
+    # Old checkpoints omit this field and therefore keep the encoded architecture.
+    goal_encoding: Literal["encoded", "direct"] = "encoded"
+    # ``identity`` is the historical motion/legacy actor contract. New direct
+    # command/task actors use tanh so imagined gradients stay inside the same
+    # bounded action support used by physical execution.
+    action_output: Literal["identity", "tanh"] = "identity"
 
 
 @dataclass
@@ -69,11 +76,25 @@ class Decoder(nn.Module):
         super().__init__()
         obs_dim = obs_dim or cfg.history * (3 * cfg.num_joints + 6)
         act_dim = act_dim or cfg.num_joints
-        self.mlp = MLP(cfg.latent_dim + obs_dim, cfg.decoder_hidden, act_dim, last_gain=cfg.decoder_last_gain)
+        self.goal_encoding = cfg.goal_encoding
+        self.action_output = cfg.action_output
+        if self.goal_encoding == "direct":
+            input_dim = obs_dim + int(cfg.goal_dim)
+            self.register_buffer("goal_scale", _goal_scale_vector(cfg, int(cfg.goal_dim)))
+        elif self.goal_encoding == "encoded":
+            input_dim = cfg.latent_dim + obs_dim
+        else:
+            raise ValueError(f"unknown goal encoding {self.goal_encoding!r}")
+        self.mlp = MLP(input_dim, cfg.decoder_hidden, act_dim, last_gain=cfg.decoder_last_gain)
         self.register_buffer("scale", _obs_scale_vector(cfg))
 
-    def forward(self, z: torch.Tensor, obs_hist: torch.Tensor) -> torch.Tensor:
-        return self.mlp(torch.cat([z, obs_hist * self.scale], dim=-1))
+    def forward(self, z_or_goal: torch.Tensor, obs_hist: torch.Tensor) -> torch.Tensor:
+        obs_scaled = obs_hist * self.scale
+        if self.goal_encoding == "direct":
+            # Direct velocity mode follows [scaled 420-D proprioception, scaled 3-D goal].
+            action = self.mlp(torch.cat([obs_scaled, z_or_goal * self.goal_scale], dim=-1))
+            return torch.tanh(action) if self.action_output == "tanh" else action
+        return self.mlp(torch.cat([z_or_goal, obs_scaled], dim=-1))
 
 
 class Policy(nn.Module):
@@ -82,10 +103,16 @@ class Policy(nn.Module):
     def __init__(self, cfg: PolicyCfg):
         super().__init__()
         self.cfg = cfg
-        self.encoders = nn.ModuleDict({cfg.goal_interface: MotionEncoder(cfg)})
+        # Preserve the encoded checkpoint module names exactly. Direct mode creates no
+        # unused encoder parameters or buffers.
+        self.encoders = nn.ModuleDict(
+            {cfg.goal_interface: MotionEncoder(cfg)} if cfg.goal_encoding == "encoded" else {}
+        )
         self.decoder = Decoder(cfg)
 
     def forward(self, obs_hist: torch.Tensor, goal: torch.Tensor, interface: str | None = None) -> torch.Tensor:
+        if self.cfg.goal_encoding == "direct":
+            return self.decoder(goal, obs_hist)
         interface = interface or self.cfg.goal_interface
         return self.decoder(self.encoders[interface](goal), obs_hist)
 

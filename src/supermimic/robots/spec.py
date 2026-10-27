@@ -24,6 +24,8 @@ class RobotSpec:
     wheel_joint_names: tuple[str, ...] = ()
     amp_joint_names: tuple[str, ...] = ()
     foot_geom_regex: str = ".*"
+    effort_limits: tuple[float, ...] = ()
+    actuator_model_version: str = "mjlab_builtin_position_pd_v1"
 
     def __post_init__(self) -> None:
         n = len(self.joint_names)
@@ -42,6 +44,8 @@ class RobotSpec:
             raise ValueError(f"{self.name}: action_modes entries must be position or velocity")
         if not set(self.wheel_joint_names).issubset(self.joint_names):
             raise ValueError(f"{self.name}: wheel joints are missing from action joint list")
+        if self.effort_limits and len(self.effort_limits) != n:
+            raise ValueError(f"{self.name}: effort_limits has {len(self.effort_limits)} entries; expected {n}")
 
     @property
     def num_joints(self) -> int:
@@ -134,6 +138,8 @@ def get_robot_spec(name: str) -> RobotSpec:
             root_body_name="base", anchor_body_name="base",
             model_path=Path("/home/yifeiy/ws_parkour/lidar_locomotion/legged_gym/resources/robots/go2/urdf/go2.urdf"),
             foot_geom_regex=r"^(FL|FR|RL|RR)_foot_collision$", amp_joint_names=(),
+            effort_limits=(23.7, 23.7, 35.55) * 4,
+            actuator_model_version="go2_urdf_builtin_pd_kp40_kd1_effort_23p7_35p55_v2",
         )
     if key in ("m1", "m1_piper", "m1piper"):
         return RobotSpec(

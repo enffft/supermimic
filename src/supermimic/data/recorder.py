@@ -47,6 +47,9 @@ class ReplayRecorder(RecorderTerm):
         self.prev_clip = torch.zeros(n, dtype=torch.long, device=env.device)
         self.ep_start = torch.ones(n, dtype=torch.bool, device=env.device)
         self.enabled = True
+        # Set by Trainer after constructing the World Model. This callback only
+        # sees new real transitions; sampled replay windows never update moments.
+        self.real_transition_callback = None
 
     # lazy handles (managers are built after the recorder in load_managers order? no: recorder is last)
     @property
@@ -79,6 +82,9 @@ class ReplayRecorder(RecorderTerm):
 
     def _write_rows(self, ids: torch.Tensor, done_next: torch.Tensor) -> None:
         env = self._env
+        s_next = self.state_io.read()[ids]
+        if self.real_transition_callback is not None:
+            self.real_transition_callback(self.prev_s[ids], s_next)
         self.buffer.add(
             ids,
             s=self.prev_s[ids],

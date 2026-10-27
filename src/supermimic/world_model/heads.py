@@ -65,6 +65,14 @@ def anchor_relative_obs(robot_anchor_pos: torch.Tensor, robot_anchor_quat: torch
     return torch.cat([pos, mat[..., :2].reshape(*q12.shape[:-1], 6)], dim=-1)
 
 
+def anchor_orientation_relative_obs(robot_anchor_quat: torch.Tensor, ref_anchor_quat: torch.Tensor) -> torch.Tensor:
+    """Reference anchor orientation in the robot anchor frame as a 6D rotation."""
+    from supermimic.kinematics.rotations import matrix_from_quat, quat_inv, quat_mul
+
+    q_rel = quat_mul(quat_inv(robot_anchor_quat), ref_anchor_quat)
+    return matrix_from_quat(q_rel)[..., :, :2].reshape(*q_rel.shape[:-1], 6)
+
+
 ANCHOR_OBS_DIM = 9
 
 

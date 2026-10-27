@@ -36,6 +36,10 @@ class StartBatch:
     hist_actions: torch.Tensor  # (hist, n, A) clean actions a_{t-hist..t-1} aligned with hist_states' obs
     goal: torch.Tensor | None = None  # (n, G) task command snapshot; motion goals are rebuilt from frame.
 
+    @property
+    def previous_policy_action(self) -> torch.Tensor:
+        return self.prev_action
+
 
 class ReplayBuffer:
     def __init__(self, num_envs: int, capacity: int, state_dim: int, act_dim: int, xi_dim: int, device, goal_dim: int = 0):
@@ -60,6 +64,14 @@ class ReplayBuffer:
         self.ep_counter = torch.zeros(E, dtype=torch.long, device=self.device)
         self.total_rows = 0
         self._env_ar = torch.arange(E, device=self.device)
+
+    @property
+    def policy_action(self) -> torch.Tensor:
+        return self.a
+
+    @property
+    def executed_action(self) -> torch.Tensor:
+        return self.a_exec
 
     # ------------------------------------------------------------------ writes
 

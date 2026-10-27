@@ -8,14 +8,16 @@ import torch
 import torch.nn.functional as F
 
 from supermimic.kinematics.rotations import quat_apply_inverse
+from supermimic.tasks.action_contract import position_setpoint
 
 
 @dataclass
 class VelocityRewardCfg:
     """First-pass reward coefficients; values are reward rates before the env dt."""
 
-    linear_tracking: float = 2.0
-    yaw_tracking: float = 1.0
+    linear_tracking: float = 3.0
+    command_direction: float = 0.5
+    yaw_tracking: float = 1.2
     upright: float = 0.5
     base_lin_vel_z: float = -1.0
     base_ang_vel_xy: float = -0.05
@@ -45,6 +47,7 @@ class VelocityRobotParams:
 
 VELOCITY_REWARD_NAMES = (
     "track_lin_vel_xy",
+    "command_direction",
     "track_yaw_rate",
     "upright",
     "base_lin_vel_z",
@@ -58,7 +61,7 @@ VELOCITY_REWARD_NAMES = (
 )
 
 
-def _joint_torque_proxy(s_next: torch.Tensor, action: torch.Tensor, params: VelocityRobotParams) -> torch.Tensor:
+def _joint_torque_proxy(s_next: torch.Tensor, executed_action: torch.Tensor, params: VelocityRobotParams) -> torch.Tensor:
     """Approximate Go2 PD actuator force for imagined states.
 
     The real reward uses MuJoCo's measured actuator-space force. Imagination has no
@@ -66,10 +69,10 @@ def _joint_torque_proxy(s_next: torch.Tensor, action: torch.Tensor, params: Velo
     the configured PD law and effort limit. This proxy is differentiable with respect
     to the predicted joint state and actor action.
     """
-    nj = action.shape[-1]
+    nj = executed_action.shape[-1]
     q = s_next[..., 7:7 + nj]
     qd = s_next[..., 13 + nj:13 + 2 * nj]
-    target = params.default_joint_pos + action.clamp(-params.cfg.action_clip, params.cfg.action_clip) * params.action_scales
+    target = position_setpoint(executed_action, params.default_joint_pos, params.action_scales)
     limits = params.soft_joint_limits
     target = torch.maximum(torch.minimum(target, limits[..., 1]), limits[..., 0])
     return (params.kp * (target - q) - params.kd * qd).clamp(-params.effort_limits, params.effort_limits)
@@ -83,6 +86,7 @@ def velocity_reward_terms(
     previous_action: torch.Tensor,
     params: VelocityRobotParams,
     *,
+    executed_action: torch.Tensor | None = None,
     measured_torque: torch.Tensor | None = None,
     measured_joint_acceleration: torch.Tensor | None = None,
 ) -> dict[str, torch.Tensor]:
@@ -105,7 +109,9 @@ def velocity_reward_terms(
     gravity_w[..., 2] = -1.0
     gravity_b = quat_apply_inverse(root_quat, gravity_w)
 
-    torque = measured_torque if measured_torque is not None else _joint_torque_proxy(s_next, action, params)
+    if executed_action is None:
+        executed_action = action.clamp(-params.cfg.action_clip, params.cfg.action_clip)
+    torque = measured_torque if measured_torque is not None else _joint_torque_proxy(s_next, executed_action, params)
     if measured_joint_acceleration is not None:
         joint_acc = measured_joint_acceleration
     else:
@@ -118,6 +124,12 @@ def velocity_reward_terms(
     q_error = q - params.default_joint_pos
     terms = {
         "track_lin_vel_xy": params.cfg.linear_tracking * torch.exp(-goal_lin_error_sq / params.cfg.tracking_sigma_sq),
+        "command_direction": params.cfg.command_direction
+        * (torch.linalg.vector_norm(goal[..., :2], dim=-1) / (torch.linalg.vector_norm(goal[..., :2], dim=-1) + 0.1))
+        * torch.tanh(
+            ((lin_vel_b[..., :2] * goal[..., :2]).sum(-1)
+             / torch.linalg.vector_norm(goal[..., :2], dim=-1).clamp_min(1e-4)) / 0.3
+        ),
         "track_yaw_rate": params.cfg.yaw_tracking * torch.exp(-yaw_error_sq / params.cfg.tracking_sigma_sq),
         "upright": params.cfg.upright * torch.exp(-gravity_b[..., :2].square().sum(-1) / params.cfg.upright_sigma_sq),
         "base_lin_vel_z": params.cfg.base_lin_vel_z * lin_vel_w[..., 2].square(),
@@ -136,7 +148,14 @@ def velocity_reward_total(terms: dict[str, torch.Tensor]) -> torch.Tensor:
     return torch.stack([terms[name] for name in VELOCITY_REWARD_NAMES], dim=0).sum(0)
 
 
-def go2_velocity_reward_term(env, term_name: str) -> torch.Tensor:
+def go2_velocity_reward_term(
+    env,
+    term_name: str,
+    linear_tracking: float = 3.0,
+    yaw_tracking: float = 1.2,
+    command_direction: float = 0.5,
+    min_safe_height: float = 0.22,
+) -> torch.Tensor:
     """RewardManager adapter; caches the shared core and records real command metrics."""
     step = int(env.common_step_counter)
     cache = getattr(env, "_supermimic_go2_reward_cache", None)
@@ -160,18 +179,27 @@ def go2_velocity_reward_term(env, term_name: str) -> torch.Tensor:
             action_scales=default.new_tensor(spec.action_scales),
             kp=default.new_tensor(spec.kp),
             kd=default.new_tensor(spec.kd),
-            effort_limits=torch.full_like(default, 23.5),
+            effort_limits=default.new_tensor(spec.effort_limits),
             dt=float(env.step_dt),
+            cfg=VelocityRewardCfg(
+                linear_tracking=float(linear_tracking),
+                yaw_tracking=float(yaw_tracking),
+                command_direction=float(command_direction),
+                min_safe_height=float(min_safe_height),
+            ),
         )
         command = env.command_manager.get_term("velocity")
         if not isinstance(command, VelocityCommand):
             raise TypeError("Go2 reward requires the local VelocityCommand term")
         action = env.action_manager.action
+        action_term = env.action_manager.get_term("joint_pos")
+        executed_action = action_term.executed_raw
         previous_action = env.action_manager.prev_action
         torque = robot.data.qfrc_actuator.clone()
         joint_acceleration = robot.data.joint_acc.clone()
         goal = command.command.clone()
         action = action.clone()
+        executed_action = executed_action.clone()
         previous_action = previous_action.clone()
         state_for_reward = state.clone()
         state_prev = state
@@ -180,6 +208,7 @@ def go2_velocity_reward_term(env, term_name: str) -> torch.Tensor:
             state_prev = recorder_manager.get_term("replay").prev_s.clone()
         terms = velocity_reward_terms(
             state_prev, state_for_reward, goal, action, previous_action, params,
+            executed_action=executed_action,
             measured_torque=torque,
             measured_joint_acceleration=joint_acceleration,
         )
@@ -198,6 +227,7 @@ def go2_velocity_reward_term(env, term_name: str) -> torch.Tensor:
                 "state_prev": state_prev,
                 "goal": goal,
                 "action": action,
+                "executed_action": executed_action,
                 "previous_action": previous_action,
                 "torque": torque,
                 "joint_acceleration": joint_acceleration,

@@ -23,25 +23,33 @@ from supermimic.data.recorder import ReplayRecorderCfg
 from supermimic.envs.actions import MixedM1ActionCfg, NoisyJointPositionActionCfg
 from supermimic.envs.mdp import observations as sm_obs
 from supermimic.envs.mdp import terminations as sm_term
-from supermimic.envs.mdp.commands import MultiClipMotionCommandCfg, VelocityCommandCfg
+from supermimic.envs.mdp.commands import MultiClipMotionCommandCfg, VelocityCommandCfg, WorldPointCommandCfg
 from supermimic.envs.tracking_env_cfg import QuietSimulationCfg, SuperMimicEnvCfgArgs
 from supermimic.robots.mjlab_assets import get_robot_entity_cfg
 from supermimic.robots.spec import get_robot_spec
 from supermimic.tasks.velocity_reward import VELOCITY_REWARD_NAMES, go2_velocity_reward_term
+from supermimic.tasks.world_point_reward import WORLD_POINT_REWARD_NAMES, m1_world_point_reward_term
 
 
 def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
     robot = get_robot_spec(a.robot_name)
     motion_task = a.task_name == "motion_tracking"
     velocity_task = a.task_name == "velocity_command"
-    if not (motion_task or velocity_task):
-        raise ValueError(f"unknown task {a.task_name!r}; use motion_tracking or velocity_command")
+    world_point_task = a.task_name == "world_point_reach"
+    if not (motion_task or velocity_task or world_point_task):
+        raise ValueError(f"unknown task {a.task_name!r}; use motion_tracking, velocity_command, or world_point_reach")
     if velocity_task and robot.name != "go2":
         raise ValueError("velocity_command is currently defined only for Go2")
+    if world_point_task and robot.name != "m1_piper":
+        raise ValueError("world_point_reach is currently defined only for M1-Piper")
     if motion_task and robot.name == "go2":
         raise ValueError("Go2 has no motion bank; select velocity_command")
+    if motion_task and a.anchor_obs and a.anchor_orientation_obs:
+        raise ValueError("choose position+orientation Anchor or orientation-only Anchor")
     if motion_task and not a.npz_files:
         raise ValueError(f"{robot.name} motion_tracking requires converted NPZ motion files")
+    if a.anchor_obs and a.anchor_orientation_obs:
+        raise ValueError("choose position+orientation Anchor or orientation-only Anchor")
 
     noise = (lambda lo, hi: Unoise(n_min=lo, n_max=hi)) if a.obs_noise else (lambda lo, hi: None)
     joint_cfg = SceneEntityCfg("robot", joint_names=robot.joint_names)
@@ -63,8 +71,16 @@ def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
                 "anchor_pos": ObservationTermCfg(func=track_mdp.motion_anchor_pos_b, params={"command_name": "motion"}, noise=noise(-0.25, 0.25)),
                 "anchor_ori": ObservationTermCfg(func=track_mdp.motion_anchor_ori_b, params={"command_name": "motion"}, noise=noise(-0.05, 0.05)),
             })
-    else:
+        elif a.anchor_orientation_obs:
+            goal_terms["anchor_ori"] = ObservationTermCfg(
+                func=track_mdp.motion_anchor_ori_b,
+                params={"command_name": "motion"},
+                noise=noise(-0.05, 0.05),
+            )
+    elif velocity_task:
         goal_terms = {"velocity_command": ObservationTermCfg(func=sm_obs.velocity_goal, params={"command_name": "velocity"})}
+    else:
+        goal_terms = {"world_point_body": ObservationTermCfg(func=sm_obs.world_point_goal_body, params={"command_name": "world_point"})}
     observations = {
         "policy": ObservationGroupCfg(
             terms=policy_terms, concatenate_terms=True, enable_corruption=a.obs_noise,
@@ -131,7 +147,7 @@ def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
         # reference-free command tasks need a Goal snapshot in each replay row.
         goal_dim = 0
         command_name = "motion"
-    else:
+    elif velocity_task:
         commands = {
             "velocity": VelocityCommandCfg(
                 entity_name="robot",
@@ -168,7 +184,16 @@ def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
         }
         # Every adapter calls the same pure reward core; RewardManager applies dt once.
         rewards = {
-            name: RewardTermCfg(func=go2_velocity_reward_term, weight=1.0, params={"term_name": name})
+            name: RewardTermCfg(
+                func=go2_velocity_reward_term, weight=1.0,
+                params={
+                    "term_name": name,
+                    "linear_tracking": a.velocity_reward_linear_tracking,
+                    "yaw_tracking": a.velocity_reward_yaw_tracking,
+                    "command_direction": a.velocity_reward_direction,
+                    "min_safe_height": a.velocity_min_safe_height,
+                },
+            )
             for name in VELOCITY_REWARD_NAMES
         }
         tilt_feature_threshold = 1.0 - math.cos(math.radians(a.velocity_fall_tilt_deg))
@@ -182,6 +207,35 @@ def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
         }
         goal_dim = 3
         command_name = "velocity"
+    else:
+        commands = {
+            "world_point": WorldPointCommandCfg(
+                entity_name="robot",
+                near_target_fraction=a.m1_near_target_fraction,
+                near_x=a.m1_near_x, near_y=a.m1_near_y, near_z=a.m1_near_z,
+                far_x=a.m1_far_x, far_y=a.m1_far_y, far_z=a.m1_far_z,
+                success_distance=a.m1_success_distance,
+                debug_vis=a.debug_vis,
+            )
+        }
+        rewards = {
+            name: RewardTermCfg(func=m1_world_point_reward_term, weight=1.0, params={"term_name": name})
+            for name in WORLD_POINT_REWARD_NAMES
+        }
+        tilt_feature_threshold = 1.0 - math.cos(math.radians(a.velocity_fall_tilt_deg))
+        terminations = {
+            "time_out": TerminationTermCfg(func=base_mdp.time_out, time_out=True),
+            "root_height": TerminationTermCfg(
+                func=sm_term.free_root_too_low,
+                params={"asset_cfg": SceneEntityCfg("robot"), "threshold": a.m1_fall_height},
+            ),
+            "root_tilt": TerminationTermCfg(
+                func=sm_term.free_root_tilted,
+                params={"asset_cfg": SceneEntityCfg("robot"), "threshold": tilt_feature_threshold},
+            ),
+        }
+        goal_dim = 3
+        command_name = "world_point"
 
     events: dict[str, EventTermCfg] = {
         "reset_scene_to_default": EventTermCfg(func=base_mdp.reset_scene_to_default, mode="reset"),

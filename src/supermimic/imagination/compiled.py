@@ -12,6 +12,7 @@ import torch
 
 from supermimic.world_model.heads import ReferenceFrame, analytic_observation
 from supermimic.world_model.world_model import WorldModel
+from supermimic.tasks.action_contract import clamp_executed_action
 
 REWARD_TERM_NAMES = (
     "motion_global_root_pos",
@@ -54,7 +55,7 @@ class ImagStep:
 
 
 class VelocityImagStep:
-    """One reference-free predicted step for command-conditioned tasks."""
+    """One reference-free step for command/point goals in the shared WM."""
 
     def __init__(self, wm: WorldModel, task, default_joint_pos: torch.Tensor, compile_mode: str | None = None):
         self.wm = wm
@@ -67,11 +68,13 @@ class VelocityImagStep:
             self._fn = torch.compile(self._step, mode=mode, dynamic=False)
 
     def _step(self, s, a, a_prev, xi, goal):
-        s_next = self.wm.step(s, a, xi)
-        terms = self.task.reward_terms(s, s_next, goal, a, a_prev)
+        clip = self.task.reward_cfg.action_clip if hasattr(self.task, "reward_cfg") else 1.0
+        executed_action = clamp_executed_action(a, clip)
+        s_next = self.wm.step(s, executed_action, xi)
+        terms = self.task.reward_terms(s, s_next, goal, a, a_prev, executed_action=executed_action)
         reward = torch.stack([terms[name] for name in self.task.reward_term_names], dim=0).sum(0)
         term_vec = torch.stack([terms[name] for name in self.task.reward_term_names], dim=0)
-        logits = self.wm.termination_logits(s_next, None)
+        logits = self.task.termination_logits(s_next)
         obs_clean = analytic_observation(s_next, a, xi, self.q0, self.wheel_indices)
         bodies = self.wm.heads.robot_bodies(s_next)
         ai = self.wm.heads.anchor_index

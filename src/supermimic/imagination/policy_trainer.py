@@ -10,10 +10,19 @@ from supermimic.data.replay_buffer import ReplayBuffer
 from supermimic.envs.mdp.motion_library import MotionLibrary
 from supermimic.imagination.objective import gae_targets, policy_objective
 from supermimic.imagination.rollout import ImagRollout, imagine
-from supermimic.imagination.tasks import MotionTrackingTask, VelocityCommandTask
+from supermimic.imagination.tasks import MotionTrackingTask, VelocityCommandTask, WorldPointReachTask
 from supermimic.policy.nets import Critic, Policy
 from supermimic.training.distributed import allreduce_grads
 from supermimic.world_model.world_model import WorldModel
+
+
+def _clip_bootstrap_values(values: torch.Tensor, value_clip: float | None) -> tuple[torch.Tensor, torch.Tensor]:
+    """Optionally bound bootstrap values and report the fraction affected."""
+    if value_clip is None:
+        return values, values.new_zeros(())
+    if value_clip <= 0:
+        raise ValueError("critic_value_clip must be positive or None")
+    return values.clamp(-value_clip, value_clip), (values.abs() > value_clip).float().mean()
 
 
 @dataclass
@@ -30,19 +39,25 @@ class PolicyTrainerCfg:
     grad_clip_value: float = 0.1
     critic_lr: float = 2e-4
     critic_grad_clip: float = 1.0
+    # Optional symmetric bound for critic bootstrap values. Keep unset by default;
+    # reward scales differ across Motion, Velocity and World Point tasks.
+    critic_value_clip: float | None = None
     critic_epochs: int = 5
     critic_minibatches: int = 4
     use_critic: bool = True
     obs_noise: bool = True
     compile: str | None = "default"
     anchor_obs: bool = False  # None | "default" | "reduce-overhead" | "max-autotune-no-cudagraphs"
+    anchor_orientation_obs: bool = False
 
 
 class PolicyTrainer:
-    def __init__(self, wm: WorldModel, policy: Policy, critic: Critic, task: MotionTrackingTask | VelocityCommandTask | MotionLibrary, cfg: PolicyTrainerCfg):
+    def __init__(self, wm: WorldModel, policy: Policy, critic: Critic, task: MotionTrackingTask | VelocityCommandTask | WorldPointReachTask | MotionLibrary, cfg: PolicyTrainerCfg):
         if isinstance(task, MotionLibrary):
-            task = MotionTrackingTask(task, future_frames=cfg.future_frames, anchor_obs=cfg.anchor_obs)
+            task = MotionTrackingTask(task, future_frames=cfg.future_frames, anchor_obs=cfg.anchor_obs, anchor_orientation_obs=cfg.anchor_orientation_obs)
         self.wm, self.policy, self.critic, self.task, self.cfg = wm, policy, critic, task, cfg
+        if cfg.critic_value_clip is not None and cfg.critic_value_clip <= 0:
+            raise ValueError("critic_value_clip must be positive or None")
         self.last_imag_diagnostics: dict[str, list[float] | float] = {}
         self.lib = task.library if isinstance(task, MotionTrackingTask) else None
         self.opt = torch.optim.Adam(policy.parameters(), lr=cfg.lr, betas=cfg.betas)
@@ -76,11 +91,15 @@ class PolicyTrainer:
         self.wm.requires_grad_(False)
         self.critic.requires_grad_(False)
         try:
-            ro = imagine(self.wm, self.policy, self.task, start, cfg.horizon, cfg.future_frames, obs_noise=cfg.obs_noise, step_fn=self.step_fn, anchor_obs=cfg.anchor_obs)
+            ro = imagine(self.wm, self.policy, self.task, start, cfg.horizon, cfg.future_frames, obs_noise=cfg.obs_noise, step_fn=self.step_fn, anchor_obs=cfg.anchor_obs, anchor_orientation_obs=cfg.anchor_orientation_obs)
             with torch.no_grad():
+                if hasattr(self.task, "termination_probability"):
+                    initial_term_prob = float(self.task.termination_probability(start.state).mean())
+                else:
+                    initial_term_prob = float(torch.sigmoid(self.wm.term_head(ro.term_features[0])).mean())
                 self.last_imag_diagnostics = {
-                    "real_replay_state_termination_probability": float(torch.sigmoid(self.wm.term_head(ro.term_features[0])).mean()),
-                    "termination_probability": [float(x) for x in torch.sigmoid(self.wm.term_head(ro.term_features[1:])).mean(dim=1)],
+                    "real_replay_state_termination_probability": initial_term_prob,
+                    "termination_probability": [float(x) for x in ro.dhat[1:].mean(dim=1)],
                     "survival": [float(x) for x in ro.survival[1:].mean(dim=1)],
                     "root_height_m": [float(x) for x in ro.root_height[1:].mean(dim=1)],
                     "tilt_feature": [float(x) for x in ro.tilt[1:].mean(dim=1)],
@@ -88,6 +107,8 @@ class PolicyTrainer:
             feat, goals, e_root = self._critic_inputs(ro)
             if cfg.use_critic:
                 v_H = self.critic(feat[-1], goals[-1], xi_norm, e_root[-1])
+                if cfg.critic_value_clip is not None:
+                    v_H, _ = _clip_bootstrap_values(v_H, cfg.critic_value_clip)
             else:
                 v_H = None
             J = policy_objective(ro, v_H, cfg.gamma)
@@ -95,7 +116,9 @@ class PolicyTrainer:
             self.opt.zero_grad(set_to_none=True)
             loss.backward()
             allreduce_grads(self.policy)
-            gn = torch.nn.utils.clip_grad_norm_(self.policy.parameters(), cfg.grad_clip_norm)
+            gn = torch.nn.utils.clip_grad_norm_(
+                self.policy.parameters(), cfg.grad_clip_norm, error_if_nonfinite=True
+            )
             torch.nn.utils.clip_grad_value_(self.policy.parameters(), cfg.grad_clip_value)
             self.opt.step()
         finally:
@@ -120,7 +143,8 @@ class PolicyTrainer:
                 feat_d, goals_d, e_root_d = feat.detach(), goals.detach(), e_root.detach()
                 H1, n, _ = feat_d.shape
                 xi_rep = xi_norm[None].expand(H1, n, -1)
-                values = self.critic(feat_d.reshape(H1 * n, -1), goals_d.reshape(H1 * n, -1), xi_rep.reshape(H1 * n, -1), e_root_d.reshape(H1 * n, -1)).reshape(H1, n)
+                raw_values = self.critic(feat_d.reshape(H1 * n, -1), goals_d.reshape(H1 * n, -1), xi_rep.reshape(H1 * n, -1), e_root_d.reshape(H1 * n, -1)).reshape(H1, n)
+                values, value_clip_fraction = _clip_bootstrap_values(raw_values, cfg.critic_value_clip)
                 targets = gae_targets(ro.rewards.detach(), ro.dhat[1:].detach(), values, cfg.gamma, cfg.gae_lambda)  # (H, n)
                 X_feat = feat_d[:-1].reshape(-1, feat_d.shape[-1])
                 X_goal = goals_d[:-1].reshape(-1, goals_d.shape[-1])
@@ -139,10 +163,13 @@ class PolicyTrainer:
                     self.critic_opt.zero_grad(set_to_none=True)
                     closs.backward()
                     allreduce_grads(self.critic)
-                    torch.nn.utils.clip_grad_norm_(self.critic.parameters(), cfg.critic_grad_clip)
+                    torch.nn.utils.clip_grad_norm_(
+                        self.critic.parameters(), cfg.critic_grad_clip, error_if_nonfinite=True
+                    )
                     self.critic_opt.step()
                     last = closs.detach()
             metrics["critic_loss"] = float(last)
-            metrics["critic_value_mean"] = float(values.mean())
+            metrics["critic_value_mean"] = float(raw_values.mean())
             metrics["critic_target_mean"] = float(targets.mean())
+            metrics["critic_value_clip_fraction"] = float(value_clip_fraction)
         return metrics

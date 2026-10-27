@@ -25,7 +25,11 @@ class DataCfg:
 @dataclass
 class EnvCfg:
     robot_name: str = "g1"  # g1 | go2 | m1_piper
-    task_name: str = "motion_tracking"  # motion_tracking | velocity_command
+    task_name: str = "motion_tracking"  # motion_tracking | velocity_command | world_point_reach
+    velocity_policy_encoding: Literal["direct", "encoded"] = "direct"  # encoded is for legacy Go2 checkpoints
+    direct_action_output: Literal["identity", "tanh"] = "tanh"  # set identity only to resume/evaluate legacy direct checkpoints
+    velocity_wm_batch_size: int = 1024
+    velocity_actor_batch_size: int = 1024
     num_envs: int | None = None  # Defaults: Go2 3072, M1-Piper 2048, G1 4096; CLI overrides remain explicit.
     episode_length_s: float = 10.0
     action_noise_std: float = 0.1
@@ -38,11 +42,15 @@ class EnvCfg:
     future_frames: int = 10
     compact_library: bool = False
     anchor_obs: bool | None = None  # default: enabled for M1, disabled for G1/Go2
+    anchor_orientation_obs: bool = False  # G1 orientation-only (6D) alternative; mutually exclusive with anchor_obs
     velocity_debug_objective: bool = False  # smoke-test only; not a selected Go2 reward
-    velocity_gaussian_noise_std: float = 0.1
-    velocity_ou_env_fraction: float = 0.25
-    velocity_ou_noise_std: float = 0.3
+    velocity_gaussian_noise_std: float = 0.18
+    velocity_ou_env_fraction: float = 0.30
+    velocity_ou_noise_std: float = 0.60
     velocity_ou_theta: float = 2.0
+    velocity_reward_linear_tracking: float = 3.0
+    velocity_reward_yaw_tracking: float = 1.2
+    velocity_reward_direction: float = 0.5
     velocity_curriculum: bool = True
     velocity_curriculum_initial_stage: int = 0
     velocity_curriculum_fixed_stage: int | None = None  # A=0, B=1, C=2; None means automatic
@@ -72,6 +80,17 @@ class EnvCfg:
     velocity_min_safe_height: float = 0.22  # zero-action stable Go2 root height was 0.2827 m
     velocity_fall_height: float = 0.17
     velocity_fall_tilt_deg: float = 70.0
+    m1_fall_height: float = 0.20
+    m1_success_distance: float = 0.08
+    m1_near_target_fraction: float = 0.60
+    m1_near_x: tuple[float, float] = (0.05, 0.30)
+    m1_near_y: tuple[float, float] = (-0.20, 0.20)
+    m1_near_z: tuple[float, float] = (-0.15, 0.15)
+    m1_far_x: tuple[float, float] = (1.00, 1.40)
+    m1_far_y: tuple[float, float] = (-0.40, 0.40)
+    m1_far_z: tuple[float, float] = (-0.10, 0.25)
+    m1_world_point_wm_batch_size: int = 256
+    m1_world_point_actor_batch_size: int = 256
 
 
 @dataclass
@@ -106,3 +125,4 @@ class TrainConfig:
     policy_trainer: PolicyTrainerCfg = field(default_factory=PolicyTrainerCfg)
     schedule: ScheduleCfg = field(default_factory=ScheduleCfg)
     resume: Path | None = None
+    init_wm_from: Path | None = None

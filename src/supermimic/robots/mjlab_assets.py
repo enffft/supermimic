@@ -436,11 +436,13 @@ def get_robot_entity_cfg(name: str):
         actuators = (
             BuiltinPositionActuatorCfg(
                 target_names_expr=(".*_hip_joint", ".*_thigh_joint"),
-                stiffness=40.0, damping=1.0, effort_limit=23.5,
+                stiffness=float(robot.kp[0]), damping=float(robot.kd[0]),
+                effort_limit=float(robot.effort_limits[0]),
             ),
             BuiltinPositionActuatorCfg(
                 target_names_expr=(".*_calf_joint",),
-                stiffness=40.0, damping=1.0, effort_limit=23.5,
+                stiffness=float(robot.kp[2]), damping=float(robot.kd[2]),
+                effort_limit=float(robot.effort_limits[2]),
             ),
         )
         collision_cfg = CollisionCfg(

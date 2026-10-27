@@ -61,7 +61,9 @@ class WorldModelTrainer:
             self.opt.zero_grad(set_to_none=True)
             loss.backward()
             allreduce_grads(self.wm)
-            gn = torch.nn.utils.clip_grad_norm_(self.wm.parameters(), self.cfg.grad_clip)
+            gn = torch.nn.utils.clip_grad_norm_(
+                self.wm.parameters(), self.cfg.grad_clip, error_if_nonfinite=True
+            )
             self.opt.step()
             m["loss"] = loss.detach()
             m["grad_norm"] = gn.detach()

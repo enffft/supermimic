@@ -169,3 +169,50 @@ def test_anchor_relative_obs_matches_env():
             np.testing.assert_allclose(ours.cpu().numpy(), obs["goal"][:, 680:].cpu().numpy(), atol=3e-5)
     finally:
         env.close()
+
+
+def test_orientation_only_anchor_goal_matches_real_and_fk_reconstruction():
+    """The optional 6D G1 anchor uses the same real and imagined orientation feature."""
+    from supermimic.data.motion_convert import load_g1_model
+    from supermimic.envs import SuperMimicEnvCfgArgs, make_env
+    from supermimic.envs.mdp.motion_library import discover_npz
+    from supermimic.envs.state_io import StateIO
+    from supermimic.envs.tracking_env_cfg import ANCHOR_BODY, ROOT_BODY, TRACKED_BODIES
+    from supermimic.kinematics.g1_fk import G1Kinematics
+    from supermimic.world_model.heads import AnalyticHeads, anchor_orientation_relative_obs
+
+    files = discover_npz(NPZ, names=["walk1_subject1"])
+    env = make_env(
+        SuperMimicEnvCfgArgs(
+            npz_files=[str(f) for f in files], num_envs=8, obs_noise=False,
+            anchor_obs=False, anchor_orientation_obs=True,
+            record_transitions=False, seed=5,
+        ),
+        "cuda:0",
+    )
+    torch.backends.cuda.matmul.allow_tf32 = False
+    try:
+        robot = env.scene["robot"]
+        heads = AnalyticHeads(
+            G1Kinematics(load_g1_model(), device=env.device), TRACKED_BODIES,
+            ANCHOR_BODY, ROOT_BODY, robot.data.soft_joint_pos_limits[0].clone(),
+            robot.data.default_joint_pos[0].clone(),
+        )
+        io = StateIO(env)
+        obs, _ = env.reset()
+        assert obs["policy"].shape == (8, 930)
+        assert obs["goal"].shape == (8, 686)
+        cmd = env.command_manager.get_term("motion")
+        for _ in range(5):
+            obs, *_ = env.step(0.2 * torch.randn(8, 29, device=env.device))
+            state = io.read()
+            bodies = heads.robot_bodies(state)
+            ref = _ref_from_command(cmd)
+            expected = anchor_orientation_relative_obs(
+                bodies["quat"][:, heads.anchor_index],
+                ref.body_quat_w[:, heads.anchor_index],
+            )
+            torch.testing.assert_close(obs["goal"][:, :680], cmd.goal, atol=2e-5, rtol=0.0)
+            torch.testing.assert_close(obs["goal"][:, 680:], expected, atol=3e-5, rtol=0.0)
+    finally:
+        env.close()

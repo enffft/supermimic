@@ -86,10 +86,13 @@ class SuperMimicEnvCfgArgs:
     seed: int | None = 0
     root_height_threshold: float = 0.25
     root_tilt_threshold: float = 0.8
-    velocity_gaussian_noise_std: float = 0.1
-    velocity_ou_env_fraction: float = 0.25
-    velocity_ou_noise_std: float = 0.3
+    velocity_gaussian_noise_std: float = 0.18
+    velocity_ou_env_fraction: float = 0.30
+    velocity_ou_noise_std: float = 0.60
     velocity_ou_theta: float = 2.0
+    velocity_reward_linear_tracking: float = 3.0
+    velocity_reward_yaw_tracking: float = 1.2
+    velocity_reward_direction: float = 0.5
     velocity_curriculum: bool = True
     velocity_curriculum_initial_stage: int = 0
     velocity_curriculum_fixed_stage: int | None = None
@@ -122,10 +125,20 @@ class SuperMimicEnvCfgArgs:
     velocity_min_safe_height: float = 0.22
     velocity_fall_height: float = 0.17
     velocity_fall_tilt_deg: float = 70.0
+    m1_fall_height: float = 0.20
+    m1_success_distance: float = 0.08
+    m1_near_target_fraction: float = 0.60
+    m1_near_x: tuple[float, float] = (0.05, 0.30)
+    m1_near_y: tuple[float, float] = (-0.20, 0.20)
+    m1_near_z: tuple[float, float] = (-0.15, 0.15)
+    m1_far_x: tuple[float, float] = (1.00, 1.40)
+    m1_far_y: tuple[float, float] = (-0.40, 0.40)
+    m1_far_z: tuple[float, float] = (-0.10, 0.25)
     joint_limit_weight: float = -2.0
     bin_frames: int = 50
     compact_library: bool = False
     anchor_obs: bool = False  # add BeyondMimic anchor-relative pose (9) to the goal group (plan D5 alt.)
+    anchor_orientation_obs: bool = False  # 6D relative orientation only
     debug_vis: bool = False  # draw the reference ghost in the viewer (scripts/play.py)
     extra_command_kwargs: dict = field(default_factory=dict)
 
@@ -161,6 +174,7 @@ def make_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
                         "anchor_ori": ObservationTermCfg(func=track_mdp.motion_anchor_ori_b, params={"command_name": "motion"}, noise=noise(-0.05, 0.05)),
                     }
                     if a.anchor_obs
+                    else {"anchor_ori": ObservationTermCfg(func=track_mdp.motion_anchor_ori_b, params={"command_name": "motion"}, noise=noise(-0.05, 0.05))} if a.anchor_orientation_obs
                     else {}
                 ),
             },

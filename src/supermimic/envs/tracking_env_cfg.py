@@ -136,6 +136,8 @@ class SuperMimicEnvCfgArgs:
     chase_tag_weight: float = 15.0
     chase_tag_sigma: float = 0.30
     chase_facing_weight: float = 0.5
+    chase_joint_torque_weight: float = -2.0e-5
+    chase_joint_acceleration_weight: float = -2.5e-7
     velocity_min_safe_height: float = 0.22
     velocity_fall_height: float = 0.17
     velocity_fall_tilt_deg: float = 70.0
@@ -154,6 +156,9 @@ class SuperMimicEnvCfgArgs:
     m1_far_x: tuple[float, float] = (0.40, 0.80)
     m1_far_y: tuple[float, float] = (-0.40, 0.40)
     m1_far_z: tuple[float, float] = (-0.10, 0.25)
+    m1_joint_velocity_weight: float = -1.0e-6
+    m1_joint_acceleration_weight: float = -1.0e-7
+    m1_leg_action_magnitude_weight: float = -0.002
     joint_limit_weight: float = -2.0
     bin_frames: int = 50
     compact_library: bool = False

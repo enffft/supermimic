@@ -127,12 +127,30 @@ class ChaseBallTask:
     """Go2 chase task; task Goal is a fixed-step snapshot of an external ball state."""
 
     default_joint_pos: torch.Tensor
+    params: object | None = None
     dt: float = 0.02
     reward_cfg: ChaseBallRewardCfg = field(default_factory=ChaseBallRewardCfg)
     fall_height: float = 0.17
     fall_tilt_deg: float = 70.0
     goal_interface: str = "chase_ball"
     reward_term_names: tuple[str, ...] = CHASE_REWARD_NAMES
+
+    def __post_init__(self) -> None:
+        if self.params is None:
+            # Keep the standalone task API differentiable too; Trainer supplies the
+            # exact simulator limits, while this fallback preserves Go2's contract.
+            from supermimic.tasks.velocity_reward import VelocityRobotParams
+            n = int(self.default_joint_pos.shape[-1])
+            limits = self.default_joint_pos.new_tensor([[-float("inf"), float("inf")]] * n)
+            effort = self.default_joint_pos.new_tensor([23.7, 23.7, 35.55] * 4)
+            self.params = VelocityRobotParams(
+                default_joint_pos=self.default_joint_pos,
+                soft_joint_limits=limits,
+                action_scales=self.default_joint_pos.new_full((n,), 0.25),
+                kp=self.default_joint_pos.new_full((n,), 40.0),
+                kd=self.default_joint_pos.new_full((n,), 1.0),
+                effort_limits=effort, dt=self.dt,
+            )
 
     @property
     def goal_dim(self) -> int:
@@ -155,11 +173,11 @@ class ChaseBallTask:
         executed_action: torch.Tensor | None = None,
         ball_state_next: torch.Tensor | None = None,
     ) -> dict[str, torch.Tensor]:
-        del s_prev, executed_action
         ball_next = self.advance_goal(ball_state) if ball_state_next is None else ball_state_next
         terms = chase_ball_reward_terms(
             s_next, ball_next, action, previous_action,
-            self.default_joint_pos, self.reward_cfg,
+            self.default_joint_pos, self.reward_cfg, state_prev=s_prev,
+            executed_action=executed_action, robot_params=self.params,
         )
         return {name: value * float(self.dt) for name, value in terms.items()}
 

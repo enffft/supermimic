@@ -26,6 +26,8 @@ class ChaseBallRewardCfg:
     minimum_height: float = 0.22
     base_height_weight: float = -5.0
     tag_softness: float = 0.06
+    joint_torque_weight: float = -2.0e-5
+    joint_acceleration_weight: float = -2.5e-7
 
 
 def chase_goal_yaw_frame(state: torch.Tensor, ball_state: torch.Tensor) -> torch.Tensor:
@@ -62,6 +64,11 @@ def chase_ball_reward_terms(
     cfg: ChaseBallRewardCfg,
     *,
     tag_event: torch.Tensor | None = None,
+    state_prev: torch.Tensor | None = None,
+    executed_action: torch.Tensor | None = None,
+    torque: torch.Tensor | None = None,
+    joint_acceleration: torch.Tensor | None = None,
+    robot_params=None,
 ) -> dict[str, torch.Tensor]:
     """Weighted reward rates (the simulator and imagination apply ``dt`` once).
 
@@ -92,6 +99,24 @@ def chase_ball_reward_terms(
         if tag_event is None
         else cfg.tag_weight * tag_event.to(state_next.dtype)
     )
+    if torque is None:
+        if robot_params is not None:
+            from supermimic.tasks.velocity_reward import go2_joint_torque_proxy
+            torque = go2_joint_torque_proxy(
+                state_next, action if executed_action is None else executed_action,
+                robot_params.default_joint_pos, robot_params.action_scales,
+                robot_params.kp, robot_params.kd, robot_params.effort_limits,
+                robot_params.soft_joint_limits,
+            )
+        else:
+            torque = state_next.new_zeros(state_next.shape[:-1] + (nj,))
+    if joint_acceleration is None:
+        if state_prev is None:
+            joint_acceleration = state_next.new_zeros(state_next.shape[:-1] + (nj,))
+        else:
+            from supermimic.tasks.velocity_reward import joint_acceleration_from_states
+            dt = float(robot_params.dt) if robot_params is not None else 0.02
+            joint_acceleration = joint_acceleration_from_states(state_prev, state_next, dt, nj)
     return {
         "approach": cfg.approach_weight * approach,
         "near": near,
@@ -102,6 +127,8 @@ def chase_ball_reward_terms(
         "action_rate": cfg.action_rate_weight * (action - previous_action).square().sum(-1),
         "joint_deviation": cfg.joint_deviation_weight * qerr.square().sum(-1),
         "base_height_low": cfg.base_height_weight * torch.relu(cfg.minimum_height - state_next[..., 2]).square(),
+        "joint_torque": cfg.joint_torque_weight * torque.square().sum(-1),
+        "joint_acceleration": cfg.joint_acceleration_weight * joint_acceleration.square().sum(-1),
     }
 
 
@@ -137,6 +164,8 @@ def go2_chase_reward_term(
     tag_sigma: float = 0.30,
     facing_weight: float = 0.5,
     minimum_height: float = 0.22,
+    joint_torque_weight: float = -2.0e-5,
+    joint_acceleration_weight: float = -2.5e-7,
 ) -> torch.Tensor:
     """RewardManager adapter; obtains the same fixed world goal stored by Replay."""
     step = int(env.common_step_counter)
@@ -153,6 +182,7 @@ def go2_chase_reward_term(
             state_io = StateIO(env)
             env._supermimic_chase_state_io = state_io
         state_next = state_io.read()
+        robot = env.scene["robot"]
         # The command advances the scripted ball by exactly one env dt. Use that
         # same post-step state for reward and the next observation snapshot.
         goal_next = command.goal.clone()
@@ -164,13 +194,55 @@ def go2_chase_reward_term(
             tag_weight=float(tag_weight), tag_radius=float(tag_radius),
             tag_sigma=float(tag_sigma), facing_weight=float(facing_weight),
             minimum_height=float(minimum_height),
+            joint_torque_weight=float(joint_torque_weight),
+            joint_acceleration_weight=float(joint_acceleration_weight),
         )
         tag_event = command.record_real_step(state_next, goal_next)
-        terms = chase_ball_reward_terms(
-            state_next, goal_next, action, previous_action,
-            default, cfg, tag_event=tag_event,
+        from supermimic.robots.spec import get_robot_spec
+        spec = get_robot_spec("go2")
+        limits = robot.data.soft_joint_pos_limits[0]
+        from supermimic.tasks.velocity_reward import VelocityRobotParams
+        robot_params = VelocityRobotParams(
+            default_joint_pos=default, soft_joint_limits=limits,
+            action_scales=default.new_tensor(spec.action_scales),
+            kp=default.new_tensor(spec.kp), kd=default.new_tensor(spec.kd),
+            effort_limits=default.new_tensor(spec.effort_limits), dt=float(env.step_dt),
         )
-        cache = {"step": step, "terms": terms}
+        state_prev = state_next
+        recorder_manager = getattr(env, "recorder_manager", None)
+        if recorder_manager is not None and "replay" in getattr(recorder_manager, "active_terms", []):
+            state_prev = recorder_manager.get_term("replay").prev_s.clone()
+        else:
+            previous_state = getattr(env, "_supermimic_chase_previous_state", None)
+            if previous_state is not None:
+                done = getattr(env, "reset_terminated", torch.zeros(state_next.shape[0], dtype=torch.bool, device=state_next.device))
+                done = done | getattr(env, "reset_time_outs", torch.zeros_like(done))
+                state_prev = torch.where(done[..., None], state_next, previous_state)
+        action_term = env.action_manager.get_term("joint_pos")
+        executed_action = getattr(action_term, "executed_raw", action).clone()
+        measured_torque = robot.data.qfrc_actuator.clone()
+        measured_acceleration = robot.data.joint_acc.clone()
+        if measured_torque.shape[-1] != len(spec.joint_names) or measured_acceleration.shape[-1] != len(spec.joint_names):
+            raise RuntimeError(
+                "Go2 actuator diagnostics must expose exactly the 12 RobotSpec joints; "
+                f"got torque={tuple(measured_torque.shape)}, acceleration={tuple(measured_acceleration.shape)}"
+            )
+        terms = chase_ball_reward_terms(
+            state_next, goal_next, action, previous_action, default, cfg,
+            tag_event=tag_event, state_prev=state_prev,
+            executed_action=executed_action, torque=measured_torque,
+            joint_acceleration=measured_acceleration, robot_params=robot_params,
+        )
+        from supermimic.tasks.velocity_reward import go2_joint_torque_proxy, joint_acceleration_from_states
+        torque_proxy = go2_joint_torque_proxy(state_next, executed_action, default, robot_params.action_scales,
+                                              robot_params.kp, robot_params.kd, robot_params.effort_limits, limits)
+        acceleration_fd = joint_acceleration_from_states(state_prev, state_next, robot_params.dt, len(spec.joint_names))
+        env._supermimic_chase_previous_state = state_next.clone()
+        cache = {
+            "step": step, "terms": terms,
+            "inputs": {"torque": measured_torque, "joint_acceleration": measured_acceleration,
+                        "torque_proxy": torque_proxy, "acceleration_fd": acceleration_fd},
+        }
         env._supermimic_chase_reward_cache = cache
     if term_name not in cache["terms"]:
         raise KeyError(f"unknown chase_ball reward term {term_name!r}")
@@ -180,4 +252,5 @@ def go2_chase_reward_term(
 CHASE_REWARD_NAMES = (
     "approach", "near", "tag_success", "facing", "upright",
     "angular_velocity", "action_rate", "joint_deviation", "base_height_low",
+    "joint_torque", "joint_acceleration",
 )

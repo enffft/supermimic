@@ -93,6 +93,8 @@ class EnvCfg:
     chase_tag_weight: float = 15.0
     chase_tag_sigma: float = 0.30
     chase_facing_weight: float = 0.5
+    chase_joint_torque_weight: float = -2.0e-5
+    chase_joint_acceleration_weight: float = -2.5e-7
     m1_fall_height: float = 0.20
     m1_success_distance: float = 0.08
     m1_target_curriculum: bool = True
@@ -110,6 +112,9 @@ class EnvCfg:
     m1_far_z: tuple[float, float] = (-0.10, 0.25)
     m1_world_point_wm_batch_size: int = 256
     m1_world_point_actor_batch_size: int = 256
+    m1_joint_velocity_weight: float = -1.0e-6
+    m1_joint_acceleration_weight: float = -1.0e-7
+    m1_leg_action_magnitude_weight: float = -0.002
 
 
 @dataclass

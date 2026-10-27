@@ -869,10 +869,12 @@ class ChaseBallCommand(CommandTerm):
         self._episode_success = torch.zeros(self.num_envs, dtype=torch.bool, device=self.device)
         self._episode_steps = torch.zeros(self.num_envs, dtype=torch.long, device=self.device)
         self._episode_min_distance = torch.full((self.num_envs,), float("inf"), device=self.device)
+        self._episode_root_start = torch.zeros(self.num_envs, 3, device=self.device)
         self._base_trace: dict[int, list] = {}
         self.metrics["ball_distance"] = torch.zeros(self.num_envs, device=self.device)
         self.metrics["tagged"] = torch.zeros(self.num_envs, device=self.device)
         self.metrics["approach_speed"] = torch.zeros(self.num_envs, device=self.device)
+        self.metrics["robot_displacement"] = torch.zeros(self.num_envs, device=self.device)
 
     @property
     def goal(self) -> torch.Tensor:
@@ -898,6 +900,7 @@ class ChaseBallCommand(CommandTerm):
         else:
             dmin, dmax, angle_max, speed_max, moving_p = 0.80, 1.80, math.pi, 0.18, 0.75
         root = self.robot.data.root_link_pos_w[env_ids] - self._env.scene.env_origins[env_ids]
+        self._episode_root_start[env_ids] = root
         yaw = heading_yaw(self.robot.data.root_link_quat_w[env_ids])
         distance = dmin + torch.rand(n, device=self.device) * (dmax - dmin)
         angle = (torch.rand(n, device=self.device) * 2.0 - 1.0) * angle_max
@@ -980,6 +983,8 @@ class ChaseBallCommand(CommandTerm):
         direction = self.ball_position_world[:, :2] - front
         direction = direction / torch.linalg.vector_norm(direction, dim=-1, keepdim=True).clamp_min(1.0e-6)
         self.metrics["approach_speed"] = (velocity * direction).sum(-1)
+        root = self.robot.data.root_link_pos_w - self._env.scene.env_origins
+        self.metrics["robot_displacement"] = torch.linalg.vector_norm(root - self._episode_root_start, dim=-1)
 
     @torch.no_grad()
     def record_real_step(self, state_next: torch.Tensor, ball_state_next: torch.Tensor) -> torch.Tensor:

@@ -241,6 +241,8 @@ def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
                     "tag_sigma": a.chase_tag_sigma,
                     "facing_weight": a.chase_facing_weight,
                     "minimum_height": a.velocity_min_safe_height,
+                    "joint_torque_weight": a.chase_joint_torque_weight,
+                    "joint_acceleration_weight": a.chase_joint_acceleration_weight,
                 },
             )
             for name in CHASE_REWARD_NAMES
@@ -282,7 +284,15 @@ def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
             )
         }
         rewards = {
-            name: RewardTermCfg(func=m1_world_point_reward_term, weight=1.0, params={"term_name": name})
+            name: RewardTermCfg(
+                func=m1_world_point_reward_term, weight=1.0,
+                params={
+                    "term_name": name,
+                    "joint_velocity_weight": a.m1_joint_velocity_weight,
+                    "joint_acceleration_weight": a.m1_joint_acceleration_weight,
+                    "leg_action_magnitude_weight": a.m1_leg_action_magnitude_weight,
+                },
+            )
             for name in WORLD_POINT_REWARD_NAMES
         }
         tilt_feature_threshold = 1.0 - math.cos(math.radians(a.velocity_fall_tilt_deg))

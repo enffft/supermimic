@@ -69,13 +69,40 @@ def _joint_torque_proxy(s_next: torch.Tensor, executed_action: torch.Tensor, par
     the configured PD law and effort limit. This proxy is differentiable with respect
     to the predicted joint state and actor action.
     """
+    return go2_joint_torque_proxy(
+        s_next, executed_action, params.default_joint_pos, params.action_scales,
+        params.kp, params.kd, params.effort_limits, params.soft_joint_limits,
+    )
+
+
+def go2_joint_torque_proxy(
+    state_next: torch.Tensor,
+    executed_action: torch.Tensor,
+    default_joint_pos: torch.Tensor,
+    action_scales: torch.Tensor,
+    kp: torch.Tensor,
+    kd: torch.Tensor,
+    effort_limits: torch.Tensor,
+    soft_joint_limits: torch.Tensor | None = None,
+) -> torch.Tensor:
+    """Differentiable Go2 PD torque using the same mapping as the real action term."""
     nj = executed_action.shape[-1]
-    q = s_next[..., 7:7 + nj]
-    qd = s_next[..., 13 + nj:13 + 2 * nj]
-    target = position_setpoint(executed_action, params.default_joint_pos, params.action_scales)
-    limits = params.soft_joint_limits
-    target = torch.maximum(torch.minimum(target, limits[..., 1]), limits[..., 0])
-    return (params.kp * (target - q) - params.kd * qd).clamp(-params.effort_limits, params.effort_limits)
+    q = state_next[..., 7:7 + nj]
+    qd = state_next[..., 13 + nj:13 + 2 * nj]
+    target = position_setpoint(executed_action, default_joint_pos, action_scales)
+    if soft_joint_limits is not None:
+        target = torch.maximum(torch.minimum(target, soft_joint_limits[..., 1]), soft_joint_limits[..., 0])
+    return (kp * (target - q) - kd * qd).clamp(-effort_limits, effort_limits)
+
+
+def joint_acceleration_from_states(
+    state_prev: torch.Tensor, state_next: torch.Tensor, dt: float, num_joints: int | None = None
+) -> torch.Tensor:
+    """Finite-difference joint acceleration at the control period (never a physics substep)."""
+    nj = int(num_joints or ((state_next.shape[-1] - 13) // 2))
+    qd_prev = state_prev[..., 13 + nj:13 + 2 * nj]
+    qd_next = state_next[..., 13 + nj:13 + 2 * nj]
+    return (qd_next - qd_prev) / float(dt)
 
 
 def velocity_reward_terms(
@@ -197,6 +224,11 @@ def go2_velocity_reward_term(
         previous_action = env.action_manager.prev_action
         torque = robot.data.qfrc_actuator.clone()
         joint_acceleration = robot.data.joint_acc.clone()
+        if torque.shape[-1] != len(spec.joint_names) or joint_acceleration.shape[-1] != len(spec.joint_names):
+            raise RuntimeError(
+                "Go2 actuator diagnostics must expose exactly the 12 RobotSpec joints; "
+                f"got torque={tuple(torque.shape)}, acceleration={tuple(joint_acceleration.shape)}"
+            )
         goal = command.command.clone()
         action = action.clone()
         executed_action = executed_action.clone()
@@ -212,6 +244,8 @@ def go2_velocity_reward_term(
             measured_torque=torque,
             measured_joint_acceleration=joint_acceleration,
         )
+        torque_proxy = _joint_torque_proxy(state_for_reward, executed_action, params)
+        acceleration_fd = joint_acceleration_from_states(state_prev, state_for_reward, params.dt, len(spec.joint_names))
         nj = len(spec.joint_names)
         lin_body = quat_apply_inverse(state[:, 3:7], state[:, 7 + nj:10 + nj])
         command.record_real_step(
@@ -231,6 +265,8 @@ def go2_velocity_reward_term(
                 "previous_action": previous_action,
                 "torque": torque,
                 "joint_acceleration": joint_acceleration,
+                "torque_proxy": torque_proxy,
+                "acceleration_fd": acceleration_fd,
                 "params": params,
             },
         }

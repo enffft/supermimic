@@ -266,6 +266,8 @@ class Trainer:
                 chase_tag_weight=cfg.env.chase_tag_weight,
                 chase_tag_sigma=cfg.env.chase_tag_sigma,
                 chase_facing_weight=cfg.env.chase_facing_weight,
+                chase_joint_torque_weight=cfg.env.chase_joint_torque_weight,
+                chase_joint_acceleration_weight=cfg.env.chase_joint_acceleration_weight,
                 m1_fall_height=cfg.env.m1_fall_height,
                 m1_success_distance=cfg.env.m1_success_distance,
                 m1_target_curriculum=cfg.env.m1_target_curriculum,
@@ -281,6 +283,9 @@ class Trainer:
                 m1_far_x=cfg.env.m1_far_x,
                 m1_far_y=cfg.env.m1_far_y,
                 m1_far_z=cfg.env.m1_far_z,
+                m1_joint_velocity_weight=cfg.env.m1_joint_velocity_weight,
+                m1_joint_acceleration_weight=cfg.env.m1_joint_acceleration_weight,
+                m1_leg_action_magnitude_weight=cfg.env.m1_leg_action_magnitude_weight,
                 seed=cfg.seed + 1000 * self.rank,
             ),
             device=self.device,
@@ -312,6 +317,7 @@ class Trainer:
         self.pretrained_wm = False
         self.init_wm_from_path: str | None = None
         self.init_wm_sha256: str | None = None
+        self.init_wm_source_iteration: int | None = None
         if cfg.init_wm_from is not None:
             self._initialize_world_model(cfg.init_wm_from, robot_spec.joint_names)
         if is_motion:
@@ -346,8 +352,16 @@ class Trainer:
                 tilt_feature_threshold=1.0 - math.cos(math.radians(cfg.env.velocity_fall_tilt_deg)),
             )
         elif is_chase:
+            chase_default = robot.data.default_joint_pos[0].detach().clone()
+            chase_reward_params = VelocityRobotParams(
+                default_joint_pos=chase_default,
+                soft_joint_limits=robot.data.soft_joint_pos_limits[0].detach().clone(),
+                action_scales=chase_default.new_tensor(robot_spec.action_scales),
+                kp=chase_default.new_tensor(robot_spec.kp), kd=chase_default.new_tensor(robot_spec.kd),
+                effort_limits=chase_default.new_tensor(robot_spec.effort_limits), dt=robot_spec.control_dt,
+            )
             self.task = ChaseBallTask(
-                default_joint_pos=robot.data.default_joint_pos[0].detach().clone(),
+                default_joint_pos=chase_default, params=chase_reward_params,
                 dt=robot_spec.control_dt,
                 reward_cfg=ChaseBallRewardCfg(
                     approach_weight=cfg.env.chase_approach_weight,
@@ -357,6 +371,8 @@ class Trainer:
                     tag_sigma=cfg.env.chase_tag_sigma,
                     facing_weight=cfg.env.chase_facing_weight,
                     minimum_height=cfg.env.velocity_min_safe_height,
+                    joint_torque_weight=cfg.env.chase_joint_torque_weight,
+                    joint_acceleration_weight=cfg.env.chase_joint_acceleration_weight,
                 ),
                 fall_height=cfg.env.velocity_fall_height,
                 fall_tilt_deg=cfg.env.velocity_fall_tilt_deg,
@@ -369,6 +385,9 @@ class Trainer:
                 dt=robot_spec.control_dt,
                 fall_height=cfg.env.m1_fall_height,
                 success_distance=cfg.env.m1_success_distance,
+                joint_velocity_weight=cfg.env.m1_joint_velocity_weight,
+                joint_acceleration_weight=cfg.env.m1_joint_acceleration_weight,
+                leg_action_magnitude_weight=cfg.env.m1_leg_action_magnitude_weight,
             )
             self.task = WorldPointReachTask(
                 params=world_point_params,
@@ -395,6 +414,7 @@ class Trainer:
         self.is_m1_motion = robot_spec.name == "m1_piper" and is_motion
         self.is_m1_world_point = robot_spec.name == "m1_piper" and is_world_point
         self.go2_action_stats = self._empty_go2_action_stats() if self.is_go2_task else None
+        self.task_diag_sum: dict[str, torch.Tensor] = {}
         self.motion_names = [Path(f).stem for f in files]
         self.motion_return_sum = torch.zeros(len(self.motion_names), device=self.device)
         self.motion_return_count = torch.zeros(len(self.motion_names), device=self.device)
@@ -450,7 +470,9 @@ class Trainer:
         if not path.is_file():
             raise FileNotFoundError(f"pretrained World Model checkpoint does not exist: {path}")
         ck = torch.load(path, map_location="cpu", weights_only=False)
-        required = {"wm", "policy", "critic", "wm_opt", "policy_opt", "critic_opt", "config"}
+        # Init-WM intentionally consumes only the model and its provenance.  Actor,
+        # critic, optimizers and replay belong to the new experiment.
+        required = {"wm", "config"}
         missing = required - set(ck)
         if missing:
             raise ValueError(f"{path}: incomplete training checkpoint, missing {sorted(missing)}")
@@ -458,36 +480,68 @@ class Trainer:
         saved_env = saved.get("env", {})
         saved_wm = saved.get("world_model", {})
         saved_spec = saved_wm.get("state_spec", {})
-        if saved_env.get("robot_name") != "go2" or saved_env.get("task_name") not in ("velocity_command", "chase_ball"):
-            raise ValueError("--init-wm-from requires a Go2 velocity_command or chase_ball checkpoint")
+        saved_robot = ck.get("robot_name", saved.get("robot_name", saved_env.get("robot_name")))
+        saved_task = ck.get("task_name", saved.get("task_name", saved_env.get("task_name")))
+        current_robot = self.cfg.env.robot_name
+        current_task = self.cfg.env.task_name
+        compatible_tasks = {
+            "go2": {"velocity_command", "chase_ball"},
+            "m1_piper": {"world_point_reach"},
+        }
+        if saved_robot != current_robot:
+            raise ValueError(f"--init-wm-from robot mismatch: saved={saved_robot!r}, current={current_robot!r}")
+        if saved_task not in compatible_tasks.get(current_robot, set()) or current_task not in compatible_tasks.get(current_robot, set()):
+            raise ValueError(f"--init-wm-from task is not compatible with {current_robot}: saved={saved_task!r}, current={current_task!r}")
+        saved_joints = tuple(ck.get("robot_joint_names", saved.get("robot_joint_names", ())))
+        if saved_joints != tuple(joint_names):
+            raise ValueError(f"pretrained World Model joint order mismatch: saved={saved_joints}, current={tuple(joint_names)}")
         saved_actuator = ck.get("actuator_model_version", saved.get("actuator_model_version"))
         if saved_actuator != self.actuator_model_version:
             raise ValueError(
-                "pretrained Go2 World Model actuator model is incompatible: "
+                "pretrained World Model actuator model is incompatible: "
                 f"saved={saved_actuator!r}, current={self.actuator_model_version!r}"
             )
         saved_model_hash = ck.get("robot_model_sha256", saved.get("robot_model_sha256"))
         if saved_model_hash != self.robot_model_sha256:
             raise ValueError(
-                "pretrained Go2 World Model robot URDF fingerprint is incompatible: "
+                "pretrained World Model robot URDF fingerprint is incompatible: "
                 f"saved={saved_model_hash!r}, current={self.robot_model_sha256!r}"
             )
+        current_robot_spec = get_robot_spec(current_robot)
+        physical_fields = {
+            "control_dt": float(current_robot_spec.control_dt),
+            "action_modes": tuple(current_robot_spec.action_modes),
+            "action_scales": tuple(current_robot_spec.action_scales),
+            "kp": tuple(current_robot_spec.kp),
+            "kd": tuple(current_robot_spec.kd),
+            "effort_limits": tuple(current_robot_spec.effort_limits),
+        }
+        for key, current_value in physical_fields.items():
+            saved_value = saved.get(key, saved_env.get(key))
+            if saved_value is not None:
+                old = self._as_tuple(saved_value)
+                if key == "control_dt":
+                    if not math.isclose(float(old), float(current_value), rel_tol=0.0, abs_tol=1e-12):
+                        raise ValueError(f"pretrained World Model {key} mismatch: saved={old}, current={current_value}")
+                elif old != current_value:
+                    raise ValueError(f"pretrained World Model {key} mismatch: saved={old}, current={current_value}")
         for key in ("running_normalization", "running_norm_min_std"):
             old = saved_wm.get(key, False if key == "running_normalization" else 1e-2)
             new = getattr(self.cfg.world_model, key)
             if old != new:
                 raise ValueError(f"pretrained World Model {key} mismatch: saved={old}, current={new}")
-        expected_dims = {
-            "num_joints": 12,
-            "action_dim": 12,
-            "xi_dim": 16,
-        }
+        current_spec = get_robot_spec(current_robot)
+        expected_dims = {"num_joints": current_spec.num_joints, "action_dim": current_spec.num_joints, "xi_dim": current_spec.num_joints + 4}
         for key, expected in expected_dims.items():
             actual = saved_wm.get(key)
             if actual != expected or getattr(self.cfg.world_model, key) != expected:
                 raise ValueError(f"pretrained World Model {key} mismatch: saved={actual}, expected={expected}")
-        if 13 + 2 * expected_dims["num_joints"] != 37:
-            raise AssertionError("Go2 state dimension invariant failed")
+        expected_state_dim = 13 + 2 * expected_dims["num_joints"]
+        saved_state_dim = ck.get("state_dim", saved.get("state_dim"))
+        if saved_state_dim is not None and int(saved_state_dim) != expected_state_dim:
+            raise ValueError(f"pretrained World Model state dimension mismatch: saved={saved_state_dim}, current={expected_state_dim}")
+        if int(self.wm.spec.state_dim) != expected_state_dim:
+            raise AssertionError("World Model state dimension invariant failed")
 
         # Old checkpoints did not persist a named joint-order table. The robot identity
         # plus the 12-D weight layout is checked here; new checkpoints save and compare
@@ -527,8 +581,9 @@ class Trainer:
         self.pretrained_wm = True
         self.init_wm_from_path = str(path)
         self.init_wm_sha256 = self._checkpoint_sha256(path)
+        self.init_wm_source_iteration = int(ck.get("iteration", -1))
         print(
-            f"[INFO] initialized Go2 World Model from {path} "
+            f"[INFO] initialized {current_robot} World Model from {path} "
             f"(sha256={self.init_wm_sha256}; strict state-dict load)",
             flush=True,
         )
@@ -537,7 +592,7 @@ class Trainer:
         if getattr(self, "is_go2_task", False):
             return 0 if self.pretrained_wm else int(self.cfg.schedule.wm_only_iterations)
         if self.is_m1_motion or getattr(self, "is_m1_world_point", False):
-            return int(self.cfg.schedule.m1_wm_only_iterations)
+            return 0 if self.pretrained_wm else int(self.cfg.schedule.m1_wm_only_iterations)
         if self.cfg.env.robot_name == "g1" and self.cfg.env.task_name == "motion_tracking":
             return int(self.cfg.schedule.g1_motion_wm_only_updates)
         return 0
@@ -558,7 +613,14 @@ class Trainer:
             "pretrained_wm": self.pretrained_wm,
             "init_wm_from": self.init_wm_from_path,
             "init_wm_sha256": self.init_wm_sha256,
+            "init_wm_source_iteration": self.init_wm_source_iteration,
             "effective_wm_only_updates": self._effective_wm_only_target(),
+            "control_dt": self.cfg.world_model.state_spec.dt,
+            "action_modes": tuple(get_robot_spec(self.cfg.env.robot_name).action_modes),
+            "action_scales": tuple(get_robot_spec(self.cfg.env.robot_name).action_scales),
+            "kp": tuple(get_robot_spec(self.cfg.env.robot_name).kp),
+            "kd": tuple(get_robot_spec(self.cfg.env.robot_name).kd),
+            "effort_limits": tuple(get_robot_spec(self.cfg.env.robot_name).effort_limits),
         })
         return config
 
@@ -592,6 +654,7 @@ class Trainer:
             "pretrained_wm": self.pretrained_wm,
             "init_wm_from": self.init_wm_from_path,
             "init_wm_sha256": self.init_wm_sha256,
+            "init_wm_source_iteration": self.init_wm_source_iteration,
             "effective_wm_only_updates": self._effective_wm_only_target(),
             "policy_mode": self.cfg.policy.goal_encoding,
             "robot_joint_names": self.robot_joint_names,
@@ -698,6 +761,7 @@ class Trainer:
         self.pretrained_wm = bool(ck.get("pretrained_wm", False))
         self.init_wm_from_path = ck.get("init_wm_from")
         self.init_wm_sha256 = ck.get("init_wm_sha256")
+        self.init_wm_source_iteration = ck.get("init_wm_source_iteration")
         if "torch_rng_state" in ck:
             torch.set_rng_state(ck["torch_rng_state"].cpu())
         if torch.cuda.is_available() and "cuda_rng_state" in ck:
@@ -769,13 +833,48 @@ class Trainer:
         for name in names:
             value = self.env.reward_manager.get_term(name).mean().detach()
             self.real_reward_term_sum[name] = self.real_reward_term_sum.get(name, value.new_zeros(())) + value
+        if self.is_go2_task:
+            cache = getattr(self.env, "_supermimic_go2_reward_cache", None) or getattr(self.env, "_supermimic_chase_reward_cache", None)
+            if cache is not None:
+                inputs = cache.get("inputs", {})
+                for key, value in (("joint_torque_rms", inputs.get("torque")), ("joint_acceleration_rms", inputs.get("joint_acceleration"))):
+                    if value is not None:
+                        metric = value.square().mean().sqrt().detach()
+                        self.task_diag_sum[key] = self.task_diag_sum.get(key, metric.new_zeros(())) + metric
+                if inputs.get("torque_proxy") is not None:
+                    value = (inputs["torque"] - inputs["torque_proxy"]).square().mean().sqrt().detach()
+                    self.task_diag_sum["torque_proxy_rms_error"] = self.task_diag_sum.get("torque_proxy_rms_error", value.new_zeros(())) + value
+                if inputs.get("acceleration_fd") is not None:
+                    value = (inputs["joint_acceleration"] - inputs["acceleration_fd"]).square().mean().sqrt().detach()
+                    self.task_diag_sum["acceleration_fd_rms_error"] = self.task_diag_sum.get("acceleration_fd_rms_error", value.new_zeros(())) + value
+        elif self.is_m1_world_point:
+            cache = getattr(self.env, "_supermimic_world_point_reward_cache", None)
+            if cache is not None:
+                action = cache["action"]
+                leg = action[..., (0, 1, 2, 4, 5, 6, 8, 9, 10, 12, 13, 14)]
+                wheels = action[..., (3, 7, 11, 15)]
+                arm = action[..., 16:22]
+                for key, value in (("action/leg_abs_mean", leg.abs().mean()), ("action/wheel_abs_mean", wheels.abs().mean()), ("action/arm_abs_mean", arm.abs().mean()),
+                                    ("action/leg_saturation_fraction", (leg.abs() >= 1.0 - 1e-7).float().mean()),
+                                    ("action/wheel_saturation_fraction", (wheels.abs() >= 1.0 - 1e-7).float().mean()),
+                                    ("action/arm_saturation_fraction", (arm.abs() >= 1.0 - 1e-7).float().mean())):
+                    self.task_diag_sum[key] = self.task_diag_sum.get(key, value.new_zeros(())) + value.detach()
+                torque = cache.get("actual_torque")
+                if torque is not None and torque.shape[-1] >= 22:
+                    leg_torque = torque[..., (0, 1, 2, 4, 5, 6, 8, 9, 10, 12, 13, 14)]
+                    limits = 180.0
+                    for key, value in (("actuator/leg_torque_rms", leg_torque.square().mean().sqrt()),
+                                        ("actuator/leg_torque_limit_fraction", (leg_torque.abs() >= limits * (1 - 1e-6)).float().mean())):
+                        self.task_diag_sum[key] = self.task_diag_sum.get(key, value.new_zeros(())) + value.detach()
 
     def _empty_go2_action_stats(self) -> dict[str, torch.Tensor]:
         return {
             name: torch.zeros((), device=self.device)
             for name in (
                 "clean_sum", "clean_sq_sum", "clean_count",
+                "clean_abs_sum",
                 "exec_sum", "exec_sq_sum", "exec_count",
+                "exec_abs_sum",
                 "gauss_sum", "gauss_sq_sum", "gauss_count",
                 "ou_sum", "ou_sq_sum", "ou_count",
                 "clipped", "action_count", "terminated", "env_steps", "ou_envs", "env_count",
@@ -802,6 +901,8 @@ class Trainer:
 
         add_moments("clean", clean)
         add_moments("exec", executed)
+        stats["clean_abs_sum"] += clean.abs().sum()
+        stats["exec_abs_sum"] += executed.abs().sum()
         add_moments("gauss", applied_noise[~ou_mask])
         add_moments("ou", applied_noise[ou_mask])
         stats["clipped"] += (executed.abs() >= 1.0 - 1.0e-7).sum()
@@ -824,6 +925,7 @@ class Trainer:
 
         self.writer.add_scalar("go2/clean_action_std", std("clean"), iteration)
         self.writer.add_scalar("go2/executed_action_std", std("exec"), iteration)
+        self.writer.add_scalar("go2/action_abs_mean", float(stats["clean_abs_sum"] / stats["clean_count"].clamp_min(1.0)), iteration)
         self.writer.add_scalar("go2/gaussian_noise_std_actual", std("gauss"), iteration)
         self.writer.add_scalar("go2/ou_noise_std_actual", std("ou"), iteration)
         self.writer.add_scalar(
@@ -900,6 +1002,11 @@ class Trainer:
             if self.iteration >= sch.warmup_iterations:
                 self._utd_acc += sch.updates_per_env_step
                 while self._utd_acc >= 1.0:
+                    # A configured UTD ratio must never force a sample from an
+                    # empty or shorter-than-window Replay. Keep the accumulator
+                    # pending; the next real steps will make a valid window.
+                    if self.buffer.size < int(cfg.wm_trainer.window) + 1 or not bool(self.buffer.window_mask(int(cfg.wm_trainer.window)).any()):
+                        break
                     self._utd_acc -= 1.0
                     wm_lr = scheduled_lr(sch.lr_schedule, self.iteration, sch.total_iterations, cfg.wm_trainer.lr, sch.lr_final_ratio, sch.lr_decay_fraction)
                     actor_scheduled_lr = scheduled_lr(sch.lr_schedule, self.iteration, sch.total_iterations, cfg.policy_trainer.lr, sch.lr_final_ratio, sch.lr_decay_fraction)
@@ -998,7 +1105,13 @@ class Trainer:
                         self.writer.add_scalar("go2/real_episode_return", tr, it)
                     elif self.is_go2_chase:
                         self.writer.add_scalar("go2/chase_episode_return", tr, it)
-                        self.writer.add_scalar("go2/chase_timeout_success_fraction", 1.0 - sum(finished_falls) / max(len(finished_falls), 1), it)
+                        # Timeout success is the command's hard tag event, never
+                        # the complement of the fall flag (ordinary timeouts are
+                        # not successes).
+                        tag_rate = float(self.command.last_success_rate)
+                        if not math.isfinite(tag_rate):
+                            tag_rate = float(self.command.metrics["tagged"].float().mean())
+                        self.writer.add_scalar("go2/chase_timeout_success_fraction", tag_rate, it)
                     elif self.is_m1_world_point:
                         self.writer.add_scalar("m1/world_point_episode_return", tr, it)
                     self.writer.add_scalar("train/episode_len", sum(finished_lens) / max(len(finished_lens), 1), it)
@@ -1007,7 +1120,9 @@ class Trainer:
                 if self.is_go2_task and self.is_main and finished_falls:
                     self.writer.add_scalar("go2/fall_rate", sum(finished_falls) / len(finished_falls), it)
                 if self.is_m1_world_point and self.is_main and finished_falls:
-                    self.writer.add_scalar("m1/world_point_fall_rate", sum(finished_falls) / len(finished_falls), it)
+                    fall_rate = sum(finished_falls) / len(finished_falls)
+                    self.writer.add_scalar("m1/world_point_fall_rate", fall_rate, it)
+                    self.writer.add_scalar("m1/fall_rate", fall_rate, it)
                 if self.is_go2_velocity and self.is_main:
                     self.writer.add_scalar("go2/curriculum_stage", float(self.command.stage), it)
                     self.writer.add_scalar("go2/curriculum_eval_count", float(self.command.eval_count), it)
@@ -1026,6 +1141,10 @@ class Trainer:
                     self.writer.add_scalar("go2/chase_tag_fraction_step", float(self.command.metrics["tagged"].mean()), it)
                     self.writer.add_scalar("go2/chase_ball_distance", float(self.command.metrics["ball_distance"].mean()), it)
                     self.writer.add_scalar("go2/chase_approach_speed", float(self.command.metrics["approach_speed"].mean()), it)
+                    self.writer.add_scalar("go2/chase/tag_rate", float(self.command.metrics["tagged"].mean()), it)
+                    self.writer.add_scalar("go2/chase/mean_ball_distance", float(self.command.metrics["ball_distance"].mean()), it)
+                    self.writer.add_scalar("go2/chase/approach_velocity", float(self.command.metrics["approach_speed"].mean()), it)
+                    self.writer.add_scalar("go2/chase/robot_displacement", float(self.command.metrics["robot_displacement"].mean()), it)
                     self._write_go2_action_stats(it)
                 if self.is_m1_motion and self.is_main:
                     metric_count = float(self.m1_step_metric_count)
@@ -1043,9 +1162,10 @@ class Trainer:
                     if total_success_count > 0:
                         self.writer.add_scalar("m1/motion_success_rate", float(self.motion_success_sum.sum() / total_success_count), it)
                 if self.is_m1_world_point and self.is_main:
+                    tcp_distance = float(self.command.metrics["target_distance"].mean())
                     self.writer.add_scalar(
                         "m1/world_point_target_distance",
-                        float(self.command.metrics["target_distance"].mean()), it,
+                        tcp_distance, it,
                     )
                     self.writer.add_scalar(
                         "m1/world_point_instant_success_fraction",
@@ -1054,10 +1174,22 @@ class Trainer:
                     self.writer.add_scalar("m1/world_point_target_stage", float(self.command.stage), it)
                     if math.isfinite(self.command.last_success_rate):
                         self.writer.add_scalar("m1/world_point_success_rate_window", self.command.last_success_rate, it)
+                        self.writer.add_scalar("m1/success_rate", self.command.last_success_rate, it)
+                    self.writer.add_scalar("m1/tcp_distance_mean", tcp_distance, it)
+                    self.writer.add_scalar("m1/tcp_distance_final", tcp_distance, it)
+                    cache = getattr(self.env, "_supermimic_world_point_reward_cache", None)
+                    if cache is not None:
+                        self.writer.add_scalar("m1/base_height_mean", float(cache["state_next"][..., 2].mean()), it)
                 if self.is_main:
                     task_prefix = "go2" if self.is_go2_task else ("m1" if self.is_m1_motion or self.is_m1_world_point else "g1")
                     for key, value in self.real_reward_term_sum.items():
                         self.writer.add_scalar(f"{task_prefix}/reward_real/{key}", float(value / sch.log_interval), it)
+                    for key, value in self.task_diag_sum.items():
+                        self.writer.add_scalar(f"{task_prefix}/{key}", float(value / sch.log_interval), it)
+                    for key, value in agg.items():
+                        if key.startswith("policy/imag_r/"):
+                            term = key.removeprefix("policy/imag_r/")
+                            self.writer.add_scalar(f"{task_prefix}/reward_imag/{term}", value / max(agg_n, 1), it)
                 with torch.no_grad():
                     if self.is_main and self.buffer.size > 2048:
                         err = self.wm_trainer.online_error(self.buffer, n=256, k=8)
@@ -1072,6 +1204,10 @@ class Trainer:
                         self.writer.add_scalar(f"time/{k}_s_per_iter", v / sch.log_interval, it)
                     self.writer.add_scalar("time/hours", elapsed / 3600, it)
                     self.writer.add_scalar("time/updates", self.num_updates, it)
+                    self.writer.add_scalar("wm/pretrained_initialized", float(self.pretrained_wm), it)
+                    self.writer.add_scalar("wm/pretrained_source_iteration", float(self.init_wm_source_iteration or 0), it)
+                    self.writer.add_scalar("wm/optimizer_steps", float(self.num_updates), it)
+                    self.writer.add_scalar("wm/updates_per_env_step_actual", float(self.num_updates / max(it, 1)), it)
                     self.writer.add_scalar("schedule/wm_only_updates", self.wm_only_updates, it)
                     self.writer.add_scalar("schedule/actor_updates", self.actor_updates, it)
                     if "sampling_entropy" in self.command.metrics:
@@ -1093,6 +1229,7 @@ class Trainer:
                 finished_returns, finished_lens = [], []
                 finished_falls = []
                 self.real_reward_term_sum = {}
+                self.task_diag_sum = {}
                 self.m1_step_metric_sum = {}
                 self.m1_step_metric_count.zero_()
                 timers = {k: 0.0 for k in timers}

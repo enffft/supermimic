@@ -25,7 +25,7 @@ class DataCfg:
 @dataclass
 class EnvCfg:
     robot_name: str = "g1"  # g1 | go2 | m1_piper
-    task_name: str = "motion_tracking"  # motion_tracking | velocity_command | world_point_reach
+    task_name: str = "motion_tracking"  # motion_tracking | velocity_command | chase_ball | world_point_reach
     velocity_policy_encoding: Literal["direct", "encoded"] = "direct"  # encoded is for legacy Go2 checkpoints
     direct_action_output: Literal["identity", "tanh"] = "tanh"  # set identity only to resume/evaluate legacy direct checkpoints
     velocity_wm_batch_size: int = 1024
@@ -40,6 +40,7 @@ class EnvCfg:
     replay_capacity: int = 1000
     history_length: int = 10
     future_frames: int = 10
+    motion_goal_schema: Literal["root_joint", "full_body"] = "root_joint"
     compact_library: bool = False
     anchor_obs: bool | None = None  # default: enabled for M1, disabled for G1/Go2
     anchor_orientation_obs: bool = False  # G1 orientation-only (6D) alternative; mutually exclusive with anchor_obs
@@ -80,10 +81,28 @@ class EnvCfg:
     velocity_min_safe_height: float = 0.22  # zero-action stable Go2 root height was 0.2827 m
     velocity_fall_height: float = 0.17
     velocity_fall_tilt_deg: float = 70.0
+    chase_auto_curriculum: bool = True
+    chase_initial_stage: int = 0
+    chase_fixed_stage: int | None = None
+    chase_promotion_window_episodes: int = 64
+    chase_consecutive_passing_windows: int = 2
+    chase_promotion_success_rate: float = 0.35
+    chase_tag_radius: float = 0.20
+    chase_approach_weight: float = 1.5
+    chase_near_weight: float = 3.0
+    chase_tag_weight: float = 15.0
+    chase_tag_sigma: float = 0.30
+    chase_facing_weight: float = 0.5
     m1_fall_height: float = 0.20
     m1_success_distance: float = 0.08
-    m1_near_target_fraction: float = 0.60
-    m1_near_x: tuple[float, float] = (0.05, 0.30)
+    m1_target_curriculum: bool = True
+    m1_initial_target_stage: int = 0
+    m1_fixed_target_stage: int | None = None
+    m1_target_promotion_window_episodes: int = 128
+    m1_target_promotion_success_rate: float = 0.35
+    m1_target_consecutive_passing_windows: int = 2
+    m1_near_target_fraction: float = 0.95
+    m1_near_x: tuple[float, float] = (0.12, 0.36)
     m1_near_y: tuple[float, float] = (-0.20, 0.20)
     m1_near_z: tuple[float, float] = (-0.15, 0.15)
     m1_far_x: tuple[float, float] = (1.00, 1.40)
@@ -101,6 +120,7 @@ class ScheduleCfg:
     warmup_iterations: int = 40  # env steps before the first update (fills k-step windows)
     wm_only_iterations: int = 200  # WM update events before Go2 actor/critic updates
     m1_wm_only_iterations: int = 200  # let the M1 WM fit the selected motion bank before BPTT
+    g1_motion_wm_only_updates: int = 0  # opt-in WM prefit for a new G1 motion architecture
     actor_ramp_iterations: int = 1000  # actual Actor optimizer updates after WM-only warmup
     lr_schedule: Literal["cosine", "constant"] = "cosine"
     lr_final_ratio: float = 0.03

@@ -12,6 +12,16 @@ from supermimic.kinematics.g1_fk import G1Kinematics
 from supermimic.kinematics.rotations import quat_apply_inverse
 
 
+# The Piper URDF has no named TCP frame. Keep the phase-one gripper-center
+# proxy (midpoint of these fixed finger frames) identical across commands,
+# reward, evaluation, and visualization.
+M1_TCP_PROXY_BODIES = ("piper_x_link7", "piper_x_link8")
+
+
+def m1_tcp_proxy_indices(fk: G1Kinematics) -> tuple[int, int]:
+    return tuple(fk.body_index(name) for name in M1_TCP_PROXY_BODIES)
+
+
 @dataclass
 class WorldPointRobotParams:
     default_joint_pos: torch.Tensor
@@ -22,7 +32,7 @@ class WorldPointRobotParams:
     soft_term_temperature: float = 0.015
     success_distance: float = 0.08
     distance_weight: float = 1.5
-    approach_weight: float = 0.8
+    approach_weight: float = 0.25
     near_weight: float = 0.6
     upright_weight: float = 0.25
     base_height_weight: float = -4.0
@@ -98,7 +108,10 @@ def world_point_reward_terms(
         "tcp_distance": -params.distance_weight * d_next,
         # Signed, bounded progress prevents oscillating away and back from earning
         # positive progress twice. It remains useful when far from the target.
-        "tcp_approach": params.approach_weight * torch.tanh(((d_prev - d_next) / float(params.dt)) / 0.25),
+        # Bound progress by displacement, not nominal velocity. The old dt / 0.25
+        # scaling saturated after roughly 5 mm per step and removed gradients on
+        # ordinary arm motion.
+        "tcp_approach": params.approach_weight * torch.tanh((d_prev - d_next) / 0.05),
         "tcp_near": params.near_weight * torch.exp(-(d_next / 0.10).square()),
         "upright": params.upright_weight * torch.exp(-gravity_b[..., :2].square().sum(-1) / 0.16),
         "base_height_low": params.base_height_weight * F.relu(params.fall_height + 0.04 - state_next[..., 2]).square(),
@@ -133,7 +146,7 @@ def m1_world_point_reward_term(env, term_name: str) -> torch.Tensor:
             fk = G1Kinematics(load_robot_spec_model("m1_piper"), device=env.device)
             env._supermimic_world_point_fk = fk
         spec = get_robot_spec("m1_piper")
-        tcp_indices = (fk.body_index("piper_x_link7"), fk.body_index("piper_x_link8"))
+        tcp_indices = m1_tcp_proxy_indices(fk)
         action = env.action_manager.action.clone()
         previous_action = env.action_manager.prev_action.clone()
         state_next = state_io.read()
@@ -151,6 +164,8 @@ def m1_world_point_reward_term(env, term_name: str) -> torch.Tensor:
             state_prev, state_next, command.target_position_world, action,
             previous_action, params, fk, tcp_indices,
         )
+        tcp_next = tcp_position_world(state_next, fk, tcp_indices)
+        command.record_real_step(torch.linalg.vector_norm(tcp_next - command.target_position_world, dim=-1))
         cache = {"step": step, "terms": terms}
         env._supermimic_world_point_reward_cache = cache
     if term_name not in cache["terms"]:

@@ -16,7 +16,7 @@ from torch.utils.tensorboard import SummaryWriter
 from supermimic.config import TrainConfig
 from supermimic.envs import SuperMimicEnvCfgArgs, make_env
 from supermimic.envs.mdp.motion_library import discover_npz
-from supermimic.imagination.tasks import MotionTrackingTask, VelocityCommandTask, WorldPointReachTask
+from supermimic.imagination.tasks import ChaseBallTask, MotionTrackingTask, VelocityCommandTask, WorldPointReachTask
 from supermimic.imagination.policy_trainer import PolicyTrainer
 from supermimic.kinematics.g1_fk import G1Kinematics
 from supermimic.policy.nets import Critic, Policy
@@ -28,7 +28,8 @@ from supermimic.world_model.heads import AnalyticHeads
 from supermimic.world_model.wm_trainer import WorldModelTrainer
 from supermimic.world_model.world_model import WorldModel
 from supermimic.tasks.velocity_reward import VelocityRewardCfg, VelocityRobotParams
-from supermimic.tasks.world_point_reward import WorldPointRobotParams
+from supermimic.tasks.world_point_reward import WorldPointRobotParams, m1_tcp_proxy_indices
+from supermimic.tasks.chase_reward import ChaseBallRewardCfg
 
 
 M1_FIRST_PHASE_CLIPS = (
@@ -45,6 +46,14 @@ M1_MOTION_SETS = {
     "C": M1_FIRST_PHASE_CLIPS,
 }
 M1_FIRST_PHASE_MANIFEST = Path("configs/m1_piper_first6.csv")
+
+
+def _termination_mode(task_name: str) -> str:
+    if task_name == "motion_tracking":
+        return "learned_reference"
+    if task_name == "chase_ball":
+        return "analytic_fall_plus_tag_success"
+    return "analytic_height_tilt"
 
 
 class Trainer:
@@ -72,15 +81,16 @@ class Trainer:
         cfg.env.num_envs = self._resolved_num_envs(robot_spec.name, cfg.env.num_envs, cfg.env.task_name)
         is_motion = cfg.env.task_name == "motion_tracking"
         is_velocity = cfg.env.task_name == "velocity_command"
+        is_chase = cfg.env.task_name == "chase_ball"
         is_world_point = cfg.env.task_name == "world_point_reach"
-        if cfg.env.task_name not in ("motion_tracking", "velocity_command", "world_point_reach"):
+        if cfg.env.task_name not in ("motion_tracking", "velocity_command", "chase_ball", "world_point_reach"):
             raise ValueError(f"unknown task {cfg.env.task_name!r}")
-        if is_velocity and robot_spec.name != "go2":
-            raise ValueError("velocity_command is currently supported only for Go2")
+        if (is_velocity or is_chase) and robot_spec.name != "go2":
+            raise ValueError(f"{cfg.env.task_name} is currently supported only for Go2")
         if is_world_point and robot_spec.name != "m1_piper":
             raise ValueError("world_point_reach is currently supported only for M1-Piper")
-        if robot_spec.name == "go2" and not is_velocity:
-            raise ValueError("Go2 has no Motion Library; select env.task_name=velocity_command")
+        if robot_spec.name == "go2" and not (is_velocity or is_chase):
+            raise ValueError("Go2 has no Motion Library; select velocity_command or chase_ball")
         if robot_spec.name == "m1_piper" and not (is_motion or is_world_point):
             raise ValueError("M1-Piper supports motion_tracking and world_point_reach")
         if cfg.env.anchor_obs is None:
@@ -104,7 +114,7 @@ class Trainer:
             if cfg.data.manifest is None:
                 cfg.data.manifest = M1_FIRST_PHASE_MANIFEST
 
-        if is_velocity:
+        if is_velocity or is_chase:
             cfg.wm_trainer.batch_size = cfg.env.velocity_wm_batch_size
             cfg.policy_trainer.batch_size = cfg.env.velocity_actor_batch_size
         elif is_world_point:
@@ -114,17 +124,19 @@ class Trainer:
         # Build every network dimension from the selected robot/task while leaving the
         # default G1 values and initialization path unchanged.
         n_joints = robot_spec.num_joints
-        goal_term_sizes = (robot_spec.amp_dim, robot_spec.amp_dim, 3, 3, 3, 1) if is_motion else (3,)
-        goal_term_scale = (1.0, 5.0, 1.0, 2.0, 1.0, 1.0) if is_motion else (1.0,)
+        full_body_goal = is_motion and robot_spec.name == "g1" and cfg.env.motion_goal_schema == "full_body"
+        goal_term_sizes = (268,) if full_body_goal else (robot_spec.amp_dim, robot_spec.amp_dim, 3, 3, 3, 1) if is_motion else (3, 3) if is_chase else (3,)
+        goal_term_scale = (1.0,) if full_body_goal else (1.0, 5.0, 1.0, 2.0, 1.0, 1.0) if is_motion else (1.0, 1.0) if is_chase else (1.0,)
         anchor_dim = 9 if cfg.env.anchor_obs else 6 if cfg.env.anchor_orientation_obs else 0
-        goal_dim = cfg.env.future_frames * (2 * robot_spec.amp_dim + 10) + anchor_dim if is_motion else 3
+        per_frame_goal_dim = 268 if full_body_goal else (2 * robot_spec.amp_dim + 10)
+        goal_dim = cfg.env.future_frames * per_frame_goal_dim + anchor_dim if is_motion else 6 if is_chase else 3
         cfg.policy.num_joints = n_joints
         cfg.policy.history = cfg.env.history_length
         cfg.policy.goal_dim = goal_dim
-        cfg.policy.goal_interface = "motion" if is_motion else "velocity" if is_velocity else "world_point_reach"
+        cfg.policy.goal_interface = "motion" if is_motion else "velocity" if is_velocity else "chase_ball" if is_chase else "world_point_reach"
         # Keep G1/M1 on the original encoded goal path; only Go2 gets the compact
         # proprioception + velocity-command actor.
-        cfg.policy.goal_encoding = cfg.env.velocity_policy_encoding if is_velocity else "direct" if is_world_point else "encoded"
+        cfg.policy.goal_encoding = cfg.env.velocity_policy_encoding if is_velocity else "direct" if (is_world_point or is_chase) else "encoded"
         # Direct task actors must stay inside the action interval during BPTT.
         # A smooth tanh has useful gradients near the boundary, unlike relying on
         # a hard execution clamp after an unbounded decoder. Old checkpoints omit
@@ -195,6 +207,7 @@ class Trainer:
                 num_envs=cfg.env.num_envs,
                 history_length=cfg.env.history_length,
                 future_frames=cfg.env.future_frames,
+                motion_goal_schema=cfg.env.motion_goal_schema,
                 episode_length_s=cfg.env.episode_length_s,
                 action_noise_std=cfg.env.action_noise_std,
                 obs_noise=cfg.env.obs_noise,
@@ -241,8 +254,26 @@ class Trainer:
                 velocity_min_safe_height=cfg.env.velocity_min_safe_height,
                 velocity_fall_height=cfg.env.velocity_fall_height,
                 velocity_fall_tilt_deg=cfg.env.velocity_fall_tilt_deg,
+                chase_auto_curriculum=cfg.env.chase_auto_curriculum,
+                chase_initial_stage=cfg.env.chase_initial_stage,
+                chase_fixed_stage=cfg.env.chase_fixed_stage,
+                chase_promotion_window_episodes=cfg.env.chase_promotion_window_episodes,
+                chase_consecutive_passing_windows=cfg.env.chase_consecutive_passing_windows,
+                chase_promotion_success_rate=cfg.env.chase_promotion_success_rate,
+                chase_tag_radius=cfg.env.chase_tag_radius,
+                chase_approach_weight=cfg.env.chase_approach_weight,
+                chase_near_weight=cfg.env.chase_near_weight,
+                chase_tag_weight=cfg.env.chase_tag_weight,
+                chase_tag_sigma=cfg.env.chase_tag_sigma,
+                chase_facing_weight=cfg.env.chase_facing_weight,
                 m1_fall_height=cfg.env.m1_fall_height,
                 m1_success_distance=cfg.env.m1_success_distance,
+                m1_target_curriculum=cfg.env.m1_target_curriculum,
+                m1_initial_target_stage=cfg.env.m1_initial_target_stage,
+                m1_fixed_target_stage=cfg.env.m1_fixed_target_stage,
+                m1_target_promotion_window_episodes=cfg.env.m1_target_promotion_window_episodes,
+                m1_target_promotion_success_rate=cfg.env.m1_target_promotion_success_rate,
+                m1_target_consecutive_passing_windows=cfg.env.m1_target_consecutive_passing_windows,
                 m1_near_target_fraction=cfg.env.m1_near_target_fraction,
                 m1_near_x=cfg.env.m1_near_x,
                 m1_near_y=cfg.env.m1_near_y,
@@ -255,7 +286,7 @@ class Trainer:
             device=self.device,
         )
         env = self.env
-        command_name = "motion" if is_motion else "velocity" if is_velocity else "world_point"
+        command_name = "motion" if is_motion else "velocity" if is_velocity else "chase_ball" if is_chase else "world_point"
         self.command = env.command_manager.get_term(command_name)
         self.lib = getattr(self.command, "library", None)
         self.recorder = env.recorder_manager.get_term("replay")
@@ -287,6 +318,7 @@ class Trainer:
             self.task = MotionTrackingTask(
                 self.lib, cfg.env.future_frames, cfg.env.anchor_obs,
                 cfg.env.anchor_orientation_obs,
+                goal_schema=cfg.env.motion_goal_schema,
             )
         elif is_velocity:
             reward_cfg = VelocityRewardCfg(
@@ -313,8 +345,24 @@ class Trainer:
                 fall_height=cfg.env.velocity_fall_height,
                 tilt_feature_threshold=1.0 - math.cos(math.radians(cfg.env.velocity_fall_tilt_deg)),
             )
+        elif is_chase:
+            self.task = ChaseBallTask(
+                default_joint_pos=robot.data.default_joint_pos[0].detach().clone(),
+                dt=robot_spec.control_dt,
+                reward_cfg=ChaseBallRewardCfg(
+                    approach_weight=cfg.env.chase_approach_weight,
+                    near_weight=cfg.env.chase_near_weight,
+                    tag_weight=cfg.env.chase_tag_weight,
+                    tag_radius=cfg.env.chase_tag_radius,
+                    tag_sigma=cfg.env.chase_tag_sigma,
+                    facing_weight=cfg.env.chase_facing_weight,
+                    minimum_height=cfg.env.velocity_min_safe_height,
+                ),
+                fall_height=cfg.env.velocity_fall_height,
+                fall_tilt_deg=cfg.env.velocity_fall_tilt_deg,
+            )
         else:
-            tcp_indices = (heads.fk.body_index("piper_x_link7"), heads.fk.body_index("piper_x_link8"))
+            tcp_indices = m1_tcp_proxy_indices(heads.fk)
             world_point_params = WorldPointRobotParams(
                 default_joint_pos=robot.data.default_joint_pos[0].detach().clone(),
                 soft_joint_limits=robot.data.soft_joint_pos_limits[0].detach().clone(),
@@ -341,10 +389,12 @@ class Trainer:
         self.ep_len = torch.zeros(env.num_envs, device=self.device)
         self.max_step_reward = heads.reward_cfg.max_step_reward if is_motion else 1.0
         self.has_tracking_return = is_motion
-        self.is_go2_velocity = robot_spec.name == "go2" and not is_motion
+        self.is_go2_velocity = robot_spec.name == "go2" and is_velocity
+        self.is_go2_chase = robot_spec.name == "go2" and is_chase
+        self.is_go2_task = self.is_go2_velocity or self.is_go2_chase
         self.is_m1_motion = robot_spec.name == "m1_piper" and is_motion
         self.is_m1_world_point = robot_spec.name == "m1_piper" and is_world_point
-        self.go2_action_stats = self._empty_go2_action_stats() if self.is_go2_velocity else None
+        self.go2_action_stats = self._empty_go2_action_stats() if self.is_go2_task else None
         self.motion_names = [Path(f).stem for f in files]
         self.motion_return_sum = torch.zeros(len(self.motion_names), device=self.device)
         self.motion_return_count = torch.zeros(len(self.motion_names), device=self.device)
@@ -408,8 +458,8 @@ class Trainer:
         saved_env = saved.get("env", {})
         saved_wm = saved.get("world_model", {})
         saved_spec = saved_wm.get("state_spec", {})
-        if saved_env.get("robot_name") != "go2" or saved_env.get("task_name") != "velocity_command":
-            raise ValueError("--init-wm-from requires a Go2 velocity_command checkpoint")
+        if saved_env.get("robot_name") != "go2" or saved_env.get("task_name") not in ("velocity_command", "chase_ball"):
+            raise ValueError("--init-wm-from requires a Go2 velocity_command or chase_ball checkpoint")
         saved_actuator = ck.get("actuator_model_version", saved.get("actuator_model_version"))
         if saved_actuator != self.actuator_model_version:
             raise ValueError(
@@ -484,10 +534,12 @@ class Trainer:
         )
 
     def _effective_wm_only_target(self) -> int:
-        if self.is_go2_velocity:
+        if getattr(self, "is_go2_task", False):
             return 0 if self.pretrained_wm else int(self.cfg.schedule.wm_only_iterations)
         if self.is_m1_motion or getattr(self, "is_m1_world_point", False):
             return int(self.cfg.schedule.m1_wm_only_iterations)
+        if self.cfg.env.robot_name == "g1" and self.cfg.env.task_name == "motion_tracking":
+            return int(self.cfg.schedule.g1_motion_wm_only_updates)
         return 0
 
     def _run_config_snapshot(self) -> dict:
@@ -502,7 +554,7 @@ class Trainer:
             "action_dim": self.cfg.policy.num_joints,
             "state_dim": self.wm.spec.state_dim,
             "policy_mode": self.cfg.policy.goal_encoding,
-            "termination_mode": "learned_reference" if self.cfg.env.task_name == "motion_tracking" else "analytic_height_tilt",
+            "termination_mode": _termination_mode(self.cfg.env.task_name),
             "pretrained_wm": self.pretrained_wm,
             "init_wm_from": self.init_wm_from_path,
             "init_wm_sha256": self.init_wm_sha256,
@@ -552,7 +604,7 @@ class Trainer:
             "goal_dim": self.cfg.policy.goal_dim,
             "action_dim": self.cfg.policy.num_joints,
             "state_dim": self.wm.spec.state_dim,
-            "termination_mode": "learned_reference" if self.cfg.env.task_name == "motion_tracking" else "analytic_height_tilt",
+            "termination_mode": _termination_mode(self.cfg.env.task_name),
             "torch_rng_state": torch.get_rng_state(),
         }
         if torch.cuda.is_available():
@@ -600,7 +652,7 @@ class Trainer:
         if saved_norm != self.cfg.world_model.running_normalization:
             raise ValueError(f"checkpoint World Model running_normalization={saved_norm} differs from requested config")
         saved_term_mode = ck.get("termination_mode")
-        current_term_mode = "learned_reference" if self.cfg.env.task_name == "motion_tracking" else "analytic_height_tilt"
+        current_term_mode = _termination_mode(self.cfg.env.task_name)
         if saved_term_mode is not None and saved_term_mode != current_term_mode:
             raise ValueError(f"checkpoint termination mode {saved_term_mode!r} differs from {current_term_mode!r}")
         for key, actual in (("goal_dim", self.cfg.policy.goal_dim), ("action_dim", self.cfg.policy.num_joints), ("state_dim", self.wm.spec.state_dim)):
@@ -808,12 +860,12 @@ class Trainer:
             t0 = time.perf_counter()
             pre_frame = self.command.frame.clone() if self.is_m1_motion else None
             action = self.act(obs)
-            action_buffer_ptr = self.buffer.ptr.clone() if self.is_go2_velocity else None
+            action_buffer_ptr = self.buffer.ptr.clone() if self.is_go2_task else None
             action_ou_mask = (
-                self.recorder.action_term._ou_mask.clone() if self.is_go2_velocity else None
+                self.recorder.action_term._ou_mask.clone() if self.is_go2_task else None
             )
             obs, rew, term, tout, extras = env.step(action)
-            if self.is_go2_velocity:
+            if self.is_go2_task:
                 env_ids = torch.arange(env.num_envs, device=self.device)
                 executed = self.buffer.a_exec[env_ids, action_buffer_ptr]
                 clean = self.buffer.a[env_ids, action_buffer_ptr]
@@ -834,7 +886,7 @@ class Trainer:
                 if self.has_tracking_return:
                     norm_ret = self.ep_reward_sum[ids] / (self.max_step_reward * lens.clamp_min(1))
                     finished_returns.extend(norm_ret.tolist())
-                elif self.is_go2_velocity or self.is_m1_world_point:
+                elif self.is_go2_task or self.is_m1_world_point:
                     finished_returns.extend(self.ep_reward_sum[ids].tolist())
                     finished_falls.extend(term[ids].float().tolist())
                 finished_lens.extend(lens.tolist())
@@ -866,7 +918,7 @@ class Trainer:
                     else:
                         if self.actor_start_iteration is None:
                             self.actor_start_iteration = self.iteration
-                            if self.is_go2_velocity and self.is_main:
+                            if self.is_go2_task and self.is_main:
                                 with torch.no_grad():
                                     start_err = self.wm_trainer.online_error(self.buffer, n=256, k=8)
                                     self.go2_actor_start_nse8 = float(start_err[-1])
@@ -879,7 +931,7 @@ class Trainer:
                         t0 = time.perf_counter()
                         for _ in range(sch.policy_updates_per_wm_update):
                             ramp_updates = max(int(sch.actor_ramp_iterations), 0)
-                            if self.is_go2_velocity and ramp_updates > 0:
+                            if self.is_go2_task and ramp_updates > 0:
                                 ramp_scale = actor_ramp_scale(self.actor_updates + 1, ramp_updates)
                             else:
                                 ramp_scale = 1.0
@@ -915,7 +967,7 @@ class Trainer:
                     len_sum = allreduce_mean(float(sum(finished_lens))) * self.world
                     fall_sum = allreduce_mean(float(sum(finished_falls))) * self.world
                     finished_lens = [len_sum / cnt] if cnt > 0 else []
-                    finished_falls = [fall_sum / cnt] if cnt > 0 and self.is_go2_velocity else []
+                    finished_falls = [fall_sum / cnt] if cnt > 0 and self.is_go2_task else []
                 else:
                     n_finished = len(finished_returns)
                 if not self.is_main:
@@ -944,12 +996,15 @@ class Trainer:
                         self.writer.add_scalar("train/episode_norm_return", tr, it)
                     elif self.is_go2_velocity:
                         self.writer.add_scalar("go2/real_episode_return", tr, it)
+                    elif self.is_go2_chase:
+                        self.writer.add_scalar("go2/chase_episode_return", tr, it)
+                        self.writer.add_scalar("go2/chase_timeout_success_fraction", 1.0 - sum(finished_falls) / max(len(finished_falls), 1), it)
                     elif self.is_m1_world_point:
                         self.writer.add_scalar("m1/world_point_episode_return", tr, it)
                     self.writer.add_scalar("train/episode_len", sum(finished_lens) / max(len(finished_lens), 1), it)
                 else:
                     tr = float("nan")
-                if self.is_go2_velocity and self.is_main and finished_falls:
+                if self.is_go2_task and self.is_main and finished_falls:
                     self.writer.add_scalar("go2/fall_rate", sum(finished_falls) / len(finished_falls), it)
                 if self.is_m1_world_point and self.is_main and finished_falls:
                     self.writer.add_scalar("m1/world_point_fall_rate", sum(finished_falls) / len(finished_falls), it)
@@ -963,6 +1018,14 @@ class Trainer:
                     if hasattr(action_term, "_ou_mask"):
                         self.writer.add_scalar("go2/ou_env_fraction", float(action_term._ou_mask.float().mean()), it)
                         self.writer.add_scalar("go2/action_noise_abs_mean", float((action_term.executed_raw - action_term.raw_action).abs().mean()), it)
+                    self._write_go2_action_stats(it)
+                if self.is_go2_chase and self.is_main:
+                    self.writer.add_scalar("go2/chase_curriculum_stage", float(self.command.stage), it)
+                    if math.isfinite(self.command.last_success_rate):
+                        self.writer.add_scalar("go2/chase_success_rate_window", self.command.last_success_rate, it)
+                    self.writer.add_scalar("go2/chase_tag_fraction_step", float(self.command.metrics["tagged"].mean()), it)
+                    self.writer.add_scalar("go2/chase_ball_distance", float(self.command.metrics["ball_distance"].mean()), it)
+                    self.writer.add_scalar("go2/chase_approach_speed", float(self.command.metrics["approach_speed"].mean()), it)
                     self._write_go2_action_stats(it)
                 if self.is_m1_motion and self.is_main:
                     metric_count = float(self.m1_step_metric_count)
@@ -988,8 +1051,11 @@ class Trainer:
                         "m1/world_point_instant_success_fraction",
                         float(self.command.metrics["success"].mean()), it,
                     )
+                    self.writer.add_scalar("m1/world_point_target_stage", float(self.command.stage), it)
+                    if math.isfinite(self.command.last_success_rate):
+                        self.writer.add_scalar("m1/world_point_success_rate_window", self.command.last_success_rate, it)
                 if self.is_main:
-                    task_prefix = "go2" if self.is_go2_velocity else ("m1" if self.is_m1_motion or self.is_m1_world_point else "g1")
+                    task_prefix = "go2" if self.is_go2_task else ("m1" if self.is_m1_motion or self.is_m1_world_point else "g1")
                     for key, value in self.real_reward_term_sum.items():
                         self.writer.add_scalar(f"{task_prefix}/reward_real/{key}", float(value / sch.log_interval), it)
                 with torch.no_grad():
@@ -999,7 +1065,7 @@ class Trainer:
                         self.writer.add_scalar("wm/nse_8step", float(err[-1]), it)
                     else:
                         err = None
-                if self.is_main and self.is_go2_velocity and hasattr(self, "go2_actor_start_nse8"):
+                if self.is_main and self.is_go2_task and hasattr(self, "go2_actor_start_nse8"):
                     self.writer.add_scalar("wm/actor_start_nse8", self.go2_actor_start_nse8, it)
                 if self.is_main:
                     for k, v in timers.items():

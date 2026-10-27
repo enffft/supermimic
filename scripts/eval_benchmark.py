@@ -6,6 +6,9 @@
 from __future__ import annotations
 
 from pathlib import Path
+import json
+import shutil
+import os
 
 import tyro
 
@@ -13,12 +16,31 @@ from supermimic.envs.mdp.motion_library import discover_npz
 from supermimic.eval.benchmark import load_policy_from_checkpoint, run_benchmark, save_results, summarize
 
 
-def main(ckpt: Path, npz_dir: Path = Path("data/npz/lafan1"), clips: list[str] | None = None, clip_list: Path | None = None, manifest: Path | None = None, num_envs: int = 1024, device: str = "cuda:0", out: Path | None = None) -> None:
+def main(
+    ckpt: Path,
+    npz_dir: Path = Path("data/npz/lafan1"),
+    clips: list[str] | None = None,
+    clip_list: Path | None = None,
+    manifest: Path | None = None,
+    num_envs: int = 1024,
+    device: str = "cuda:0",
+    out: Path | None = None,
+    best_checkpoint: Path | None = None,
+    best_metrics: Path | None = None,
+) -> None:
+    if (best_checkpoint is None) != (best_metrics is None):
+        raise ValueError("--best-checkpoint and --best-metrics must be specified together")
     if clip_list is not None:
         clips = [l.strip() for l in open(clip_list) if l.strip()]
     files = [str(f) for f in discover_npz(npz_dir, names=clips, manifest=manifest)]
     policy, cfg = load_policy_from_checkpoint(ckpt, device)
-    results = run_benchmark(policy, files, device=device, num_envs=num_envs, future_frames=cfg["env"]["future_frames"], anchor_obs=cfg["env"].get("anchor_obs", False))
+    results = run_benchmark(
+        policy, files, device=device, num_envs=num_envs,
+        future_frames=cfg["env"]["future_frames"],
+        anchor_obs=cfg["env"].get("anchor_obs", False),
+        anchor_orientation_obs=cfg["env"].get("anchor_orientation_obs", False),
+        motion_goal_schema=cfg["env"].get("motion_goal_schema", "root_joint"),
+    )
     s = summarize(results)
     print(f"\n{s['clips']} clips | failed {s['failed']} | mean norm return {s['mean_norm_return']:.4f} | step-weighted {s['step_weighted_norm_return']:.4f}")
     if "terms" in s:
@@ -31,6 +53,35 @@ def main(ckpt: Path, npz_dir: Path = Path("data/npz/lafan1"), clips: list[str] |
     out = out or ckpt.parent / f"benchmark_{ckpt.stem}.json"
     save_results(results, out)
     print("saved", out)
+    if best_checkpoint is not None and best_metrics is not None:
+        best_metrics.parent.mkdir(parents=True, exist_ok=True)
+        previous = None
+        if best_metrics.is_file():
+            previous = json.loads(best_metrics.read_text())
+        score = float(s["mean_norm_return"])
+        if previous is None or score > float(previous.get("mean_norm_return", float("-inf"))):
+            best_checkpoint.parent.mkdir(parents=True, exist_ok=True)
+            tmp = best_checkpoint.with_name(best_checkpoint.name + ".tmp")
+            try:
+                shutil.copy2(ckpt, tmp)
+                os.replace(tmp, best_checkpoint)
+            finally:
+                if tmp.exists():
+                    tmp.unlink()
+            best_metrics.write_text(json.dumps({
+                "checkpoint": str(best_checkpoint),
+                "source_checkpoint": str(ckpt),
+                "mean_norm_return": score,
+                "step_weighted_norm_return": float(s["step_weighted_norm_return"]),
+                "failed": int(s["failed"]),
+                "clips": int(s["clips"]),
+            }, indent=2) + "\n")
+            print(f"new best real benchmark: {score:.4f} | saved {best_checkpoint}")
+        else:
+            print(
+                f"best unchanged: current {score:.4f} <= "
+                f"previous {float(previous['mean_norm_return']):.4f}"
+            )
 
 
 if __name__ == "__main__":

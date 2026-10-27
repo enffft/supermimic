@@ -28,7 +28,7 @@ from pathlib import Path
 import numpy as np
 import torch
 
-from supermimic.kinematics.rotations import projected_gravity, quat_apply_inverse, yaw_quat
+from supermimic.kinematics.rotations import matrix_from_quat, projected_gravity, quat_apply, quat_apply_inverse, quat_mul, quat_inv, yaw_quat
 
 GOAL_FEAT_DIM = 68  # G1 compatibility constant.
 REF_DIM = 71  # G1 compatibility constant.
@@ -78,6 +78,36 @@ def goal_features(ref: RefState, default_joint_pos: torch.Tensor, joint_indices:
     return torch.cat([ref_pos - default_joint_pos, ref_vel, grav, ang_b, lin_h, height], dim=-1)
 
 
+def full_body_goal_features(
+    ref: RefState,
+    bodies: RefBodies,
+    default_joint_pos: torch.Tensor,
+) -> torch.Tensor:
+    """Breezewrf legacy 268-D/frame schema (root-yaw frame, wxyz quaternions).
+
+    Layout: joint position(29), joint velocity(29), body position(14x3),
+    body orientation 6D(14x6), body linear velocity(14x3), body angular
+    velocity(14x3). The reference is anchored at pelvis XY and heading yaw.
+    """
+    yaw_inverse = quat_inv(yaw_quat(ref.root_quat_w))
+    origin = torch.cat((ref.root_pos_w[..., :2], torch.zeros_like(ref.root_pos_w[..., 2:3])), -1)
+    yaw_per_body = yaw_inverse[..., None, :].expand_as(bodies.quat_w)
+    pos = quat_apply(yaw_per_body, bodies.pos_w - origin[..., None, :]) / 0.3
+    quat = quat_mul(yaw_per_body, bodies.quat_w)
+    matrix = matrix_from_quat(quat)
+    orientation = torch.cat((matrix[..., :, 0], matrix[..., :, 1]), dim=-1)
+    lin = quat_apply(yaw_per_body, bodies.lin_vel_w)
+    ang = quat_apply(yaw_per_body, bodies.ang_vel_w) / 3.14
+    return torch.cat((
+        (ref.joint_pos - default_joint_pos) / 0.3,
+        ref.joint_vel / 5.0,
+        pos.flatten(-2),
+        orientation.flatten(-2),
+        lin.flatten(-2),
+        ang.flatten(-2),
+    ), dim=-1)
+
+
 class MotionLibrary:
     def __init__(
         self,
@@ -92,6 +122,7 @@ class MotionLibrary:
         joint_names: tuple[str, ...] | None = None,
         goal_joint_names: tuple[str, ...] | None = None,
         root_body_name: str = "pelvis",
+        goal_schema: str = "root_joint",
         fk_model=None,
     ):
         self.device = torch.device(device)
@@ -109,6 +140,7 @@ class MotionLibrary:
         self.joint_names = tuple(joint_names) if joint_names is not None else None
         self.goal_joint_names = tuple(goal_joint_names) if goal_joint_names is not None else None
         self.root_body_name = root_body_name
+        self.goal_schema = str(goal_schema)
         self.num_joints = int(q0.numel())
         if self.goal_joint_names is not None:
             if self.joint_names is None:
@@ -116,7 +148,11 @@ class MotionLibrary:
             self.goal_joint_indices = torch.tensor([self.joint_names.index(n) for n in self.goal_joint_names], device=self.device, dtype=torch.long)
         else:
             self.goal_joint_indices = None
-        self.goal_feat_dim = 2 * (len(self.goal_joint_names) if self.goal_joint_names is not None else self.num_joints) + 10
+        if self.goal_schema not in ("root_joint", "full_body"):
+            raise ValueError(f"unknown Motion Goal schema {self.goal_schema!r}")
+        if self.goal_schema == "full_body" and (compact or len(self.body_names) != 14 or self.num_joints != 29):
+            raise ValueError("full_body Goal currently requires the full G1 14-body/29-joint Motion Library")
+        self.goal_feat_dim = 268 if self.goal_schema == "full_body" else 2 * (len(self.goal_joint_names) if self.goal_joint_names is not None else self.num_joints) + 10
         self.ref_dim = 13 + 2 * self.num_joints
 
         clips: list[ClipInfo] = []
@@ -198,7 +234,12 @@ class MotionLibrary:
             self.body_lin_vel_w = t(body_chunks["lin"])
             self.body_ang_vel_w = t(body_chunks["ang"])
             del body_chunks
-            self.goal_feat = goal_features(self._split(self._ref), q0, self.goal_joint_indices)
+            if self.goal_schema == "full_body":
+                ref = self._split(self._ref)
+                bodies = RefBodies(self.body_pos_w, self.body_quat_w, self.body_lin_vel_w, self.body_ang_vel_w)
+                self.goal_feat = full_body_goal_features(ref, bodies, q0)
+            else:
+                self.goal_feat = goal_features(self._split(self._ref), q0, self.goal_joint_indices)
         else:
             from supermimic.kinematics.g1_fk import G1Kinematics
 

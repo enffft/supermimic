@@ -23,11 +23,12 @@ from supermimic.data.recorder import ReplayRecorderCfg
 from supermimic.envs.actions import MixedM1ActionCfg, NoisyJointPositionActionCfg
 from supermimic.envs.mdp import observations as sm_obs
 from supermimic.envs.mdp import terminations as sm_term
-from supermimic.envs.mdp.commands import MultiClipMotionCommandCfg, VelocityCommandCfg, WorldPointCommandCfg
+from supermimic.envs.mdp.commands import ChaseBallCommandCfg, MultiClipMotionCommandCfg, VelocityCommandCfg, WorldPointCommandCfg
 from supermimic.envs.tracking_env_cfg import QuietSimulationCfg, SuperMimicEnvCfgArgs
 from supermimic.robots.mjlab_assets import get_robot_entity_cfg
 from supermimic.robots.spec import get_robot_spec
 from supermimic.tasks.velocity_reward import VELOCITY_REWARD_NAMES, go2_velocity_reward_term
+from supermimic.tasks.chase_reward import CHASE_REWARD_NAMES, go2_chase_reward_term
 from supermimic.tasks.world_point_reward import WORLD_POINT_REWARD_NAMES, m1_world_point_reward_term
 
 
@@ -35,15 +36,18 @@ def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
     robot = get_robot_spec(a.robot_name)
     motion_task = a.task_name == "motion_tracking"
     velocity_task = a.task_name == "velocity_command"
+    chase_task = a.task_name == "chase_ball"
     world_point_task = a.task_name == "world_point_reach"
-    if not (motion_task or velocity_task or world_point_task):
-        raise ValueError(f"unknown task {a.task_name!r}; use motion_tracking, velocity_command, or world_point_reach")
-    if velocity_task and robot.name != "go2":
-        raise ValueError("velocity_command is currently defined only for Go2")
+    if not (motion_task or velocity_task or chase_task or world_point_task):
+        raise ValueError(f"unknown task {a.task_name!r}; use motion_tracking, velocity_command, chase_ball, or world_point_reach")
+    if (velocity_task or chase_task) and robot.name != "go2":
+        raise ValueError(f"{a.task_name} is currently defined only for Go2")
     if world_point_task and robot.name != "m1_piper":
         raise ValueError("world_point_reach is currently defined only for M1-Piper")
     if motion_task and robot.name == "go2":
-        raise ValueError("Go2 has no motion bank; select velocity_command")
+        raise ValueError("Go2 has no motion bank; select velocity_command or chase_ball")
+    if a.motion_goal_schema == "full_body" and not (motion_task and robot.name == "g1"):
+        raise ValueError("full_body Motion Goal schema is supported only for G1 motion_tracking")
     if motion_task and a.anchor_obs and a.anchor_orientation_obs:
         raise ValueError("choose position+orientation Anchor or orientation-only Anchor")
     if motion_task and not a.npz_files:
@@ -79,6 +83,8 @@ def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
             )
     elif velocity_task:
         goal_terms = {"velocity_command": ObservationTermCfg(func=sm_obs.velocity_goal, params={"command_name": "velocity"})}
+    elif chase_task:
+        goal_terms = {"chase_ball": ObservationTermCfg(func=sm_obs.chase_ball_goal, params={"command_name": "chase_ball"})}
     else:
         goal_terms = {"world_point_body": ObservationTermCfg(func=sm_obs.world_point_goal_body, params={"command_name": "world_point"})}
     observations = {
@@ -119,6 +125,7 @@ def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
                 npz_files=a.npz_files, anchor_body_name=robot.anchor_body_name,
                 root_body_name=robot.root_body_name, body_names=robot.tracked_body_names,
                 goal_joint_names=robot.amp_joint_names or None,
+                goal_schema=a.motion_goal_schema,
                 entity_name="robot", future_frames=a.future_frames, bin_frames=a.bin_frames,
                 pose_range={"x": (-0.05, 0.05), "y": (-0.05, 0.05), "z": (-0.01, 0.01), "roll": (-0.1, 0.1), "pitch": (-0.1, 0.1), "yaw": (-0.2, 0.2)} if a.reset_noise else {},
                 velocity_range={"x": (-0.5, 0.5), "y": (-0.5, 0.5), "z": (-0.2, 0.2), "roll": (-0.52, 0.52), "pitch": (-0.52, 0.52), "yaw": (-0.78, 0.78)} if a.reset_noise else {},
@@ -207,6 +214,56 @@ def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
         }
         goal_dim = 3
         command_name = "velocity"
+    elif chase_task:
+        commands = {
+            "chase_ball": ChaseBallCommandCfg(
+                entity_name="robot",
+                ball_center_height=0.09,
+                tag_radius=a.chase_tag_radius,
+                auto_curriculum=a.chase_auto_curriculum,
+                initial_stage=a.chase_initial_stage,
+                fixed_stage=a.chase_fixed_stage,
+                promotion_window_episodes=a.chase_promotion_window_episodes,
+                consecutive_passing_windows=a.chase_consecutive_passing_windows,
+                promotion_success_rate=a.chase_promotion_success_rate,
+                debug_vis=a.debug_vis,
+            )
+        }
+        rewards = {
+            name: RewardTermCfg(
+                func=go2_chase_reward_term, weight=1.0,
+                params={
+                    "term_name": name,
+                    "approach_weight": a.chase_approach_weight,
+                    "near_weight": a.chase_near_weight,
+                    "tag_weight": a.chase_tag_weight,
+                    "tag_radius": a.chase_tag_radius,
+                    "tag_sigma": a.chase_tag_sigma,
+                    "facing_weight": a.chase_facing_weight,
+                    "minimum_height": a.velocity_min_safe_height,
+                },
+            )
+            for name in CHASE_REWARD_NAMES
+        }
+        tilt_feature_threshold = 1.0 - math.cos(math.radians(a.velocity_fall_tilt_deg))
+        terminations = {
+            "time_out": TerminationTermCfg(func=base_mdp.time_out, time_out=True),
+            "chase_tag": TerminationTermCfg(
+                func=sm_term.chase_tag,
+                params={"command_name": "chase_ball"},
+                time_out=True,
+            ),
+            "root_height": TerminationTermCfg(
+                func=sm_term.free_root_too_low,
+                params={"asset_cfg": SceneEntityCfg("robot"), "threshold": a.velocity_fall_height},
+            ),
+            "root_tilt": TerminationTermCfg(
+                func=sm_term.free_root_tilted,
+                params={"asset_cfg": SceneEntityCfg("robot"), "threshold": tilt_feature_threshold},
+            ),
+        }
+        goal_dim = 6
+        command_name = "chase_ball"
     else:
         commands = {
             "world_point": WorldPointCommandCfg(
@@ -215,6 +272,12 @@ def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
                 near_x=a.m1_near_x, near_y=a.m1_near_y, near_z=a.m1_near_z,
                 far_x=a.m1_far_x, far_y=a.m1_far_y, far_z=a.m1_far_z,
                 success_distance=a.m1_success_distance,
+                auto_curriculum=a.m1_target_curriculum,
+                initial_stage=a.m1_initial_target_stage,
+                fixed_stage=a.m1_fixed_target_stage,
+                promotion_window_episodes=a.m1_target_promotion_window_episodes,
+                promotion_success_rate=a.m1_target_promotion_success_rate,
+                consecutive_passing_windows=a.m1_target_consecutive_passing_windows,
                 debug_vis=a.debug_vis,
             )
         }

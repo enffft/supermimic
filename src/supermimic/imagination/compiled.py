@@ -68,13 +68,21 @@ class VelocityImagStep:
             self._fn = torch.compile(self._step, mode=mode, dynamic=False)
 
     def _step(self, s, a, a_prev, xi, goal):
-        clip = self.task.reward_cfg.action_clip if hasattr(self.task, "reward_cfg") else 1.0
+        clip = getattr(getattr(self.task, "reward_cfg", None), "action_clip", 1.0)
         executed_action = clamp_executed_action(a, clip)
         s_next = self.wm.step(s, executed_action, xi)
-        terms = self.task.reward_terms(s, s_next, goal, a, a_prev, executed_action=executed_action)
+        goal_next = self.task.advance_goal(goal) if hasattr(self.task, "advance_goal") else goal
+        if hasattr(self.task, "advance_goal"):
+            terms = self.task.reward_terms(
+                s, s_next, goal, a, a_prev,
+                executed_action=executed_action, ball_state_next=goal_next,
+            )
+            logits = self.task.termination_logits(s_next, goal_next)
+        else:
+            terms = self.task.reward_terms(s, s_next, goal, a, a_prev, executed_action=executed_action)
+            logits = self.task.termination_logits(s_next)
         reward = torch.stack([terms[name] for name in self.task.reward_term_names], dim=0).sum(0)
         term_vec = torch.stack([terms[name] for name in self.task.reward_term_names], dim=0)
-        logits = self.task.termination_logits(s_next)
         obs_clean = analytic_observation(s_next, a, xi, self.q0, self.wheel_indices)
         bodies = self.wm.heads.robot_bodies(s_next)
         ai = self.wm.heads.anchor_index

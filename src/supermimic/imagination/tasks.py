@@ -20,6 +20,14 @@ from supermimic.tasks.world_point_reward import (
     WorldPointRobotParams,
     world_point_reward_terms,
 )
+from supermimic.tasks.chase_reward import (
+    CHASE_REWARD_NAMES,
+    ChaseBallRewardCfg,
+    chase_ball_reward_terms,
+    chase_fall_probability,
+    chase_goal_yaw_frame,
+    chase_tag_probability,
+)
 from supermimic.kinematics.rotations import quat_apply_inverse
 
 
@@ -29,6 +37,7 @@ class MotionTrackingTask:
     future_frames: int = 10
     anchor_obs: bool = False
     anchor_orientation_obs: bool = False
+    goal_schema: str = "root_joint"
     goal_interface: str = "motion"
     debug_objective: bool = False
 
@@ -111,6 +120,69 @@ class VelocityCommandTask:
     @property
     def goal_dim(self) -> int:
         return 3
+
+
+@dataclass
+class ChaseBallTask:
+    """Go2 chase task; task Goal is a fixed-step snapshot of an external ball state."""
+
+    default_joint_pos: torch.Tensor
+    dt: float = 0.02
+    reward_cfg: ChaseBallRewardCfg = field(default_factory=ChaseBallRewardCfg)
+    fall_height: float = 0.17
+    fall_tilt_deg: float = 70.0
+    goal_interface: str = "chase_ball"
+    reward_term_names: tuple[str, ...] = CHASE_REWARD_NAMES
+
+    @property
+    def goal_dim(self) -> int:
+        return 6
+
+    def actor_goal(self, state: torch.Tensor, ball_state: torch.Tensor) -> torch.Tensor:
+        return chase_goal_yaw_frame(state, ball_state)
+
+    def advance_goal(self, ball_state: torch.Tensor) -> torch.Tensor:
+        return torch.cat((ball_state[..., :3] + ball_state[..., 3:6] * float(self.dt), ball_state[..., 3:6]), -1)
+
+    def reward_terms(
+        self,
+        s_prev: torch.Tensor,
+        s_next: torch.Tensor,
+        ball_state: torch.Tensor,
+        action: torch.Tensor,
+        previous_action: torch.Tensor,
+        *,
+        executed_action: torch.Tensor | None = None,
+        ball_state_next: torch.Tensor | None = None,
+    ) -> dict[str, torch.Tensor]:
+        del s_prev, executed_action
+        ball_next = self.advance_goal(ball_state) if ball_state_next is None else ball_state_next
+        terms = chase_ball_reward_terms(
+            s_next, ball_next, action, previous_action,
+            self.default_joint_pos, self.reward_cfg,
+        )
+        return {name: value * float(self.dt) for name, value in terms.items()}
+
+    def termination_features(self, state: torch.Tensor) -> torch.Tensor:
+        gravity = state.new_zeros(state.shape[:-1] + (3,))
+        gravity[..., 2] = -1.0
+        from supermimic.kinematics.rotations import quat_apply_inverse
+
+        gravity_local = quat_apply_inverse(state[..., 3:7], gravity)
+        tilt = (1.0 + gravity_local[..., 2]).abs()
+        tilt_threshold = 1.0 - math.cos(math.radians(self.fall_tilt_deg))
+        return torch.stack((self.fall_height - state[..., 2], tilt - tilt_threshold), -1)
+
+    def termination_probability(self, state: torch.Tensor, ball_state: torch.Tensor | None = None) -> torch.Tensor:
+        p_fall = chase_fall_probability(state, self.fall_height, self.fall_tilt_deg)
+        if ball_state is None:
+            return p_fall
+        p_tag = chase_tag_probability(state, ball_state, self.reward_cfg)
+        return 1.0 - (1.0 - p_fall) * (1.0 - p_tag)
+
+    def termination_logits(self, state: torch.Tensor, ball_state: torch.Tensor | None = None) -> torch.Tensor:
+        probability = self.termination_probability(state, ball_state)
+        return torch.logit(probability.clamp(1.0e-6, 1.0 - 1.0e-6))
 
 
 @dataclass

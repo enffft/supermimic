@@ -14,6 +14,7 @@ Differences from mjlab's BeyondMimic re-implementation (``mjlab.tasks.tracking``
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import Literal
 
 from mjlab.asset_zoo.robots import G1_ACTION_SCALE, get_g1_robot_cfg
 from mjlab.envs import ManagerBasedRlEnv, ManagerBasedRlEnvCfg
@@ -74,6 +75,7 @@ class SuperMimicEnvCfgArgs:
     task_name: str = "motion_tracking"
     num_envs: int = 4096
     future_frames: int = 10
+    motion_goal_schema: Literal["root_joint", "full_body"] = "root_joint"
     history_length: int = 10
     episode_length_s: float = 10.0
     action_noise_std: float = 0.1
@@ -122,16 +124,34 @@ class SuperMimicEnvCfgArgs:
     velocity_fixed_command: tuple[float, float, float] | None = None
     velocity_debug_vis: bool = False
     velocity_show_actual_velocity: bool = False
+    chase_auto_curriculum: bool = True
+    chase_initial_stage: int = 0
+    chase_fixed_stage: int | None = None
+    chase_promotion_window_episodes: int = 64
+    chase_consecutive_passing_windows: int = 2
+    chase_promotion_success_rate: float = 0.35
+    chase_tag_radius: float = 0.20
+    chase_approach_weight: float = 1.5
+    chase_near_weight: float = 3.0
+    chase_tag_weight: float = 15.0
+    chase_tag_sigma: float = 0.30
+    chase_facing_weight: float = 0.5
     velocity_min_safe_height: float = 0.22
     velocity_fall_height: float = 0.17
     velocity_fall_tilt_deg: float = 70.0
     m1_fall_height: float = 0.20
     m1_success_distance: float = 0.08
-    m1_near_target_fraction: float = 0.60
-    m1_near_x: tuple[float, float] = (0.05, 0.30)
+    m1_target_curriculum: bool = True
+    m1_initial_target_stage: int = 0
+    m1_fixed_target_stage: int | None = None
+    m1_target_promotion_window_episodes: int = 128
+    m1_target_promotion_success_rate: float = 0.35
+    m1_target_consecutive_passing_windows: int = 2
+    m1_near_target_fraction: float = 0.95
+    m1_near_x: tuple[float, float] = (0.12, 0.36)
     m1_near_y: tuple[float, float] = (-0.20, 0.20)
     m1_near_z: tuple[float, float] = (-0.15, 0.15)
-    m1_far_x: tuple[float, float] = (1.00, 1.40)
+    m1_far_x: tuple[float, float] = (0.40, 0.80)
     m1_far_y: tuple[float, float] = (-0.40, 0.40)
     m1_far_z: tuple[float, float] = (-0.10, 0.25)
     joint_limit_weight: float = -2.0
@@ -211,6 +231,7 @@ def make_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
             joint_position_range=(-0.1, 0.1) if a.reset_noise else (0.0, 0.0),
             sampling_mode=a.sampling_mode,  # type: ignore[arg-type]
             compact_library=a.compact_library,
+            goal_schema=a.motion_goal_schema,
             debug_vis=a.debug_vis,
             **a.extra_command_kwargs,
         )

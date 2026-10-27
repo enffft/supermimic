@@ -10,7 +10,7 @@ from supermimic.data.replay_buffer import ReplayBuffer
 from supermimic.envs.mdp.motion_library import MotionLibrary
 from supermimic.imagination.objective import gae_targets, policy_objective
 from supermimic.imagination.rollout import ImagRollout, imagine
-from supermimic.imagination.tasks import MotionTrackingTask, VelocityCommandTask, WorldPointReachTask
+from supermimic.imagination.tasks import ChaseBallTask, MotionTrackingTask, VelocityCommandTask, WorldPointReachTask
 from supermimic.policy.nets import Critic, Policy
 from supermimic.training.distributed import allreduce_grads
 from supermimic.world_model.world_model import WorldModel
@@ -52,7 +52,7 @@ class PolicyTrainerCfg:
 
 
 class PolicyTrainer:
-    def __init__(self, wm: WorldModel, policy: Policy, critic: Critic, task: MotionTrackingTask | VelocityCommandTask | WorldPointReachTask | MotionLibrary, cfg: PolicyTrainerCfg):
+    def __init__(self, wm: WorldModel, policy: Policy, critic: Critic, task: MotionTrackingTask | VelocityCommandTask | ChaseBallTask | WorldPointReachTask | MotionLibrary, cfg: PolicyTrainerCfg):
         if isinstance(task, MotionLibrary):
             task = MotionTrackingTask(task, future_frames=cfg.future_frames, anchor_obs=cfg.anchor_obs, anchor_orientation_obs=cfg.anchor_orientation_obs)
         self.wm, self.policy, self.critic, self.task, self.cfg = wm, policy, critic, task, cfg

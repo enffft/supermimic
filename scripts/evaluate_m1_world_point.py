@@ -15,7 +15,7 @@ from supermimic.kinematics.g1_fk import G1Kinematics
 from supermimic.kinematics.rotations import quat_apply_inverse
 from supermimic.policy.nets import Policy, PolicyCfg
 from supermimic.robots.mjlab_assets import load_robot_spec_model
-from supermimic.tasks.world_point_reward import tcp_position_world
+from supermimic.tasks.world_point_reward import M1_TCP_PROXY_BODIES, tcp_position_world
 
 
 def evaluate(
@@ -23,8 +23,12 @@ def evaluate(
     device: str = "cuda:0",
     num_envs: int = 128,
     episodes: int = 256,
+    target_stage: int = 0,
     debug_vis: bool = False,
+    out: Path | None = None,
 ) -> dict:
+    if target_stage not in (0, 1, 2):
+        raise ValueError("target_stage must be 0 (near), 1 (mid), or 2 (far)")
     ckpt = torch.load(checkpoint, map_location="cpu", weights_only=False)
     config = ckpt.get("config", {})
     env_cfg = config.get("env", {})
@@ -47,6 +51,12 @@ def evaluate(
         debug_vis=debug_vis,
         m1_fall_height=float(env_cfg.get("m1_fall_height", 0.20)),
         m1_success_distance=float(env_cfg.get("m1_success_distance", 0.08)),
+        m1_target_curriculum=False,
+        m1_fixed_target_stage=target_stage,
+        m1_initial_target_stage=target_stage,
+        m1_target_promotion_window_episodes=int(env_cfg.get("m1_target_promotion_window_episodes", 128)),
+        m1_target_promotion_success_rate=float(env_cfg.get("m1_target_promotion_success_rate", 0.35)),
+        m1_target_consecutive_passing_windows=int(env_cfg.get("m1_target_consecutive_passing_windows", 2)),
         m1_near_target_fraction=float(env_cfg.get("m1_near_target_fraction", 0.60)),
         m1_near_x=tuple(env_cfg.get("m1_near_x", (0.05, 0.30))),
         m1_near_y=tuple(env_cfg.get("m1_near_y", (-0.20, 0.20))),
@@ -65,7 +75,7 @@ def evaluate(
         state_io = StateIO(env)
         spec = load_robot_spec_model("m1_piper")
         fk = G1Kinematics(spec, device=device)
-        tcp_ids = (fk.body_index("piper_x_link7"), fk.body_index("piper_x_link8"))
+        tcp_ids = tuple(fk.body_index(name) for name in M1_TCP_PROXY_BODIES)
         recorder = env.recorder_manager.get_term("replay")
         dt = float(env.step_dt)
         arm_slice = slice(7 + 16, 7 + 22)
@@ -82,6 +92,7 @@ def evaluate(
         dist_count = torch.zeros(num_envs, device=device)
         episodes_done = torch.zeros(num_envs, dtype=torch.long, device=device)
         rows: list[dict[str, float]] = []
+        distance_trace: list[list[tuple[float, float]]] = [[] for _ in range(num_envs)]
         fk_error_sum = 0.0
         fk_error_count = 0
 
@@ -95,6 +106,9 @@ def evaluate(
             success |= hold >= 0.5
             dist_sum += distance
             dist_count += 1
+            trace_mask = (step_count.long() % 25) == 0
+            for env_id in trace_mask.nonzero(as_tuple=False).flatten().tolist():
+                distance_trace[env_id].append((float(step_count[env_id] * dt), float(distance[env_id])))
             step_count += 1
 
             # Verify the differentiable FK against the simulator body frames.
@@ -115,6 +129,10 @@ def evaluate(
                     final_target = recorder.buffer.goal[env_id, terminal_idx]
                     final_tcp = tcp_position_world(final_state[None], fk, tcp_ids)[0]
                     final_distance = float(torch.linalg.vector_norm(final_tcp - final_target))
+                    terminal_gravity_local = quat_apply_inverse(
+                        final_state[None, 3:7], final_state.new_tensor([[0.0, 0.0, -1.0]])
+                    )[0]
+                    terminal_tilt = torch.rad2deg(torch.acos((-terminal_gravity_local[2]).clamp(-1.0, 1.0)))
                     final_hold = float(max_hold[env_id])
                     final_success = bool(success[env_id] or (final_distance < command.cfg.success_distance and hold[env_id] + dt >= 0.5))
                     root_displacement = float(torch.linalg.vector_norm(final_state[:2] - initial_state[env_id, :2]))
@@ -129,7 +147,12 @@ def evaluate(
                         "arm_joint_motion": arm_motion,
                         "fall": float(terminated[env_id]),
                         "timeout": float(truncated[env_id]),
+                        "episode_duration_s": float(step_count[env_id] * dt),
+                        "terminal_base_height_m": float(final_state[2]),
+                        "terminal_tilt_deg": float(terminal_tilt),
+                        "distance_trace": distance_trace[env_id] + [(float(step_count[env_id] * dt), final_distance)],
                     })
+                    distance_trace[env_id] = []
                     episodes_done[env_id] += 1
                     if len(rows) >= episodes:
                         break
@@ -154,8 +177,27 @@ def evaluate(
 
         near = [r for r in rows if r["initial_target_distance"] <= 0.40]
         far = [r for r in rows if r["initial_target_distance"] > 0.40]
+        trace_times = (0.0, 0.5, 1.0, 2.0, 3.0, 5.0, 7.5, 10.0)
+        distance_progress = []
+        for elapsed in trace_times:
+            samples = []
+            for row in rows:
+                trace = row["distance_trace"]
+                if not trace:
+                    continue
+                time_index = min(range(len(trace)), key=lambda idx: abs(trace[idx][0] - elapsed))
+                sample_time, sample_dist = trace[time_index]
+                if abs(sample_time - elapsed) <= 0.26:
+                    samples.append(sample_dist)
+            distance_progress.append({
+                "elapsed_s": elapsed,
+                "mean_tcp_distance_m": sum(samples) / max(len(samples), 1),
+                "episodes": len(samples),
+            })
         result = {
             "checkpoint": str(checkpoint),
+            "target_stage": target_stage,
+            "target_stage_name": ("near", "mid", "far")[target_stage],
             "episodes": len(rows),
             "mean_initial_target_distance": mean("initial_target_distance"),
             "mean_tcp_distance": mean("mean_tcp_distance"),
@@ -166,6 +208,10 @@ def evaluate(
             "arm_joint_motion": mean("arm_joint_motion"),
             "fall_rate": mean("fall"),
             "timeout_rate": mean("timeout"),
+            "mean_episode_duration_s": mean("episode_duration_s"),
+            "mean_terminal_base_height_m": mean("terminal_base_height_m"),
+            "mean_terminal_tilt_deg": mean("terminal_tilt_deg"),
+            "distance_progress_by_time": distance_progress,
             "fk_mujoco_tcp_error_mean": fk_error_sum / max(fk_error_count, 1),
             "near_target_episodes": len(near),
             "near_target_initial_distance": mean("initial_target_distance", near),
@@ -174,7 +220,12 @@ def evaluate(
             "far_target_initial_distance": mean("initial_target_distance", far),
             "far_target_success_rate": mean("success", far),
         }
-        print(json.dumps(result, indent=2))
+        encoded = json.dumps(result, indent=2)
+        print(encoded)
+        if out is not None:
+            out = Path(out)
+            out.parent.mkdir(parents=True, exist_ok=True)
+            out.write_text(encoded + "\n")
         return result
     finally:
         env.close()
@@ -185,9 +236,11 @@ def main(
     device: str = "cuda:0",
     num_envs: int = 128,
     episodes: int = 256,
+    target_stage: int = 0,
     debug_vis: bool = False,
+    out: Path | None = None,
 ) -> None:
-    evaluate(checkpoint, device, num_envs, episodes, debug_vis)
+    evaluate(checkpoint, device, num_envs, episodes, target_stage, debug_vis, out)
 
 
 if __name__ == "__main__":

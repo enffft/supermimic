@@ -23,6 +23,16 @@ def velocity_goal(env: ManagerBasedRlEnv, command_name: str) -> torch.Tensor:
     return command.goal
 
 
+def chase_ball_goal(env: ManagerBasedRlEnv, command_name: str) -> torch.Tensor:
+    """6-D ball position/velocity in the robot's yaw-only navigation frame."""
+    command = env.command_manager.get_term(command_name)
+    robot = env.scene["robot"]
+    root_local = robot.data.root_link_pos_w - env.scene.env_origins
+    from supermimic.tasks.chase_reward import chase_goal_from_pose
+
+    return chase_goal_from_pose(root_local, robot.data.root_link_quat_w, command.goal)
+
+
 def world_point_goal_body(env: ManagerBasedRlEnv, command_name: str) -> torch.Tensor:
     """Fixed env-local world target expressed relative to the current robot base."""
     command = env.command_manager.get_term(command_name)

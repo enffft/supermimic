@@ -43,3 +43,22 @@ def free_root_tilted(env: ManagerBasedRlEnv, asset_cfg, threshold: float = 0.8) 
     gravity = asset.data.gravity_vec_w
     gravity_local = quat_apply_inverse(asset.data.root_link_quat_w, gravity)
     return (1.0 + gravity_local[:, 2]).abs() > threshold
+
+
+def chase_tag(env: ManagerBasedRlEnv, command_name: str) -> torch.Tensor:
+    """Success timeout, distinct from the physical fall termination label."""
+    from supermimic.envs.mdp.commands import ChaseBallCommand
+    from supermimic.envs.state_io import StateIO
+    from supermimic.tasks.chase_reward import chase_front_position
+
+    command = env.command_manager.get_term(command_name)
+    if not isinstance(command, ChaseBallCommand):
+        raise TypeError("chase_tag termination requires ChaseBallCommand")
+    state_io = getattr(env, "_supermimic_chase_state_io", None)
+    if state_io is None:
+        state_io = StateIO(env)
+        env._supermimic_chase_state_io = state_io
+    state = state_io.read()
+    front = chase_front_position(state)
+    distance = torch.linalg.vector_norm(front[..., :2] - command.ball_position_world[..., :2], dim=-1)
+    return distance <= command.cfg.tag_radius

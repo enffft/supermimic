@@ -139,6 +139,7 @@ def main(
     yaw_rate: float | None = None,
     velocity_arrow: bool = True,
     actual_velocity_arrow: bool = False,
+    chase_debug_vis: bool = True,
 ) -> None:
     policy, config, checkpoint_data = _load_checkpoint(ckpt, device)
     env_cfg = config.get("env", {})
@@ -155,12 +156,12 @@ def main(
                 f"(checkpoint={saved_actuator!r}, current={current_actuator!r}); "
                 "this Play run is an evaluation on changed physics, not a compatible full resume."
             )
-    if task_name not in ("motion_tracking", "velocity_command", "world_point_reach"):
+    if task_name not in ("motion_tracking", "velocity_command", "chase_ball", "world_point_reach"):
         raise ValueError(f"unsupported checkpoint task {task_name!r}")
-    if task_name == "velocity_command" and robot_name != "go2":
-        raise ValueError(f"checkpoint mismatch: {robot_name} cannot use velocity_command")
-    if robot_name == "go2" and task_name != "velocity_command":
-        raise ValueError("Go2 checkpoint must use velocity_command")
+    if task_name in ("velocity_command", "chase_ball") and robot_name != "go2":
+        raise ValueError(f"checkpoint mismatch: {robot_name} cannot use {task_name}")
+    if robot_name == "go2" and task_name not in ("velocity_command", "chase_ball"):
+        raise ValueError("Go2 checkpoint must use velocity_command or chase_ball")
     if task_name == "world_point_reach" and robot_name != "m1_piper":
         raise ValueError("world_point_reach checkpoint must use M1-Piper")
 
@@ -204,6 +205,7 @@ def main(
         task_name=task_name,
         num_envs=num_envs,
         future_frames=future_frames,
+        motion_goal_schema=str(env_cfg.get("motion_goal_schema", "root_joint")),
         history_length=history_length,
         episode_length_s=1.0e5,
         action_noise_std=0.0,
@@ -239,8 +241,23 @@ def main(
         velocity_show_actual_velocity=actual_velocity_arrow,
         velocity_fall_height=float(env_cfg.get("velocity_fall_height", 0.17)),
         velocity_fall_tilt_deg=float(env_cfg.get("velocity_fall_tilt_deg", 70.0)),
+        chase_auto_curriculum=False,
+        chase_initial_stage=int(env_cfg.get("chase_initial_stage", 0)),
+        chase_fixed_stage=int(checkpoint_data.get("command_state", {}).get("stage", env_cfg.get("chase_initial_stage", 0))) if task_name == "chase_ball" else None,
+        chase_tag_radius=float(env_cfg.get("chase_tag_radius", 0.20)),
+        chase_approach_weight=float(env_cfg.get("chase_approach_weight", 1.5)),
+        chase_near_weight=float(env_cfg.get("chase_near_weight", 3.0)),
+        chase_tag_weight=float(env_cfg.get("chase_tag_weight", 15.0)),
+        chase_tag_sigma=float(env_cfg.get("chase_tag_sigma", 0.30)),
+        chase_facing_weight=float(env_cfg.get("chase_facing_weight", 0.5)),
         m1_fall_height=float(env_cfg.get("m1_fall_height", 0.20)),
         m1_success_distance=float(env_cfg.get("m1_success_distance", 0.08)),
+        m1_target_curriculum=False,
+        m1_initial_target_stage=int(env_cfg.get("m1_initial_target_stage", 0)),
+        m1_fixed_target_stage=int(checkpoint_data.get("command_state", {}).get("stage", env_cfg.get("m1_initial_target_stage", 0))) if task_name == "world_point_reach" else None,
+        m1_target_promotion_window_episodes=int(env_cfg.get("m1_target_promotion_window_episodes", 128)),
+        m1_target_promotion_success_rate=float(env_cfg.get("m1_target_promotion_success_rate", 0.35)),
+        m1_target_consecutive_passing_windows=int(env_cfg.get("m1_target_consecutive_passing_windows", 2)),
         m1_near_target_fraction=float(env_cfg.get("m1_near_target_fraction", 0.60)),
         m1_near_x=tuple(env_cfg.get("m1_near_x", (0.05, 0.30))),
         m1_near_y=tuple(env_cfg.get("m1_near_y", (-0.20, 0.20))),
@@ -248,7 +265,7 @@ def main(
         m1_far_x=tuple(env_cfg.get("m1_far_x", (1.00, 1.40))),
         m1_far_y=tuple(env_cfg.get("m1_far_y", (-0.40, 0.40))),
         m1_far_z=tuple(env_cfg.get("m1_far_z", (-0.10, 0.25))),
-        debug_vis=bool(ghost) if task_name in ("motion_tracking", "world_point_reach") else False,
+        debug_vis=bool(ghost) if task_name in ("motion_tracking", "world_point_reach") else bool(chase_debug_vis) if task_name == "chase_ball" else False,
     )
 
     raw_env = make_env(play_env_args, device=device)
@@ -300,6 +317,9 @@ def main(
         if task_name == "velocity_command":
             command = raw_env.command_manager.get_term("velocity")
             print(f"[INFO] velocity command={command.command[0].tolist()} (body frame), loop=episode reset")
+        if task_name == "chase_ball":
+            command = raw_env.command_manager.get_term("chase_ball")
+            print(f"[INFO] chase_ball stage={command.stage} initial_distance={float(command.metrics['ball_distance'][0]):.3f}m; ball marker, velocity arrow, robot velocity and base path enabled")
 
         pol = _DictPolicy(policy)
         if viewer == "auto":

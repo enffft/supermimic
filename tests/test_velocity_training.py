@@ -145,16 +145,30 @@ def test_critic_bootstrap_value_clip_is_optional_and_task_configurable():
 
 
 def test_multirobot_defaults_keep_m1_2048_go2_3072_and_g1_unchanged():
+    from types import SimpleNamespace
+
     from supermimic.config import ScheduleCfg
     from supermimic.training.loop import Trainer
 
     assert ScheduleCfg().wm_only_iterations == 200
     assert ScheduleCfg().m1_wm_only_iterations == 200
+    assert ScheduleCfg().g1_motion_wm_only_updates == 0
     assert ScheduleCfg().lr_schedule == "cosine"
     assert Trainer._resolved_num_envs("m1_piper") == 2048
     assert Trainer._resolved_num_envs("go2") == 3072
     assert Trainer._resolved_num_envs("g1") == 4096
     assert Trainer._resolved_num_envs("go2", 128) == 128
+
+    trainer = object.__new__(Trainer)
+    trainer.cfg = SimpleNamespace(
+        env=SimpleNamespace(robot_name="g1", task_name="motion_tracking"),
+        schedule=SimpleNamespace(g1_motion_wm_only_updates=200, m1_wm_only_iterations=80, wm_only_iterations=90),
+    )
+    trainer.is_m1_motion = False
+    trainer.pretrained_wm = False
+    assert trainer._effective_wm_only_target() == 200
+    trainer.cfg.schedule.g1_motion_wm_only_updates = 0
+    assert trainer._effective_wm_only_target() == 0
 
 
 def test_velocity_command_ranges_and_two_window_curriculum_promotion():

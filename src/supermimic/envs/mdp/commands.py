@@ -29,6 +29,7 @@ from mjlab.utils.lab_api.math import (
 )
 
 from supermimic.envs.mdp.motion_library import MotionLibrary
+from supermimic.kinematics.rotations import heading_yaw
 
 if TYPE_CHECKING:
     from mjlab.entity import Entity
@@ -55,7 +56,7 @@ class MultiClipMotionCommand(CommandTerm):
             cfg.npz_files, cfg.body_names, default_joint_pos, device=self.device, bin_frames=cfg.bin_frames,
             compact=cfg.compact_library, store_dtype=torch.float16 if cfg.library_fp16 else torch.float32,
             joint_names=tuple(self.robot.joint_names), goal_joint_names=cfg.goal_joint_names,
-            root_body_name=cfg.root_body_name,
+            root_body_name=cfg.root_body_name, goal_schema=cfg.goal_schema,
         )
         print(f"[INFO] {self.library.summary()}")
         lib = self.library
@@ -419,6 +420,7 @@ class MultiClipMotionCommandCfg(CommandTermCfg):
     root_body_name: str = "pelvis"
     body_names: tuple[str, ...]
     goal_joint_names: tuple[str, ...] | None = None
+    goal_schema: str = "root_joint"
     entity_name: str = "robot"
     future_frames: int = 10
     bin_frames: int = 50
@@ -848,6 +850,212 @@ class VelocityCommandCfg(CommandTermCfg):
         return VelocityCommand(self, env)
 
 
+class ChaseBallCommand(CommandTerm):
+    """One scripted, low-speed ground target per Go2 episode; no ball rigid body."""
+
+    cfg: ChaseBallCommandCfg
+
+    def __init__(self, cfg: ChaseBallCommandCfg, env: ManagerBasedRlEnv):
+        super().__init__(cfg, env)
+        self.robot = env.scene[cfg.entity_name]
+        self.ball_position_world = torch.zeros(self.num_envs, 3, device=self.device)
+        self.ball_velocity_world = torch.zeros_like(self.ball_position_world)
+        self.stage = int(cfg.fixed_stage if cfg.fixed_stage is not None else cfg.initial_stage)
+        self.stage = max(0, min(self.stage, 2))
+        self.success_window: list[float] = []
+        self.last_success_rate = float("nan")
+        self.promotion_streak = 0
+        self.promotion_count = 0
+        self._episode_success = torch.zeros(self.num_envs, dtype=torch.bool, device=self.device)
+        self._episode_steps = torch.zeros(self.num_envs, dtype=torch.long, device=self.device)
+        self._episode_min_distance = torch.full((self.num_envs,), float("inf"), device=self.device)
+        self._base_trace: dict[int, list] = {}
+        self.metrics["ball_distance"] = torch.zeros(self.num_envs, device=self.device)
+        self.metrics["tagged"] = torch.zeros(self.num_envs, device=self.device)
+        self.metrics["approach_speed"] = torch.zeros(self.num_envs, device=self.device)
+
+    @property
+    def goal(self) -> torch.Tensor:
+        # Immutable per replay row snapshot: env-local ball xyz and world-axis velocity.
+        return torch.cat((self.ball_position_world, self.ball_velocity_world), dim=-1)
+
+    @property
+    def command(self) -> torch.Tensor:
+        return self.goal
+
+    def predict_goal(self, goal: torch.Tensor, dt: float | torch.Tensor) -> torch.Tensor:
+        step = torch.as_tensor(dt, dtype=goal.dtype, device=goal.device)
+        return torch.cat((goal[..., :3] + step[..., None] * goal[..., 3:6], goal[..., 3:6]), -1)
+
+    def _sample_ball(self, env_ids: torch.Tensor) -> None:
+        if env_ids.numel() == 0:
+            return
+        n = env_ids.numel()
+        if self.stage == 0:
+            dmin, dmax, angle_max, speed_max, moving_p = 0.70, 1.10, 0.75, 0.05, 0.35
+        elif self.stage == 1:
+            dmin, dmax, angle_max, speed_max, moving_p = 0.80, 1.45, 1.15, 0.10, 0.60
+        else:
+            dmin, dmax, angle_max, speed_max, moving_p = 0.80, 1.80, math.pi, 0.18, 0.75
+        root = self.robot.data.root_link_pos_w[env_ids] - self._env.scene.env_origins[env_ids]
+        yaw = heading_yaw(self.robot.data.root_link_quat_w[env_ids])
+        distance = dmin + torch.rand(n, device=self.device) * (dmax - dmin)
+        angle = (torch.rand(n, device=self.device) * 2.0 - 1.0) * angle_max
+        bearing = yaw + angle
+        position = root.clone()
+        position[:, 0] += distance * torch.cos(bearing)
+        position[:, 1] += distance * torch.sin(bearing)
+        position[:, 2] = self.cfg.ball_center_height
+        moving = torch.rand(n, device=self.device) < moving_p
+        speed = torch.rand(n, device=self.device) * speed_max * moving
+        velocity_angle = torch.rand(n, device=self.device) * (2.0 * math.pi)
+        velocity = torch.zeros_like(position)
+        velocity[:, 0] = speed * torch.cos(velocity_angle)
+        velocity[:, 1] = speed * torch.sin(velocity_angle)
+        self.ball_position_world[env_ids] = position
+        self.ball_velocity_world[env_ids] = velocity
+        self._episode_success[env_ids] = False
+        self._episode_steps[env_ids] = 0
+        self._episode_min_distance[env_ids] = float("inf")
+        for env_id in env_ids.tolist():
+            self._base_trace[int(env_id)] = []
+
+    def _finish_episodes(self, env_ids: torch.Tensor) -> None:
+        valid = self._episode_steps[env_ids] > 0
+        ids = env_ids[valid]
+        if ids.numel() == 0:
+            return
+        if self.cfg.debug_vis:
+            for env_id in ids[self._episode_success[ids]].tolist():
+                print(
+                    f"[CHASE SUCCESS] env={env_id} tagged ball after {int(self._episode_steps[env_id])} steps; "
+                    f"closest distance={float(self._episode_min_distance[env_id]):.3f} m",
+                    flush=True,
+                )
+        self.success_window.extend(self._episode_success[ids].float().detach().cpu().tolist())
+        window = self.cfg.promotion_window_episodes
+        while len(self.success_window) >= window:
+            rows, self.success_window = self.success_window[:window], self.success_window[window:]
+            rate = sum(rows) / max(len(rows), 1)
+            self.last_success_rate = rate
+            passed = rate >= self.cfg.promotion_success_rate
+            self.promotion_streak = self.promotion_streak + 1 if passed else 0
+            if self.cfg.auto_curriculum and self.cfg.fixed_stage is None and self.stage < 2 and self.promotion_streak >= self.cfg.consecutive_passing_windows:
+                self.stage += 1
+                self.promotion_count += 1
+                self.promotion_streak = 0
+
+    def _resample_command(self, env_ids: torch.Tensor) -> None:
+        self._finish_episodes(env_ids)
+        self._sample_ball(env_ids)
+
+    def _update_command(self, env_ids: torch.Tensor | None = None) -> None:
+        if env_ids is None:
+            dt = float(self._env.step_dt)
+            self.ball_position_world[:, :2] += self.ball_velocity_world[:, :2] * dt
+
+    def compute(self, dt: float | torch.Tensor, env_ids: torch.Tensor | None = None) -> None:
+        """Re-sample after reset forwarding so the ball uses the actual base pose."""
+        super().compute(dt, env_ids)
+        if env_ids is not None:
+            reset_ids = env_ids
+        elif isinstance(dt, torch.Tensor):
+            reset_ids = (dt.reshape(-1) <= 0.0).nonzero(as_tuple=False).flatten()
+        else:
+            return
+        if reset_ids.numel():
+            self._sample_ball(reset_ids)
+            self._update_metrics()
+
+    def _base_front_local(self) -> torch.Tensor:
+        root = self.robot.data.root_link_pos_w - self._env.scene.env_origins
+        yaw = heading_yaw(self.robot.data.root_link_quat_w)
+        return root[:, :2] + 0.20 * torch.stack((torch.cos(yaw), torch.sin(yaw)), -1)
+
+    def _update_metrics(self) -> None:
+        front = self._base_front_local()
+        self.metrics["ball_distance"] = torch.linalg.vector_norm(self.ball_position_world[:, :2] - front, dim=-1)
+        self.metrics["tagged"] = (self.metrics["ball_distance"] <= self.cfg.tag_radius).float()
+        velocity = self.robot.data.root_link_lin_vel_w[:, :2]
+        direction = self.ball_position_world[:, :2] - front
+        direction = direction / torch.linalg.vector_norm(direction, dim=-1, keepdim=True).clamp_min(1.0e-6)
+        self.metrics["approach_speed"] = (velocity * direction).sum(-1)
+
+    @torch.no_grad()
+    def record_real_step(self, state_next: torch.Tensor, ball_state_next: torch.Tensor) -> torch.Tensor:
+        from supermimic.tasks.chase_reward import chase_front_position
+
+        front = chase_front_position(state_next)
+        distance = torch.linalg.vector_norm(front[..., :2] - ball_state_next[..., :2], dim=-1)
+        self._episode_success |= distance <= self.cfg.tag_radius
+        self._episode_steps += 1
+        self._episode_min_distance = torch.minimum(self._episode_min_distance, distance)
+        self.metrics["ball_distance"] = distance
+        self.metrics["tagged"] = (distance <= self.cfg.tag_radius).float()
+        return distance <= self.cfg.tag_radius
+
+    def state_dict(self) -> dict:
+        return {
+            "stage": self.stage,
+            "success_window": list(self.success_window),
+            "last_success_rate": self.last_success_rate,
+            "promotion_streak": self.promotion_streak,
+            "promotion_count": self.promotion_count,
+        }
+
+    def load_state_dict(self, state: dict) -> None:
+        self.stage = max(0, min(int(state.get("stage", self.stage)), 2))
+        self.success_window = list(state.get("success_window", []))
+        self.last_success_rate = float(state.get("last_success_rate", float("nan")))
+        self.promotion_streak = int(state.get("promotion_streak", 0))
+        self.promotion_count = int(state.get("promotion_count", 0))
+
+    def _debug_vis_impl(self, visualizer: DebugVisualizer) -> None:
+        import numpy as np
+
+        env_indices = visualizer.get_env_indices(self.num_envs)
+        if not env_indices:
+            return
+        origins = self._env.scene.env_origins
+        root = self.robot.data.root_link_pos_w
+        velocity = self.robot.data.root_link_lin_vel_w
+        for e in env_indices:
+            ball = (self.ball_position_world[e] + origins[e]).detach().cpu().numpy()
+            base = root[e].detach().cpu().numpy()
+            front = base.copy()
+            yaw = float(heading_yaw(self.robot.data.root_link_quat_w[e]))
+            front[:2] += 0.20 * np.array([np.cos(yaw), np.sin(yaw)])
+            visualizer.add_sphere(ball, radius=0.09, color=(0.1, 0.9, 0.2, 1.0), label=f"chase_ball_{e}")
+            visualizer.add_arrow(ball, ball + np.r_[self.ball_velocity_world[e, :2].detach().cpu().numpy() * 0.6, 0.0], (0.1, 0.8, 0.2, 1.0), width=0.016, label=f"ball_vel_{e}")
+            v = velocity[e].detach().cpu().numpy()
+            if np.linalg.norm(v[:2]) > 1.0e-3:
+                visualizer.add_arrow(base + np.array([0.0, 0.0, 0.18]), base + np.r_[v[:2] * 0.5, 0.18], (0.1, 0.5, 1.0, 1.0), width=0.016, label=f"robot_velocity_{e}")
+            visualizer.add_arrow(front, ball, (1.0, 0.8, 0.1, 1.0), width=0.012, label=f"chase_line_{e}")
+            path = self._base_trace.setdefault(int(e), [])
+            if not path or np.linalg.norm(path[-1] - base) > 0.05:
+                path.append(base.copy())
+                del path[:-80]
+            for j in range(1, len(path)):
+                visualizer.add_arrow(path[j - 1], path[j], (0.25, 0.75, 0.35, 0.65), width=0.008, label=f"chase_path_{e}_{j}")
+
+
+@dataclass(kw_only=True)
+class ChaseBallCommandCfg(CommandTermCfg):
+    entity_name: str = "robot"
+    ball_center_height: float = 0.09
+    tag_radius: float = 0.20
+    auto_curriculum: bool = True
+    initial_stage: int = 0
+    fixed_stage: int | None = None
+    promotion_window_episodes: int = 64
+    consecutive_passing_windows: int = 2
+    promotion_success_rate: float = 0.35
+    resampling_time_range: tuple[float, float] = (1.0e9, 1.0e9)
+
+    def build(self, env: ManagerBasedRlEnv) -> ChaseBallCommand:
+        return ChaseBallCommand(self, env)
+
+
 class WorldPointCommand(CommandTerm):
     """Episode-fixed env-local world target for M1-Piper TCP reaching."""
 
@@ -857,13 +1065,24 @@ class WorldPointCommand(CommandTerm):
         super().__init__(cfg, env)
         self.robot = env.scene[cfg.entity_name]
         self.target_position_world = torch.zeros(self.num_envs, 3, device=self.device)
+        from supermimic.tasks.world_point_reward import M1_TCP_PROXY_BODIES
+
         self._tcp_body_ids = torch.tensor(
-            [self.robot.body_names.index("piper_x_link7"), self.robot.body_names.index("piper_x_link8")],
+            [self.robot.body_names.index(name) for name in M1_TCP_PROXY_BODIES],
             dtype=torch.long, device=self.device,
         )
         self.metrics["target_distance"] = torch.zeros(self.num_envs, device=self.device)
         self.metrics["success"] = torch.zeros(self.num_envs, device=self.device)
         self._base_trace: dict[int, list] = {}
+        self.stage = int(cfg.fixed_stage if cfg.fixed_stage is not None else cfg.initial_stage)
+        self.stage = max(0, min(self.stage, 2))
+        self._episode_hold = torch.zeros(self.num_envs, device=self.device)
+        self._episode_success = torch.zeros(self.num_envs, dtype=torch.bool, device=self.device)
+        self._episode_steps = torch.zeros(self.num_envs, dtype=torch.long, device=self.device)
+        self._success_window: list[float] = []
+        self.last_success_rate = float("nan")
+        self.promotion_streak = 0
+        self.promotion_count = 0
 
     @property
     def goal(self) -> torch.Tensor:
@@ -878,17 +1097,38 @@ class WorldPointCommand(CommandTerm):
     def _resample_command(self, env_ids: torch.Tensor) -> None:
         if env_ids.numel() == 0:
             return
+        self._finish_episodes(env_ids)
         root_pos = self.robot.data.root_link_pos_w[env_ids]
         root_quat = self.robot.data.root_link_quat_w[env_ids]
         tcp_origins = self.robot.data.body_link_pos_w[env_ids][:, self._tcp_body_ids].mean(dim=1)
         env_origins = self._env.scene.env_origins[env_ids]
         count = int(env_ids.numel())
-        near = torch.rand(count, device=self.device) < self.cfg.near_target_fraction
+        if self.cfg.fixed_stage is not None:
+            stage = int(self.cfg.fixed_stage)
+        elif self.cfg.auto_curriculum:
+            stage = self.stage
+        else:
+            stage = -1
+        if stage == 0:
+            near_fraction = 1.0
+        elif stage == 1:
+            near_fraction = 0.75
+        elif stage == 2:
+            near_fraction = 0.50
+        else:
+            near_fraction = self.cfg.near_target_fraction
+        near = torch.rand(count, device=self.device) < near_fraction
         offsets = torch.zeros(count, 3, device=self.device)
-        for mask, bounds in (
-            (near, (self.cfg.near_x, self.cfg.near_y, self.cfg.near_z)),
-            (~near, (self.cfg.far_x, self.cfg.far_y, self.cfg.far_z)),
-        ):
+        far_is_mid = stage == 1
+        if far_is_mid:
+            mid_bounds = (
+                tuple((a + b) * 0.5 for a, b in zip(self.cfg.near_x, self.cfg.far_x)),
+                tuple((a + b) * 0.5 for a, b in zip(self.cfg.near_y, self.cfg.far_y)),
+                tuple((a + b) * 0.5 for a, b in zip(self.cfg.near_z, self.cfg.far_z)),
+            )
+        else:
+            mid_bounds = (self.cfg.far_x, self.cfg.far_y, self.cfg.far_z)
+        for mask, bounds in ((near, (self.cfg.near_x, self.cfg.near_y, self.cfg.near_z)), (~near, mid_bounds)):
             num = int(mask.sum().item())
             if not num:
                 continue
@@ -898,6 +1138,9 @@ class WorldPointCommand(CommandTerm):
         target_local = target_global - env_origins
         target_local[:, 2].clamp_(self.cfg.min_target_height, self.cfg.max_target_height)
         self.target_position_world[env_ids] = target_local
+        self._episode_hold[env_ids] = 0.0
+        self._episode_success[env_ids] = False
+        self._episode_steps[env_ids] = 0
         for env_id in env_ids.tolist():
             self._base_trace[int(env_id)] = []
 
@@ -932,6 +1175,48 @@ class WorldPointCommand(CommandTerm):
         target_global = self.target_position_world + self._env.scene.env_origins
         self.metrics["target_distance"] = torch.linalg.vector_norm(tcp - target_global, dim=-1)
         self.metrics["success"] = (self.metrics["target_distance"] < self.cfg.success_distance).float()
+
+    def record_real_step(self, distance: torch.Tensor) -> None:
+        within = distance < self.cfg.success_distance
+        self.metrics["target_distance"] = distance
+        self.metrics["success"] = within.float()
+        self._episode_hold = torch.where(within, self._episode_hold + float(self._env.step_dt), torch.zeros_like(self._episode_hold))
+        self._episode_success |= self._episode_hold >= 0.5
+        self._episode_steps += 1
+
+    def _finish_episodes(self, env_ids: torch.Tensor) -> None:
+        ids = env_ids[self._episode_steps[env_ids] > 0]
+        if ids.numel() == 0:
+            return
+        self._success_window.extend(self._episode_success[ids].float().detach().cpu().tolist())
+        window = self.cfg.promotion_window_episodes
+        while len(self._success_window) >= window:
+            rows, self._success_window = self._success_window[:window], self._success_window[window:]
+            rate = sum(rows) / max(len(rows), 1)
+            self.last_success_rate = rate
+            self.metrics["curriculum_success_rate"] = self.metrics["target_distance"].new_full((self.num_envs,), rate)
+            passed = rate >= self.cfg.promotion_success_rate
+            self.promotion_streak = self.promotion_streak + 1 if passed else 0
+            if self.cfg.auto_curriculum and self.cfg.fixed_stage is None and self.stage < 2 and self.promotion_streak >= self.cfg.consecutive_passing_windows:
+                self.stage += 1
+                self.promotion_count += 1
+                self.promotion_streak = 0
+
+    def state_dict(self) -> dict:
+        return {
+            "stage": self.stage,
+            "success_window": list(self._success_window),
+            "last_success_rate": self.last_success_rate,
+            "promotion_streak": self.promotion_streak,
+            "promotion_count": self.promotion_count,
+        }
+
+    def load_state_dict(self, state: dict) -> None:
+        self.stage = max(0, min(int(state.get("stage", self.stage)), 2))
+        self._success_window = list(state.get("success_window", []))
+        self.last_success_rate = float(state.get("last_success_rate", float("nan")))
+        self.promotion_streak = int(state.get("promotion_streak", 0))
+        self.promotion_count = int(state.get("promotion_count", 0))
 
     def _debug_vis_impl(self, visualizer: DebugVisualizer) -> None:
         import numpy as np
@@ -971,6 +1256,12 @@ class WorldPointCommandCfg(CommandTermCfg):
     min_target_height: float = 0.10
     max_target_height: float = 1.20
     success_distance: float = 0.08
+    auto_curriculum: bool = True
+    initial_stage: int = 0
+    fixed_stage: int | None = None
+    promotion_window_episodes: int = 128
+    promotion_success_rate: float = 0.35
+    consecutive_passing_windows: int = 2
     resampling_time_range: tuple[float, float] = (1.0e9, 1.0e9)
 
     def __post_init__(self):

@@ -9,7 +9,7 @@ import torch
 from supermimic.data.replay_buffer import StartBatch
 from supermimic.envs.mdp.motion_library import MotionLibrary
 from supermimic.imagination.compiled import REWARD_TERM_NAMES, ImagStep, VelocityImagStep
-from supermimic.imagination.tasks import MotionTrackingTask, VelocityCommandTask, WorldPointReachTask
+from supermimic.imagination.tasks import ChaseBallTask, MotionTrackingTask, VelocityCommandTask, WorldPointReachTask
 from supermimic.policy.nets import Policy
 from supermimic.world_model.heads import ReferenceFrame, analytic_observation, anchor_orientation_relative_obs, anchor_relative_obs, flatten_history_term_major
 from supermimic.world_model.wm_trainer import reference_at
@@ -39,7 +39,7 @@ def _observation_noise(obs: torch.Tensor, num_joints: int) -> torch.Tensor:
 def imagine(
     wm: WorldModel,
     policy: Policy,
-    task: MotionTrackingTask | VelocityCommandTask | WorldPointReachTask | MotionLibrary,
+    task: MotionTrackingTask | VelocityCommandTask | ChaseBallTask | WorldPointReachTask | MotionLibrary,
     start: StartBatch,
     horizon: int,
     future_frames: int = 10,
@@ -58,6 +58,7 @@ def imagine(
         task = MotionTrackingTask(task, future_frames=future_frames, anchor_obs=anchor_obs, anchor_orientation_obs=anchor_orientation_obs)
     is_motion = isinstance(task, MotionTrackingTask)
     is_world_point = isinstance(task, WorldPointReachTask)
+    is_chase_ball = isinstance(task, ChaseBallTask)
     device = start.state.device
     n = start.state.shape[0]
     q0 = task.library.default_joint_pos if is_motion else task.default_joint_pos
@@ -138,7 +139,7 @@ def imagine(
         if start.goal is None:
             raise ValueError("reference-free imagination requires the task Goal snapshot stored in ReplayBuffer")
         task_goal = start.goal
-        goal = task.actor_goal(s, task_goal) if is_world_point else task_goal
+        goal = task.actor_goal(s, task_goal) if (is_world_point or is_chase_ball) else task_goal
         if goal.shape[-1] != task.goal_dim:
             raise ValueError(f"task Goal has {goal.shape[-1]} features; task expects {task.goal_dim}")
         frames_all = frame[None, :].expand(horizon + 1, n)
@@ -175,7 +176,13 @@ def imagine(
             e_root = wm.heads.root_error_features(s_next, ref)
         else:
             s_next, r, term_vec, logits, obs_clean, anchor_pose = step_fn(s, a, a_prev, start.xi, task_goal)
-            goal_next = task.actor_goal(s_next, task_goal) if is_world_point else task_goal
+            if is_chase_ball:
+                task_goal = task.advance_goal(task_goal)
+                goal_next = task.actor_goal(s_next, task_goal)
+            elif is_world_point:
+                goal_next = task.actor_goal(s_next, task_goal)
+            else:
+                goal_next = task_goal
             e_root = torch.zeros(n, 4, device=device, dtype=s.dtype)
 
         d = torch.sigmoid(logits)

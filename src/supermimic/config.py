@@ -133,6 +133,8 @@ class ScheduleCfg:
     log_interval: int = 50  # iterations
     checkpoint_interval: int = 4000  # iterations
     max_hours: float | None = None
+    # Optional absolute global-iteration stop; leaves total_iterations/LR schedule unchanged.
+    stop_at_iteration: int | None = None
 
 
 @dataclass

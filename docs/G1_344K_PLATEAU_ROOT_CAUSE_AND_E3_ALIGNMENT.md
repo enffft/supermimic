@@ -278,6 +278,33 @@ print('rows:', len(rows), 'first:', rows[0] if rows else None)
 PY
 ```
 
+## F. New Scratch result at 272650 iterations
+
+The later from-scratch run `logs/g1_e3_scratch/g1_e3_scratch_1024_16h_20261028` was initialized without `--resume` or `--init-wm-from`, and its saved configuration confirms `goal_dim=689`, `root_joint`, position+orientation Anchor 9D, RunningNorm=false, 1024 environments, and 1024 WM/Actor batches. It reached iteration `272650` after 16 hours. The deterministic 40-clip benchmark is [`benchmark_272650.json`](/home/yifeiy/ws_supermimic/logs/g1_e3_scratch/g1_e3_scratch_1024_16h_20261028/benchmark_272650.json): mean normalized return `0.40223`, step-weighted `0.40508`, and 2 failed clips.
+
+This rules out insufficient iteration count as the primary explanation. CuboiLeo e3 reports `0.609` at 8k, `0.792` at 16k, and `0.824` at 24k, while this run remains near `0.40` after more than eleven times 24k iterations. The scratch run's real body-orientation reward is already only `0.00120` at 8k, `0.000615` at 16k, and `0.000319` at 24k; at 272650 it is `0.000163`. The final benchmark term is `1.18e-5`, versus the reference e3 value `0.0149` at 24k. Continuing this same run is therefore unlikely to recover the reference behavior.
+
+The TensorBoard evidence points to an optimization/distribution failure rather than a dead Actor: the Actor gradient remains nonzero (about `0.03` at the end), but imagined survival is `0.9998`, imagined return is about `1.82`, and imagined body-orientation reward is about `5.83e-4` while real body-orientation reward remains `1.63e-4`. At the same time, imagined action magnitude grows from `0.62` at 8k to `2.32` at the end. The policy is optimizing a favorable world-model rollout that does not predict the real orientation behavior.
+
+The strongest confirmed experimental difference is effective batch/resource scale: this machine uses 1024 environments and 1024-policy/WM batches, whereas CuboiLeo e3 used 4096 environments and the documented early runs used batch 4096. This changes gradient noise and replay coverage and is a P1/P2 candidate, but it is not by itself a proven implementation bug. The 320k cosine schedule is also correct for the scratch run; its learning rate is still approximately `1.96e-4` at 24k, so the early failure cannot be explained by the later floor at `6e-6`.
+
+The static comparison still finds no confirmed G1 reward, FK, quaternion-order, body-index, goal-layout, or World Model dimension error. The remaining highest-priority validation is a paired real/imagination transition audit that compares clean action, executed action, physical setpoint, state history, anchor frame and body orientation field by field. Until that check and a controlled batch-size/action-contract comparison are done, the responsible conclusion is: **not an iteration shortage; the current training distribution or real/imagination contract is failing, with 1024-vs-4096 batch scale the leading confirmed difference and action growth a strong symptom.**
+
+## G. 12 GB GPU batch optimization
+
+The trainers now support logical batches larger than the GPU micro-batch. Set `batch_size=4096` and `micro_batch_size=1024` to run four 1024-sample forward/backward passes, accumulate gradients, clip once, and perform one optimizer step. WM batches and Actor/Critic rollout batches use the same logical-batch semantics; leaving `micro_batch_size=None` preserves the previous behavior. The new path is CPU-tested and exposed by `sm-train --help`; peak GPU memory still requires a short validation run.
+
+For the 12 GB card, the intended first configuration is:
+
+```text
+1024 environments
+logical WM batch 4096, micro-batch 1024
+logical Actor batch 4096, micro-batch 1024
+UTD 0.4, policy updates per WM update 1
+```
+
+Do not increase `updates_per_env_step` to compensate for micro-batching: four micro-batches form one optimizer update. If the detached Critic payload still exceeds available memory, use micro-batch 512 and accumulation eight; the logical batch remains 4096.
+
 ## Decision
 
 - **Ready for Scratch training now:** **NO** — Go2 PID 1948552 is still occupying the GPU, and the stop patch is intentionally unapplied.

@@ -29,6 +29,9 @@ def _clip_bootstrap_values(values: torch.Tensor, value_clip: float | None) -> tu
 class PolicyTrainerCfg:
     horizon: int = 32
     batch_size: int = 4096
+    # Optional GPU micro-batch. Several imagined rollouts are accumulated into one
+    # logical batch so large reference batch sizes do not require a large GPU.
+    micro_batch_size: int | None = None
     history: int = 10
     future_frames: int = 10
     gamma: float = 0.99
@@ -84,37 +87,98 @@ class PolicyTrainer:
 
     def update(self, buffer: ReplayBuffer, xi_norm_fn=None) -> dict[str, float]:
         cfg = self.cfg
-        start = buffer.sample_starts(cfg.batch_size, cfg.history)
-        xi_norm = self.wm.spec.normalize_xi(start.xi)
+        micro = cfg.micro_batch_size or cfg.batch_size
+        if micro <= 0 or cfg.batch_size <= 0 or cfg.batch_size % micro:
+            raise ValueError(
+                "policy batch_size must be a positive multiple of micro_batch_size; "
+                f"got batch_size={cfg.batch_size}, micro_batch_size={micro}"
+            )
+        n_micro = cfg.batch_size // micro
 
         # ---- actor: BPTT through the frozen world model ------------------------------------
         self.wm.requires_grad_(False)
         self.critic.requires_grad_(False)
+        self.opt.zero_grad(set_to_none=True)
+        objective_sum = 0.0
+        imag_return_sum = 0.0
+        imag_reward_sum = 0.0
+        imag_survival_sum = 0.0
+        imag_dhat_sum = 0.0
+        action_abs_sum = 0.0
+        reward_metric_sum: dict[str, float] = {}
+        critic_payload: list[tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]] = []
+        raw_value_sum = 0.0
+        target_sum = 0.0
+        value_clip_sum = 0.0
         try:
-            ro = imagine(self.wm, self.policy, self.task, start, cfg.horizon, cfg.future_frames, obs_noise=cfg.obs_noise, step_fn=self.step_fn, anchor_obs=cfg.anchor_obs, anchor_orientation_obs=cfg.anchor_orientation_obs)
-            with torch.no_grad():
-                if hasattr(self.task, "termination_probability"):
-                    initial_term_prob = float(self.task.termination_probability(start.state).mean())
+            for _ in range(n_micro):
+                start = buffer.sample_starts(micro, cfg.history)
+                xi_norm = self.wm.spec.normalize_xi(start.xi)
+                ro = imagine(
+                    self.wm, self.policy, self.task, start, cfg.horizon, cfg.future_frames,
+                    obs_noise=cfg.obs_noise, step_fn=self.step_fn, anchor_obs=cfg.anchor_obs,
+                    anchor_orientation_obs=cfg.anchor_orientation_obs,
+                )
+                with torch.no_grad():
+                    if hasattr(self.task, "termination_probability"):
+                        initial_term_prob = float(self.task.termination_probability(start.state).mean())
+                    else:
+                        initial_term_prob = float(torch.sigmoid(self.wm.term_head(ro.term_features[0])).mean())
+                    self.last_imag_diagnostics = {
+                        "real_replay_state_termination_probability": initial_term_prob,
+                        "termination_probability": [float(x) for x in ro.dhat[1:].mean(dim=1)],
+                        "survival": [float(x) for x in ro.survival[1:].mean(dim=1)],
+                        "root_height_m": [float(x) for x in ro.root_height[1:].mean(dim=1)],
+                        "tilt_feature": [float(x) for x in ro.tilt[1:].mean(dim=1)],
+                    }
+                feat, goals, e_root = self._critic_inputs(ro)
+                if cfg.use_critic:
+                    v_H = self.critic(feat[-1], goals[-1], xi_norm, e_root[-1])
+                    if cfg.critic_value_clip is not None:
+                        v_H, _ = _clip_bootstrap_values(v_H, cfg.critic_value_clip)
                 else:
-                    initial_term_prob = float(torch.sigmoid(self.wm.term_head(ro.term_features[0])).mean())
-                self.last_imag_diagnostics = {
-                    "real_replay_state_termination_probability": initial_term_prob,
-                    "termination_probability": [float(x) for x in ro.dhat[1:].mean(dim=1)],
-                    "survival": [float(x) for x in ro.survival[1:].mean(dim=1)],
-                    "root_height_m": [float(x) for x in ro.root_height[1:].mean(dim=1)],
-                    "tilt_feature": [float(x) for x in ro.tilt[1:].mean(dim=1)],
-                }
-            feat, goals, e_root = self._critic_inputs(ro)
-            if cfg.use_critic:
-                v_H = self.critic(feat[-1], goals[-1], xi_norm, e_root[-1])
-                if cfg.critic_value_clip is not None:
-                    v_H, _ = _clip_bootstrap_values(v_H, cfg.critic_value_clip)
-            else:
-                v_H = None
-            J = policy_objective(ro, v_H, cfg.gamma)
-            loss = -J / cfg.horizon
-            self.opt.zero_grad(set_to_none=True)
-            loss.backward()
+                    v_H = None
+                J = policy_objective(ro, v_H, cfg.gamma)
+                # Average micro-batch objectives so the logical update has the same
+                # scale as one full batch.
+                (-J / cfg.horizon / n_micro).backward()
+
+                objective_sum += float(J.detach())
+                imag_return_sum += float((ro.survival[:-1] * ro.rewards).sum(0).mean().detach())
+                imag_reward_sum += float(ro.rewards.mean().detach())
+                imag_survival_sum += float(ro.survival[-1].mean().detach())
+                imag_dhat_sum += float(ro.dhat[1:].mean().detach())
+                action_abs_sum += float(ro.actions.abs().mean().detach())
+                for k, v in ro.reward_terms.items():
+                    reward_metric_sum[k] = reward_metric_sum.get(k, 0.0) + v
+
+                if cfg.use_critic:
+                    # Retain only detached critic data after the Actor graph has been
+                    # backpropagated; this avoids retaining four BPTT graphs.
+                    with torch.no_grad():
+                        feat_d, goals_d, e_root_d = feat.detach(), goals.detach(), e_root.detach()
+                        H1, n, _ = feat_d.shape
+                        xi_rep = xi_norm[None].expand(H1, n, -1)
+                        raw_values = self.critic(
+                            feat_d.reshape(H1 * n, -1), goals_d.reshape(H1 * n, -1),
+                            xi_rep.reshape(H1 * n, -1), e_root_d.reshape(H1 * n, -1),
+                        ).reshape(H1, n)
+                        values, value_clip_fraction = _clip_bootstrap_values(raw_values, cfg.critic_value_clip)
+                        targets = gae_targets(
+                            ro.rewards.detach(), ro.dhat[1:].detach(), values,
+                            cfg.gamma, cfg.gae_lambda,
+                        )
+                        critic_payload.append((
+                            feat_d[:-1].reshape(-1, feat_d.shape[-1]),
+                            goals_d[:-1].reshape(-1, goals_d.shape[-1]),
+                            xi_rep[:-1].reshape(-1, xi_rep.shape[-1]),
+                            e_root_d[:-1].reshape(-1, 4),
+                            targets.reshape(-1),
+                        ))
+                        raw_value_sum += float(raw_values.mean())
+                        target_sum += float(targets.mean())
+                        value_clip_sum += float(value_clip_fraction)
+
             allreduce_grads(self.policy)
             gn = torch.nn.utils.clip_grad_norm_(
                 self.policy.parameters(), cfg.grad_clip_norm, error_if_nonfinite=True
@@ -126,32 +190,31 @@ class PolicyTrainer:
             self.critic.requires_grad_(True)
 
         metrics = {
-            "imag_objective": float(J.detach()),
-            "imag_return_undisc": float((ro.survival[:-1] * ro.rewards).sum(0).mean().detach()),
-            "imag_reward_mean": float(ro.rewards.mean().detach()),
-            "imag_survival_H": float(ro.survival[-1].mean().detach()),
-            "imag_dhat_mean": float(ro.dhat[1:].mean().detach()),
+            "imag_objective": objective_sum / n_micro,
+            "imag_return_undisc": imag_return_sum / n_micro,
+            "imag_reward_mean": imag_reward_sum / n_micro,
+            "imag_survival_H": imag_survival_sum / n_micro,
+            "imag_dhat_mean": imag_dhat_sum / n_micro,
             "policy_grad_norm": float(gn),
-            "action_abs_mean": float(ro.actions.abs().mean().detach()),
+            "action_abs_mean": action_abs_sum / n_micro,
         }
-        for k, v in ro.reward_terms.items():
-            metrics[f"imag_r/{k}"] = v
+        for k, v in reward_metric_sum.items():
+            metrics[f"imag_r/{k}"] = v / n_micro
 
-        # ---- critic: fit to GAE targets of this rollout (targets fixed) ---------------------
+        # ---- critic: fit to GAE targets of the logical rollout batch -----------------------
         if cfg.use_critic:
-            with torch.no_grad():
-                feat_d, goals_d, e_root_d = feat.detach(), goals.detach(), e_root.detach()
-                H1, n, _ = feat_d.shape
-                xi_rep = xi_norm[None].expand(H1, n, -1)
-                raw_values = self.critic(feat_d.reshape(H1 * n, -1), goals_d.reshape(H1 * n, -1), xi_rep.reshape(H1 * n, -1), e_root_d.reshape(H1 * n, -1)).reshape(H1, n)
-                values, value_clip_fraction = _clip_bootstrap_values(raw_values, cfg.critic_value_clip)
-                targets = gae_targets(ro.rewards.detach(), ro.dhat[1:].detach(), values, cfg.gamma, cfg.gae_lambda)  # (H, n)
-                X_feat = feat_d[:-1].reshape(-1, feat_d.shape[-1])
-                X_goal = goals_d[:-1].reshape(-1, goals_d.shape[-1])
-                X_xi = xi_rep[:-1].reshape(-1, xi_rep.shape[-1])
-                X_er = e_root_d[:-1].reshape(-1, 4)
-                Y = targets.reshape(-1)
+            if not critic_payload:
+                raise RuntimeError("critic is enabled but no policy micro-batch payload was collected")
+            X_feat = torch.cat([p[0] for p in critic_payload], dim=0)
+            X_goal = torch.cat([p[1] for p in critic_payload], dim=0)
+            X_xi = torch.cat([p[2] for p in critic_payload], dim=0)
+            X_er = torch.cat([p[3] for p in critic_payload], dim=0)
+            Y = torch.cat([p[4] for p in critic_payload], dim=0)
             N = Y.shape[0]
+            if N < cfg.critic_minibatches or N % cfg.critic_minibatches:
+                raise ValueError(
+                    f"critic logical batch ({N}) must be divisible by critic_minibatches ({cfg.critic_minibatches})"
+                )
             mb = N // cfg.critic_minibatches
             last = torch.zeros((), device=Y.device)
             for _ in range(cfg.critic_epochs):
@@ -169,7 +232,7 @@ class PolicyTrainer:
                     self.critic_opt.step()
                     last = closs.detach()
             metrics["critic_loss"] = float(last)
-            metrics["critic_value_mean"] = float(raw_values.mean())
-            metrics["critic_target_mean"] = float(targets.mean())
-            metrics["critic_value_clip_fraction"] = float(value_clip_fraction)
+            metrics["critic_value_mean"] = raw_value_sum / n_micro
+            metrics["critic_target_mean"] = target_sum / n_micro
+            metrics["critic_value_clip_fraction"] = value_clip_sum / n_micro
         return metrics

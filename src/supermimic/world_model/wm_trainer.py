@@ -18,6 +18,10 @@ class WMTrainerCfg:
     window: int = 8
     batches_per_update: int = 10
     batch_size: int = 2048
+    # Optional GPU micro-batch. When set below batch_size, several micro-batches
+    # are accumulated into one optimizer step, preserving the logical batch size
+    # without allocating the full window batch at once.
+    micro_batch_size: int | None = None
     lr: float = 2e-4
     grad_clip: float = 1.0
     weight_decay: float = 0.0
@@ -55,19 +59,31 @@ class WorldModelTrainer:
 
     def update(self, buffer: ReplayBuffer) -> dict[str, float]:
         agg: dict[str, torch.Tensor] = {}
+        micro = self.cfg.micro_batch_size or self.cfg.batch_size
+        if micro <= 0 or self.cfg.batch_size <= 0 or self.cfg.batch_size % micro:
+            raise ValueError(
+                "wm batch_size must be a positive multiple of micro_batch_size; "
+                f"got batch_size={self.cfg.batch_size}, micro_batch_size={micro}"
+            )
+        n_micro = self.cfg.batch_size // micro
         for _ in range(self.cfg.batches_per_update):
-            w = buffer.sample_windows(self.cfg.batch_size, self.cfg.window)
-            loss, m = self.loss_on(w)
             self.opt.zero_grad(set_to_none=True)
-            loss.backward()
+            batch_metrics: dict[str, torch.Tensor] = {}
+            for _ in range(n_micro):
+                w = buffer.sample_windows(micro, self.cfg.window)
+                loss, m = self.loss_on(w)
+                # Each micro-batch contributes its share of the logical mean loss.
+                (loss / n_micro).backward()
+                batch_metrics["loss"] = batch_metrics.get("loss", 0.0) + loss.detach() / n_micro
+                for k, v in m.items():
+                    batch_metrics[k] = batch_metrics.get(k, 0.0) + v.detach() / n_micro
             allreduce_grads(self.wm)
             gn = torch.nn.utils.clip_grad_norm_(
                 self.wm.parameters(), self.cfg.grad_clip, error_if_nonfinite=True
             )
             self.opt.step()
-            m["loss"] = loss.detach()
-            m["grad_norm"] = gn.detach()
-            for k, v in m.items():
+            batch_metrics["grad_norm"] = gn.detach()
+            for k, v in batch_metrics.items():
                 agg[k] = agg.get(k, 0.0) + v
         # Single host sync per update (keeps the CPU queuing GPU work across minibatches).
         return {k: float(v) / self.cfg.batches_per_update for k, v in agg.items()}

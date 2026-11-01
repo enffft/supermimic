@@ -240,7 +240,7 @@ def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
                     "tag_radius": a.chase_tag_radius,
                     "tag_sigma": a.chase_tag_sigma,
                     "facing_weight": a.chase_facing_weight,
-                    "minimum_height": a.velocity_min_safe_height,
+                    "minimum_height": 0.18,
                     "joint_torque_weight": a.chase_joint_torque_weight,
                     "joint_acceleration_weight": a.chase_joint_acceleration_weight,
                 },

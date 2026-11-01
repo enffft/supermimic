@@ -13,19 +13,24 @@ from supermimic.kinematics.rotations import heading_yaw, quat_apply_inverse
 @dataclass
 class ChaseBallRewardCfg:
     approach_weight: float = 1.5
-    approach_speed_clip: float = 1.5
+    # Go2-SuperMimic clips the approach velocity at 5 m/s.  The old local
+    # chase task used 1.5, which silently flattened the useful running signal.
+    approach_speed_clip: float = 5.0
     near_weight: float = 3.0
     tag_weight: float = 15.0
     tag_radius: float = 0.20
     tag_sigma: float = 0.30
     facing_weight: float = 0.5
-    upright_weight: float = 0.35
-    angular_velocity_weight: float = -0.02
-    action_rate_weight: float = -0.02
-    joint_deviation_weight: float = -0.01
-    minimum_height: float = 0.22
-    base_height_weight: float = -5.0
-    tag_softness: float = 0.06
+    upright_weight: float = 1.0
+    angular_velocity_weight: float = -0.05
+    action_rate_weight: float = -0.05
+    joint_deviation_weight: float = -0.1
+    minimum_height: float = 0.18
+    base_height_weight: float = -10.0
+    # Soft termination is only used by imagination; real termination is the
+    # hard 0.20 m event.  A 3 cm transition keeps the soft probability close
+    # to one throughout the physical tag radius.
+    tag_softness: float = 0.03
     joint_torque_weight: float = -2.0e-5
     joint_acceleration_weight: float = -2.5e-7
 
@@ -47,8 +52,13 @@ def chase_goal_from_pose(root_pos: torch.Tensor, root_quat: torch.Tensor, ball_s
     return torch.cat((rel, vel), -1)
 
 
-def chase_front_position(state: torch.Tensor, front_offset: float = 0.20) -> torch.Tensor:
-    """Go2 front reference point in env-local world coordinates."""
+def chase_front_position(state: torch.Tensor, front_offset: float = 0.33) -> torch.Tensor:
+    """Go2 head reference point in env-local world coordinates.
+
+    The reference Go2-SuperMimic task measures the chase distance at a point
+    near the nose (0.33 m ahead of the base), rather than at the base-front
+    proxy used by the first local implementation.
+    """
     root = state[..., :3]
     yaw = heading_yaw(state[..., 3:7])
     forward = torch.stack((torch.cos(yaw), torch.sin(yaw), torch.zeros_like(yaw)), -1)
@@ -93,9 +103,12 @@ def chase_ball_reward_terms(
     gravity_b = quat_apply_inverse(quat, gravity_w)
     q = state_next[..., 7:7 + nj]
     qerr = q - default_joint_pos
+    # ``near`` is kept as a compatibility term for old checkpoints/configs;
+    # the reference task has no separate near reward, so new configs set its
+    # weight to zero.  The actual chase shaping is the Gaussian tag term below.
     near = cfg.near_weight * torch.exp(-distance.square() / (cfg.tag_sigma**2))
     tag = (
-        cfg.tag_weight * torch.sigmoid((cfg.tag_radius - distance) / cfg.tag_softness)
+        cfg.tag_weight * torch.exp(-(distance / cfg.tag_sigma).square())
         if tag_event is None
         else cfg.tag_weight * tag_event.to(state_next.dtype)
     )
@@ -126,7 +139,9 @@ def chase_ball_reward_terms(
         "angular_velocity": cfg.angular_velocity_weight * state_next[..., 10 + nj:12 + nj].square().sum(-1),
         "action_rate": cfg.action_rate_weight * (action - previous_action).square().sum(-1),
         "joint_deviation": cfg.joint_deviation_weight * qerr.square().sum(-1),
-        "base_height_low": cfg.base_height_weight * torch.relu(cfg.minimum_height - state_next[..., 2]).square(),
+        # Reference reward uses a linear penalty below 0.18 m.  Squaring this
+        # term made low crouches almost free until the hard termination fired.
+        "base_height_low": cfg.base_height_weight * torch.relu(cfg.minimum_height - state_next[..., 2]),
         "joint_torque": cfg.joint_torque_weight * torque.square().sum(-1),
         "joint_acceleration": cfg.joint_acceleration_weight * joint_acceleration.square().sum(-1),
     }
@@ -158,12 +173,12 @@ def go2_chase_reward_term(
     env,
     term_name: str,
     approach_weight: float = 1.5,
-    near_weight: float = 3.0,
+    near_weight: float = 0.0,
     tag_weight: float = 15.0,
     tag_radius: float = 0.20,
     tag_sigma: float = 0.30,
     facing_weight: float = 0.5,
-    minimum_height: float = 0.22,
+    minimum_height: float = 0.18,
     joint_torque_weight: float = -2.0e-5,
     joint_acceleration_weight: float = -2.5e-7,
 ) -> torch.Tensor:
@@ -197,7 +212,11 @@ def go2_chase_reward_term(
             joint_torque_weight=float(joint_torque_weight),
             joint_acceleration_weight=float(joint_acceleration_weight),
         )
-        tag_event = command.record_real_step(state_next, goal_next)
+        # The command still records the hard tag event for curriculum/metrics,
+        # but the reward itself must remain the same smooth Gaussian shaping as
+        # imagination.  Using the one-step event here gave the actor no useful
+        # real-simulation signal until it was already inside the tag radius.
+        command.record_real_step(state_next, goal_next)
         from supermimic.robots.spec import get_robot_spec
         spec = get_robot_spec("go2")
         limits = robot.data.soft_joint_pos_limits[0]
@@ -229,7 +248,7 @@ def go2_chase_reward_term(
             )
         terms = chase_ball_reward_terms(
             state_next, goal_next, action, previous_action, default, cfg,
-            tag_event=tag_event, state_prev=state_prev,
+            tag_event=None, state_prev=state_prev,
             executed_action=executed_action, torque=measured_torque,
             joint_acceleration=measured_acceleration, robot_params=robot_params,
         )

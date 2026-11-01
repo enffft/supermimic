@@ -45,8 +45,10 @@ class EnvCfg:
     anchor_obs: bool | None = None  # default: enabled for M1, disabled for G1/Go2
     anchor_orientation_obs: bool = False  # G1 orientation-only (6D) alternative; mutually exclusive with anchor_obs
     velocity_debug_objective: bool = False  # smoke-test only; not a selected Go2 reward
-    velocity_gaussian_noise_std: float = 0.18
-    velocity_ou_env_fraction: float = 0.30
+    # Match Go2-SuperMimic's action exploration: 0.1 iid noise on 75% of
+    # environments and temporally correlated OU noise on the remaining 25%.
+    velocity_gaussian_noise_std: float = 0.10
+    velocity_ou_env_fraction: float = 0.25
     velocity_ou_noise_std: float = 0.60
     velocity_ou_theta: float = 2.0
     velocity_reward_linear_tracking: float = 3.0
@@ -89,7 +91,9 @@ class EnvCfg:
     chase_promotion_success_rate: float = 0.35
     chase_tag_radius: float = 0.20
     chase_approach_weight: float = 1.5
-    chase_near_weight: float = 3.0
+    # The reference chase task uses the Gaussian tag reward directly; retain
+    # the legacy term for checkpoint compatibility but disable it by default.
+    chase_near_weight: float = 0.0
     chase_tag_weight: float = 15.0
     chase_tag_sigma: float = 0.30
     chase_facing_weight: float = 0.5

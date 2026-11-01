@@ -132,6 +132,10 @@ class Trainer:
         goal_dim = cfg.env.future_frames * per_frame_goal_dim + anchor_dim if is_motion else 6 if is_chase else 3
         cfg.policy.num_joints = n_joints
         cfg.policy.history = cfg.env.history_length
+        # The imagination rollout must use the same flattened observation
+        # history as the environment/Actor.  Keep this synchronized when a
+        # task overrides the default (Go2-SuperMimic uses five frames).
+        cfg.policy_trainer.history = cfg.env.history_length
         cfg.policy.goal_dim = goal_dim
         cfg.policy.goal_interface = "motion" if is_motion else "velocity" if is_velocity else "chase_ball" if is_chase else "world_point_reach"
         # Keep G1/M1 on the original encoded goal path; only Go2 gets the compact

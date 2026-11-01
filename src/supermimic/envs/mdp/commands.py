@@ -894,11 +894,11 @@ class ChaseBallCommand(CommandTerm):
             return
         n = env_ids.numel()
         if self.stage == 0:
-            dmin, dmax, angle_max, speed_max, moving_p = 0.70, 1.10, 0.75, 0.05, 0.35
+            dmin, dmax, angle_max, speed_min, speed_max = 1.50, 2.50, 0.75, 0.15, 0.35
         elif self.stage == 1:
-            dmin, dmax, angle_max, speed_max, moving_p = 0.80, 1.45, 1.15, 0.10, 0.60
+            dmin, dmax, angle_max, speed_min, speed_max = 1.50, 3.00, 1.15, 0.30, 0.70
         else:
-            dmin, dmax, angle_max, speed_max, moving_p = 0.80, 1.80, math.pi, 0.18, 0.75
+            dmin, dmax, angle_max, speed_min, speed_max = 1.50, 3.50, math.pi, 0.50, 1.20
         root = self.robot.data.root_link_pos_w[env_ids] - self._env.scene.env_origins[env_ids]
         self._episode_root_start[env_ids] = root
         yaw = heading_yaw(self.robot.data.root_link_quat_w[env_ids])
@@ -909,12 +909,9 @@ class ChaseBallCommand(CommandTerm):
         position[:, 0] += distance * torch.cos(bearing)
         position[:, 1] += distance * torch.sin(bearing)
         position[:, 2] = self.cfg.ball_center_height
-        moving = torch.rand(n, device=self.device) < moving_p
-        speed = torch.rand(n, device=self.device) * speed_max * moving
-        velocity_angle = torch.rand(n, device=self.device) * (2.0 * math.pi)
+        speed = speed_min + (speed_max - speed_min) * torch.rand(n, device=self.device)
         velocity = torch.zeros_like(position)
-        velocity[:, 0] = speed * torch.cos(velocity_angle)
-        velocity[:, 1] = speed * torch.sin(velocity_angle)
+        velocity[:, :2] = speed[:, None] * torch.stack((torch.cos(bearing), torch.sin(bearing)), -1)
         self.ball_position_world[env_ids] = position
         self.ball_velocity_world[env_ids] = velocity
         self._episode_success[env_ids] = False
@@ -973,7 +970,7 @@ class ChaseBallCommand(CommandTerm):
     def _base_front_local(self) -> torch.Tensor:
         root = self.robot.data.root_link_pos_w - self._env.scene.env_origins
         yaw = heading_yaw(self.robot.data.root_link_quat_w)
-        return root[:, :2] + 0.20 * torch.stack((torch.cos(yaw), torch.sin(yaw)), -1)
+        return root[:, :2] + 0.33 * torch.stack((torch.cos(yaw), torch.sin(yaw)), -1)
 
     def _update_metrics(self) -> None:
         front = self._base_front_local()

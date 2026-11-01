@@ -281,3 +281,11 @@ env -u PYTHONPATH -u LD_LIBRARY_PATH \
 探测稳定后正式 2048/12h：`CKPT=logs/4070/lafan1_q1_resume_2048_probe15m/ckpt_latest.pt`、`HOURS=12`、`RUN=lafan1_q1_resume_2048_12h`，其余命令不变。3072/16h 则先将探测轮次设为 `ENV_COUNT=3072`、`RUN=lafan1_q1_resume_3072_probe15m`；通过显存观察后，正式轮次改为 CKPT 指向该探测输出、`HOURS=16`、`RUN=lafan1_q1_resume_3072_16h`。
 
 `max_hours` 是每次进程的运行上限，恢复时计时器会重置；若 12/16 小时指含已完成首轮在内的总墙钟时间，应将下一轮 `HOURS` 分别设为约 8/12。训练末尾 1024-env 日志的 `sim/wm/pi` 约为 `2.0/4.1/4.3 s` 每 50 iteration。假设只有仿真部分随环境数线性增长，2048 env 约 4.0 it/s、3072 env 约 3.5 it/s；从 67,900 起，12h 粗估分别到约 242k / 218k，16h 粗估约 300k / 268k。该线性模型未实测，不能作为吞吐保证。总 iteration 仍受 320,000 上限约束，达到上限会早于 max_hours 正常结束并保存最终 checkpoint。
+
+## 9. 3072 环境续训中止记录（2026-10-26）
+
+基于 `lafan1_q1_4070_anchor_retry1/ckpt_latest.pt`（iteration 67,900）启动 `lafan1_anchor_3072_8h_resume01`，完整 40 条 LAFAN1、`anchor_obs=true`、3072 env、replay capacity 256、Actor/WM batch 1024、H=32、WM window 8、10 batches/update、seed 0、`total_iterations=320000`、`max_hours=8`。启动使用普通终端；完整参数保存在本目录 `config.json`，控制台输出在 `console.log`。源码 Git HEAD 为 `a0f5e6d0dad6771f2db4d4f280e99e1f911d8983`；检查时工作树另有尚未提交的源码修改，未在本次操作中改动。
+
+用户要求停止后，以 `SIGINT` 停止训练进程。停止前日志到 iteration 78,650，耗时约 0.67 h，吞吐约 4.3–4.6 iteration/s；最后日志的 train return 0.424、WM NSE 1-step 0.0124 / 8-step 0.0293、imagination return 1.757、survival 0.999，均为有限值。没有看到 OOM 或 NaN。运行时一次 GPU 快照为 6,415 / 12,282 MiB，停止后为 513 / 12,282 MiB。Warp 报告驱动 12.2 导致 CUDA Graphs disabled；训练仍实际运行。
+
+停止时最后完整保存的是 `logs/4070/lafan1_anchor_3072_8h_resume01/ckpt_latest.pt`，已用 PyTorch CPU load 验证：iteration 76,000、updates 30,368，大小 215,679,907 bytes。`ckpt_0080000.pt` 尚未生成；78,650 的尾部权重没有保存，后续应从 76,000 恢复。Checkpoints 不包含 replay buffer，恢复时将 buffer 重新填充 40 个向量化环境步，因此设置 `warmup_iterations=76040`。若要把本轮约 8 小时计划跑完，下一进程可设约 7.3 小时；若要从恢复点再跑完整 8 小时，设 8 小时。两个设置都受全局 320,000 iteration 上限约束。

@@ -51,7 +51,7 @@ class M1JointLossCfg:
     # Explicitly named physical thresholds used by soft feasibility/smoothness terms.
     minimum_base_height_m: float = 0.22
     maximum_tilt_rad: float = 0.9
-    maximum_wheel_rate_rad_s: float = 10.0
+    maximum_wheel_rate_rad_s: float = 5.0
     maximum_leg_velocity_rad_s: float = 16.75  # M1 URDF limit for the 12 leg position joints
     maximum_arm_velocity_rad_s: float = 10.0  # Piper URDF limit for the six arm position joints
     maximum_joint_acceleration_rad_s2: float = 80.0

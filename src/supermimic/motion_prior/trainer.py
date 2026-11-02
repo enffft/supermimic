@@ -17,7 +17,7 @@ from supermimic.motion_prior.losses import M1JointLossCfg, actor_losses, planner
 from supermimic.motion_prior.reference import decode_future31
 from supermimic.motion_prior.rollout import differentiable_m1_rollout
 from supermimic.policy.nets import M1PriorConditionedActor
-from supermimic.robots.spec import M1_JOINTS
+from supermimic.robots.spec import M1_JOINTS, get_robot_spec
 from supermimic.world_model.wm_trainer import WorldModelTrainer
 from supermimic.world_model.world_model import WorldModel
 
@@ -59,6 +59,19 @@ class M1AlternatingTrainer:
             )
         if cfg.prior_mode not in ("prior_mean", "prior_sample"):
             raise ValueError("unsupported Motion Prior inference mode")
+        if cfg.training_mode not in ("actor_only", "auto_joint", "controlled_joint_experiment"):
+            raise ValueError(f"unsupported M1 training mode: {cfg.training_mode!r}")
+        if cfg.training_mode == "controlled_joint_experiment" and cfg.freeze_prior:
+            raise ValueError(
+                "controlled_joint_experiment requires explicit --m1-joint-training.no-freeze-prior; "
+                "use actor_only or auto_joint to keep the Prior frozen"
+            )
+        if int(cfg.prior_updates_per_event) > int(cfg.actor_updates_per_event):
+            raise ValueError("Prior update frequency must not exceed Actor update frequency")
+        if not 0.0 <= float(cfg.wm_warmup_exploration_env_fraction) <= 1.0:
+            raise ValueError("WM warmup exploration environment fraction must lie in [0,1]")
+        if float(cfg.wm_warmup_exploration_std) < 0.0:
+            raise ValueError("WM warmup exploration std cannot be negative")
         if cfg.batch_size <= 0 or cfg.micro_batch_size <= 0 or cfg.batch_size % cfg.micro_batch_size:
             raise ValueError("M1 joint batch_size must be divisible by positive micro_batch_size")
         self.wm, self.wm_trainer = wm, wm_trainer
@@ -213,18 +226,65 @@ class M1AlternatingTrainer:
         wheel_ids = [M1_JOINTS.index(n) for n in ("FAR_FOOT_JOINT", "FBL_FOOT_JOINT", "RAR_FOOT_JOINT", "RBL_FOOT_JOINT")]
         arm_error = (next_state[:, 7:29][:, arm_ids] - target[:, 7:29][:, arm_ids]).square().mean(-1).sqrt()
         wheel_error = (next_state[:, 35:57][:, wheel_ids] - target[:, 35:57][:, wheel_ids]).square().mean(-1).sqrt()
+        from supermimic.kinematics.rotations import quat_apply_inverse
+
+        gravity = torch.zeros_like(next_state[:, :3])
+        gravity[:, 2] = -1.0
+        gravity_body = quat_apply_inverse(next_state[:, 3:7], gravity)
+        base_tilt = torch.acos((-gravity_body[:, 2]).clamp(-1.0 + 1e-6, 1.0 - 1e-6))
         metrics = {
             "survival": float((~terminated.bool()).float().mean()),
             "root_tracking_error": float(root_error.mean()),
             "arm_tracking_error": float(arm_error.mean()),
             "wheel_tracking_error": float(wheel_error.mean()),
             "action_saturation": float((action.abs() >= 0.98).float().mean()),
+            "base_height_m": float(next_state[:, 2].mean()),
+            "base_tilt_rad": float(base_tilt.mean()),
         }
         self._actor_ready_window.append(metrics)
         self._real_metrics = {
             f"real/{key}": value for key, value in metrics.items()
         }
         return self._real_metrics
+
+    def _controlled_joint_readiness(self, *, policy_allowed: bool) -> dict[str, float]:
+        """Minimum online safety gate for the explicitly research-only mode.
+
+        This does not claim held-out WM quality or a deployment-ready Actor. It
+        only permits a low-LR Prior experiment after warmups, finite replay
+        diagnostics, and a recent real-MuJoCo safety window.
+        """
+        cfg = self.cfg
+        count = len(self._actor_ready_window)
+        means = ({key: sum(row[key] for row in self._actor_ready_window) / count
+                  for key in self._actor_ready_window[0]} if count else {})
+        nse1 = self.last_wm_metrics.get("nse_1step", float("nan"))
+        nseh = self.last_wm_metrics.get("nse_kstep", float("nan"))
+        finite_wm = bool(np.isfinite(nse1) and np.isfinite(nseh))
+        checks = {
+            "policy_warmup": bool(policy_allowed),
+            "wm_updates": self.wm_update_events >= int(cfg.controlled_joint_min_wm_events),
+            "actor_pretrain": self.actor_optimizer_steps >= int(cfg.controlled_joint_actor_pretrain_updates),
+            "real_samples": count >= int(cfg.controlled_joint_min_real_samples),
+            "finite_wm_metrics": finite_wm,
+            "survival": count >= int(cfg.controlled_joint_min_real_samples)
+                and means.get("survival", 0.0) >= cfg.controlled_joint_min_survival,
+            "base_height": count >= int(cfg.controlled_joint_min_real_samples)
+                and means.get("base_height_m", 0.0) >= cfg.controlled_joint_min_base_height_m,
+            "base_tilt": count >= int(cfg.controlled_joint_min_real_samples)
+                and means.get("base_tilt_rad", float("inf")) <= cfg.controlled_joint_max_base_tilt_rad,
+            "action_saturation": count >= int(cfg.controlled_joint_min_real_samples)
+                and means.get("action_saturation", float("inf")) <= cfg.controlled_joint_max_action_saturation,
+        }
+        result = {
+            "schedule/controlled_joint_ready": float(all(checks.values())),
+            "schedule/controlled_joint_is_research_mode": 1.0,
+            "schedule/controlled_joint_real_samples": float(count),
+        }
+        result.update({f"schedule/controlled_joint_{key}_pass": float(value) for key, value in checks.items()})
+        for key, value in means.items():
+            result[f"schedule/controlled_joint_mean_{key}"] = float(value)
+        return result
 
     def _one_micro_rollout(self, micro: int, *, planner: bool) -> tuple[dict[str, torch.Tensor], object]:
         start = self.buffer.sample_starts(micro, self.actor.cfg.history)
@@ -425,8 +485,32 @@ class M1AlternatingTrainer:
         wm_ready = bool(wm_readiness["schedule/wm_ready"])
         ready = self.actor_ready
         fit_ready = bool(wm_readiness["schedule/wm_fit_ready"])
+        mode = self.cfg.training_mode
+        controlled_readiness = (
+            self._controlled_joint_readiness(policy_allowed=policy_allowed)
+            if mode == "controlled_joint_experiment" else {}
+        )
+        controlled_ready = bool(controlled_readiness.get("schedule/controlled_joint_ready", 0.0))
         if not fit_ready:
             self.stage = "wm_warmup"
+        elif mode == "actor_only":
+            self.stage = "actor_only_prior_frozen"
+            for _ in range(int(self.cfg.actor_updates_per_event)):
+                output.update(self._update_actor())
+        elif mode == "controlled_joint_experiment" and controlled_ready:
+            self.stage = "controlled_joint_experiment"
+            for _ in range(int(self.cfg.prior_updates_per_event)):
+                output.update(self._update_prior())
+            for _ in range(int(self.cfg.actor_updates_per_event)):
+                output.update(self._update_actor())
+        elif mode == "controlled_joint_experiment":
+            self.stage = "controlled_joint_warmup"
+            for _ in range(int(self.cfg.actor_updates_per_event)):
+                output.update(self._update_actor())
+        elif mode == "auto_joint" and self.cfg.freeze_prior:
+            self.stage = "actor_only_prior_frozen"
+            for _ in range(int(self.cfg.actor_updates_per_event)):
+                output.update(self._update_actor())
         elif not ready:
             self.stage = "actor_tracking_warmup"
         elif (not wm_ready or
@@ -446,7 +530,8 @@ class M1AlternatingTrainer:
         output.update(self._real_metrics)
         phase_code = {"wm_warmup": 0, "actor_tracking_warmup": 1,
                       "prior_frozen_tracking_warmup": 2, "joint_alternating": 3,
-                      "actor_only_prior_frozen": 4}[self.stage]
+                      "actor_only_prior_frozen": 4, "controlled_joint_warmup": 5,
+                      "controlled_joint_experiment": 6}[self.stage]
         output.update({
             "schedule/wm_update_events": float(self.wm_update_events),
             "schedule/wm_optimizer_steps": float(self.wm_optimizer_steps),
@@ -461,6 +546,7 @@ class M1AlternatingTrainer:
         })
         output.update(wm_readiness)
         output.update(self.actor_readiness_diagnostics)
+        output.update(controlled_readiness)
         return output
 
     def checkpoint(self, *, iteration: int, config_snapshot: dict, command_state: dict,
@@ -474,6 +560,7 @@ class M1AlternatingTrainer:
             "prior_optimizer_steps": self.prior_optimizer_steps,
             "actor_optimizer_steps": self.actor_optimizer_steps,
             "training_phase": self.stage,
+            "training_mode": self.cfg.training_mode,
             "wm_only_updates": int(wm_only_updates),
             "actor_readiness_window": list(self._actor_ready_window),
             "wm": self.wm.state_dict(),
@@ -497,9 +584,14 @@ class M1AlternatingTrainer:
             "prior_mode": self.cfg.prior_mode,
             "actor_schema": asdict(self.actor.cfg),
             "action_mapping": {
+                "contract_version": "m1_mixed_action_v2",
                 "joint_names": self.robot_joint_names,
                 "wheel_joint_names": ("FAR_FOOT_JOINT", "FBL_FOOT_JOINT", "RAR_FOOT_JOINT", "RBL_FOOT_JOINT"),
                 "position_control_count": 18, "wheel_velocity_control_count": 4,
+                "action_modes": get_robot_spec("m1_piper").action_modes,
+                "action_scales": get_robot_spec("m1_piper").action_scales,
+                "position_mapping": "default_q+clip(action,-1,1)*scale;clamp_soft_limits",
+                "wheel_mapping": "clip(action,-1,1)*scale_rad_s",
             },
             "goal_mapping": "Goal8[vx,vy,wz,ee_dx_heading,ee_dy_heading,ee_dz_heading,velocity_valid,ee_valid]",
             "tcp_convention": "piper_x_link7 for CVAE Future, Planner FK, and m1_prior_joint real target/metrics",
@@ -532,8 +624,24 @@ class M1AlternatingTrainer:
             raise ValueError("joint resume Motion Prior source checkpoint/hash mismatch")
         if checkpoint.get("loss_coefficients") != asdict(self.loss_cfg):
             raise ValueError("joint resume loss coefficient/schema mismatch")
-        if checkpoint.get("action_mapping", {}).get("joint_names") != self.robot_joint_names:
+        if checkpoint.get("training_mode", "auto_joint") != self.cfg.training_mode:
+            raise ValueError("joint resume training mode mismatch")
+        saved_action = checkpoint.get("action_mapping", {})
+        if saved_action.get("joint_names") != self.robot_joint_names:
             raise ValueError("joint resume M1 mixed-action joint mapping mismatch")
+        current_action = {
+            "action_modes": get_robot_spec("m1_piper").action_modes,
+            "action_scales": get_robot_spec("m1_piper").action_scales,
+        }
+        snapshot = checkpoint.get("config", {})
+        snapshot_scales = snapshot.get("action_scales")
+        if snapshot_scales is not None and tuple(snapshot_scales) != current_action["action_scales"]:
+            raise ValueError("joint resume action scale differs from the saved M1 actuator contract")
+        for key, expected in current_action.items():
+            if key in saved_action and tuple(saved_action[key]) != expected:
+                raise ValueError(f"joint resume M1 action contract mismatch for {key}")
+        if saved_action.get("contract_version") != "m1_mixed_action_v2":
+            raise ValueError("joint resume M1 mixed-action contract version mismatch")
         current_task_state = self.command.state_dict()
         if checkpoint.get("task_sampler_state") != current_task_state:
             raise ValueError("joint resume L/M task sampler configuration mismatch")

@@ -252,6 +252,8 @@ def test_planner_actor_gradient_ownership_and_horizon3_finite_difference():
         prior_lr=1e-4, actor_lr=2e-4, grad_clip_norm=1.0,
         loss=M1JointLossCfg(), wm_updates_per_event=1, prior_updates_per_event=1,
         actor_updates_per_event=1, freeze_prior=True, actor_pretrain_updates=0,
+        training_mode="auto_joint",
+        wm_warmup_exploration_env_fraction=0.0, wm_warmup_exploration_std=0.0,
         prior_warmup_updates=0, readiness_window_steps=4, readiness_min_samples=4,
         readiness_min_survival=0.9, readiness_max_root_tracking_error=0.2,
         readiness_max_arm_tracking_error=0.25, readiness_max_wheel_tracking_error=0.75,

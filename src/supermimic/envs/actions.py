@@ -14,7 +14,8 @@ from typing import TYPE_CHECKING
 import torch
 from mjlab.envs.mdp.actions import JointPositionAction, JointPositionActionCfg
 from mjlab.managers.action_manager import ActionTerm, ActionTermCfg
-from supermimic.tasks.action_contract import clamp_executed_action
+
+from supermimic.tasks.action_contract import clamp_executed_action, mixed_m1_setpoints
 
 if TYPE_CHECKING:
     from mjlab.envs import ManagerBasedRlEnv
@@ -123,12 +124,14 @@ class MixedM1Action(ActionTerm):
         if tuple(names) != tuple(cfg.joint_names):
             raise ValueError(f"M1 action joint order mismatch: got {names}")
         self._joint_ids = torch.tensor(ids, device=self.device, dtype=torch.long)
+        self._action_dim = len(ids)
         wheel_names = set(cfg.wheel_joint_names)
         self._wheel_action_idx = torch.tensor([i for i, n in enumerate(names) if n in wheel_names], device=self.device, dtype=torch.long)
         self._position_action_idx = torch.tensor([i for i, n in enumerate(names) if n not in wheel_names], device=self.device, dtype=torch.long)
+        self._wheel_mask = torch.zeros(self._action_dim, dtype=torch.bool, device=self.device)
+        self._wheel_mask[self._wheel_action_idx] = True
         self._wheel_joint_ids = self._joint_ids[self._wheel_action_idx]
         self._position_joint_ids = self._joint_ids[self._position_action_idx]
-        self._action_dim = len(ids)
         self._raw_actions = torch.zeros(self.num_envs, self._action_dim, device=self.device)
         self._executed_raw = torch.zeros_like(self._raw_actions)
         self._physical_setpoint = torch.zeros_like(self._raw_actions)
@@ -170,13 +173,12 @@ class MixedM1Action(ActionTerm):
 
     def apply_actions(self) -> None:
         q0 = self._entity.data.default_joint_pos[:, self._joint_ids]
-        position_target = q0[:, self._position_action_idx] + self._executed_raw[:, self._position_action_idx] * self._scale[:, self._position_action_idx]
-        limits = self._entity.data.soft_joint_pos_limits[:, self._position_joint_ids]
-        position_target = torch.maximum(torch.minimum(position_target, limits[..., 1]), limits[..., 0])
-        wheel_target = self._executed_raw[:, self._wheel_action_idx] * self._scale[:, self._wheel_action_idx]
-        self._physical_setpoint.zero_()
-        self._physical_setpoint[:, self._position_action_idx] = position_target
-        self._physical_setpoint[:, self._wheel_action_idx] = wheel_target
+        full_limits = self._entity.data.soft_joint_pos_limits[:, self._joint_ids]
+        self._physical_setpoint[:] = mixed_m1_setpoints(
+            self._executed_raw, q0, self._scale, self._wheel_mask, full_limits,
+        )
+        position_target = self._physical_setpoint[:, self._position_action_idx]
+        wheel_target = self._physical_setpoint[:, self._wheel_action_idx]
         self._entity.set_joint_position_target(position_target, joint_ids=self._position_joint_ids)
         self._entity.set_joint_velocity_target(wheel_target, joint_ids=self._wheel_joint_ids)
 

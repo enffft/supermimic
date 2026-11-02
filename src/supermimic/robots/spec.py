@@ -94,6 +94,12 @@ M1_DEFAULT = (
     0.0, -1.1, 2.0, 0.0,
     0.0, 2.55, -1.50, -0.80, 0.0, 0.0,
 )
+M1_ACTION_SCALES = tuple(
+    5.0 if n.endswith("FOOT_JOINT") else
+    0.35 if n in ("piper_x_joint2", "piper_x_joint4") else
+    0.25
+    for n in M1_JOINTS
+)
 
 
 def get_robot_spec(name: str) -> RobotSpec:
@@ -145,7 +151,7 @@ def get_robot_spec(name: str) -> RobotSpec:
         return RobotSpec(
             name="m1_piper", joint_names=M1_JOINTS, default_joint_pos=M1_DEFAULT,
             action_modes=tuple("velocity" if n in M1_LEG_JOINTS and n.endswith("FOOT_JOINT") else "position" for n in M1_JOINTS),
-            action_scales=tuple(5.0 if n.endswith("FOOT_JOINT") else 0.25 for n in M1_JOINTS),
+            action_scales=M1_ACTION_SCALES,
             kp=tuple(0.0 if n.endswith("FOOT_JOINT") else (32.0 if n.startswith("piper_") else 250.0) for n in M1_JOINTS),
             kd=tuple(0.5 if n.endswith("FOOT_JOINT") else (1.0 if n.startswith("piper_") else 9.0) for n in M1_JOINTS),
             default_base_height=0.3892858, control_dt=0.02,

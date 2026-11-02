@@ -192,6 +192,9 @@ class M1JointTrainingCfg:
     wm_updates_per_event: int = 1
     prior_updates_per_event: int = 1
     actor_updates_per_event: int = 1
+    training_mode: Literal["actor_only", "auto_joint", "controlled_joint_experiment"] = "auto_joint"
+    wm_warmup_exploration_env_fraction: float = 0.0
+    wm_warmup_exploration_std: float = 0.0
     prior_lr: float = 1.0e-5
     actor_lr: float = 2.0e-4
     batch_size: int = 32
@@ -204,6 +207,16 @@ class M1JointTrainingCfg:
     # calibration exists. Finite replay losses alone are not a quality claim.
     wm_readiness_max_nse_1: float | None = None
     wm_readiness_max_nse_horizon: float | None = None
+    # The controlled research mode is intentionally distinct from auto_joint:
+    # it has explicit minimum WM/Actor warmups and real-state safety checks,
+    # while still logging that the strict held-out quality gate was not met.
+    controlled_joint_min_wm_events: int = 200
+    controlled_joint_actor_pretrain_updates: int = 384
+    controlled_joint_min_real_samples: int = 100
+    controlled_joint_min_survival: float = 0.90
+    controlled_joint_min_base_height_m: float = 0.22
+    controlled_joint_max_base_tilt_rad: float = 0.90
+    controlled_joint_max_action_saturation: float = 0.20
     grad_clip_norm: float = 1.0
     readiness_window_steps: int = 500
     readiness_min_samples: int = 100

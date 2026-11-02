@@ -43,12 +43,14 @@ def mixed_m1_setpoints(
     action_scale: torch.Tensor,
     wheel_mask: torch.Tensor,
     soft_joint_limits: torch.Tensor,
+    position_target_bounds: torch.Tensor | None = None,
 ) -> torch.Tensor:
     """Map M1's interleaved 22D action to physical joint targets.
 
-    Position-controlled joints use ``q_default + a*scale`` and are clamped to
-    soft limits; wheel joints use velocity targets ``a*scale``. The returned
-    tensor retains RobotSpec order so callers can split it by actuator type.
+    Without bounds this keeps Contract v2 ``q_default + a*scale`` behavior.
+    Contract v3 maps position actions asymmetrically between an absolute safe
+    interval and the default pose, so -1/0/+1 map to lower/default/upper.
+    Wheel joints always retain angular-velocity semantics ``a*scale``.
     """
     if executed_action.shape[-1] != 22:
         raise ValueError("M1 Mixed Action must have 22 dimensions")
@@ -59,7 +61,15 @@ def mixed_m1_setpoints(
     if soft_joint_limits.shape[-2:] != (22, 2):
         raise ValueError("M1 soft joint limits must end in [22,2]")
     action = clamp_executed_action(executed_action)
-    position_target = default_joint_pos + action * action_scale
+    if position_target_bounds is None:
+        position_target = default_joint_pos + action * action_scale
+    else:
+        if position_target_bounds.shape[-2:] != (22, 2):
+            raise ValueError("M1 v3 position bounds must end in [22,2]")
+        lower, upper = position_target_bounds[..., 0], position_target_bounds[..., 1]
+        positive = default_joint_pos + action * (upper - default_joint_pos)
+        negative = default_joint_pos + action * (default_joint_pos - lower)
+        position_target = torch.where(action >= 0.0, positive, negative)
     position_target = torch.maximum(
         torch.minimum(position_target, soft_joint_limits[..., 1]), soft_joint_limits[..., 0],
     )

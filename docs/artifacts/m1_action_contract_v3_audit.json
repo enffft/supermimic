@@ -1,0 +1,1607 @@
+{
+  "joint_order_future_position": [
+    "FAR_ABAD_JOINT",
+    "FAR_HIP_JOINT",
+    "FAR_KNEE_JOINT",
+    "FBL_ABAD_JOINT",
+    "FBL_HIP_JOINT",
+    "FBL_KNEE_JOINT",
+    "RAR_ABAD_JOINT",
+    "RAR_HIP_JOINT",
+    "RAR_KNEE_JOINT",
+    "RBL_ABAD_JOINT",
+    "RBL_HIP_JOINT",
+    "RBL_KNEE_JOINT",
+    "piper_x_joint1",
+    "piper_x_joint2",
+    "piper_x_joint3",
+    "piper_x_joint4",
+    "piper_x_joint5",
+    "piper_x_joint6"
+  ],
+  "limits": {
+    "FAR_ABAD_JOINT": {
+      "hardware_intersection_rad": [
+        -0.697,
+        0.523
+      ],
+      "mujoco_soft_rad": [
+        -0.636,
+        0.4620000000000001
+      ],
+      "sdk_rad": null,
+      "urdf_rad": [
+        -0.697,
+        0.523
+      ]
+    },
+    "FAR_HIP_JOINT": {
+      "hardware_intersection_rad": [
+        -2.443,
+        2.443
+      ],
+      "mujoco_soft_rad": [
+        -2.1987,
+        2.1987
+      ],
+      "sdk_rad": null,
+      "urdf_rad": [
+        -2.443,
+        2.443
+      ]
+    },
+    "FAR_KNEE_JOINT": {
+      "hardware_intersection_rad": [
+        -2.801,
+        2.801
+      ],
+      "mujoco_soft_rad": [
+        -2.5209,
+        2.5209
+      ],
+      "sdk_rad": null,
+      "urdf_rad": [
+        -2.801,
+        2.801
+      ]
+    },
+    "FBL_ABAD_JOINT": {
+      "hardware_intersection_rad": [
+        -0.523,
+        0.697
+      ],
+      "mujoco_soft_rad": [
+        -0.4620000000000001,
+        0.636
+      ],
+      "sdk_rad": null,
+      "urdf_rad": [
+        -0.523,
+        0.697
+      ]
+    },
+    "FBL_HIP_JOINT": {
+      "hardware_intersection_rad": [
+        -2.443,
+        2.443
+      ],
+      "mujoco_soft_rad": [
+        -2.1987,
+        2.1987
+      ],
+      "sdk_rad": null,
+      "urdf_rad": [
+        -2.443,
+        2.443
+      ]
+    },
+    "FBL_KNEE_JOINT": {
+      "hardware_intersection_rad": [
+        -2.801,
+        2.801
+      ],
+      "mujoco_soft_rad": [
+        -2.5209,
+        2.5209
+      ],
+      "sdk_rad": null,
+      "urdf_rad": [
+        -2.801,
+        2.801
+      ]
+    },
+    "RAR_ABAD_JOINT": {
+      "hardware_intersection_rad": [
+        -0.697,
+        0.523
+      ],
+      "mujoco_soft_rad": [
+        -0.636,
+        0.4620000000000001
+      ],
+      "sdk_rad": null,
+      "urdf_rad": [
+        -0.697,
+        0.523
+      ]
+    },
+    "RAR_HIP_JOINT": {
+      "hardware_intersection_rad": [
+        -2.443,
+        2.443
+      ],
+      "mujoco_soft_rad": [
+        -2.1987,
+        2.1987
+      ],
+      "sdk_rad": null,
+      "urdf_rad": [
+        -2.443,
+        2.443
+      ]
+    },
+    "RAR_KNEE_JOINT": {
+      "hardware_intersection_rad": [
+        -2.801,
+        2.801
+      ],
+      "mujoco_soft_rad": [
+        -2.5209,
+        2.5209
+      ],
+      "sdk_rad": null,
+      "urdf_rad": [
+        -2.801,
+        2.801
+      ]
+    },
+    "RBL_ABAD_JOINT": {
+      "hardware_intersection_rad": [
+        -0.523,
+        0.697
+      ],
+      "mujoco_soft_rad": [
+        -0.4620000000000001,
+        0.636
+      ],
+      "sdk_rad": null,
+      "urdf_rad": [
+        -0.523,
+        0.697
+      ]
+    },
+    "RBL_HIP_JOINT": {
+      "hardware_intersection_rad": [
+        -2.443,
+        2.443
+      ],
+      "mujoco_soft_rad": [
+        -2.1987,
+        2.1987
+      ],
+      "sdk_rad": null,
+      "urdf_rad": [
+        -2.443,
+        2.443
+      ]
+    },
+    "RBL_KNEE_JOINT": {
+      "hardware_intersection_rad": [
+        -2.801,
+        2.801
+      ],
+      "mujoco_soft_rad": [
+        -2.5209,
+        2.5209
+      ],
+      "sdk_rad": null,
+      "urdf_rad": [
+        -2.801,
+        2.801
+      ]
+    },
+    "piper_x_joint1": {
+      "hardware_intersection_rad": [
+        -2.6179938779914944,
+        2.6179938779914944
+      ],
+      "mujoco_soft_rad": [
+        -2.356194490192345,
+        2.356194490192345
+      ],
+      "sdk_rad": [
+        -2.6179938779914944,
+        2.6179938779914944
+      ],
+      "urdf_rad": [
+        -2.618,
+        2.618
+      ]
+    },
+    "piper_x_joint2": {
+      "hardware_intersection_rad": [
+        0.0,
+        3.14
+      ],
+      "mujoco_soft_rad": [
+        0.15700000000000003,
+        2.983
+      ],
+      "sdk_rad": [
+        0.0,
+        3.141592653589793
+      ],
+      "urdf_rad": [
+        0.0,
+        3.14
+      ]
+    },
+    "piper_x_joint3": {
+      "hardware_intersection_rad": [
+        -2.9670597283903604,
+        0.0
+      ],
+      "mujoco_soft_rad": [
+        -2.8187067419708427,
+        -0.14835298641951788
+      ],
+      "sdk_rad": [
+        -2.9670597283903604,
+        0.0
+      ],
+      "urdf_rad": [
+        -2.9671,
+        0.0
+      ]
+    },
+    "piper_x_joint4": {
+      "hardware_intersection_rad": [
+        -1.57,
+        1.57
+      ],
+      "mujoco_soft_rad": [
+        -1.413,
+        1.413
+      ],
+      "sdk_rad": [
+        -1.7453292519943295,
+        1.7453292519943295
+      ],
+      "urdf_rad": [
+        -1.57,
+        1.57
+      ]
+    },
+    "piper_x_joint5": {
+      "hardware_intersection_rad": [
+        -1.2217304763960306,
+        1.2217304763960306
+      ],
+      "mujoco_soft_rad": [
+        -1.0995574287564276,
+        1.0995574287564276
+      ],
+      "sdk_rad": [
+        -1.2217304763960306,
+        1.2217304763960306
+      ],
+      "urdf_rad": [
+        -1.57,
+        1.57
+      ]
+    },
+    "piper_x_joint6": {
+      "hardware_intersection_rad": [
+        -2.0943951023931953,
+        2.0943951023931953
+      ],
+      "mujoco_soft_rad": [
+        -1.8849555921538759,
+        1.8849555921538759
+      ],
+      "sdk_rad": [
+        -2.0943951023931953,
+        2.0943951023931953
+      ],
+      "urdf_rad": [
+        -3.14,
+        3.14
+      ]
+    }
+  },
+  "pose_profiles": {
+    "L": {
+      "p5_p50_p95_piper_q_rad": [
+        [
+          0.0,
+          0.5,
+          -0.4000000059604645,
+          0.30000001192092896,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.5,
+          -0.4000000059604645,
+          0.30000001192092896,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.5,
+          -0.4000000059604645,
+          0.30000001192092896,
+          0.0,
+          0.0
+        ]
+      ],
+      "sampled_trajectory_start_count": 999
+    },
+    "LM": {
+      "p5_p50_p95_piper_q_rad": [
+        [
+          0.0,
+          0.5,
+          -0.4000000059604645,
+          0.30000001192092896,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.5,
+          -0.4000000059604645,
+          0.30000001192092896,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.5,
+          -0.4000000059604645,
+          0.30000001192092896,
+          0.0,
+          0.0
+        ]
+      ],
+      "sampled_trajectory_start_count": 273
+    },
+    "M": {
+      "p5_p50_p95_piper_q_rad": [
+        [
+          0.0,
+          0.5,
+          -0.4000000059604645,
+          0.30000001192092896,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.5,
+          -0.4000000059604645,
+          0.30000001192092896,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.5,
+          -0.4000000059604645,
+          0.30000001192092896,
+          0.0,
+          0.0
+        ]
+      ],
+      "sampled_trajectory_start_count": 1000
+    }
+  },
+  "position_bounds": {
+    "v2_legacy_manipulation": {
+      "FAR_ABAD_JOINT": [
+        -0.25,
+        0.25
+      ],
+      "FAR_HIP_JOINT": [
+        0.8500000000000001,
+        1.35
+      ],
+      "FAR_KNEE_JOINT": [
+        -2.25,
+        -1.75
+      ],
+      "FBL_ABAD_JOINT": [
+        -0.25,
+        0.25
+      ],
+      "FBL_HIP_JOINT": [
+        0.8500000000000001,
+        1.35
+      ],
+      "FBL_KNEE_JOINT": [
+        -2.25,
+        -1.75
+      ],
+      "RAR_ABAD_JOINT": [
+        -0.25,
+        0.25
+      ],
+      "RAR_HIP_JOINT": [
+        -1.35,
+        -0.8500000000000001
+      ],
+      "RAR_KNEE_JOINT": [
+        1.75,
+        2.25
+      ],
+      "RBL_ABAD_JOINT": [
+        -0.25,
+        0.25
+      ],
+      "RBL_HIP_JOINT": [
+        -1.35,
+        -0.8500000000000001
+      ],
+      "RBL_KNEE_JOINT": [
+        1.75,
+        2.25
+      ],
+      "piper_x_joint1": [
+        -0.25,
+        0.25
+      ],
+      "piper_x_joint2": [
+        2.1999999999999997,
+        2.9
+      ],
+      "piper_x_joint3": [
+        -1.75,
+        -1.25
+      ],
+      "piper_x_joint4": [
+        -1.15,
+        -0.45000000000000007
+      ],
+      "piper_x_joint5": [
+        -0.25,
+        0.25
+      ],
+      "piper_x_joint6": [
+        -0.25,
+        0.25
+      ]
+    },
+    "v3_dataset_carry": {
+      "FAR_ABAD_JOINT": [
+        -0.31298,
+        0.36099
+      ],
+      "FAR_HIP_JOINT": [
+        0.53814,
+        1.56619
+      ],
+      "FAR_KNEE_JOINT": [
+        -2.5209,
+        -1.66946
+      ],
+      "FBL_ABAD_JOINT": [
+        -0.35488,
+        0.31071
+      ],
+      "FBL_HIP_JOINT": [
+        0.56885,
+        1.58435
+      ],
+      "FBL_KNEE_JOINT": [
+        -2.5209,
+        -1.68615
+      ],
+      "RAR_ABAD_JOINT": [
+        -0.3077,
+        0.34571
+      ],
+      "RAR_HIP_JOINT": [
+        -1.57743,
+        -0.61997
+      ],
+      "RAR_KNEE_JOINT": [
+        1.57674,
+        2.5209
+      ],
+      "RBL_ABAD_JOINT": [
+        -0.37172,
+        0.30733
+      ],
+      "RBL_HIP_JOINT": [
+        -1.59972,
+        -0.60404
+      ],
+      "RBL_KNEE_JOINT": [
+        1.59689,
+        2.5209
+      ],
+      "piper_x_joint1": [
+        -0.53457,
+        0.61986
+      ],
+      "piper_x_joint2": [
+        0.157,
+        2.8428
+      ],
+      "piper_x_joint3": [
+        -1.88899,
+        -0.30207
+      ],
+      "piper_x_joint4": [
+        -0.41415,
+        0.60037
+      ],
+      "piper_x_joint5": [
+        -0.36002,
+        0.29504
+      ],
+      "piper_x_joint6": [
+        -0.05,
+        0.05
+      ]
+    }
+  },
+  "schema": "m1_action_contract_v3_audit_v1",
+  "sources": {
+    "cache": "/tmp/m1_cvae_window_cache_v2/cvae_v1_strict_fcl_2272",
+    "cache_window_counts": {
+      "L": 211148,
+      "LM": 92088,
+      "M": 188889
+    },
+    "piper_sdk_limits_source": "/home/yifeiy/m1_piper_rl_grasp/src/rl_sar/piper/piper_backend.py",
+    "sdk_limits_rad": [
+      [
+        -2.6179938779914944,
+        2.6179938779914944
+      ],
+      [
+        0.0,
+        3.141592653589793
+      ],
+      [
+        -2.9670597283903604,
+        0.0
+      ],
+      [
+        -1.7453292519943295,
+        1.7453292519943295
+      ],
+      [
+        -1.2217304763960306,
+        1.2217304763960306
+      ],
+      [
+        -2.0943951023931953,
+        2.0943951023931953
+      ]
+    ],
+    "sdk_sha256": "9ab737b7c911fe0b23c5c95b7603d28354ace9616f62c76e4cdd70f7e45cc307",
+    "systematic_stride": 35,
+    "urdf": "/home/yifeiy/AMP-LOCO-M1/resources/robots/zg_m1_piper_x/zg_m1_piper_x.urdf",
+    "urdf_sha256": "25bebd86d7595da81f0718f8f0185c8b5f0fd70efca0c8d05b24a3d14b624c1f"
+  },
+  "tasks": {
+    "L": {
+      "position_joint_stats": {
+        "FAR_ABAD_JOINT": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            -0.44957834482192993,
+            -0.3047838509082794,
+            -0.2069982424378395,
+            2.466613409524143e-06,
+            0.22856628894805908,
+            0.3597178488969801,
+            0.5228919982910156
+          ],
+          "mujoco_soft_violation_fraction": 0.0012763136084866567,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.06650091165257749,
+          "v3_near_action_saturation_fraction": 0.02040444223437759,
+          "v3_outside_fraction": 0.01788496602022211
+        },
+        "FAR_HIP_JOINT": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            0.1912933737039566,
+            0.5682945615053177,
+            0.7593321025371551,
+            1.1226238012313843,
+            1.398959219455719,
+            1.5221870791912078,
+            1.6645026206970215
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.16098126968340792,
+          "v3_near_action_saturation_fraction": 0.013326703132769766,
+          "v3_outside_fraction": 0.011354218465108569
+        },
+        "FAR_KNEE_JOINT": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            -2.347519874572754,
+            -2.2581575083732606,
+            -2.197569751739502,
+            -2.010607600212097,
+            -1.8054404020309454,
+            -1.6708249533176422,
+            -1.1876367330551147
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.03931708934195259,
+          "v3_near_action_saturation_fraction": 0.010790651417205371,
+          "v3_outside_fraction": 0.009762970329852478
+        },
+        "FBL_ABAD_JOINT": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            -0.5210354924201965,
+            -0.3563600891828537,
+            -0.23325899988412857,
+            -0.0006251782178878784,
+            0.18873033523559546,
+            0.2897040504217146,
+            0.4248315989971161
+          ],
+          "mujoco_soft_violation_fraction": 0.0007293220619923752,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.06295375435106912,
+          "v3_near_action_saturation_fraction": 0.019111553124482015,
+          "v3_outside_fraction": 0.016807558428642465
+        },
+        "FBL_HIP_JOINT": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            0.33887630701065063,
+            0.6138952368497849,
+            0.7838767796754837,
+            1.119581699371338,
+            1.4104363918304443,
+            1.530514097213745,
+            1.671068549156189
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.16423006795955578,
+          "v3_near_action_saturation_fraction": 0.010790651417205371,
+          "v3_outside_fraction": 0.009000497265042267
+        },
+        "FBL_KNEE_JOINT": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            -2.330484390258789,
+            -2.263071620464325,
+            -2.1987127900123595,
+            -2.007876753807068,
+            -1.8273424327373504,
+            -1.6901440620422363,
+            -1.3341666460037231
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.036250621581302836,
+          "v3_near_action_saturation_fraction": 0.01030996187634676,
+          "v3_outside_fraction": 0.00946461130449196
+        },
+        "RAR_ABAD_JOINT": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            -0.44033676385879517,
+            -0.2958775758743286,
+            -0.19883528500795364,
+            0.0,
+            0.20137198269367218,
+            0.33541951507329926,
+            0.5168885588645935
+          ],
+          "mujoco_soft_violation_fraction": 0.0010608320901707277,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.053041604508536386,
+          "v3_near_action_saturation_fraction": 0.018216476048400463,
+          "v3_outside_fraction": 0.015895905851151998
+        },
+        "RAR_HIP_JOINT": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            -1.6568515300750732,
+            -1.5076463413238526,
+            -1.3910835564136506,
+            -1.1142131686210632,
+            -0.7715565592050553,
+            -0.5852048981189729,
+            -0.23011243343353271
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.15847836897066137,
+          "v3_near_action_saturation_fraction": 0.019028675617437426,
+          "v3_outside_fraction": 0.016674954417371126
+        },
+        "RAR_KNEE_JOINT": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            1.3353917598724365,
+            1.6823073136806488,
+            1.819345486164093,
+            2.007017970085144,
+            2.1912553191184996,
+            2.2534432077407835,
+            2.3278348445892334
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.034244985910823804,
+          "v3_near_action_saturation_fraction": 0.002270843693021714,
+          "v3_outside_fraction": 0.0019061826620255262
+        },
+        "RBL_ABAD_JOINT": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            -0.5137478113174438,
+            -0.3758341997861862,
+            -0.24240176826715468,
+            -0.0005801934166811407,
+            0.18777197375893584,
+            0.28198780000209805,
+            0.43749046325683594
+          ],
+          "mujoco_soft_violation_fraction": 0.001873031659207691,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.06636830764130615,
+          "v3_near_action_saturation_fraction": 0.0179678435272667,
+          "v3_outside_fraction": 0.01566384883142715
+        },
+        "RBL_HIP_JOINT": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            -1.659820795059204,
+            -1.5339558744430541,
+            -1.4037595868110657,
+            -1.1173471212387085,
+            -0.7544136017560966,
+            -0.5699714249372484,
+            -0.22046096622943878
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.1672633847173877,
+          "v3_near_action_saturation_fraction": 0.019956903696336813,
+          "v3_outside_fraction": 0.017768937510359687
+        },
+        "RBL_KNEE_JOINT": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            1.4495875835418701,
+            1.697676807641983,
+            1.8263936042785645,
+            2.0123389959335327,
+            2.196571707725525,
+            2.261152982711792,
+            2.3357882499694824
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.03328360682910658,
+          "v3_near_action_saturation_fraction": 0.002668655726835737,
+          "v3_outside_fraction": 0.0023702967014752195
+        },
+        "piper_x_joint1": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.0,
+          "v3_near_action_saturation_fraction": 0.0,
+          "v3_outside_fraction": 0.0
+        },
+        "piper_x_joint2": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            0.5
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 1.0,
+          "v3_near_action_saturation_fraction": 0.0,
+          "v3_outside_fraction": 0.0
+        },
+        "piper_x_joint3": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            -0.4000000059604645,
+            -0.4000000059604645,
+            -0.4000000059604645,
+            -0.4000000059604645,
+            -0.4000000059604645,
+            -0.4000000059604645,
+            -0.4000000059604645
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 1.0,
+          "v3_near_action_saturation_fraction": 0.0,
+          "v3_outside_fraction": 0.0
+        },
+        "piper_x_joint4": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            0.30000001192092896,
+            0.30000001192092896,
+            0.30000001192092896,
+            0.30000001192092896,
+            0.30000001192092896,
+            0.30000001192092896,
+            0.30000001192092896
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 1.0,
+          "v3_near_action_saturation_fraction": 0.0,
+          "v3_outside_fraction": 0.0
+        },
+        "piper_x_joint5": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.0,
+          "v3_near_action_saturation_fraction": 0.0,
+          "v3_outside_fraction": 0.0
+        },
+        "piper_x_joint6": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.0,
+          "v3_near_action_saturation_fraction": 0.0,
+          "v3_outside_fraction": 0.0
+        }
+      },
+      "sampled_future_frames": 60330,
+      "sampled_windows": 6033,
+      "v2_coordinate_coverage_fraction": 0.7753936681584618,
+      "v2_full_pose_coverage_fraction": 0.0,
+      "v3_coordinate_coverage_fraction": 0.9919691695673795,
+      "v3_full_pose_coverage_fraction": 0.8816177689375103,
+      "wheel_outside_v2_pm5_fraction": 0.0,
+      "wheel_outside_v3_pm5_fraction": 0.0,
+      "wheel_rate_abs_p50_p90_p99_rad_s": [
+        [
+          5.166807852674538e-07,
+          1.00150356274753e-06,
+          1.049608385983447e-06,
+          4.773793307322194e-07
+        ],
+        [
+          4.4171740228193744e-05,
+          0.00014811877481406548,
+          0.00015288713620975605,
+          4.1495024925097815e-05
+        ],
+        [
+          0.03896357662975787,
+          0.03803576901555061,
+          0.038158157169818865,
+          0.038733995221555226
+        ]
+      ]
+    },
+    "LM": {
+      "position_joint_stats": {
+        "FAR_ABAD_JOINT": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            -0.34408074617385864,
+            -0.22525894343852998,
+            -0.136623664945364,
+            0.0014082087436690927,
+            0.21623532250523558,
+            0.309289070367813,
+            0.4362497329711914
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.03660205245153934,
+          "v3_near_action_saturation_fraction": 0.003040668947168377,
+          "v3_outside_fraction": 0.0020144431774990496
+        },
+        "FAR_HIP_JOINT": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            0.2394075095653534,
+            0.5247611439228058,
+            0.6477720141410828,
+            1.0761414766311646,
+            1.2512194097042082,
+            1.363073375225067,
+            1.7652406692504883
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.2176738882554162,
+          "v3_near_action_saturation_fraction": 0.014329152413530976,
+          "v3_outside_fraction": 0.012466742683390345
+        },
+        "FAR_KNEE_JOINT": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            -2.7210025787353516,
+            -2.40735335111618,
+            -2.266364336013794,
+            -2.0303750038146973,
+            -1.8712019681930543,
+            -1.7454964053630828,
+            -1.3071446418762207
+          ],
+          "mujoco_soft_violation_fraction": 0.0023185100722158875,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.07278601292284302,
+          "v3_near_action_saturation_fraction": 0.008095781071835804,
+          "v3_outside_fraction": 0.007791714177118966
+        },
+        "FBL_ABAD_JOINT": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            -0.44365575909614563,
+            -0.25196927785873413,
+            -0.14428137242794037,
+            0.0011240718304179609,
+            0.19357725828886027,
+            0.26992931962013245,
+            0.3570157587528229
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.028050171037628278,
+          "v3_near_action_saturation_fraction": 0.0025465602432535157,
+          "v3_outside_fraction": 0.0017103762827822121
+        },
+        "FBL_HIP_JOINT": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            0.2676800489425659,
+            0.5530025362968445,
+            0.6634839028120041,
+            1.0589265823364258,
+            1.2281752526760101,
+            1.3830721127986907,
+            1.875278353691101
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.20220448498669708,
+          "v3_near_action_saturation_fraction": 0.01725579627518054,
+          "v3_outside_fraction": 0.014481185860889395
+        },
+        "FBL_KNEE_JOINT": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            -2.693702459335327,
+            -2.3945623946189882,
+            -2.2463103413581846,
+            -2.0085233449935913,
+            -1.8565775811672212,
+            -1.7477542316913606,
+            -1.5329982042312622
+          ],
+          "mujoco_soft_violation_fraction": 0.0016343595591030026,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.059293044469783354,
+          "v3_near_action_saturation_fraction": 0.0072595971113645005,
+          "v3_outside_fraction": 0.006157354618015963
+        },
+        "RAR_ABAD_JOINT": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            -0.35282573103904724,
+            -0.24367821216583252,
+            -0.13380837440490723,
+            5.8940440794685856e-05,
+            0.20829260200262067,
+            0.3076717257499695,
+            0.4184066653251648
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.03523375142531357,
+          "v3_near_action_saturation_fraction": 0.00653743823641201,
+          "v3_outside_fraction": 0.005131128848346636
+        },
+        "RAR_HIP_JOINT": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            -1.8775434494018555,
+            -1.5413628089427949,
+            -1.4616876184940337,
+            -1.179142951965332,
+            -1.037614792585373,
+            -0.8496863067150117,
+            -0.6769518256187439
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.17970353477765108,
+          "v3_near_action_saturation_fraction": 0.006993538578487267,
+          "v3_outside_fraction": 0.006081337894336754
+        },
+        "RAR_KNEE_JOINT": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            1.0343841314315796,
+            1.5324547517299651,
+            1.7536204040050507,
+            1.9995599389076233,
+            2.2089929580688477,
+            2.340774953365326,
+            2.666691780090332
+          ],
+          "mujoco_soft_violation_fraction": 0.0016723679209426075,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.07841125047510453,
+          "v3_near_action_saturation_fraction": 0.019650323071075636,
+          "v3_outside_fraction": 0.018358038768529077
+        },
+        "RBL_ABAD_JOINT": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            -0.4402577877044678,
+            -0.28397750735282895,
+            -0.15765069276094437,
+            4.139174416195601e-05,
+            0.19106030240654942,
+            0.26792783707380285,
+            0.34020450711250305
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.03242113264918282,
+          "v3_near_action_saturation_fraction": 0.004903078677309008,
+          "v3_outside_fraction": 0.003876852907639681
+        },
+        "RBL_HIP_JOINT": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            -1.7795547246932983,
+            -1.544838615655899,
+            -1.4679786443710328,
+            -1.171139895915985,
+            -1.0116025865077973,
+            -0.8649078869819642,
+            -0.6625654101371765
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.2006841505131129,
+          "v3_near_action_saturation_fraction": 0.004408969973394147,
+          "v3_outside_fraction": 0.003838844545800076
+        },
+        "RBL_KNEE_JOINT": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            0.9923536777496338,
+            1.5431248879432677,
+            1.757224577665329,
+            1.9982911348342896,
+            2.199284303188324,
+            2.36352281332016,
+            2.6956145763397217
+          ],
+          "mujoco_soft_violation_fraction": 0.0018244013683010262,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.07248194602812619,
+          "v3_near_action_saturation_fraction": 0.017939946788293425,
+          "v3_outside_fraction": 0.01653363740022805
+        },
+        "piper_x_joint1": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            -1.4281548261642456,
+            -0.6762062197923661,
+            -0.4009535118937492,
+            0.05472361482679844,
+            0.5595705240964889,
+            0.8948692750930786,
+            1.3864953517913818
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.37943747624477386,
+          "v3_near_action_saturation_fraction": 0.061269479285442796,
+          "v3_outside_fraction": 0.05750665146332193
+        },
+        "piper_x_joint2": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            0.0,
+            0.0,
+            0.1655452221632004,
+            1.0746136903762817,
+            2.2598506927490227,
+            2.6180477237701414,
+            2.9305872917175293
+          ],
+          "mujoco_soft_violation_fraction": 0.04815659445077917,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.9377803116685671,
+          "v3_near_action_saturation_fraction": 0.051159255036107944,
+          "v3_outside_fraction": 0.04910680349676929
+        },
+        "piper_x_joint3": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            -2.512465238571167,
+            -2.121227979660034,
+            -1.5996216893196107,
+            -0.7074874937534332,
+            -0.3850094482302666,
+            -0.32049375265836716,
+            -0.25564104318618774
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.9212466742683391,
+          "v3_near_action_saturation_fraction": 0.03204104903078677,
+          "v3_outside_fraction": 0.029532497149372863
+        },
+        "piper_x_joint4": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            -0.3907514810562134,
+            -0.3762070605158806,
+            -0.32074759304523465,
+            0.02770417369902134,
+            0.5644759595394134,
+            1.0108624815940856,
+            1.2730687856674194
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 1.0,
+          "v3_near_action_saturation_fraction": 0.04564804256936526,
+          "v3_outside_fraction": 0.04484986697073356
+        },
+        "piper_x_joint5": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            -0.9143986105918884,
+            -0.6019356232881546,
+            -0.30873917043209076,
+            -0.02038661390542984,
+            0.19899360984563796,
+            0.408558622598648,
+            0.8566213846206665
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.10957810718358038,
+          "v3_near_action_saturation_fraction": 0.0637400228050171,
+          "v3_outside_fraction": 0.0613074876472824
+        },
+        "piper_x_joint6": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            -2.3509382907430855e-17,
+            -7.90839112282974e-18,
+            -3.9770354987807555e-18,
+            -7.421474957142135e-21,
+            3.313009127621029e-18,
+            7.550674178594188e-18,
+            1.8530918635802878e-17
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.0,
+          "v3_near_action_saturation_fraction": 0.0,
+          "v3_outside_fraction": 0.0
+        }
+      },
+      "sampled_future_frames": 26310,
+      "sampled_windows": 2631,
+      "v2_coordinate_coverage_fraction": 0.7464673339245745,
+      "v2_full_pose_coverage_fraction": 0.0,
+      "v3_coordinate_coverage_fraction": 0.9810697242282191,
+      "v3_full_pose_coverage_fraction": 0.8136450019004181,
+      "wheel_outside_v2_pm5_fraction": 0.0,
+      "wheel_outside_v3_pm5_fraction": 0.0,
+      "wheel_rate_abs_p50_p90_p99_rad_s": [
+        [
+          4.272528570936629e-07,
+          7.479700414592116e-08,
+          3.256365772585923e-07,
+          5.807360281551155e-08
+        ],
+        [
+          2.704137896216718e-05,
+          3.38921814545757e-05,
+          0.00021720517543144524,
+          0.00010761947123683086
+        ],
+        [
+          0.03354803547263144,
+          0.031867227032780644,
+          0.03283550258725881,
+          0.03355185378342866
+        ]
+      ]
+    },
+    "M": {
+      "position_joint_stats": {
+        "FAR_ABAD_JOINT": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            -0.21637845039367676,
+            -0.11523416265845299,
+            -0.009463298041373488,
+            0.0,
+            0.053024019300937586,
+            0.17541169553995126,
+            0.21470628678798676
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.0,
+          "v3_near_action_saturation_fraction": 0.0,
+          "v3_outside_fraction": 0.0
+        },
+        "FAR_HIP_JOINT": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            0.793040931224823,
+            0.9921350634098053,
+            1.0676151514053345,
+            1.100000023841858,
+            1.4002779841423034,
+            1.532280585765838,
+            1.5658527612686157
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.08039651658328702,
+          "v3_near_action_saturation_fraction": 0.005614230127848805,
+          "v3_outside_fraction": 0.0
+        },
+        "FAR_KNEE_JOINT": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            -2.799252510070801,
+            -2.6455528330802918,
+            -2.5030641674995424,
+            -2.0,
+            -1.9849648177623749,
+            -1.84606906294823,
+            -1.6277283430099487
+          ],
+          "mujoco_soft_violation_fraction": 0.04550676301649064,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.17309616453585325,
+          "v3_near_action_saturation_fraction": 0.04841578654808227,
+          "v3_outside_fraction": 0.0458958680748564
+        },
+        "FBL_ABAD_JOINT": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            -0.20234613120555878,
+            -0.11122105777263641,
+            -0.00942971995100379,
+            0.0,
+            0.05387209095060797,
+            0.18724933475255945,
+            0.23282745480537415
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.0,
+          "v3_near_action_saturation_fraction": 0.0,
+          "v3_outside_fraction": 0.0
+        },
+        "FBL_HIP_JOINT": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            0.793040931224823,
+            0.9910384088754653,
+            1.0706326127052308,
+            1.100000023841858,
+            1.4024568378925324,
+            1.557269284725189,
+            1.615276575088501
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.08065591995553086,
+          "v3_near_action_saturation_fraction": 0.0039466370205669815,
+          "v3_outside_fraction": 0.003501945525291829
+        },
+        "FBL_KNEE_JOINT": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            -2.798612117767334,
+            -2.650720160007477,
+            -2.5088392734527587,
+            -2.0,
+            -1.9918912529945374,
+            -1.8471929240226752,
+            -1.6277283430099487
+          ],
+          "mujoco_soft_violation_fraction": 0.04658143413007226,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.17576431350750416,
+          "v3_near_action_saturation_fraction": 0.050509542338336114,
+          "v3_outside_fraction": 0.047304057809894384
+        },
+        "RAR_ABAD_JOINT": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            -0.21146652102470398,
+            -0.11513077236711979,
+            -0.00945570454932749,
+            0.0,
+            0.05317153241485313,
+            0.17574439316987986,
+            0.21470628678798676
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.0,
+          "v3_near_action_saturation_fraction": 0.0,
+          "v3_outside_fraction": 0.0
+        },
+        "RAR_HIP_JOINT": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            -1.5884782075881958,
+            -1.536960244178772,
+            -1.4019330263137817,
+            -1.100000023841858,
+            -1.0833593130111694,
+            -1.0140631043910981,
+            -0.8336549997329712
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.08074856401704651,
+          "v3_near_action_saturation_fraction": 0.00022234574763757643,
+          "v3_outside_fraction": 0.00018528812303131369
+        },
+        "RAR_KNEE_JOINT": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            1.0353480577468872,
+            1.6369310808181763,
+            1.86315016746521,
+            2.0,
+            2.4682832837104796,
+            2.644611949920654,
+            2.780362844467163
+          ],
+          "mujoco_soft_violation_fraction": 0.0377431906614786,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.15465999629423755,
+          "v3_near_action_saturation_fraction": 0.04685936631461923,
+          "v3_outside_fraction": 0.04446914952751529
+        },
+        "RBL_ABAD_JOINT": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            -0.20234613120555878,
+            -0.1115269923955202,
+            -0.009441156918182968,
+            0.0,
+            0.05381307024508688,
+            0.18576739728450775,
+            0.23282745480537415
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.0,
+          "v3_near_action_saturation_fraction": 0.0,
+          "v3_outside_fraction": 0.0
+        },
+        "RBL_HIP_JOINT": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            -1.615276575088501,
+            -1.5585647964477538,
+            -1.4035847902297973,
+            -1.100000023841858,
+            -1.0877493262290958,
+            -1.0144897341728212,
+            -0.8336549997329712
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.08154530294608116,
+          "v3_near_action_saturation_fraction": 0.003261070965351121,
+          "v3_outside_fraction": 0.0025940337224383916
+        },
+        "RBL_KNEE_JOINT": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            1.0353480577468872,
+            1.6456664526462554,
+            1.8630145430564882,
+            2.0,
+            2.4722585320472716,
+            2.6504762959480286,
+            2.7703678607940674
+          ],
+          "mujoco_soft_violation_fraction": 0.04004076338706689,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.15369649805447472,
+          "v3_near_action_saturation_fraction": 0.04960163053548267,
+          "v3_outside_fraction": 0.04710024087455994
+        },
+        "piper_x_joint1": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            -0.9226177334785461,
+            -0.5010100466012954,
+            -0.3504283517599106,
+            -0.0005557841795962304,
+            0.16403375566005707,
+            0.4181173637509325,
+            0.824971616268158
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.16247915508615898,
+          "v3_near_action_saturation_fraction": 0.009431165462293866,
+          "v3_outside_fraction": 0.008634426533259219
+        },
+        "piper_x_joint2": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            0.10950887948274612,
+            0.4102464303374291,
+            0.5,
+            1.1177396178245544,
+            2.6416665315628047,
+            2.936879446506499,
+            3.140000104904175
+          ],
+          "mujoco_soft_violation_fraction": 0.006336853807670928,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.8536779692421715,
+          "v3_near_action_saturation_fraction": 0.025995923661293312,
+          "v3_outside_fraction": 0.02030757828423198
+        },
+        "piper_x_joint3": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            -2.7509496212005615,
+            -1.8952594494819641,
+            -1.5512655258178711,
+            -0.5929941534996033,
+            -0.39268730878829966,
+            -0.33285057604312895,
+            -0.21616487205028534
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.8660922734852696,
+          "v3_near_action_saturation_fraction": 0.015545673522327219,
+          "v3_outside_fraction": 0.013859551602742264
+        },
+        "piper_x_joint4": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            -0.9903661012649536,
+            -0.3730571621656418,
+            -0.3243194118142128,
+            0.06019505113363266,
+            0.30000001192092896,
+            0.33050232291221593,
+            0.5681754946708679
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.9997776542523624,
+          "v3_near_action_saturation_fraction": 0.00022234574763757643,
+          "v3_outside_fraction": 0.00022234574763757643
+        },
+        "piper_x_joint5": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            -0.5276902318000793,
+            -0.17440568968653677,
+            -0.054227246157824996,
+            3.4009284718194976e-05,
+            0.11038457974791527,
+            0.23851847440004256,
+            0.5242652893066406
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 0.012544005929219938,
+          "v3_near_action_saturation_fraction": 0.007096535112099314,
+          "v3_outside_fraction": 0.006503613118399111
+        },
+        "piper_x_joint6": {
+          "min_p1_p5_p50_p95_p99_max_rad": [
+            -0.22769762575626373,
+            -4.5707377163649535e-18,
+            -2.23927948562051e-18,
+            0.0,
+            2.287053612091236e-18,
+            4.494747727145197e-18,
+            0.419359028339386
+          ],
+          "mujoco_soft_violation_fraction": 0.0,
+          "sdk_violation_fraction": 0.0,
+          "urdf_hard_violation_fraction": 0.0,
+          "v2_outside_fraction": 3.7057624606262736e-05,
+          "v3_near_action_saturation_fraction": 0.00016675931072818233,
+          "v3_outside_fraction": 0.00016675931072818233
+        }
+      },
+      "sampled_future_frames": 53970,
+      "sampled_windows": 5397,
+      "v2_coordinate_coverage_fraction": 0.7847127004714554,
+      "v2_full_pose_coverage_fraction": 3.7057624606262736e-05,
+      "v3_coordinate_coverage_fraction": 0.986625285652523,
+      "v3_full_pose_coverage_fraction": 0.8978321289605337,
+      "wheel_outside_v2_pm5_fraction": 0.0,
+      "wheel_outside_v3_pm5_fraction": 0.0,
+      "wheel_rate_abs_p50_p90_p99_rad_s": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ]
+    }
+  }
+}

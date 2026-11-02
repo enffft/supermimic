@@ -17,7 +17,7 @@ from supermimic.motion_prior.losses import M1JointLossCfg, actor_losses, planner
 from supermimic.motion_prior.reference import decode_future31
 from supermimic.motion_prior.rollout import differentiable_m1_rollout
 from supermimic.policy.nets import M1PriorConditionedActor
-from supermimic.robots.spec import M1_JOINTS, get_robot_spec
+from supermimic.robots.spec import M1_JOINTS, RobotSpec, get_robot_spec
 from supermimic.world_model.wm_trainer import WorldModelTrainer
 from supermimic.world_model.world_model import WorldModel
 
@@ -41,13 +41,14 @@ def frozen_parameters(*modules):
 class M1AlternatingTrainer:
     """Owns the separate Prior/Actor optimizers and their gradient boundaries."""
 
-    FORMAT_VERSION = 2
+    FORMAT_VERSION = 3
 
     def __init__(self, *, wm: WorldModel, wm_trainer: WorldModelTrainer,
                  prior, actor: M1PriorConditionedActor, buffer: ReplayBuffer,
                  default_joint_pos: torch.Tensor, soft_limits: torch.Tensor,
                  fk, tcp_index: int, cfg, robot_joint_names: tuple[str, ...],
-                 robot_model_sha256: str | None, command):
+                 robot_model_sha256: str | None, command,
+                 robot_spec: RobotSpec | None = None):
         if buffer.task_type is None:
             raise ValueError("M1 joint trainer requires the named L/M Replay context")
         if int(cfg.prior_horizon) != 10 or int(cfg.actor_horizon) != 10 or int(cfg.replanning_cadence) != 10:
@@ -83,6 +84,11 @@ class M1AlternatingTrainer:
         self.loss_cfg: M1JointLossCfg = cfg.loss
         self.robot_joint_names = tuple(robot_joint_names)
         self.robot_model_sha256 = robot_model_sha256
+        self.robot_spec = robot_spec or get_robot_spec(
+            "m1_piper", m1_pose_profile="dataset_carry", m1_action_contract="v3",
+        )
+        if self.robot_spec.action_contract_version != "m1_mixed_action_v3":
+            raise ValueError("M1 prior/Actor training requires Action Contract v3")
         self.command = command
         self.prior_initial = deepcopy(prior).eval()
         self.prior_initial.requires_grad_(False)
@@ -290,6 +296,8 @@ class M1AlternatingTrainer:
         start = self.buffer.sample_starts(micro, self.actor.cfg.history)
         goal = task_goal8(start.state, start.task_type, start.velocity_command, start.fixed_world_target)
         state_history = self._prior_state_history(start)
+        if planner:
+            self.last_prior_input_diagnostics = self.prior.input_diagnostics(state_history, goal)
         reference = self._sample_prior(state_history, goal)
         if planner:
             with torch.no_grad():
@@ -380,6 +388,10 @@ class M1AlternatingTrainer:
         self.last_prior_metrics = {
             f"prior/{metric_names.get(k, k)}": v for k, v in sums.items()
         }
+        self.last_prior_metrics.update({
+            key: float(value.detach())
+            for key, value in getattr(self, "last_prior_input_diagnostics", {}).items()
+        })
         self.last_prior_metrics["imag/planner_return"] = -sums.get("task", float("nan"))
         if "imag_survival" in sums:
             self.last_prior_metrics["imag/survival"] = sums["imag_survival"]
@@ -552,7 +564,7 @@ class M1AlternatingTrainer:
     def checkpoint(self, *, iteration: int, config_snapshot: dict, command_state: dict,
                    wm_only_updates: int = 0) -> dict:
         return {
-            "format": "supermimic_m1_prior_actor_joint_v2",
+            "format": "supermimic_m1_prior_actor_joint_v3",
             "format_version": self.FORMAT_VERSION,
             "iteration": int(iteration),
             "wm_update_events": self.wm_update_events,
@@ -582,16 +594,20 @@ class M1AlternatingTrainer:
             "prior_schema_version": self.prior.feature_version,
             "prior_source": dict(self.prior.source),
             "prior_mode": self.cfg.prior_mode,
+            "prior_input_compatibility": self.prior.input_compatibility,
             "actor_schema": asdict(self.actor.cfg),
             "action_mapping": {
-                "contract_version": "m1_mixed_action_v2",
+                "contract_version": self.robot_spec.action_contract_version,
+                "default_pose_profile": self.robot_spec.default_pose_profile,
+                "default_joint_pos": self.robot_spec.default_joint_pos,
                 "joint_names": self.robot_joint_names,
                 "wheel_joint_names": ("FAR_FOOT_JOINT", "FBL_FOOT_JOINT", "RAR_FOOT_JOINT", "RBL_FOOT_JOINT"),
                 "position_control_count": 18, "wheel_velocity_control_count": 4,
-                "action_modes": get_robot_spec("m1_piper").action_modes,
-                "action_scales": get_robot_spec("m1_piper").action_scales,
-                "position_mapping": "default_q+clip(action,-1,1)*scale;clamp_soft_limits",
-                "wheel_mapping": "clip(action,-1,1)*scale_rad_s",
+                "action_modes": self.robot_spec.action_modes,
+                "action_scales": self.robot_spec.action_scales,
+                "position_target_bounds": self.robot_spec.position_target_bounds,
+                "position_mapping": "asymmetric_default_to_absolute_bounds_v3;clamp_soft_limits",
+                "wheel_mapping": "clip(action,-1,1)*wheel_scale_rad_s",
             },
             "goal_mapping": "Goal8[vx,vy,wz,ee_dx_heading,ee_dy_heading,ee_dz_heading,velocity_valid,ee_valid]",
             "tcp_convention": "piper_x_link7 for CVAE Future, Planner FK, and m1_prior_joint real target/metrics",
@@ -603,8 +619,8 @@ class M1AlternatingTrainer:
         }
 
     def load_checkpoint(self, checkpoint: dict, *, expected_source: dict) -> int:
-        if checkpoint.get("format") != "supermimic_m1_prior_actor_joint_v2" or checkpoint.get("format_version") != self.FORMAT_VERSION:
-            raise ValueError("joint checkpoint format/version mismatch")
+        if checkpoint.get("format") != "supermimic_m1_prior_actor_joint_v3" or checkpoint.get("format_version") != self.FORMAT_VERSION:
+            raise ValueError("M1 joint resume requires Action Contract v3 checkpoint; v2 checkpoints are incompatible")
         checks = {
             "robot_identity": "m1_piper",
             "robot_joint_names": self.robot_joint_names,
@@ -614,6 +630,7 @@ class M1AlternatingTrainer:
             "replanning_cadence": int(self.cfg.replanning_cadence),
             "prior_state_source": self.cfg.state_source,
             "prior_mode": self.cfg.prior_mode,
+            "prior_input_compatibility": self.prior.input_compatibility,
             "actor_schema": asdict(self.actor.cfg),
         }
         for key, expected in checks.items():
@@ -627,21 +644,25 @@ class M1AlternatingTrainer:
         if checkpoint.get("training_mode", "auto_joint") != self.cfg.training_mode:
             raise ValueError("joint resume training mode mismatch")
         saved_action = checkpoint.get("action_mapping", {})
-        if saved_action.get("joint_names") != self.robot_joint_names:
-            raise ValueError("joint resume M1 mixed-action joint mapping mismatch")
         current_action = {
-            "action_modes": get_robot_spec("m1_piper").action_modes,
-            "action_scales": get_robot_spec("m1_piper").action_scales,
+            "contract_version": self.robot_spec.action_contract_version,
+            "default_pose_profile": self.robot_spec.default_pose_profile,
+            "default_joint_pos": self.robot_spec.default_joint_pos,
+            "joint_names": self.robot_joint_names,
+            "wheel_joint_names": ("FAR_FOOT_JOINT", "FBL_FOOT_JOINT", "RAR_FOOT_JOINT", "RBL_FOOT_JOINT"),
+            "position_control_count": 18, "wheel_velocity_control_count": 4,
+            "action_modes": self.robot_spec.action_modes,
+            "action_scales": self.robot_spec.action_scales,
+            "position_target_bounds": self.robot_spec.position_target_bounds,
+            "position_mapping": "asymmetric_default_to_absolute_bounds_v3;clamp_soft_limits",
+            "wheel_mapping": "clip(a,-1,1)*wheel_scale_rad_s",
         }
+        if saved_action != current_action:
+            raise ValueError("joint resume M1 Action Contract v3, pose profile, or setpoint bounds mismatch")
         snapshot = checkpoint.get("config", {})
         snapshot_scales = snapshot.get("action_scales")
-        if snapshot_scales is not None and tuple(snapshot_scales) != current_action["action_scales"]:
+        if snapshot_scales is not None and tuple(snapshot_scales) != self.robot_spec.action_scales:
             raise ValueError("joint resume action scale differs from the saved M1 actuator contract")
-        for key, expected in current_action.items():
-            if key in saved_action and tuple(saved_action[key]) != expected:
-                raise ValueError(f"joint resume M1 action contract mismatch for {key}")
-        if saved_action.get("contract_version") != "m1_mixed_action_v2":
-            raise ValueError("joint resume M1 mixed-action contract version mismatch")
         current_task_state = self.command.state_dict()
         if checkpoint.get("task_sampler_state") != current_task_state:
             raise ValueError("joint resume L/M task sampler configuration mismatch")

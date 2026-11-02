@@ -27,6 +27,7 @@ class DataCfg:
 class EnvCfg:
     robot_name: str = "g1"  # g1 | go2 | m1_piper
     task_name: str = "motion_tracking"  # motion_tracking | velocity_command | chase_ball | world_point_reach
+    m1_pose_profile: Literal["legacy_manipulation", "dataset_carry"] | None = None
     velocity_policy_encoding: Literal["direct", "encoded"] = "direct"  # encoded is for legacy Go2 checkpoints
     direct_action_output: Literal["identity", "tanh"] = "tanh"  # set identity only to resume/evaluate legacy direct checkpoints
     velocity_wm_batch_size: int = 1024
@@ -186,6 +187,7 @@ class M1JointTrainingCfg:
     resume: Path | None = None  # separate format from old M1/G1/Go2 checkpoints
     state_source: Literal["privileged", "estimated"] = "privileged"
     prior_mode: Literal["prior_mean", "prior_sample"] = "prior_mean"
+    prior_input_compatibility: Literal["legacy_v1", "train_constant_compat_v1"] = "train_constant_compat_v1"
     prior_horizon: int = 10
     actor_horizon: int = 10
     replanning_cadence: int = 10

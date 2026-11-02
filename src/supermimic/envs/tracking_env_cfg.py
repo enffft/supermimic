@@ -73,6 +73,7 @@ class SuperMimicEnvCfgArgs:
     npz_files: list[str]
     robot_name: str = "g1"
     task_name: str = "motion_tracking"
+    m1_pose_profile: Literal["legacy_manipulation", "dataset_carry"] | None = None
     num_envs: int = 4096
     future_frames: int = 10
     motion_goal_schema: Literal["root_joint", "full_body"] = "root_joint"

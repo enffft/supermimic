@@ -14,6 +14,10 @@ CONDITION_DIM = 220
 HORIZON = 10
 FUTURE_DIM = 31
 FEATURE_VERSION = "m1_cvae_motion_prior_v1_state53_goal8_future31"
+PRIOR_INPUT_COMPATIBILITY = ("legacy_v1", "train_constant_compat_v1")
+_Q6_CONDITION_INDICES = tuple(i * STATE_DIM + 30 for i in range(HISTORY))
+_QD6_CONDITION_INDICES = tuple(i * STATE_DIM + 48 for i in range(HISTORY))
+_TRAIN_CONSTANT_CONDITION_INDICES = _Q6_CONDITION_INDICES + _QD6_CONDITION_INDICES
 
 
 class _CVAECore(nn.Module):
@@ -67,29 +71,40 @@ class M1MotionPrior(nn.Module):
     feature_version = FEATURE_VERSION
 
     def __init__(self, x_mean, x_std, y_mean, y_std, latent_dim: int = 32,
-                 hidden_dim: int = 256, layers: int = 3):
+                 hidden_dim: int = 256, layers: int = 3,
+                 input_compatibility: str = "legacy_v1"):
         super().__init__()
         self.model = _CVAECore(latent_dim=latent_dim, hidden_dim=hidden_dim, layers=layers)
         self.register_buffer("x_mean", torch.as_tensor(x_mean, dtype=torch.float32).reshape(CONDITION_DIM))
         self.register_buffer("x_std", torch.as_tensor(x_std, dtype=torch.float32).reshape(CONDITION_DIM))
         self.register_buffer("y_mean", torch.as_tensor(y_mean, dtype=torch.float32).reshape(FUTURE_DIM))
         self.register_buffer("y_std", torch.as_tensor(y_std, dtype=torch.float32).reshape(FUTURE_DIM))
+        if input_compatibility not in PRIOR_INPUT_COMPATIBILITY:
+            raise ValueError(f"input_compatibility must be one of {PRIOR_INPUT_COMPATIBILITY}")
+        self.input_compatibility = input_compatibility
         if (not torch.isfinite(self.x_mean).all() or not torch.isfinite(self.x_std).all()
                 or not torch.isfinite(self.y_mean).all() or not torch.isfinite(self.y_std).all()
                 or torch.any(self.x_std <= 0) or torch.any(self.y_std <= 0)):
             raise ValueError("invalid AMP CVAE normalization")
 
-    def forward(self, state_history: torch.Tensor, task_goal: torch.Tensor, *,
-                mode: Literal["prior_mean", "prior_sample"] = "prior_mean",
-                latent_eps: torch.Tensor | None = None) -> torch.Tensor:
-        from supermimic.motion_prior.features import state_history_to_cvae53
-
-        state = state_history_to_cvae53(state_history)
-        if task_goal.shape != (state.shape[0], GOAL_DIM):
+    def forward_features(self, state_features: torch.Tensor, task_goal: torch.Tensor, *,
+                         mode: Literal["prior_mean", "prior_sample"] = "prior_mean",
+                         latent_eps: torch.Tensor | None = None) -> torch.Tensor:
+        """Run the CVAE from already encoded AMP State53 features on-device."""
+        if state_features.ndim != 3 or state_features.shape[1:] != (HISTORY, STATE_DIM):
+            raise ValueError(f"state_features must be [B,4,53], got {tuple(state_features.shape)}")
+        if task_goal.shape != (state_features.shape[0], GOAL_DIM):
             raise ValueError(f"task_goal must have shape [B,8], got {tuple(task_goal.shape)}")
-        if not task_goal.is_floating_point() or task_goal.device != state.device:
-            task_goal = task_goal.to(device=state.device, dtype=state.dtype)
-        condition = torch.cat((state.flatten(1), task_goal), dim=-1)
+        if not state_features.is_floating_point() or not torch.isfinite(state_features).all():
+            raise ValueError("state_features must be finite floating point")
+        if task_goal.device != state_features.device or task_goal.dtype != state_features.dtype:
+            task_goal = task_goal.to(device=state_features.device, dtype=state_features.dtype)
+        condition = torch.cat((state_features.flatten(1), task_goal), dim=-1)
+        if self.input_compatibility == "train_constant_compat_v1":
+            index = torch.tensor(_TRAIN_CONSTANT_CONDITION_INDICES, device=condition.device)
+            target = self.x_mean.index_select(0, index).expand(condition.shape[0], -1)
+            condition = condition.clone()
+            condition[:, index] = target
         condition = (condition - self.x_mean) / self.x_std
         mu, logvar = self.model.prior(condition)
         if mode == "prior_mean":
@@ -104,6 +119,51 @@ class M1MotionPrior(nn.Module):
             raise ValueError("mode must be 'prior_mean' or 'prior_sample'")
         normalized = self.model.decode(condition, latent)
         result = normalized * self.y_std + self.y_mean
-        if result.shape != (state.shape[0], HORIZON, FUTURE_DIM):
+        if result.shape != (state_features.shape[0], HORIZON, FUTURE_DIM):
             raise RuntimeError("AMP CVAE output violated Future31 contract")
         return result
+
+    def forward(self, state_history: torch.Tensor, task_goal: torch.Tensor, *,
+                mode: Literal["prior_mean", "prior_sample"] = "prior_mean",
+                latent_eps: torch.Tensor | None = None) -> torch.Tensor:
+        from supermimic.motion_prior.features import state_history_to_cvae53
+
+        state = state_history_to_cvae53(state_history)
+        return self.forward_features(state, task_goal, mode=mode, latent_eps=latent_eps)
+
+    @torch.no_grad()
+    def input_diagnostics(self, state_history: torch.Tensor, task_goal: torch.Tensor) -> dict[str, torch.Tensor]:
+        """Return device-native diagnostics; callers choose when to synchronize."""
+        from supermimic.motion_prior.features import state_history_to_cvae53
+
+        state_features = state_history_to_cvae53(state_history)
+        if state_features.ndim != 3 or state_features.shape[1:] != (HISTORY, STATE_DIM):
+            raise ValueError("state_features must be [B,4,53]")
+        condition = torch.cat((state_features.flatten(1), task_goal.to(state_features)), dim=-1)
+        q_idx = torch.tensor(_Q6_CONDITION_INDICES, device=condition.device)
+        qd_idx = torch.tensor(_QD6_CONDITION_INDICES, device=condition.device)
+        constant_idx = torch.tensor(_TRAIN_CONSTANT_CONDITION_INDICES, device=condition.device)
+        delta = (condition.index_select(-1, constant_idx) - self.x_mean.index_select(0, constant_idx))
+        projected_delta = delta if self.input_compatibility == "train_constant_compat_v1" else torch.zeros_like(delta)
+        normalized = (condition - self.x_mean) / self.x_std
+        if self.input_compatibility == "train_constant_compat_v1":
+            normalized = normalized.clone()
+            normalized[:, constant_idx] = 0.0
+        abs_z = normalized.abs().flatten()
+        raw_q6 = state_features[..., 30]
+        raw_qd6 = state_features[..., 48]
+        tolerance = torch.maximum(self.x_std.index_select(0, constant_idx) * 10.0,
+                                  torch.full_like(self.x_std.index_select(0, constant_idx), 1.0e-5))
+        ood = delta.abs() > tolerance
+        return {
+            "prior/input/max_abs_zscore": abs_z.max(),
+            "prior/input/p99_abs_zscore": torch.quantile(abs_z, 0.99),
+            "prior/input/constant_feature_ood_fraction": ood.to(state_features.dtype).mean(),
+            "prior/input/q6_raw": raw_q6.abs().amax(),
+            "prior/input/qd6_raw": raw_qd6.abs().amax(),
+            "prior/input/q6_normalized": normalized[:, q_idx].abs().amax(),
+            "prior/input/qd6_normalized": normalized[:, qd_idx].abs().amax(),
+            "prior/input/compat_projection_count": (delta.abs() > 0).sum().to(state_features.dtype)
+                if self.input_compatibility == "train_constant_compat_v1" else torch.zeros((), device=condition.device),
+            "prior/input/compat_projection_magnitude": projected_delta.abs().mean(),
+        }

@@ -136,6 +136,10 @@ class MixedM1Action(ActionTerm):
         self._executed_raw = torch.zeros_like(self._raw_actions)
         self._physical_setpoint = torch.zeros_like(self._raw_actions)
         self._scale = torch.tensor(cfg.action_scales, dtype=torch.float32, device=self.device).expand(self.num_envs, -1)
+        self._position_target_bounds = (
+            torch.tensor(cfg.position_target_bounds, dtype=torch.float32, device=self.device)
+            .expand(self.num_envs, -1, -1) if cfg.position_target_bounds else None
+        )
         self._noise_std = float(cfg.noise_std)
 
     @property
@@ -176,6 +180,7 @@ class MixedM1Action(ActionTerm):
         full_limits = self._entity.data.soft_joint_pos_limits[:, self._joint_ids]
         self._physical_setpoint[:] = mixed_m1_setpoints(
             self._executed_raw, q0, self._scale, self._wheel_mask, full_limits,
+            self._position_target_bounds,
         )
         position_target = self._physical_setpoint[:, self._position_action_idx]
         wheel_target = self._physical_setpoint[:, self._wheel_action_idx]
@@ -193,6 +198,7 @@ class MixedM1ActionCfg(ActionTermCfg):
     joint_names: tuple[str, ...]
     wheel_joint_names: tuple[str, ...]
     action_scales: tuple[float, ...]
+    position_target_bounds: tuple[tuple[float, float], ...] = ()
     noise_std: float = 0.1
     action_clip: float = 1.0
 

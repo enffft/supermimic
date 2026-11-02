@@ -26,6 +26,9 @@ class RobotSpec:
     foot_geom_regex: str = ".*"
     effort_limits: tuple[float, ...] = ()
     actuator_model_version: str = "mjlab_builtin_position_pd_v1"
+    default_pose_profile: str = "default_v1"
+    action_contract_version: str = "normalized_position_v1"
+    position_target_bounds: tuple[tuple[float, float], ...] = ()
 
     def __post_init__(self) -> None:
         n = len(self.joint_names)
@@ -46,6 +49,16 @@ class RobotSpec:
             raise ValueError(f"{self.name}: wheel joints are missing from action joint list")
         if self.effort_limits and len(self.effort_limits) != n:
             raise ValueError(f"{self.name}: effort_limits has {len(self.effort_limits)} entries; expected {n}")
+        if self.position_target_bounds and len(self.position_target_bounds) != n:
+            raise ValueError(f"{self.name}: position_target_bounds must have {n} entries")
+        if self.position_target_bounds:
+            for i, (mode, bounds, default) in enumerate(zip(
+                    self.action_modes, self.position_target_bounds, self.default_joint_pos)):
+                lo, hi = bounds
+                if lo > hi:
+                    raise ValueError(f"{self.name}: target bounds are inverted for {self.joint_names[i]}")
+                if mode == "position" and not lo <= default <= hi:
+                    raise ValueError(f"{self.name}: default pose is outside target bounds for {self.joint_names[i]}")
 
     @property
     def num_joints(self) -> int:
@@ -94,6 +107,38 @@ M1_DEFAULT = (
     0.0, -1.1, 2.0, 0.0,
     0.0, 2.55, -1.50, -0.80, 0.0, 0.0,
 )
+M1_CARRY_DEFAULT = (
+    0.0, 1.1, -2.0, 0.0,
+    0.0, 1.1, -2.0, 0.0,
+    0.0, -1.1, 2.0, 0.0,
+    0.0, -1.1, 2.0, 0.0,
+    0.0, 0.50, -0.40, 0.30, 0.0, 0.0,
+)
+# Absolute radians from AMP Bank v2.5 reference p1/p99 plus a 0.05 rad
+# margin, clipped to the URDF 90% soft limits and Piper SDK limits. Wheel
+# slots use explicit unused [0,0] sentinels.
+M1_POSITION_TARGET_BOUNDS_V3_BY_NAME = {
+    "FAR_ABAD_JOINT": (-0.31298, 0.36099),
+    "FAR_HIP_JOINT": (0.53814, 1.56619),
+    "FAR_KNEE_JOINT": (-2.52090, -1.66946),
+    "FBL_ABAD_JOINT": (-0.35488, 0.31071),
+    "FBL_HIP_JOINT": (0.56885, 1.58435),
+    "FBL_KNEE_JOINT": (-2.52090, -1.68615),
+    "RAR_ABAD_JOINT": (-0.30770, 0.34571),
+    "RAR_HIP_JOINT": (-1.57743, -0.61997),
+    "RAR_KNEE_JOINT": (1.57674, 2.52090),
+    "RBL_ABAD_JOINT": (-0.37172, 0.30733),
+    "RBL_HIP_JOINT": (-1.59972, -0.60404),
+    "RBL_KNEE_JOINT": (1.59689, 2.52090),
+    "piper_x_joint1": (-0.53457, 0.61986),
+    "piper_x_joint2": (0.15700, 2.84280),
+    "piper_x_joint3": (-1.88899, -0.30207),
+    "piper_x_joint4": (-0.41415, 0.60037),
+    "piper_x_joint5": (-0.36002, 0.29504),
+    # q6 has no motion support in this bank; this is a conservative bounded
+    # control envelope, not a claim that the prior learned q6 motion.
+    "piper_x_joint6": (-0.05, 0.05),
+}
 M1_ACTION_SCALES = tuple(
     5.0 if n.endswith("FOOT_JOINT") else
     0.35 if n in ("piper_x_joint2", "piper_x_joint4") else
@@ -102,7 +147,8 @@ M1_ACTION_SCALES = tuple(
 )
 
 
-def get_robot_spec(name: str) -> RobotSpec:
+def get_robot_spec(name: str, *, m1_pose_profile: str | None = None,
+                   m1_action_contract: str = "v2") -> RobotSpec:
     key = name.lower().replace("-", "_")
     if key == "g1":
         # Keep this definition aligned with mjlab's G1 asset-zoo actuator order.
@@ -148,10 +194,34 @@ def get_robot_spec(name: str) -> RobotSpec:
             actuator_model_version="go2_urdf_builtin_pd_kp40_kd1_effort_23p7_35p55_v2",
         )
     if key in ("m1", "m1_piper", "m1piper"):
+        pose_profile = m1_pose_profile or "legacy_manipulation"
+        if pose_profile not in ("legacy_manipulation", "dataset_carry"):
+            raise ValueError("M1 pose profile must be legacy_manipulation or dataset_carry")
+        if m1_action_contract not in ("v2", "v3"):
+            raise ValueError("M1 action contract must be v2 or v3")
+        defaults = M1_DEFAULT if pose_profile == "legacy_manipulation" else M1_CARRY_DEFAULT
+        action_modes = tuple(
+            "velocity" if n in M1_LEG_JOINTS and n.endswith("FOOT_JOINT") else "position"
+            for n in M1_JOINTS
+        )
+        scales = M1_ACTION_SCALES
+        target_bounds = ()
+        actuator_version = "m1_urdf_builtin_pd_v2"
+        contract_version = "m1_mixed_action_v2"
+        if m1_action_contract == "v3":
+            # Position scales are unused by v3; retaining zeros avoids implying
+            # the legacy symmetric mapping still controls physical targets.
+            scales = tuple(5.0 if mode == "velocity" else 0.0 for mode in action_modes)
+            target_bounds = tuple(M1_POSITION_TARGET_BOUNDS_V3_BY_NAME.get(n, (0.0, 0.0)) for n in M1_JOINTS)
+            for joint_name, q0, bounds in zip(M1_JOINTS, defaults, target_bounds):
+                if joint_name in M1_POSITION_TARGET_BOUNDS_V3_BY_NAME and not bounds[0] <= q0 <= bounds[1]:
+                    raise ValueError(f"M1 pose {pose_profile} default for {joint_name} is outside v3 target bounds")
+            actuator_version = f"m1_urdf_builtin_pd_action_contract_v3_{pose_profile}_v1"
+            contract_version = "m1_mixed_action_v3"
         return RobotSpec(
-            name="m1_piper", joint_names=M1_JOINTS, default_joint_pos=M1_DEFAULT,
-            action_modes=tuple("velocity" if n in M1_LEG_JOINTS and n.endswith("FOOT_JOINT") else "position" for n in M1_JOINTS),
-            action_scales=M1_ACTION_SCALES,
+            name="m1_piper", joint_names=M1_JOINTS, default_joint_pos=defaults,
+            action_modes=action_modes,
+            action_scales=scales,
             kp=tuple(0.0 if n.endswith("FOOT_JOINT") else (32.0 if n.startswith("piper_") else 250.0) for n in M1_JOINTS),
             kd=tuple(0.5 if n.endswith("FOOT_JOINT") else (1.0 if n.startswith("piper_") else 9.0) for n in M1_JOINTS),
             default_base_height=0.3892858, control_dt=0.02,
@@ -160,5 +230,10 @@ def get_robot_spec(name: str) -> RobotSpec:
             model_path=Path("/home/yifeiy/AMP-LOCO-M1/resources/robots/zg_m1_piper_x/zg_m1_piper_x.urdf"),
             wheel_joint_names=tuple(n for n in M1_LEG_JOINTS if n.endswith("FOOT_JOINT")),
             amp_joint_names=M1_AMP_JOINTS, foot_geom_regex=r".*FOOT.*",
+            actuator_model_version=actuator_version,
+            default_pose_profile=("m1_pose_dataset_carry_v1" if pose_profile == "dataset_carry"
+                                  else "m1_pose_legacy_manipulation_v1"),
+            action_contract_version=contract_version,
+            position_target_bounds=target_bounds,
         )
     raise ValueError(f"unknown robot {name!r}; choose g1, go2, or m1_piper")

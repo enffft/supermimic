@@ -95,7 +95,17 @@ class Trainer:
             raise ValueError("M1 joint runs use --m1-joint-training.resume, not the legacy --resume format")
         if cfg.m1_joint_training.resume is not None and cfg.init_wm_from is not None:
             raise ValueError("M1 joint resume includes the WM; do not also pass --init-wm-from")
-        robot_spec = get_robot_spec(cfg.env.robot_name)
+        is_m1_prior_joint = cfg.env.task_name == "m1_prior_joint"
+        if is_m1_prior_joint:
+            cfg.env.m1_pose_profile = cfg.env.m1_pose_profile or "dataset_carry"
+            robot_spec = get_robot_spec(
+                cfg.env.robot_name,
+                m1_pose_profile=cfg.env.m1_pose_profile,
+                m1_action_contract="v3",
+            )
+        else:
+            robot_spec = get_robot_spec(cfg.env.robot_name)
+        self.robot_spec = robot_spec
         self.robot_joint_names = tuple(robot_spec.joint_names)
         self.actuator_model_version = robot_spec.actuator_model_version
         self.robot_model_sha256 = (
@@ -258,6 +268,7 @@ class Trainer:
                 npz_files=[str(f) for f in files],
                 robot_name=robot_spec.name,
                 task_name=cfg.env.task_name,
+                m1_pose_profile=cfg.env.m1_pose_profile,
                 num_envs=cfg.env.num_envs,
                 history_length=cfg.env.history_length,
                 future_frames=cfg.env.future_frames,
@@ -479,6 +490,7 @@ class Trainer:
                 cfg.m1_joint_training.prior_checkpoint,
                 device=self.device,
                 expected_sha256=cfg.m1_joint_training.expected_prior_sha256,
+                input_compatibility=cfg.m1_joint_training.prior_input_compatibility,
             )
             tcp_index = heads.fk.body_index("piper_x_link7")
             self.m1_joint_trainer = M1AlternatingTrainer(
@@ -495,6 +507,7 @@ class Trainer:
                 robot_joint_names=self.robot_joint_names,
                 robot_model_sha256=self.robot_model_sha256,
                 command=self.command,
+                robot_spec=robot_spec,
             )
             if cfg.m1_joint_training.resume is not None:
                 self._load_m1_joint_checkpoint(cfg.m1_joint_training.resume)
@@ -502,7 +515,8 @@ class Trainer:
                 print(
                     f"[INFO] M1 CVAE strict load: {prior.source['path']} "
                     f"sha256={prior.source['sha256']} step={prior.source['step']}; "
-                    f"prior_state_source={cfg.m1_joint_training.state_source}", flush=True,
+                    f"prior_state_source={cfg.m1_joint_training.state_source}; "
+                    f"input_compatibility={prior.input_compatibility}", flush=True,
                 )
         else:
             self.policy_trainer = PolicyTrainer(self.wm, self.policy, self.critic, self.task, cfg.policy_trainer)
@@ -618,7 +632,7 @@ class Trainer:
                 "pretrained World Model robot URDF fingerprint is incompatible: "
                 f"saved={saved_model_hash!r}, current={self.robot_model_sha256!r}"
             )
-        current_robot_spec = get_robot_spec(current_robot)
+        current_robot_spec = self.robot_spec
         physical_fields = {
             "control_dt": float(current_robot_spec.control_dt),
             "action_modes": tuple(current_robot_spec.action_modes),
@@ -641,7 +655,7 @@ class Trainer:
             new = getattr(self.cfg.world_model, key)
             if old != new:
                 raise ValueError(f"pretrained World Model {key} mismatch: saved={old}, current={new}")
-        current_spec = get_robot_spec(current_robot)
+        current_spec = self.robot_spec
         expected_dims = {"num_joints": current_spec.num_joints, "action_dim": current_spec.num_joints, "xi_dim": current_spec.num_joints + 4}
         for key, expected in expected_dims.items():
             actual = saved_wm.get(key)
@@ -732,11 +746,14 @@ class Trainer:
             "init_wm_source_iteration": self.init_wm_source_iteration,
             "effective_wm_only_updates": self._effective_wm_only_target(),
             "control_dt": self.cfg.world_model.state_spec.dt,
-            "action_modes": tuple(get_robot_spec(self.cfg.env.robot_name).action_modes),
-            "action_scales": tuple(get_robot_spec(self.cfg.env.robot_name).action_scales),
-            "kp": tuple(get_robot_spec(self.cfg.env.robot_name).kp),
-            "kd": tuple(get_robot_spec(self.cfg.env.robot_name).kd),
-            "effort_limits": tuple(get_robot_spec(self.cfg.env.robot_name).effort_limits),
+            "action_modes": tuple(self.robot_spec.action_modes),
+            "action_scales": tuple(self.robot_spec.action_scales),
+            "position_target_bounds": tuple(self.robot_spec.position_target_bounds),
+            "default_pose_profile": self.robot_spec.default_pose_profile,
+            "action_contract_version": self.robot_spec.action_contract_version,
+            "kp": tuple(self.robot_spec.kp),
+            "kd": tuple(self.robot_spec.kd),
+            "effort_limits": tuple(self.robot_spec.effort_limits),
         })
         return config
 

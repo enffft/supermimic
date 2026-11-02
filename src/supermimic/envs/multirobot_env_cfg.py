@@ -34,7 +34,12 @@ from supermimic.tasks.world_point_reward import WORLD_POINT_REWARD_NAMES, m1_pri
 
 
 def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
-    robot = get_robot_spec(a.robot_name)
+    prior_joint_task = a.task_name == "m1_prior_joint"
+    pose_profile = a.m1_pose_profile or ("dataset_carry" if prior_joint_task else "legacy_manipulation")
+    robot = get_robot_spec(
+        a.robot_name, m1_pose_profile=pose_profile,
+        m1_action_contract="v3" if prior_joint_task else "v2",
+    )
     motion_task = a.task_name == "motion_tracking"
     velocity_task = a.task_name == "velocity_command"
     chase_task = a.task_name == "chase_ball"
@@ -107,6 +112,7 @@ def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
             "mixed": MixedM1ActionCfg(
                 entity_name="robot", joint_names=robot.joint_names,
                 wheel_joint_names=robot.wheel_joint_names, action_scales=robot.action_scales,
+                position_target_bounds=robot.position_target_bounds,
                 noise_std=a.action_noise_std,
             )
         }
@@ -383,7 +389,7 @@ def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
     nconmax = 128 if robot.name == "go2" else 256
     njmax = 512 if robot.name == "go2" else 1024
     return ManagerBasedRlEnvCfg(
-        scene=SceneCfg(terrain=TerrainEntityCfg(terrain_type="plane"), num_envs=a.num_envs, entities={"robot": get_robot_entity_cfg(robot.name)}),
+        scene=SceneCfg(terrain=TerrainEntityCfg(terrain_type="plane"), num_envs=a.num_envs, entities={"robot": get_robot_entity_cfg(robot)}),
         observations=observations, actions=actions, commands=commands, events=events,
         rewards=rewards, terminations=terminations, recorders=recorders,
         viewer=ViewerConfig(origin_type=ViewerConfig.OriginType.ASSET_BODY, entity_name="robot", body_name=robot.root_body_name, distance=2.8, fovy=55.0, elevation=-5.0, azimuth=120.0),

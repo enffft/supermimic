@@ -1278,3 +1278,163 @@ class WorldPointCommandCfg(CommandTermCfg):
 
     def build(self, env: ManagerBasedRlEnv) -> WorldPointCommand:
         return WorldPointCommand(self, env)
+
+
+class M1PriorJointCommand(CommandTerm):
+    """Episode-fixed L/M context for the optional CVAE joint-training task.
+
+    L velocity commands and M world targets are sampled once per episode. This
+    avoids a hidden command-resampling event inside a 10-step imagined window.
+    ``task_type`` is 0=L, 1=M; LM is intentionally not sampled by v1.
+    """
+
+    cfg: M1PriorJointCommandCfg
+
+    def __init__(self, cfg: M1PriorJointCommandCfg, env: ManagerBasedRlEnv):
+        super().__init__(cfg, env)
+        self.robot = env.scene[cfg.entity_name]
+        self.task_type = torch.zeros(self.num_envs, dtype=torch.long, device=self.device)
+        self.velocity_command_body = torch.zeros(self.num_envs, 3, device=self.device)
+        self.target_position_world = torch.zeros(self.num_envs, 3, device=self.device)
+        self.initial_base_position_world = torch.zeros(self.num_envs, 3, device=self.device)
+        self._tcp_body_ids = torch.tensor(
+            [self.robot.body_names.index("piper_x_link7")], dtype=torch.long, device=self.device,
+        )
+        self._hold_seconds = torch.zeros(self.num_envs, device=self.device)
+        self._episode_success = torch.zeros(self.num_envs, dtype=torch.bool, device=self.device)
+        self.metrics["base_velocity_error"] = torch.zeros(self.num_envs, device=self.device)
+        self.metrics["yaw_rate_error"] = torch.zeros(self.num_envs, device=self.device)
+        self.metrics["ee_distance"] = torch.zeros(self.num_envs, device=self.device)
+        self.metrics["ee_progress"] = torch.zeros(self.num_envs, device=self.device)
+        self.metrics["base_displacement"] = torch.zeros(self.num_envs, device=self.device)
+        self.metrics["ee_success"] = torch.zeros(self.num_envs, device=self.device)
+        self._last_ee_distance = torch.zeros(self.num_envs, device=self.device)
+
+    @property
+    def goal(self) -> torch.Tensor:
+        return torch.cat((self.task_type[:, None].to(self.velocity_command_body.dtype),
+                          self.velocity_command_body, self.target_position_world), dim=-1)
+
+    @property
+    def command(self) -> torch.Tensor:
+        return self.goal
+
+    def _resample_command(self, env_ids: torch.Tensor) -> None:
+        if env_ids.numel() == 0:
+            return
+        if self.cfg.task_type == "balanced":
+            self.task_type[env_ids] = (torch.rand(env_ids.numel(), device=self.device) >= self.cfg.l_task_fraction).long()
+        else:
+            self.task_type[env_ids] = 0 if self.cfg.task_type == "L" else 1
+        for i, bounds in enumerate((self.cfg.vx_range, self.cfg.vy_range, self.cfg.wz_range)):
+            self.velocity_command_body[env_ids, i] = bounds[0] + torch.rand(env_ids.numel(), device=self.device) * (bounds[1] - bounds[0])
+        self.target_position_world[env_ids] = 0.0
+        self._hold_seconds[env_ids] = 0.0
+        self._episode_success[env_ids] = False
+
+    def _update_command(self, env_ids: torch.Tensor | None) -> None:
+        # L/M commands stay fixed throughout an episode. Reach targets are set
+        # in compute() after the simulator forwards the reset pose.
+        del env_ids
+
+    def _set_reach_targets(self, env_ids: torch.Tensor) -> None:
+        if env_ids.numel() == 0:
+            return
+        root_pos = self.robot.data.root_link_pos_w[env_ids]
+        root_quat = self.robot.data.root_link_quat_w[env_ids]
+        env_origins = self._env.scene.env_origins[env_ids]
+        tcp = self.robot.data.body_link_pos_w[env_ids][:, self._tcp_body_ids].mean(dim=1)
+        offsets = torch.zeros(env_ids.numel(), 3, device=self.device)
+        for axis, bounds in enumerate((self.cfg.target_x_range, self.cfg.target_y_range, self.cfg.target_z_range)):
+            offsets[:, axis] = bounds[0] + torch.rand(env_ids.numel(), device=self.device) * (bounds[1] - bounds[0])
+        target = tcp + quat_apply(yaw_quat(root_quat), offsets)
+        local_target = target - env_origins
+        local_target[:, 2].clamp_(self.cfg.minimum_target_height, self.cfg.maximum_target_height)
+        self.target_position_world[env_ids] = local_target
+        self.initial_base_position_world[env_ids] = root_pos - env_origins
+        self._update_metrics()
+        self._last_ee_distance[env_ids] = self.metrics["ee_distance"][env_ids]
+
+    def compute(self, dt: float | torch.Tensor, env_ids: torch.Tensor | None = None) -> None:
+        super().compute(dt, env_ids)
+        if env_ids is not None:
+            reset_ids = env_ids if float(dt) == 0.0 else env_ids[:0]
+        elif isinstance(dt, torch.Tensor):
+            reset_ids = (dt.reshape(-1) <= 0.0).nonzero(as_tuple=False).flatten()
+        else:
+            reset_ids = torch.empty(0, dtype=torch.long, device=self.device)
+        if reset_ids.numel():
+            self._set_reach_targets(reset_ids)
+        self._update_metrics()
+
+    def _update_metrics(self) -> None:
+        root_pos = self.robot.data.root_link_pos_w - self._env.scene.env_origins
+        q = self.robot.data.root_link_quat_w
+        from supermimic.kinematics.rotations import quat_apply_inverse
+
+        body_v = quat_apply_inverse(q, self.robot.data.root_link_lin_vel_w)
+        body_w = self.robot.data.root_link_ang_vel_b
+        self.metrics["base_velocity_error"] = torch.linalg.vector_norm(body_v - self.velocity_command_body, dim=-1)
+        self.metrics["yaw_rate_error"] = (body_w[:, 2] - self.velocity_command_body[:, 2]).abs()
+        tcp = self.robot.data.body_link_pos_w[:, self._tcp_body_ids].mean(dim=1) - self._env.scene.env_origins
+        distance = torch.linalg.vector_norm(tcp - self.target_position_world, dim=-1)
+        self.metrics["ee_distance"] = torch.where(self.task_type == 1, distance, torch.zeros_like(distance))
+        self.metrics["base_displacement"] = torch.linalg.vector_norm(root_pos - self.initial_base_position_world, dim=-1)
+        self.metrics["ee_success"] = ((distance < self.cfg.success_distance) & (self.task_type == 1)).float()
+
+    def record_real_step(self) -> None:
+        self._update_metrics()
+        distance = self.metrics["ee_distance"]
+        progress = self._last_ee_distance - distance
+        self.metrics["ee_progress"] = torch.where(self.task_type == 1, progress, torch.zeros_like(progress))
+        self._last_ee_distance = distance.clone()
+        within = (distance < self.cfg.success_distance) & (self.task_type == 1)
+        self._hold_seconds = torch.where(within, self._hold_seconds + float(self._env.step_dt), torch.zeros_like(self._hold_seconds))
+        self._episode_success |= self._hold_seconds >= 0.5
+
+    def state_dict(self) -> dict:
+        return {
+            "task_type": self.cfg.task_type,
+            "l_task_fraction": self.cfg.l_task_fraction,
+            "vx_range": tuple(self.cfg.vx_range),
+            "vy_range": tuple(self.cfg.vy_range),
+            "wz_range": tuple(self.cfg.wz_range),
+            "target_x_range": tuple(self.cfg.target_x_range),
+            "target_y_range": tuple(self.cfg.target_y_range),
+            "target_z_range": tuple(self.cfg.target_z_range),
+            "minimum_target_height": float(self.cfg.minimum_target_height),
+            "maximum_target_height": float(self.cfg.maximum_target_height),
+            "success_distance": float(self.cfg.success_distance),
+        }
+
+
+@dataclass(kw_only=True)
+class M1PriorJointCommandCfg(CommandTermCfg):
+    entity_name: str = "robot"
+    task_type: str = "balanced"  # balanced | L | M
+    l_task_fraction: float = 0.5
+    vx_range: tuple[float, float] = (0.15, 0.50)
+    vy_range: tuple[float, float] = (-0.20, 0.20)
+    wz_range: tuple[float, float] = (-0.40, 0.40)
+    target_x_range: tuple[float, float] = (0.12, 0.36)
+    target_y_range: tuple[float, float] = (-0.20, 0.20)
+    target_z_range: tuple[float, float] = (-0.15, 0.15)
+    minimum_target_height: float = 0.10
+    maximum_target_height: float = 1.20
+    success_distance: float = 0.08
+    resampling_time_range: tuple[float, float] = (1.0e9, 1.0e9)
+
+    def __post_init__(self):
+        if self.task_type not in ("balanced", "L", "M"):
+            raise ValueError("M1 joint task_type must be balanced, L, or M; LM is not enabled in v1")
+        if not 0.0 <= self.l_task_fraction <= 1.0:
+            raise ValueError("l_task_fraction must be within [0,1]")
+        for key in ("vx_range", "vy_range", "wz_range", "target_x_range", "target_y_range", "target_z_range"):
+            bounds = getattr(self, key)
+            if len(bounds) != 2 or bounds[0] > bounds[1]:
+                raise ValueError(f"{key} must be an ordered range")
+        if not 0 < self.success_distance or not 0 < self.minimum_target_height < self.maximum_target_height:
+            raise ValueError("M1 prior target bounds are invalid")
+
+    def build(self, env: ManagerBasedRlEnv) -> M1PriorJointCommand:
+        return M1PriorJointCommand(self, env)

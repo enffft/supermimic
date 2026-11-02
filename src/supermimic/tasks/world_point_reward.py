@@ -212,3 +212,8 @@ def m1_world_point_reward_term(
     if term_name not in cache["terms"]:
         raise KeyError(f"unknown world_point_reach reward {term_name!r}")
     return cache["terms"][term_name]
+
+
+def m1_prior_data_collection_reward(env) -> torch.Tensor:
+    """Zero reward for the prior-joint sampler; its objectives are explicit losses."""
+    return torch.zeros(env.num_envs, dtype=torch.float32, device=env.device)

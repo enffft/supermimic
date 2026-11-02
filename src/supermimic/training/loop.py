@@ -19,7 +19,9 @@ from supermimic.envs.mdp.motion_library import discover_npz
 from supermimic.imagination.tasks import ChaseBallTask, MotionTrackingTask, VelocityCommandTask, WorldPointReachTask
 from supermimic.imagination.policy_trainer import PolicyTrainer
 from supermimic.kinematics.g1_fk import G1Kinematics
-from supermimic.policy.nets import Critic, Policy
+from supermimic.policy.nets import Critic, Policy, M1PriorActorCfg, M1PriorConditionedActor
+from supermimic.motion_prior import load_m1_motion_prior
+from supermimic.motion_prior.trainer import M1AlternatingTrainer
 from supermimic.robots.mjlab_assets import load_robot_spec_model
 from supermimic.robots.spec import get_robot_spec
 from supermimic.training.distributed import allreduce_mean, broadcast_params, finalize, init_distributed, world_size
@@ -63,6 +65,8 @@ class Trainer:
             return requested
         name = get_robot_spec(robot_name).name
         if name == "m1_piper":
+            if task_name == "m1_prior_joint":
+                return 16
             return 256 if task_name == "world_point_reach" else 2048
         return 3072 if name == "go2" else 4096
 
@@ -70,6 +74,10 @@ class Trainer:
         self.cfg = cfg
         if cfg.resume is not None and cfg.init_wm_from is not None:
             raise ValueError("--resume and --init-wm-from are mutually exclusive")
+        if cfg.m1_joint_training.enabled and cfg.resume is not None:
+            raise ValueError("M1 joint runs use --m1-joint-training.resume, not the legacy --resume format")
+        if cfg.m1_joint_training.resume is not None and cfg.init_wm_from is not None:
+            raise ValueError("M1 joint resume includes the WM; do not also pass --init-wm-from")
         robot_spec = get_robot_spec(cfg.env.robot_name)
         self.robot_joint_names = tuple(robot_spec.joint_names)
         self.actuator_model_version = robot_spec.actuator_model_version
@@ -83,16 +91,29 @@ class Trainer:
         is_velocity = cfg.env.task_name == "velocity_command"
         is_chase = cfg.env.task_name == "chase_ball"
         is_world_point = cfg.env.task_name == "world_point_reach"
-        if cfg.env.task_name not in ("motion_tracking", "velocity_command", "chase_ball", "world_point_reach"):
+        is_m1_prior_joint = cfg.env.task_name == "m1_prior_joint"
+        if cfg.m1_joint_training.enabled != is_m1_prior_joint:
+            raise ValueError("m1_joint_training.enabled and env.task_name='m1_prior_joint' must be enabled together")
+        if cfg.env.task_name not in ("motion_tracking", "velocity_command", "chase_ball", "world_point_reach", "m1_prior_joint"):
             raise ValueError(f"unknown task {cfg.env.task_name!r}")
+        if is_m1_prior_joint and cfg.env.obs_noise:
+            raise ValueError(
+                "M1 prior/Actor v1 reconstructs noise-free proprioception for BPTT; "
+                "run with --env.no-obs-noise until observation noise is replayed explicitly"
+            )
+        if is_m1_prior_joint and cfg.env.action_noise_std != 0.0:
+            raise ValueError(
+                "M1 prior/Actor v1 imagines deterministic MixedM1Action; "
+                "run with --env.action-noise-std 0 until action noise is modeled in BPTT"
+            )
         if (is_velocity or is_chase) and robot_spec.name != "go2":
             raise ValueError(f"{cfg.env.task_name} is currently supported only for Go2")
-        if is_world_point and robot_spec.name != "m1_piper":
-            raise ValueError("world_point_reach is currently supported only for M1-Piper")
+        if (is_world_point or is_m1_prior_joint) and robot_spec.name != "m1_piper":
+            raise ValueError(f"{cfg.env.task_name} is currently supported only for M1-Piper")
         if robot_spec.name == "go2" and not (is_velocity or is_chase):
             raise ValueError("Go2 has no Motion Library; select velocity_command or chase_ball")
-        if robot_spec.name == "m1_piper" and not (is_motion or is_world_point):
-            raise ValueError("M1-Piper supports motion_tracking and world_point_reach")
+        if robot_spec.name == "m1_piper" and not (is_motion or is_world_point or is_m1_prior_joint):
+            raise ValueError("M1-Piper supports motion_tracking, world_point_reach, and opt-in m1_prior_joint")
         if cfg.env.anchor_obs is None:
             cfg.env.anchor_obs = robot_spec.name == "m1_piper" and is_motion
         if cfg.env.anchor_obs and cfg.env.anchor_orientation_obs:
@@ -120,16 +141,25 @@ class Trainer:
         elif is_world_point:
             cfg.wm_trainer.batch_size = cfg.env.m1_world_point_wm_batch_size
             cfg.policy_trainer.batch_size = cfg.env.m1_world_point_actor_batch_size
+        elif is_m1_prior_joint:
+            cfg.env.m1_joint_task_type = cfg.m1_joint_training.task_type
+            cfg.env.m1_joint_l_task_fraction = cfg.m1_joint_training.l_task_fraction
+            cfg.wm_trainer.batch_size = cfg.m1_joint_training.batch_size
+            cfg.wm_trainer.micro_batch_size = min(
+                cfg.wm_trainer.micro_batch_size or cfg.m1_joint_training.micro_batch_size,
+                cfg.m1_joint_training.micro_batch_size,
+            )
+            cfg.wm_trainer.batches_per_update = max(cfg.wm_trainer.batches_per_update, 1)
 
         # Build every network dimension from the selected robot/task while leaving the
         # default G1 values and initialization path unchanged.
         n_joints = robot_spec.num_joints
         full_body_goal = is_motion and robot_spec.name == "g1" and cfg.env.motion_goal_schema == "full_body"
-        goal_term_sizes = (268,) if full_body_goal else (robot_spec.amp_dim, robot_spec.amp_dim, 3, 3, 3, 1) if is_motion else (3, 3) if is_chase else (3,)
-        goal_term_scale = (1.0,) if full_body_goal else (1.0, 5.0, 1.0, 2.0, 1.0, 1.0) if is_motion else (1.0, 1.0) if is_chase else (1.0,)
+        goal_term_sizes = (268,) if full_body_goal else (robot_spec.amp_dim, robot_spec.amp_dim, 3, 3, 3, 1) if is_motion else (3, 3) if is_chase else (8,) if is_m1_prior_joint else (3,)
+        goal_term_scale = (1.0,) if full_body_goal or is_m1_prior_joint else (1.0, 5.0, 1.0, 2.0, 1.0, 1.0) if is_motion else (1.0, 1.0) if is_chase else (1.0,)
         anchor_dim = 9 if cfg.env.anchor_obs else 6 if cfg.env.anchor_orientation_obs else 0
         per_frame_goal_dim = 268 if full_body_goal else (2 * robot_spec.amp_dim + 10)
-        goal_dim = cfg.env.future_frames * per_frame_goal_dim + anchor_dim if is_motion else 6 if is_chase else 3
+        goal_dim = cfg.env.future_frames * per_frame_goal_dim + anchor_dim if is_motion else 6 if is_chase else 8 if is_m1_prior_joint else 3
         cfg.policy.num_joints = n_joints
         cfg.policy.history = cfg.env.history_length
         # The imagination rollout must use the same flattened observation
@@ -137,10 +167,10 @@ class Trainer:
         # task overrides the default (Go2-SuperMimic uses five frames).
         cfg.policy_trainer.history = cfg.env.history_length
         cfg.policy.goal_dim = goal_dim
-        cfg.policy.goal_interface = "motion" if is_motion else "velocity" if is_velocity else "chase_ball" if is_chase else "world_point_reach"
+        cfg.policy.goal_interface = "motion" if is_motion else "velocity" if is_velocity else "chase_ball" if is_chase else "m1_prior_joint" if is_m1_prior_joint else "world_point_reach"
         # Keep G1/M1 on the original encoded goal path; only Go2 gets the compact
         # proprioception + velocity-command actor.
-        cfg.policy.goal_encoding = cfg.env.velocity_policy_encoding if is_velocity else "direct" if (is_world_point or is_chase) else "encoded"
+        cfg.policy.goal_encoding = cfg.env.velocity_policy_encoding if is_velocity else "direct" if (is_world_point or is_chase or is_m1_prior_joint) else "encoded"
         # Direct task actors must stay inside the action interval during BPTT.
         # A smooth tanh has useful gradients near the boundary, unlike relying on
         # a hard execution clamp after an unbounded decoder. Old checkpoints omit
@@ -168,6 +198,8 @@ class Trainer:
 
         self.rank, local_rank, self.world = init_distributed()
         self.is_main = self.rank == 0
+        if is_m1_prior_joint and self.world > 1:
+            raise NotImplementedError("M1 prior/Actor joint training is currently single-GPU only")
         if self.world > 1:
             cfg.device = f"cuda:{local_rank}"
             # Paper: lr x sqrt(2) for 2 GPUs (each GPU keeps its own 4096 envs and buffer).
@@ -292,12 +324,20 @@ class Trainer:
                 m1_joint_velocity_weight=cfg.env.m1_joint_velocity_weight,
                 m1_joint_acceleration_weight=cfg.env.m1_joint_acceleration_weight,
                 m1_leg_action_magnitude_weight=cfg.env.m1_leg_action_magnitude_weight,
+                m1_joint_task_type=cfg.env.m1_joint_task_type,
+                m1_joint_l_task_fraction=cfg.env.m1_joint_l_task_fraction,
+                m1_joint_vx_range=cfg.env.m1_joint_vx_range,
+                m1_joint_vy_range=cfg.env.m1_joint_vy_range,
+                m1_joint_wz_range=cfg.env.m1_joint_wz_range,
+                m1_joint_target_x_range=cfg.env.m1_joint_target_x_range,
+                m1_joint_target_y_range=cfg.env.m1_joint_target_y_range,
+                m1_joint_target_z_range=cfg.env.m1_joint_target_z_range,
                 seed=cfg.seed + 1000 * self.rank,
             ),
             device=self.device,
         )
         env = self.env
-        command_name = "motion" if is_motion else "velocity" if is_velocity else "chase_ball" if is_chase else "world_point"
+        command_name = "motion" if is_motion else "velocity" if is_velocity else "chase_ball" if is_chase else "m1_prior_joint" if is_m1_prior_joint else "world_point"
         self.command = env.command_manager.get_term(command_name)
         self.lib = getattr(self.command, "library", None)
         self.recorder = env.recorder_manager.get_term("replay")
@@ -318,8 +358,12 @@ class Trainer:
         )
         self.wm = WorldModel(cfg.world_model, heads, self.device)
         self.recorder.real_transition_callback = self.wm.update_real_transition
-        self.policy = Policy(cfg.policy).to(self.device)
-        self.critic = Critic(cfg.critic, feat_dim=self.wm.spec.feat_dim, goal_dim=goal_dim, xi_dim=n_joints + 4, pcfg=cfg.policy).to(self.device)
+        if is_m1_prior_joint:
+            self.policy = M1PriorConditionedActor(M1PriorActorCfg(history=cfg.env.history_length)).to(self.device)
+            self.critic = None  # v1 deliberately uses two separate critic-free BPTT objectives
+        else:
+            self.policy = Policy(cfg.policy).to(self.device)
+            self.critic = Critic(cfg.critic, feat_dim=self.wm.spec.feat_dim, goal_dim=goal_dim, xi_dim=n_joints + 4, pcfg=cfg.policy).to(self.device)
         self.pretrained_wm = False
         self.init_wm_from_path: str | None = None
         self.init_wm_sha256: str | None = None
@@ -385,7 +429,7 @@ class Trainer:
                 fall_height=cfg.env.velocity_fall_height,
                 fall_tilt_deg=cfg.env.velocity_fall_tilt_deg,
             )
-        else:
+        elif is_world_point:
             tcp_indices = m1_tcp_proxy_indices(heads.fk)
             world_point_params = WorldPointRobotParams(
                 default_joint_pos=robot.data.default_joint_pos[0].detach().clone(),
@@ -403,13 +447,51 @@ class Trainer:
                 tcp_body_indices=tcp_indices,
                 dt=robot_spec.control_dt,
             )
+        else:
+            self.task = None
         for m in (self.wm, self.policy, self.critic):
+            if m is None:
+                continue
             broadcast_params(m)
         self.wm_trainer = WorldModelTrainer(self.wm, self.lib, cfg.wm_trainer)
-        self.policy_trainer = PolicyTrainer(self.wm, self.policy, self.critic, self.task, cfg.policy_trainer)
+        self.policy_trainer = None
+        self.m1_joint_trainer = None
+        if is_m1_prior_joint:
+            prior = load_m1_motion_prior(
+                cfg.m1_joint_training.prior_checkpoint,
+                device=self.device,
+                expected_sha256=cfg.m1_joint_training.expected_prior_sha256,
+            )
+            tcp_index = heads.fk.body_index("piper_x_link7")
+            self.m1_joint_trainer = M1AlternatingTrainer(
+                wm=self.wm,
+                wm_trainer=self.wm_trainer,
+                prior=prior,
+                actor=self.policy,
+                buffer=self.buffer,
+                default_joint_pos=robot.data.default_joint_pos[0].detach().clone(),
+                soft_limits=robot.data.soft_joint_pos_limits[0].detach().clone(),
+                fk=heads.fk,
+                tcp_index=tcp_index,
+                cfg=cfg.m1_joint_training,
+                robot_joint_names=self.robot_joint_names,
+                robot_model_sha256=self.robot_model_sha256,
+                command=self.command,
+            )
+            if cfg.m1_joint_training.resume is not None:
+                self._load_m1_joint_checkpoint(cfg.m1_joint_training.resume)
+            if self.is_main:
+                print(
+                    f"[INFO] M1 CVAE strict load: {prior.source['path']} "
+                    f"sha256={prior.source['sha256']} step={prior.source['step']}; "
+                    f"prior_state_source={cfg.m1_joint_training.state_source}", flush=True,
+                )
+        else:
+            self.policy_trainer = PolicyTrainer(self.wm, self.policy, self.critic, self.task, cfg.policy_trainer)
         n_params = lambda m: sum(p.numel() for p in m.parameters())  # noqa: E731
         if self.is_main:
-            print(f"[INFO] params: world model {n_params(self.wm)/1e6:.2f}M, policy {n_params(self.policy)/1e6:.2f}M, critic {n_params(self.critic)/1e6:.3f}M")
+            critic_count = n_params(self.critic) / 1e6 if self.critic is not None else 0.0
+            print(f"[INFO] params: world model {n_params(self.wm)/1e6:.2f}M, policy {n_params(self.policy)/1e6:.2f}M, critic {critic_count:.3f}M")
 
         # Episode statistics of the training env (paper's "training return").
         self.ep_reward_sum = torch.zeros(env.num_envs, device=self.device)
@@ -421,6 +503,7 @@ class Trainer:
         self.is_go2_task = self.is_go2_velocity or self.is_go2_chase
         self.is_m1_motion = robot_spec.name == "m1_piper" and is_motion
         self.is_m1_world_point = robot_spec.name == "m1_piper" and is_world_point
+        self.is_m1_prior_joint = robot_spec.name == "m1_piper" and is_m1_prior_joint
         self.go2_action_stats = self._empty_go2_action_stats() if self.is_go2_task else None
         self.task_diag_sum: dict[str, torch.Tensor] = {}
         self.motion_names = [Path(f).stem for f in files]
@@ -452,7 +535,9 @@ class Trainer:
         self.actor_updates = 0
         self.actor_start_iteration: int | None = None
         self._utd_acc = 0.0
-        if cfg.resume is not None:
+        if cfg.m1_joint_training.resume is not None:
+            self._load_m1_joint_checkpoint(cfg.m1_joint_training.resume)
+        elif cfg.resume is not None:
             self.load(cfg.resume)
         if self.is_main:
             (self.log_dir / "config.json").write_text(
@@ -494,7 +579,7 @@ class Trainer:
         current_task = self.cfg.env.task_name
         compatible_tasks = {
             "go2": {"velocity_command", "chase_ball"},
-            "m1_piper": {"world_point_reach"},
+            "m1_piper": {"world_point_reach", "m1_prior_joint"},
         }
         if saved_robot != current_robot:
             raise ValueError(f"--init-wm-from robot mismatch: saved={saved_robot!r}, current={current_robot!r}")
@@ -599,7 +684,12 @@ class Trainer:
     def _effective_wm_only_target(self) -> int:
         if getattr(self, "is_go2_task", False):
             return 0 if self.pretrained_wm else int(self.cfg.schedule.wm_only_iterations)
-        if self.is_m1_motion or getattr(self, "is_m1_world_point", False):
+        if getattr(self, "is_m1_prior_joint", False):
+            # The new Planner is sensitive to WM extrapolation error even when
+            # weights came from native M1 Reach. Refit/evaluate on this run's
+            # collected distribution before allowing a Planner update.
+            return int(self.cfg.schedule.m1_wm_only_iterations)
+        if self.is_m1_motion or getattr(self, "is_m1_world_point", False) or getattr(self, "is_m1_prior_joint", False):
             return 0 if self.pretrained_wm else int(self.cfg.schedule.m1_wm_only_iterations)
         if self.cfg.env.robot_name == "g1" and self.cfg.env.task_name == "motion_tracking":
             return int(self.cfg.schedule.g1_motion_wm_only_updates)
@@ -644,6 +734,27 @@ class Trainer:
 
     def save(self, name: str = "ckpt_latest.pt") -> None:
         if not self.is_main:
+            return
+        if self.is_m1_prior_joint:
+            state = self.m1_joint_trainer.checkpoint(
+                iteration=self.iteration,
+                config_snapshot=self._run_config_snapshot(),
+                command_state=self.command.state_dict(),
+                wm_only_updates=self.wm_only_updates,
+            )
+            if not self._tree_is_finite(state["wm"]) or not self._tree_is_finite(state["motion_prior"]) \
+                    or not self._tree_is_finite(state["actor"]) or not self._tree_is_finite(state["wm_optimizer"]) \
+                    or not self._tree_is_finite(state["prior_optimizer"]) or not self._tree_is_finite(state["actor_optimizer"]):
+                print(f"[WARN] skipped joint checkpoint {name}: model or optimizer has NaN/Inf", flush=True)
+                return
+            path = self.log_dir / name
+            tmp_path = path.with_name(path.name + ".tmp")
+            try:
+                torch.save(state, tmp_path)
+                os.replace(tmp_path, path)
+            finally:
+                if tmp_path.exists():
+                    tmp_path.unlink()
             return
         state = {
             "iteration": self.iteration,
@@ -701,6 +812,8 @@ class Trainer:
                 tmp_path.unlink()
 
     def load(self, path: Path) -> None:
+        if self.is_m1_prior_joint:
+            raise ValueError("M1 prior/Actor runs require the versioned --m1-joint-training.resume checkpoint")
         ck = torch.load(path, map_location=self.device, weights_only=False)
         saved_config = ck.get("config", {})
         saved_env = saved_config.get("env", {})
@@ -776,11 +889,72 @@ class Trainer:
             torch.cuda.set_rng_state(ck["cuda_rng_state"].cpu(), self.device)
         print(f"[INFO] resumed from {path} at iteration {self.iteration}")
 
+    def _load_m1_joint_checkpoint(self, path: Path) -> None:
+        path = Path(path).expanduser().resolve()
+        if not path.is_file():
+            raise FileNotFoundError(f"M1 joint checkpoint does not exist: {path}")
+        checkpoint = torch.load(path, map_location=self.device, weights_only=False)
+        self.iteration = self.m1_joint_trainer.load_checkpoint(
+            checkpoint, expected_source=self.m1_joint_trainer.prior.source,
+        )
+        self.num_updates = self.m1_joint_trainer.wm_update_events
+        self.actor_updates = self.m1_joint_trainer.actor_optimizer_steps
+        self.wm_only_updates = int(checkpoint.get("wm_only_updates", 0))
+        saved_config = checkpoint.get("config", {})
+        self.pretrained_wm = bool(saved_config.get("pretrained_wm", False))
+        self.init_wm_from_path = saved_config.get("init_wm_from")
+        self.init_wm_sha256 = saved_config.get("init_wm_sha256")
+        self.init_wm_source_iteration = saved_config.get("init_wm_source_iteration")
+        print(f"[INFO] resumed versioned M1 joint checkpoint from {path} at iteration {self.iteration}", flush=True)
+
     # ------------------------------------------------------------------ main loop
 
     @torch.no_grad()
-    def act(self, obs) -> torch.Tensor:
+    def act(self, obs, state_history: torch.Tensor | None = None,
+            reference_phase: torch.Tensor | None = None) -> torch.Tensor:
+        if self.is_m1_prior_joint:
+            if state_history is None or reference_phase is None:
+                raise ValueError("M1 prior-conditioned acting needs state history and Reference Phase")
+            action, _ = self.m1_joint_trainer.act(obs["policy"], obs["goal"], state_history, reference_phase)
+            return action
         return self.policy(obs["policy"], obs["goal"])
+
+    @torch.no_grad()
+    def _measure_m1_joint_task_step(
+        self, state: torch.Tensor, task_type: torch.Tensor,
+        velocity_command: torch.Tensor, fixed_world_target: torch.Tensor,
+        initial_base_position: torch.Tensor, previous_ee_distance: torch.Tensor,
+    ) -> dict[str, torch.Tensor]:
+        """Measure the just-finished real state against its pre-reset task context."""
+        from supermimic.kinematics.rotations import quat_apply_inverse
+
+        task_type = task_type.to(device=state.device, dtype=torch.long)
+        is_l = task_type == 0
+        is_m = task_type == 1
+        velocity_goal = torch.where(is_l[:, None], velocity_command, torch.zeros_like(velocity_command))
+        body_velocity = quat_apply_inverse(state[:, 3:7], state[:, 29:32])
+        base_velocity_error = torch.linalg.vector_norm(body_velocity - velocity_goal, dim=-1)
+        yaw_rate_error = (state[:, 34] - velocity_goal[:, 2]).abs()
+        fk = self.m1_joint_trainer.fk
+        bodies = fk(state[:, :29], state[:, 29:])
+        tcp_position = bodies["pos"][:, self.m1_joint_trainer.tcp_index]
+        distance = torch.linalg.vector_norm(tcp_position - fixed_world_target, dim=-1)
+        distance = torch.where(is_m, distance, torch.zeros_like(distance))
+        progress = torch.where(is_m, previous_ee_distance - distance, torch.zeros_like(distance))
+        displacement = torch.linalg.vector_norm(state[:, :2] - initial_base_position[:, :2], dim=-1)
+        return {
+            "base_velocity_error": base_velocity_error,
+            "yaw_rate_error": yaw_rate_error,
+            "ee_distance": distance,
+            "ee_progress": progress,
+            "base_displacement": displacement,
+            "ee_success": ((distance < self.command.cfg.success_distance) & is_m).float(),
+            "joint_limit_violation": (
+                (state[:, 7:29] < self.env.scene["robot"].data.soft_joint_pos_limits[0, :, 0])
+                | (state[:, 7:29] > self.env.scene["robot"].data.soft_joint_pos_limits[0, :, 1])
+            ).float().mean(-1),
+            "base_height": state[:, 2],
+        }
 
     @torch.no_grad()
     def _update_m1_metrics(self, alive: torch.Tensor) -> None:
@@ -956,6 +1130,15 @@ class Trainer:
         env = self.env
         wm_only_target = self._effective_wm_only_target()
         obs, _ = env.reset()
+        if self.is_m1_prior_joint:
+            initial_state = self.recorder.state_io.read()
+            m1_state_history = initial_state[:, None, :].expand(-1, 4, -1).clone()
+            m1_reference_phase = torch.zeros(env.num_envs, dtype=torch.long, device=self.device)
+            self._m1_ee_hold_seconds = torch.zeros(env.num_envs, device=self.device)
+            self._m1_episode_reach_success = torch.zeros(env.num_envs, dtype=torch.bool, device=self.device)
+            self._m1_finished_reach_successes = 0.0
+            self._m1_finished_reach_episodes = 0.0
+            self._m1_joint_real_step_metrics: dict[str, float] = {}
         t_start = time.time()
         timers = {"sim": 0.0, "wm": 0.0, "policy": 0.0}
         agg: dict[str, float] = {}
@@ -969,12 +1152,84 @@ class Trainer:
             # ---------------- (1) collect one vectorised env step
             t0 = time.perf_counter()
             pre_frame = self.command.frame.clone() if self.is_m1_motion else None
-            action = self.act(obs)
+            phase_used = m1_reference_phase.clone() if self.is_m1_prior_joint else None
+            action = self.act(obs, m1_state_history, m1_reference_phase) if self.is_m1_prior_joint else self.act(obs)
+            if self.is_m1_prior_joint:
+                with torch.no_grad():
+                    wm_prediction = self.wm.step(
+                        m1_state_history[:, -1], action, self.recorder.prev_xi,
+                    )
+                task_type_before = self.command.task_type.clone()
+                velocity_command_before = self.command.velocity_command_body.clone()
+                fixed_target_before = self.command.target_position_world.clone()
+                initial_base_before = self.command.initial_base_position_world.clone()
+                previous_ee_distance = self.command._last_ee_distance.clone()
             action_buffer_ptr = self.buffer.ptr.clone() if self.is_go2_task else None
             action_ou_mask = (
                 self.recorder.action_term._ou_mask.clone() if self.is_go2_task else None
             )
             obs, rew, term, tout, extras = env.step(action)
+            if self.is_m1_prior_joint:
+                next_state = self.recorder.state_io.read()
+                # ManagerBasedRlEnv resets terminated worlds before returning. Recover
+                # their just-finished terminal state from Replay's explicit terminal row.
+                ended = (term | tout).nonzero(as_tuple=False).flatten()
+                metric_next_state = next_state.clone()
+                if ended.numel():
+                    terminal_row = (self.buffer.ptr[ended] - 1) % self.buffer.T
+                    metric_next_state[ended] = self.buffer.s[ended, terminal_row]
+                real_metrics = self.m1_joint_trainer.record_real_step(
+                    metric_next_state, action, phase_used, term,
+                )
+                self._m1_joint_real_step_metrics = dict(real_metrics)
+                task_metrics = self._measure_m1_joint_task_step(
+                    metric_next_state, task_type_before, velocity_command_before,
+                    fixed_target_before, initial_base_before, previous_ee_distance,
+                )
+                for name, value in task_metrics.items():
+                    self._m1_joint_real_step_metrics[f"real/{name}"] = float(value.mean())
+                self._m1_joint_real_step_metrics["real/action_saturation"] = float((action.abs() >= 0.98).float().mean())
+                self._m1_joint_real_step_metrics["imag/real_gap"] = float(
+                    self.wm.spec.normalized_sq_error(wm_prediction, metric_next_state).mean()
+                )
+                reach = task_type_before == 1
+                within = reach & (task_metrics["ee_distance"] < self.command.cfg.success_distance)
+                hold_next = torch.where(
+                    within, self._m1_ee_hold_seconds + float(env.step_dt),
+                    torch.zeros_like(self._m1_ee_hold_seconds),
+                )
+                episode_success_next = self._m1_episode_reach_success | (hold_next >= 0.5)
+                done_ids = (term | tout).nonzero(as_tuple=False).flatten()
+                finished_m = done_ids[reach[done_ids]]
+                if finished_m.numel():
+                    self._m1_finished_reach_successes += float(episode_success_next[finished_m].sum())
+                    self._m1_finished_reach_episodes += float(finished_m.numel())
+                self._m1_ee_hold_seconds = hold_next
+                self._m1_episode_reach_success = episode_success_next
+                if done_ids.numel():
+                    self._m1_ee_hold_seconds[done_ids] = 0.0
+                    self._m1_episode_reach_success[done_ids] = False
+                if self._m1_finished_reach_episodes:
+                    self._m1_joint_real_step_metrics["real/ee_success_hold_rate"] = (
+                        self._m1_finished_reach_successes / self._m1_finished_reach_episodes
+                    )
+                state_history_next = torch.cat((m1_state_history[:, 1:], next_state[:, None]), dim=1)
+                if done_ids.numel():
+                    state_history_next[done_ids] = next_state[done_ids, None, :].expand(-1, 4, -1)
+                m1_state_history = state_history_next
+                m1_reference_phase = (m1_reference_phase + 1) % 10
+                m1_reference_phase[term | tout] = 0
+                # Real MuJoCo mechanical power is reported as simulator actuator
+                # power, not battery/electrical energy and not the planner's proxy.
+                qfrc = getattr(env.sim.data, "qfrc_actuator", None)
+                if qfrc is not None:
+                    force = qfrc[:, self.recorder.state_io.joint_dof_addr]
+                    qd = metric_next_state[:, 35:57]
+                    positive_power = torch.relu(force * qd)
+                    self._m1_joint_real_step_metrics["real/actuator_force_abs_mean"] = float(force.abs().mean())
+                    self._m1_joint_real_step_metrics["real/joint_velocity_abs_mean"] = float(qd.abs().mean())
+                    self._m1_joint_real_step_metrics["real/actuator_mechanical_power_positive_w"] = float(positive_power.sum(-1).mean())
+                    self._m1_joint_real_step_metrics["real/actuator_mechanical_work_step_j"] = float(positive_power.sum(-1).mean() * self.cfg.world_model.state_spec.dt)
             if self.is_go2_task:
                 env_ids = torch.arange(env.num_envs, device=self.device)
                 executed = self.buffer.a_exec[env_ids, action_buffer_ptr]
@@ -996,7 +1251,7 @@ class Trainer:
                 if self.has_tracking_return:
                     norm_ret = self.ep_reward_sum[ids] / (self.max_step_reward * lens.clamp_min(1))
                     finished_returns.extend(norm_ret.tolist())
-                elif self.is_go2_task or self.is_m1_world_point:
+                elif self.is_go2_task or self.is_m1_world_point or self.is_m1_prior_joint:
                     finished_returns.extend(self.ep_reward_sum[ids].tolist())
                     finished_falls.extend(term[ids].float().tolist())
                 finished_lens.extend(lens.tolist())
@@ -1017,6 +1272,37 @@ class Trainer:
                         break
                     self._utd_acc -= 1.0
                     wm_lr = scheduled_lr(sch.lr_schedule, self.iteration, sch.total_iterations, cfg.wm_trainer.lr, sch.lr_final_ratio, sch.lr_decay_fraction)
+                    policy_enabled = wm_only_target <= 0 or self.wm_only_updates >= wm_only_target
+                    if self.is_m1_prior_joint:
+                        if wm_only_target > 0 and not policy_enabled:
+                            self.wm_only_updates += 1
+                        prior_lr = scheduled_lr(
+                            sch.lr_schedule, self.iteration, sch.total_iterations,
+                            cfg.m1_joint_training.prior_lr, sch.lr_final_ratio, sch.lr_decay_fraction,
+                        )
+                        actor_scheduled_lr = scheduled_lr(
+                            sch.lr_schedule, self.iteration, sch.total_iterations,
+                            cfg.m1_joint_training.actor_lr, sch.lr_final_ratio, sch.lr_decay_fraction,
+                        )
+                        self.wm_trainer.set_lr(wm_lr)
+                        self.m1_joint_trainer.set_lr(prior_lr=prior_lr, actor_lr=actor_scheduled_lr)
+                        t0 = time.perf_counter()
+                        joint_metrics = self.m1_joint_trainer.update_event(policy_allowed=policy_enabled)
+                        torch.cuda.synchronize()
+                        update_time = time.perf_counter() - t0
+                        timers["wm"] += update_time
+                        timers["policy"] += update_time if policy_enabled else 0.0
+                        self.actor_updates = self.m1_joint_trainer.actor_optimizer_steps
+                        self.num_updates += 1
+                        for k, v in joint_metrics.items():
+                            agg[k] = agg.get(k, 0.0) + v
+                        agg["wm/lr"] = wm_lr
+                        agg["prior/lr"] = prior_lr
+                        agg["actor/lr"] = actor_scheduled_lr
+                        agg["schedule/wm_only_updates"] = float(self.wm_only_updates)
+                        agg["schedule/actor_updates"] = float(self.actor_updates)
+                        agg_n += 1
+                        continue
                     actor_scheduled_lr = scheduled_lr(sch.lr_schedule, self.iteration, sch.total_iterations, cfg.policy_trainer.lr, sch.lr_final_ratio, sch.lr_decay_fraction)
                     critic_lr = scheduled_lr(sch.lr_schedule, self.iteration, sch.total_iterations, cfg.policy_trainer.critic_lr, sch.lr_final_ratio, sch.lr_decay_fraction)
                     self.wm_trainer.set_lr(wm_lr)
@@ -1097,7 +1383,7 @@ class Trainer:
                     )
                     for k, v in agg.items():
                         self.writer.add_scalar(k, v / (1 if k in last_value_keys else agg_n), it)
-                if self.is_main and self.policy_trainer.last_imag_diagnostics:
+                if self.is_main and self.policy_trainer is not None and self.policy_trainer.last_imag_diagnostics:
                     self.writer.add_text(
                         "imag/step_diagnostics",
                         json.dumps(self.policy_trainer.last_imag_diagnostics, sort_keys=True),
@@ -1122,7 +1408,11 @@ class Trainer:
                         self.writer.add_scalar("go2/chase_timeout_success_fraction", tag_rate, it)
                     elif self.is_m1_world_point:
                         self.writer.add_scalar("m1/world_point_episode_return", tr, it)
+                    elif self.is_m1_prior_joint:
+                        self.writer.add_scalar("m1/prior_joint_episode_return", tr, it)
                     self.writer.add_scalar("train/episode_len", sum(finished_lens) / max(len(finished_lens), 1), it)
+                    if self.is_m1_prior_joint:
+                        self.writer.add_scalar("real/episode_length", sum(finished_lens) / len(finished_lens), it)
                 else:
                     tr = float("nan")
                 if self.is_go2_task and self.is_main and finished_falls:
@@ -1131,6 +1421,8 @@ class Trainer:
                     fall_rate = sum(finished_falls) / len(finished_falls)
                     self.writer.add_scalar("m1/world_point_fall_rate", fall_rate, it)
                     self.writer.add_scalar("m1/fall_rate", fall_rate, it)
+                if self.is_m1_prior_joint and self.is_main and finished_falls:
+                    self.writer.add_scalar("m1/fall_rate", sum(finished_falls) / len(finished_falls), it)
                 if self.is_go2_velocity and self.is_main:
                     self.writer.add_scalar("go2/curriculum_stage", float(self.command.stage), it)
                     self.writer.add_scalar("go2/curriculum_eval_count", float(self.command.eval_count), it)
@@ -1194,8 +1486,22 @@ class Trainer:
                     cache = getattr(self.env, "_supermimic_world_point_reward_cache", None)
                     if cache is not None:
                         self.writer.add_scalar("m1/base_height_mean", float(cache["state_next"][..., 2].mean()), it)
+                if self.is_m1_prior_joint and self.is_main:
+                    for key, value in self._m1_joint_real_step_metrics.items():
+                        self.writer.add_scalar(key, value, it)
+                    self.writer.add_scalar("prior/actor_ready", float(self.m1_joint_trainer.actor_ready), it)
+                    self.writer.add_scalar("prior/state_source_privileged", 1.0, it)
+                    self.writer.add_scalar("prior/l_task_fraction_real", float((self.command.task_type == 0).float().mean()), it)
+                    self.writer.add_scalar("prior/optimizer_steps", float(self.m1_joint_trainer.prior_optimizer_steps), it)
+                    self.writer.add_scalar("actor/optimizer_steps", float(self.m1_joint_trainer.actor_optimizer_steps), it)
+                    self.writer.add_scalar("wm/update_events", float(self.m1_joint_trainer.wm_update_events), it)
+                    self.writer.add_scalar("wm/optimizer_steps", float(self.m1_joint_trainer.wm_optimizer_steps), it)
+                    stage_code = {"wm_warmup": 0, "actor_tracking_warmup": 1,
+                                  "prior_frozen_tracking_warmup": 2, "joint_alternating": 3,
+                                  "actor_only_prior_frozen": 4}.get(self.m1_joint_trainer.stage, -1)
+                    self.writer.add_scalar("schedule/m1_joint_phase", stage_code, it)
                 if self.is_main:
-                    task_prefix = "go2" if self.is_go2_task else ("m1" if self.is_m1_motion or self.is_m1_world_point else "g1")
+                    task_prefix = "go2" if self.is_go2_task else ("m1" if self.is_m1_motion or self.is_m1_world_point or self.is_m1_prior_joint else "g1")
                     for key, value in self.real_reward_term_sum.items():
                         self.writer.add_scalar(f"{task_prefix}/reward_real/{key}", float(value / sch.log_interval), it)
                     for key, value in self.task_diag_sum.items():

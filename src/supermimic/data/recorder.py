@@ -35,14 +35,21 @@ class ReplayRecorder(RecorderTerm):
         self.command_name = p.get("command_name", "motion")
         self.action_name = p.get("action_name", "joint_pos")
         self.goal_dim = int(p.get("goal_dim", 0))
+        self.m1_joint_context = bool(p.get("m1_joint_context", False))
         n = env.num_envs
         self.state_dim = self.state_io.state_dim
         self.act_dim = int(env.action_manager.total_action_dim)
         self.xi_dim = self.ctx.xi_dim
-        self.buffer = ReplayBuffer(n, int(p["capacity"]), self.state_dim, self.act_dim, self.xi_dim, env.device, self.goal_dim)
+        self.buffer = ReplayBuffer(
+            n, int(p["capacity"]), self.state_dim, self.act_dim, self.xi_dim, env.device,
+            self.goal_dim, m1_joint_context=self.m1_joint_context,
+        )
         self.prev_s = torch.zeros(n, self.state_dim, device=env.device)
         self.prev_xi = torch.zeros(n, self.xi_dim, device=env.device)
         self.prev_goal = torch.zeros(n, self.goal_dim, device=env.device) if self.goal_dim else None
+        self.prev_task_type = torch.zeros(n, dtype=torch.long, device=env.device) if self.m1_joint_context else None
+        self.prev_velocity_command = torch.zeros(n, 3, device=env.device) if self.m1_joint_context else None
+        self.prev_fixed_world_target = torch.zeros(n, 3, device=env.device) if self.m1_joint_context else None
         self.prev_frame = torch.zeros(n, dtype=torch.long, device=env.device)
         self.prev_clip = torch.zeros(n, dtype=torch.long, device=env.device)
         self.ep_start = torch.ones(n, dtype=torch.bool, device=env.device)
@@ -73,6 +80,12 @@ class ReplayRecorder(RecorderTerm):
             if goal is None or goal.shape[-1] != self.goal_dim:
                 raise ValueError(f"command {self.command_name!r} must expose a {self.goal_dim}-D goal")
             self.prev_goal[ids] = goal[ids]
+        if self.m1_joint_context:
+            if not all(hasattr(cmd, name) for name in ("task_type", "velocity_command_body", "target_position_world")):
+                raise TypeError("M1 joint replay command is missing named task context fields")
+            self.prev_task_type[ids] = cmd.task_type[ids]
+            self.prev_velocity_command[ids] = cmd.velocity_command_body[ids]
+            self.prev_fixed_world_target[ids] = cmd.target_position_world[ids]
 
     def record_post_reset(self, env_ids: torch.Tensor) -> None:
         if not self.enabled:
@@ -98,6 +111,9 @@ class ReplayRecorder(RecorderTerm):
             terminal=torch.zeros_like(done_next, dtype=torch.bool),
             ep_start=self.ep_start[ids],
             goal=self.prev_goal[ids] if self.prev_goal is not None else None,
+            task_type=self.prev_task_type[ids] if self.m1_joint_context else None,
+            velocity_command=self.prev_velocity_command[ids] if self.m1_joint_context else None,
+            fixed_world_target=self.prev_fixed_world_target[ids] if self.m1_joint_context else None,
         )
         self.ep_start[ids] = False
 
@@ -128,6 +144,9 @@ class ReplayRecorder(RecorderTerm):
             terminal=torch.ones(env_ids.numel(), dtype=torch.bool, device=env.device),
             ep_start=torch.zeros(env_ids.numel(), dtype=torch.bool, device=env.device),
             goal=self.prev_goal[env_ids] if self.prev_goal is not None else None,
+            task_type=self.prev_task_type[env_ids] if self.m1_joint_context else None,
+            velocity_command=self.prev_velocity_command[env_ids] if self.m1_joint_context else None,
+            fixed_world_target=self.prev_fixed_world_target[env_ids] if self.m1_joint_context else None,
         )
         self.buffer.end_episode(env_ids)
 

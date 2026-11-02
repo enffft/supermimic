@@ -35,6 +35,9 @@ class StartBatch:
     hist_states: torch.Tensor  # (hist, n, S) states s_{t-hist+1..t} (backfilled at episode start)
     hist_actions: torch.Tensor  # (hist, n, A) clean actions a_{t-hist..t-1} aligned with hist_states' obs
     goal: torch.Tensor | None = None  # (n, G) task command snapshot; motion goals are rebuilt from frame.
+    task_type: torch.Tensor | None = None  # optional M1 joint task: 0=L, 1=M
+    velocity_command: torch.Tensor | None = None  # optional episode-fixed body command [n,3]
+    fixed_world_target: torch.Tensor | None = None  # optional env-local episode-fixed target [n,3]
 
     @property
     def previous_policy_action(self) -> torch.Tensor:
@@ -42,7 +45,8 @@ class StartBatch:
 
 
 class ReplayBuffer:
-    def __init__(self, num_envs: int, capacity: int, state_dim: int, act_dim: int, xi_dim: int, device, goal_dim: int = 0):
+    def __init__(self, num_envs: int, capacity: int, state_dim: int, act_dim: int, xi_dim: int, device,
+                 goal_dim: int = 0, m1_joint_context: bool = False):
         self.E, self.T = num_envs, capacity
         self.device = torch.device(device)
         E, T = num_envs, capacity
@@ -52,6 +56,9 @@ class ReplayBuffer:
         self.a_exec = f(act_dim)
         self.xi = f(xi_dim)
         self.goal = f(goal_dim) if goal_dim else None
+        self.task_type = torch.full((E, T), -1, dtype=torch.long, device=self.device) if m1_joint_context else None
+        self.velocity_command = f(3) if m1_joint_context else None
+        self.fixed_world_target = f(3) if m1_joint_context else None
         self.r = f()
         self.done = f()
         self.frame = torch.zeros(E, T, dtype=torch.long, device=self.device)
@@ -76,7 +83,8 @@ class ReplayBuffer:
     # ------------------------------------------------------------------ writes
 
     @torch.no_grad()
-    def add(self, env_ids, s, a, a_exec, xi, r, done, frame, clip, terminal, ep_start, goal=None) -> None:
+    def add(self, env_ids, s, a, a_exec, xi, r, done, frame, clip, terminal, ep_start, goal=None,
+            task_type=None, velocity_command=None, fixed_world_target=None) -> None:
         p = self.ptr[env_ids]
         self.s[env_ids, p] = s
         self.a[env_ids, p] = a
@@ -86,6 +94,12 @@ class ReplayBuffer:
             if goal is None or goal.shape[-1] != self.goal.shape[-1]:
                 raise ValueError(f"replay goal must be provided with shape (n,{self.goal.shape[-1]})")
             self.goal[env_ids, p] = goal
+        if self.task_type is not None:
+            if task_type is None or velocity_command is None or fixed_world_target is None:
+                raise ValueError("M1 joint replay requires task_type, velocity_command, and fixed_world_target")
+            self.task_type[env_ids, p] = task_type.to(device=self.device, dtype=torch.long)
+            self.velocity_command[env_ids, p] = velocity_command
+            self.fixed_world_target[env_ids, p] = fixed_world_target
         self.r[env_ids, p] = r
         self.done[env_ids, p] = done
         self.frame[env_ids, p] = frame
@@ -189,4 +203,7 @@ class ReplayBuffer:
             hist_states=hist_states,
             hist_actions=hist_actions,
             goal=self.goal[e, t] if self.goal is not None else None,
+            task_type=self.task_type[e, t] if self.task_type is not None else None,
+            velocity_command=self.velocity_command[e, t] if self.velocity_command is not None else None,
+            fixed_world_target=self.fixed_world_target[e, t] if self.fixed_world_target is not None else None,
         )

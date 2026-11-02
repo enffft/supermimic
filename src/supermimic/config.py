@@ -8,6 +8,7 @@ from typing import Literal
 
 from supermimic.imagination.policy_trainer import PolicyTrainerCfg
 from supermimic.policy.nets import CriticCfg, PolicyCfg
+from supermimic.motion_prior.losses import M1JointLossCfg
 from supermimic.world_model.wm_trainer import WMTrainerCfg
 from supermimic.world_model.world_model import WorldModelCfg
 
@@ -123,6 +124,14 @@ class EnvCfg:
     m1_joint_velocity_weight: float = -1.0e-6
     m1_joint_acceleration_weight: float = -1.0e-7
     m1_leg_action_magnitude_weight: float = -0.002
+    m1_joint_task_type: str = "balanced"  # balanced | L | M; LM is research-only in v1
+    m1_joint_l_task_fraction: float = 0.5
+    m1_joint_vx_range: tuple[float, float] = (0.15, 0.50)
+    m1_joint_vy_range: tuple[float, float] = (-0.20, 0.20)
+    m1_joint_wz_range: tuple[float, float] = (-0.40, 0.40)
+    m1_joint_target_x_range: tuple[float, float] = (0.12, 0.36)
+    m1_joint_target_y_range: tuple[float, float] = (-0.20, 0.20)
+    m1_joint_target_z_range: tuple[float, float] = (-0.15, 0.15)
 
 
 @dataclass
@@ -146,6 +155,42 @@ class ScheduleCfg:
 
 
 @dataclass
+class M1JointTrainingCfg:
+    """Opt-in, checkpoint-versioned L/M CVAE prior and tracking-Actor training."""
+
+    enabled: bool = False
+    prior_checkpoint: Path = Path("/home/yifeiy/AMP-LOCO-M1/logs/motion_prior/cvae_v1_strict_fcl_2272/checkpoint_best_val.pt")
+    expected_prior_sha256: str | None = "1624741585c9a5dac7301bfb500ebf920a2c4e87f101ec1b60c945f86367106d"
+    resume: Path | None = None  # separate format from old M1/G1/Go2 checkpoints
+    state_source: Literal["privileged", "estimated"] = "privileged"
+    prior_mode: Literal["prior_mean", "prior_sample"] = "prior_mean"
+    prior_horizon: int = 10
+    actor_horizon: int = 10
+    replanning_cadence: int = 10
+    wm_updates_per_event: int = 1
+    prior_updates_per_event: int = 1
+    actor_updates_per_event: int = 1
+    prior_lr: float = 1.0e-5
+    actor_lr: float = 2.0e-4
+    batch_size: int = 32
+    micro_batch_size: int = 8
+    actor_pretrain_updates: int = 0
+    prior_warmup_updates: int = 0
+    freeze_prior: bool = True  # hold CVAE fixed until the measured Actor-readiness gate passes
+    grad_clip_norm: float = 1.0
+    readiness_window_steps: int = 500
+    readiness_min_samples: int = 100
+    readiness_min_survival: float = 0.90
+    readiness_max_root_tracking_error: float = 0.20
+    readiness_max_arm_tracking_error: float = 0.25
+    readiness_max_wheel_tracking_error: float = 0.75
+    readiness_max_action_saturation: float = 0.10
+    task_type: str = "balanced"  # balanced | L | M; LM is not enabled in v1
+    l_task_fraction: float = 0.5
+    loss: M1JointLossCfg = field(default_factory=M1JointLossCfg)
+
+
+@dataclass
 class TrainConfig:
     run_name: str = "debug"
     log_root: Path = Path("logs")
@@ -159,5 +204,6 @@ class TrainConfig:
     critic: CriticCfg = field(default_factory=CriticCfg)
     policy_trainer: PolicyTrainerCfg = field(default_factory=PolicyTrainerCfg)
     schedule: ScheduleCfg = field(default_factory=ScheduleCfg)
+    m1_joint_training: M1JointTrainingCfg = field(default_factory=M1JointTrainingCfg)
     resume: Path | None = None
     init_wm_from: Path | None = None

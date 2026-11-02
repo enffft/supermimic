@@ -161,6 +161,14 @@ class SuperMimicEnvCfgArgs:
     m1_joint_velocity_weight: float = -1.0e-6
     m1_joint_acceleration_weight: float = -1.0e-7
     m1_leg_action_magnitude_weight: float = -0.002
+    m1_joint_task_type: str = "balanced"
+    m1_joint_l_task_fraction: float = 0.5
+    m1_joint_vx_range: tuple[float, float] = (0.15, 0.50)
+    m1_joint_vy_range: tuple[float, float] = (-0.20, 0.20)
+    m1_joint_wz_range: tuple[float, float] = (-0.40, 0.40)
+    m1_joint_target_x_range: tuple[float, float] = (0.12, 0.36)
+    m1_joint_target_y_range: tuple[float, float] = (-0.20, 0.20)
+    m1_joint_target_z_range: tuple[float, float] = (-0.15, 0.15)
     joint_limit_weight: float = -2.0
     bin_frames: int = 50
     compact_library: bool = False

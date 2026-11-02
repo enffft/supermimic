@@ -42,6 +42,22 @@ def world_point_goal_body(env: ManagerBasedRlEnv, command_name: str) -> torch.Te
     return quat_apply_inverse(robot.data.root_link_quat_w, delta_world)
 
 
+def m1_prior_goal8(env: ManagerBasedRlEnv, command_name: str) -> torch.Tensor:
+    """AMP Goal8; L command and M fixed env-local world target are explicit."""
+    from supermimic.envs.state_io import StateIO
+    from supermimic.motion_prior.features import task_goal8
+
+    command = env.command_manager.get_term(command_name)
+    state_io = getattr(env, "_supermimic_prior_state_io", None)
+    if state_io is None:
+        state_io = StateIO(env)
+        env._supermimic_prior_state_io = state_io
+    return task_goal8(
+        state_io.read(), command.task_type,
+        command.velocity_command_body, command.target_position_world,
+    )
+
+
 def joint_pos_rel_masked(
     env: ManagerBasedRlEnv,
     wheel_joint_names: tuple[str, ...] = (),

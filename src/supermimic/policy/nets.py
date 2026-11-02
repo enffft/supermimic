@@ -117,6 +117,93 @@ class Policy(nn.Module):
         return self.decoder(self.encoders[interface](goal), obs_hist)
 
 
+@dataclass(frozen=True)
+class M1PriorActorCfg:
+    """Versioned Actor contract for the M1 CVAE joint-training experiment."""
+
+    history: int = 10
+    num_joints: int = 22
+    reference_horizon: int = 10
+    reference_embedding: int = 64
+    hidden: tuple[int, ...] = (512, 256)
+    version: str = "m1_prior_conditioned_actor_v1"
+
+
+class M1PriorConditionedActor(nn.Module):
+    """M1 mixed-action Actor conditioned on the complete future reference.
+
+    This is a separate schema from ``Policy``; legacy policy state dictionaries
+    and their forward signature remain unchanged. The reference path is
+    intentionally differentiable with respect to Future31 during Planner BPTT.
+    """
+
+    def __init__(self, cfg: M1PriorActorCfg = M1PriorActorCfg()):
+        super().__init__()
+        if cfg.num_joints != 22 or cfg.reference_horizon != 10:
+            raise ValueError("M1PriorConditionedActor v1 requires 22 actions and a 10-frame reference")
+        self.cfg = cfg
+        obs_dim = cfg.history * (3 * cfg.num_joints + 6)
+        self.reference_encoder = nn.Sequential(
+            nn.Linear(cfg.reference_horizon * 31, 128), nn.LayerNorm(128), nn.SiLU(),
+            nn.Linear(128, cfg.reference_embedding), nn.SiLU(),
+        )
+        widths = (obs_dim + 8 + cfg.reference_embedding + 2, *cfg.hidden)
+        layers: list[nn.Module] = []
+        for i, (din, dout) in enumerate(zip(widths[:-1], widths[1:])):
+            layers.extend((nn.Linear(din, dout), nn.LayerNorm(dout), nn.SiLU()))
+        final = nn.Linear(widths[-1], cfg.num_joints)
+        nn.init.uniform_(final.weight, -0.003, 0.003)
+        nn.init.zeros_(final.bias)
+        layers.append(final)
+        self.decoder = nn.Sequential(*layers)
+        # SuperMimic flattens temporal observations term-major:
+        # [all joint-pos frames, all joint-vel frames, all angular-velocity
+        # frames, all gravity frames, all previous-action frames].
+        # M1 proprio contains no base linear velocity term.
+        self.register_buffer("obs_scale", torch.cat((
+            torch.ones(cfg.history * 22),
+            torch.full((cfg.history * 22,), 1.0 / 5.0),
+            torch.full((cfg.history * 3,), 1.0 / 2.0),
+            torch.ones(cfg.history * 3),
+            torch.ones(cfg.history * 22),
+        )))
+        self.register_buffer("goal_scale", torch.tensor([1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 1.0, 1.0]))
+        self.register_buffer("reference_scale", torch.tensor(
+            [2.0] * 3 + [1.0] * 6 + [0.5] * 12 + [0.5] * 6 + [0.1] * 4
+        ).repeat(cfg.reference_horizon))
+
+    def forward(
+        self,
+        proprio_history: torch.Tensor,
+        task_goal: torch.Tensor,
+        future_reference: torch.Tensor,
+        reference_phase: torch.Tensor,
+    ) -> torch.Tensor:
+        batch = proprio_history.shape[0]
+        expected_obs = self.cfg.history * (3 * self.cfg.num_joints + 6)
+        if proprio_history.shape != (batch, expected_obs):
+            raise ValueError(f"proprio_history must be [B,{expected_obs}]")
+        if task_goal.shape != (batch, 8):
+            raise ValueError("task_goal must be [B,8]")
+        if future_reference.shape != (batch, 10, 31):
+            raise ValueError("future_reference must be [B,10,31]")
+        phase = reference_phase.reshape(batch).to(dtype=proprio_history.dtype)
+        if torch.any((phase < 0) | (phase >= self.cfg.reference_horizon)):
+            raise ValueError("reference_phase must lie in [0,9]")
+        phase_angle = phase * (2.0 * torch.pi / self.cfg.reference_horizon)
+        phase_code = torch.stack((phase_angle.sin(), phase_angle.cos()), dim=-1)
+        reference_embedding = self.reference_encoder(
+            (future_reference.reshape(batch, -1) * self.reference_scale).to(proprio_history.dtype)
+        )
+        inputs = torch.cat((
+            proprio_history * self.obs_scale,
+            task_goal * self.goal_scale,
+            reference_embedding,
+            phase_code,
+        ), dim=-1)
+        return torch.tanh(self.decoder(inputs))
+
+
 class Critic(nn.Module):
     """V(canonical state 71, goal 680, xi 33, root error 4) -> scalar (one per interface)."""
 

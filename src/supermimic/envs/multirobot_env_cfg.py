@@ -23,13 +23,14 @@ from supermimic.data.recorder import ReplayRecorderCfg
 from supermimic.envs.actions import MixedM1ActionCfg, NoisyJointPositionActionCfg
 from supermimic.envs.mdp import observations as sm_obs
 from supermimic.envs.mdp import terminations as sm_term
-from supermimic.envs.mdp.commands import ChaseBallCommandCfg, MultiClipMotionCommandCfg, VelocityCommandCfg, WorldPointCommandCfg
+from supermimic.envs.mdp.commands import (ChaseBallCommandCfg, M1PriorJointCommandCfg,
+    MultiClipMotionCommandCfg, VelocityCommandCfg, WorldPointCommandCfg)
 from supermimic.envs.tracking_env_cfg import QuietSimulationCfg, SuperMimicEnvCfgArgs
 from supermimic.robots.mjlab_assets import get_robot_entity_cfg
 from supermimic.robots.spec import get_robot_spec
 from supermimic.tasks.velocity_reward import VELOCITY_REWARD_NAMES, go2_velocity_reward_term
 from supermimic.tasks.chase_reward import CHASE_REWARD_NAMES, go2_chase_reward_term
-from supermimic.tasks.world_point_reward import WORLD_POINT_REWARD_NAMES, m1_world_point_reward_term
+from supermimic.tasks.world_point_reward import WORLD_POINT_REWARD_NAMES, m1_prior_data_collection_reward, m1_world_point_reward_term
 
 
 def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
@@ -38,12 +39,13 @@ def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
     velocity_task = a.task_name == "velocity_command"
     chase_task = a.task_name == "chase_ball"
     world_point_task = a.task_name == "world_point_reach"
-    if not (motion_task or velocity_task or chase_task or world_point_task):
-        raise ValueError(f"unknown task {a.task_name!r}; use motion_tracking, velocity_command, chase_ball, or world_point_reach")
+    prior_joint_task = a.task_name == "m1_prior_joint"
+    if not (motion_task or velocity_task or chase_task or world_point_task or prior_joint_task):
+        raise ValueError(f"unknown task {a.task_name!r}; use motion_tracking, velocity_command, chase_ball, world_point_reach, or m1_prior_joint")
     if (velocity_task or chase_task) and robot.name != "go2":
         raise ValueError(f"{a.task_name} is currently defined only for Go2")
-    if world_point_task and robot.name != "m1_piper":
-        raise ValueError("world_point_reach is currently defined only for M1-Piper")
+    if (world_point_task or prior_joint_task) and robot.name != "m1_piper":
+        raise ValueError(f"{a.task_name} is currently defined only for M1-Piper")
     if motion_task and robot.name == "go2":
         raise ValueError("Go2 has no motion bank; select velocity_command or chase_ball")
     if a.motion_goal_schema == "full_body" and not (motion_task and robot.name == "g1"):
@@ -88,6 +90,8 @@ def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
         goal_terms = {"velocity_command": ObservationTermCfg(func=sm_obs.velocity_goal, params={"command_name": "velocity"})}
     elif chase_task:
         goal_terms = {"chase_ball": ObservationTermCfg(func=sm_obs.chase_ball_goal, params={"command_name": "chase_ball"})}
+    elif prior_joint_task:
+        goal_terms = {"prior_goal8": ObservationTermCfg(func=sm_obs.m1_prior_goal8, params={"command_name": "m1_prior_joint"})}
     else:
         goal_terms = {"world_point_body": ObservationTermCfg(func=sm_obs.world_point_goal_body, params={"command_name": "world_point"})}
     observations = {
@@ -271,6 +275,32 @@ def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
         }
         goal_dim = 6
         command_name = "chase_ball"
+    elif prior_joint_task:
+        commands = {
+            "m1_prior_joint": M1PriorJointCommandCfg(
+                entity_name="robot", task_type=a.m1_joint_task_type,
+                l_task_fraction=a.m1_joint_l_task_fraction,
+                vx_range=a.m1_joint_vx_range, vy_range=a.m1_joint_vy_range,
+                wz_range=a.m1_joint_wz_range,
+                target_x_range=a.m1_joint_target_x_range,
+                target_y_range=a.m1_joint_target_y_range,
+                target_z_range=a.m1_joint_target_z_range,
+                success_distance=a.m1_success_distance,
+            )
+        }
+        rewards = {"data_collection_zero": RewardTermCfg(func=m1_prior_data_collection_reward, weight=1.0)}
+        tilt_feature_threshold = 1.0 - math.cos(math.radians(a.velocity_fall_tilt_deg))
+        terminations = {
+            "time_out": TerminationTermCfg(func=base_mdp.time_out, time_out=True),
+            "root_height": TerminationTermCfg(
+                func=sm_term.free_root_too_low, params={"asset_cfg": SceneEntityCfg("robot"), "threshold": a.m1_fall_height},
+            ),
+            "root_tilt": TerminationTermCfg(
+                func=sm_term.free_root_tilted, params={"asset_cfg": SceneEntityCfg("robot"), "threshold": tilt_feature_threshold},
+            ),
+        }
+        goal_dim = 7
+        command_name = "m1_prior_joint"
     else:
         commands = {
             "world_point": WorldPointCommandCfg(
@@ -340,6 +370,7 @@ def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
             "capacity": a.replay_capacity, "foot_geom_regex": robot.foot_geom_regex,
             "com_body_name": robot.root_body_name, "command_name": command_name,
             "action_name": action_name, "goal_dim": goal_dim,
+            "m1_joint_context": prior_joint_task,
         })
 
     # mjWarp's nconmax/njmax are PER WORLD, not totals across vectorized envs.

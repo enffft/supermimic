@@ -229,6 +229,8 @@ def _tiny_joint_buffer(device: torch.device):
 
 @pytest.mark.skipif(not torch.cuda.is_available(), reason="gradient ownership check is run on CUDA")
 def test_planner_actor_gradient_ownership_and_horizon3_finite_difference():
+    from dataclasses import replace
+
     from supermimic.motion_prior import load_m1_motion_prior
     from supermimic.motion_prior.losses import M1JointLossCfg, planner_losses
     from supermimic.motion_prior.rollout import differentiable_m1_rollout
@@ -305,6 +307,39 @@ def test_planner_actor_gradient_ownership_and_horizon3_finite_difference():
         parameter[index] = original
     finite_difference = (plus - minus) / (2 * epsilon)
     torch.testing.assert_close(grad, finite_difference, atol=2e-3, rtol=0.12)
+
+    # The repaired L objective must also backpropagate through the frozen
+    # Actor and WM into the CVAE, and its wz target must not touch root vz.
+    l_command = torch.tensor([[0.2, 0.0, 0.3], [0.2, 0.0, 0.3]], device=device)
+    l_task = torch.zeros(2, dtype=torch.long, device=device)
+    l_target = torch.zeros(2, 3, device=device)
+    l_start = replace(
+        start, task_type=l_task, velocity_command=l_command,
+        fixed_world_target=l_target,
+    )
+    l_goal = task_goal8(l_start.state, l_task, l_command, l_target)
+    l_reference = prior(history, l_goal)
+    with frozen_parameters(actor, wm):
+        l_rollout = differentiable_m1_rollout(
+            wm, actor, l_start, l_goal, l_reference,
+            joint.default_joint_pos, horizon=3,
+        )
+        l_terms = planner_losses(
+            l_rollout.states, l_rollout.actions, l_start.state,
+            l_reference, joint.prior_initial(history, l_goal), l_task,
+            l_command, l_target, fk=joint.fk, tcp_index=0,
+            soft_limits=joint.soft_limits, cfg=joint.loss_cfg,
+        )
+    l_grad = torch.autograd.grad(l_terms["task_l"], parameter, retain_graph=True)[0]
+    assert torch.isfinite(l_grad).all() and l_grad.norm() > 1e-8
+    probe_states = l_rollout.states.detach().clone().requires_grad_(True)
+    from supermimic.motion_prior.losses import _task_planner_terms
+
+    probe_terms = _task_planner_terms(
+        probe_states, l_task, l_command, l_target, joint.fk, 0, joint.loss_cfg,
+    )
+    state_grad = torch.autograd.grad(probe_terms["task_l"], probe_states)[0]
+    assert torch.equal(state_grad[..., 31], torch.zeros_like(state_grad[..., 31]))
 
     prior_before = [p.detach().clone() for p in prior.parameters()]
     actor_before = [p.detach().clone() for p in actor.parameters()]

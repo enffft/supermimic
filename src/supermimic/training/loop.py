@@ -13,7 +13,7 @@ from pathlib import Path
 import torch
 from torch.utils.tensorboard import SummaryWriter
 
-from supermimic.config import TrainConfig
+from supermimic.config import TrainConfig, validate_g1_actor_contract
 from supermimic.envs import SuperMimicEnvCfgArgs, make_env
 from supermimic.envs.mdp.motion_library import discover_npz
 from supermimic.imagination.tasks import ChaseBallTask, MotionTrackingTask, VelocityCommandTask, WorldPointReachTask
@@ -56,6 +56,22 @@ def _termination_mode(task_name: str) -> str:
     if task_name == "chase_ball":
         return "analytic_fall_plus_tag_success"
     return "analytic_height_tilt"
+
+
+def _format_m1_metric(value: float | None, precision: int = 4) -> str:
+    """Format missing or nonfinite diagnostics as unavailable, not a NaN result."""
+    if value is None:
+        return "n/a"
+    numeric = float(value)
+    return f"{numeric:.{precision}f}" if math.isfinite(numeric) else "n/a"
+
+
+def _format_m1_aggregate(aggregate: dict[str, float], count: int, key: str,
+                         precision: int = 4) -> str:
+    value = aggregate.get(key)
+    if value is None:
+        return "n/a"
+    return _format_m1_metric(float(value) / max(count, 1), precision)
 
 
 class Trainer:
@@ -116,6 +132,7 @@ class Trainer:
             raise ValueError("M1-Piper supports motion_tracking, world_point_reach, and opt-in m1_prior_joint")
         if cfg.env.anchor_obs is None:
             cfg.env.anchor_obs = robot_spec.name == "m1_piper" and is_motion
+        validate_g1_actor_contract(cfg.env, robot_spec.name)
         if cfg.env.anchor_obs and cfg.env.anchor_orientation_obs:
             raise ValueError("choose position+orientation Anchor or orientation-only Anchor")
         if (cfg.env.anchor_obs or cfg.env.anchor_orientation_obs) and not is_motion:
@@ -926,15 +943,17 @@ class Trainer:
         initial_base_position: torch.Tensor, previous_ee_distance: torch.Tensor,
     ) -> dict[str, torch.Tensor]:
         """Measure the just-finished real state against its pre-reset task context."""
-        from supermimic.kinematics.rotations import quat_apply_inverse
+        from supermimic.motion_prior.metrics import root_tilt_and_stability
+        from supermimic.motion_prior.velocity import velocity_command_errors
 
         task_type = task_type.to(device=state.device, dtype=torch.long)
-        is_l = task_type == 0
         is_m = task_type == 1
-        velocity_goal = torch.where(is_l[:, None], velocity_command, torch.zeros_like(velocity_command))
-        body_velocity = quat_apply_inverse(state[:, 3:7], state[:, 29:32])
-        base_velocity_error = torch.linalg.vector_norm(body_velocity - velocity_goal, dim=-1)
-        yaw_rate_error = (state[:, 34] - velocity_goal[:, 2]).abs()
+        velocity_xy_error, velocity_xy_squared_error, yaw_rate_error, body_vertical_velocity = (
+            velocity_command_errors(state, velocity_command)
+        )
+        from supermimic.robots.spec import M1_JOINTS
+
+        wheel_ids = [M1_JOINTS.index(n) for n in ("FAR_FOOT_JOINT", "FBL_FOOT_JOINT", "RAR_FOOT_JOINT", "RBL_FOOT_JOINT")]
         fk = self.m1_joint_trainer.fk
         bodies = fk(state[:, :29], state[:, 29:])
         tcp_position = bodies["pos"][:, self.m1_joint_trainer.tcp_index]
@@ -942,18 +961,37 @@ class Trainer:
         distance = torch.where(is_m, distance, torch.zeros_like(distance))
         progress = torch.where(is_m, previous_ee_distance - distance, torch.zeros_like(distance))
         displacement = torch.linalg.vector_norm(state[:, :2] - initial_base_position[:, :2], dim=-1)
+        base_tilt, base_stable = root_tilt_and_stability(
+            state[:, 3:7], state[:, 2] + self.env.scene.env_origins[:, 2],
+            minimum_height_m=self.command.cfg.success_minimum_base_height_m,
+            maximum_tilt_rad=self.command.cfg.success_maximum_tilt_rad,
+        )
         return {
-            "base_velocity_error": base_velocity_error,
-            "yaw_rate_error": yaw_rate_error,
+            "base_velocity_xy_error": torch.linalg.vector_norm(velocity_xy_error, dim=-1),
+            "base_velocity_xy_squared_error": velocity_xy_squared_error,
+            "command_vx": velocity_command[:, 0],
+            "command_vy": velocity_command[:, 1],
+            "command_wz": velocity_command[:, 2],
+            "base_vx_body": velocity_command[:, 0] + velocity_xy_error[:, 0],
+            "base_vy_body": velocity_command[:, 1] + velocity_xy_error[:, 1],
+            "base_yaw_rate": state[:, 34],
+            "wheel_rate_abs_mean": state[:, 35:57][:, wheel_ids].abs().mean(-1),
+            "base_vertical_velocity": body_vertical_velocity,
+            "yaw_rate_error": yaw_rate_error.abs(),
             "ee_distance": distance,
             "ee_progress": progress,
             "base_displacement": displacement,
-            "ee_success": ((distance < self.command.cfg.success_distance) & is_m).float(),
+            "world_displacement": displacement,
+            "ee_success": (
+                (distance < self.command.cfg.success_distance) & is_m & base_stable
+            ).float(),
             "joint_limit_violation": (
                 (state[:, 7:29] < self.env.scene["robot"].data.soft_joint_pos_limits[0, :, 0])
                 | (state[:, 7:29] > self.env.scene["robot"].data.soft_joint_pos_limits[0, :, 1])
             ).float().mean(-1),
             "base_height": state[:, 2],
+            "base_tilt_rad": base_tilt,
+            "base_stable": base_stable.to(state.dtype),
         }
 
     @torch.no_grad()
@@ -1015,6 +1053,17 @@ class Trainer:
         for name in names:
             value = self.env.reward_manager.get_term(name).mean().detach()
             self.real_reward_term_sum[name] = self.real_reward_term_sum.get(name, value.new_zeros(())) + value
+        if self.cfg.env.robot_name.lower().replace("-", "_") == "g1" and self.cfg.env.task_name == "motion_tracking":
+            # Diagnostics only: expose drift that a pure-proprio Actor cannot
+            # observe, without changing the reward or policy inputs.
+            for metric_name in (
+                "error_anchor_pos", "error_anchor_yaw", "error_root_pos", "error_root_yaw",
+                "error_body_pos", "error_body_rot", "error_joint_pos", "error_joint_vel",
+            ):
+                value = self.command.metrics.get(metric_name)
+                if value is not None:
+                    key = f"drift/{metric_name}"
+                    self.task_diag_sum[key] = self.task_diag_sum.get(key, value.new_zeros(())) + value.mean().detach()
         if self.is_go2_task:
             cache = getattr(self.env, "_supermimic_go2_reward_cache", None) or getattr(self.env, "_supermimic_chase_reward_cache", None)
             if cache is not None:
@@ -1139,6 +1188,11 @@ class Trainer:
             self._m1_finished_reach_successes = 0.0
             self._m1_finished_reach_episodes = 0.0
             self._m1_joint_real_step_metrics: dict[str, float] = {}
+            self._m1_wm_replay_diagnostics: dict[str, float] = {}
+            self._m1_metric_sum: dict[str, float] = {}
+            self._m1_metric_count: dict[str, int] = {}
+            self._m1_episode_counts = {"L": 0, "M": 0}
+            self._m1_episode_falls = {"L": 0, "M": 0}
         t_start = time.time()
         timers = {"sim": 0.0, "wm": 0.0, "policy": 0.0}
         agg: dict[str, float] = {}
@@ -1186,14 +1240,127 @@ class Trainer:
                     metric_next_state, task_type_before, velocity_command_before,
                     fixed_target_before, initial_base_before, previous_ee_distance,
                 )
-                for name, value in task_metrics.items():
-                    self._m1_joint_real_step_metrics[f"real/{name}"] = float(value.mean())
+                is_l = task_type_before == 0
+                is_m = task_type_before == 1
+                self._m1_joint_real_step_metrics["real/L_sample_count"] = float(is_l.sum())
+                self._m1_joint_real_step_metrics["real/M_sample_count"] = float(is_m.sum())
+                l_metrics = {
+                    "base_velocity_xy_error": task_metrics["base_velocity_xy_error"],
+                    "base_velocity_xy_squared_error": task_metrics["base_velocity_xy_squared_error"],
+                    "yaw_rate_error": task_metrics["yaw_rate_error"],
+                    "base_vertical_velocity": task_metrics["base_vertical_velocity"],
+                    "world_displacement": task_metrics["world_displacement"],
+                    "base_height": task_metrics["base_height"],
+                }
+                m_metrics = {
+                    "ee_distance": task_metrics["ee_distance"],
+                    "ee_progress": task_metrics["ee_progress"],
+                    "ee_success": task_metrics["ee_success"],
+                    "base_displacement": task_metrics["base_displacement"],
+                    "base_height": task_metrics["base_height"],
+                    "base_tilt_rad": task_metrics["base_tilt_rad"],
+                    "base_stable": task_metrics["base_stable"],
+                    "joint_limit_violation": task_metrics["joint_limit_violation"],
+                }
+                from supermimic.motion_prior.velocity import task_masked_mean
+
+                l_rmse_sq = task_masked_mean(task_metrics["base_velocity_xy_squared_error"], is_l)
+                if l_rmse_sq is not None:
+                    self._m1_joint_real_step_metrics["real/L/base_velocity_xy_rmse"] = float(l_rmse_sq.clamp_min(0).sqrt())
+                    for name, value in l_metrics.items():
+                        if name == "base_velocity_xy_squared_error":
+                            continue
+                        mean = task_masked_mean(value, is_l)
+                        if mean is not None:
+                            self._m1_joint_real_step_metrics[f"real/L/{name}"] = float(mean)
+                for name, value in m_metrics.items():
+                    mean = task_masked_mean(value, is_m)
+                    if mean is not None:
+                        self._m1_joint_real_step_metrics[f"real/M/{name}"] = float(mean)
+                for name, values, mask in (
+                    ("real/L/base_velocity_xy_squared_error", task_metrics["base_velocity_xy_squared_error"], is_l),
+                    ("real/L/yaw_rate_error", task_metrics["yaw_rate_error"], is_l),
+                    ("real/L/base_vertical_velocity", task_metrics["base_vertical_velocity"], is_l),
+                    ("real/L/command_vx", task_metrics["command_vx"], is_l),
+                    ("real/L/command_vy", task_metrics["command_vy"], is_l),
+                    ("real/L/command_wz", task_metrics["command_wz"], is_l),
+                    ("real/L/base_vx_body", task_metrics["base_vx_body"], is_l),
+                    ("real/L/base_vy_body", task_metrics["base_vy_body"], is_l),
+                    ("real/L/base_yaw_rate", task_metrics["base_yaw_rate"], is_l),
+                    ("real/L/wheel_rate_abs_mean", task_metrics["wheel_rate_abs_mean"], is_l),
+                    ("real/L/world_displacement", task_metrics["world_displacement"], is_l),
+                    ("real/L/base_height", task_metrics["base_height"], is_l),
+                    ("real/M/ee_distance", task_metrics["ee_distance"], is_m),
+                    ("real/M/ee_progress", task_metrics["ee_progress"], is_m),
+                    ("real/M/ee_success", task_metrics["ee_success"], is_m),
+                    ("real/M/base_displacement", task_metrics["base_displacement"], is_m),
+                    ("real/M/base_height", task_metrics["base_height"], is_m),
+                    ("real/M/joint_limit_violation", task_metrics["joint_limit_violation"], is_m),
+                ):
+                    selected = values[mask]
+                    if selected.numel():
+                        self._m1_metric_sum[name] = self._m1_metric_sum.get(name, 0.0) + float(selected.sum())
+                        self._m1_metric_count[name] = self._m1_metric_count.get(name, 0) + int(selected.numel())
+                self._m1_metric_sum["real/action_saturation"] = self._m1_metric_sum.get("real/action_saturation", 0.0) + float((action.abs() >= 0.98).float().sum())
+                self._m1_metric_count["real/action_saturation"] = self._m1_metric_count.get("real/action_saturation", 0) + action.numel()
+                if self.command.cfg.task_type == "L":
+                    self._m1_joint_real_step_metrics["real/base_velocity_xy_rmse"] = self._m1_joint_real_step_metrics["real/L/base_velocity_xy_rmse"]
+                    self._m1_joint_real_step_metrics["real/yaw_rate_error"] = self._m1_joint_real_step_metrics["real/L/yaw_rate_error"]
+                    self._m1_joint_real_step_metrics["real/base_vertical_velocity"] = self._m1_joint_real_step_metrics["real/L/base_vertical_velocity"]
+                    self._m1_joint_real_step_metrics["real/world_displacement"] = self._m1_joint_real_step_metrics["real/L/world_displacement"]
+                elif self.command.cfg.task_type == "M":
+                    self._m1_joint_real_step_metrics["real/ee_distance"] = self._m1_joint_real_step_metrics["real/M/ee_distance"]
+                    self._m1_joint_real_step_metrics["real/ee_progress"] = self._m1_joint_real_step_metrics["real/M/ee_progress"]
+                    self._m1_joint_real_step_metrics["real/base_displacement"] = self._m1_joint_real_step_metrics["real/M/base_displacement"]
                 self._m1_joint_real_step_metrics["real/action_saturation"] = float((action.abs() >= 0.98).float().mean())
                 self._m1_joint_real_step_metrics["imag/real_gap"] = float(
                     self.wm.spec.normalized_sq_error(wm_prediction, metric_next_state).mean()
                 )
+                one_step_error = self.wm.spec.error_vector(wm_prediction, metric_next_state) * self.wm.spec.err_scale
+                self._m1_joint_real_step_metrics["wm/real_one_step/root_position_rmse_m"] = float(
+                    one_step_error[..., 0:3].square().sum(-1).mean().sqrt()
+                )
+                self._m1_joint_real_step_metrics["wm/real_one_step/root_orientation_rmse_rad"] = float(
+                    one_step_error[..., 3:6].square().sum(-1).mean().sqrt()
+                )
+                self._m1_joint_real_step_metrics["wm/real_one_step/root_velocity_rmse_m_s"] = float(
+                    one_step_error[..., 6:9].square().sum(-1).mean().sqrt()
+                )
+                self._m1_joint_real_step_metrics["wm/real_one_step/root_angular_velocity_rmse_rad_s"] = float(
+                    one_step_error[..., 9:12].square().sum(-1).mean().sqrt()
+                )
+                q_error = one_step_error[..., 12:34]
+                qd_error = one_step_error[..., 34:56]
+                from supermimic.robots.spec import M1_AMP_JOINTS, M1_JOINTS
+
+                leg_error_ids = torch.tensor(
+                    [M1_JOINTS.index(name) for name in M1_AMP_JOINTS[:12]], device=self.device,
+                )
+                arm_error_ids = torch.tensor(
+                    [M1_JOINTS.index(name) for name in M1_AMP_JOINTS[12:]], device=self.device,
+                )
+                wheel_error_ids = torch.tensor(self.wm.spec.wheel_indices, device=self.device)
+                for prefix, source, indices, unit in (
+                    ("leg_position", q_error, leg_error_ids, "rad"),
+                    ("arm_position", q_error, arm_error_ids, "rad"),
+                    ("wheel_position", q_error, wheel_error_ids, "rad"),
+                    ("leg_velocity", qd_error, leg_error_ids, "rad_s"),
+                    ("arm_velocity", qd_error, arm_error_ids, "rad_s"),
+                    ("wheel_velocity", qd_error, wheel_error_ids, "rad_s"),
+                ):
+                    self._m1_joint_real_step_metrics[f"wm/real_one_step/{prefix}_rmse_{unit}"] = float(
+                        source.index_select(-1, indices).square().mean().sqrt()
+                    )
+                predicted_tcp = self.m1_joint_trainer.fk(wm_prediction[:, :29], wm_prediction[:, 29:])["pos"][:, self.m1_joint_trainer.tcp_index]
+                actual_tcp = self.m1_joint_trainer.fk(metric_next_state[:, :29], metric_next_state[:, 29:])["pos"][:, self.m1_joint_trainer.tcp_index]
+                self._m1_joint_real_step_metrics["wm/real_one_step/ee_fk_error_m"] = float(
+                    torch.linalg.vector_norm(predicted_tcp - actual_tcp, dim=-1).mean()
+                )
                 reach = task_type_before == 1
-                within = reach & (task_metrics["ee_distance"] < self.command.cfg.success_distance)
+                within = (
+                    reach & task_metrics["base_stable"].bool()
+                    & (task_metrics["ee_distance"] < self.command.cfg.success_distance)
+                )
                 hold_next = torch.where(
                     within, self._m1_ee_hold_seconds + float(env.step_dt),
                     torch.zeros_like(self._m1_ee_hold_seconds),
@@ -1202,11 +1369,18 @@ class Trainer:
                 done_ids = (term | tout).nonzero(as_tuple=False).flatten()
                 finished_m = done_ids[reach[done_ids]]
                 if finished_m.numel():
-                    self._m1_finished_reach_successes += float(episode_success_next[finished_m].sum())
+                    survived_to_end = ~term[finished_m]
+                    self._m1_finished_reach_successes += float(
+                        (episode_success_next[finished_m] & survived_to_end).sum()
+                    )
                     self._m1_finished_reach_episodes += float(finished_m.numel())
                 self._m1_ee_hold_seconds = hold_next
                 self._m1_episode_reach_success = episode_success_next
                 if done_ids.numel():
+                    for task_code, task_name in ((0, "L"), (1, "M")):
+                        task_done = done_ids[task_type_before[done_ids] == task_code]
+                        self._m1_episode_counts[task_name] += int(task_done.numel())
+                        self._m1_episode_falls[task_name] += int(term[task_done].sum())
                     self._m1_ee_hold_seconds[done_ids] = 0.0
                     self._m1_episode_reach_success[done_ids] = False
                 if self._m1_finished_reach_episodes:
@@ -1313,7 +1487,6 @@ class Trainer:
                     m_pi = {}
                     ramp_scale = 0.0
                     actor_lr = 0.0
-                    policy_enabled = wm_only_target <= 0 or self.wm_only_updates >= wm_only_target
                     if wm_only_target > 0 and not policy_enabled:
                         self.wm_only_updates += 1
                     else:
@@ -1487,8 +1660,47 @@ class Trainer:
                     if cache is not None:
                         self.writer.add_scalar("m1/base_height_mean", float(cache["state_next"][..., 2].mean()), it)
                 if self.is_m1_prior_joint and self.is_main:
-                    for key, value in self._m1_joint_real_step_metrics.items():
+                    real_window: dict[str, float] = {}
+                    for key, total in self._m1_metric_sum.items():
+                        count = self._m1_metric_count.get(key, 0)
+                        if count <= 0:
+                            continue
+                        value = total / count
+                        if key == "real/L/base_velocity_xy_squared_error":
+                            value = max(value, 0.0) ** 0.5
+                            key = "real/L/base_velocity_xy_rmse"
+                        real_window[key] = value
+                    real_window["real/L_sample_count"] = float(
+                        self._m1_metric_count.get("real/L/yaw_rate_error", 0)
+                    )
+                    real_window["real/M_sample_count"] = float(
+                        self._m1_metric_count.get("real/M/ee_distance", 0)
+                    )
+                    if self._m1_episode_counts["L"]:
+                        real_window["real/L_fall_rate"] = (
+                            self._m1_episode_falls["L"] / self._m1_episode_counts["L"]
+                        )
+                    if self._m1_episode_counts["M"]:
+                        real_window["real/M_fall_rate"] = (
+                            self._m1_episode_falls["M"] / self._m1_episode_counts["M"]
+                        )
+                    if self.command.cfg.task_type == "L" and "real/L/base_velocity_xy_rmse" in real_window:
+                        real_window["real/base_velocity_xy_rmse"] = real_window["real/L/base_velocity_xy_rmse"]
+                        real_window["real/yaw_rate_error"] = real_window["real/L/yaw_rate_error"]
+                        real_window["real/base_vertical_velocity"] = real_window["real/L/base_vertical_velocity"]
+                        real_window["real/world_displacement"] = real_window["real/L/world_displacement"]
+                    if self.command.cfg.task_type == "M" and "real/M/ee_distance" in real_window:
+                        real_window["real/ee_distance"] = real_window["real/M/ee_distance"]
+                        real_window["real/ee_progress"] = real_window["real/M/ee_progress"]
+                        real_window["real/base_displacement"] = real_window["real/M/base_displacement"]
+                    for key, value in real_window.items():
                         self.writer.add_scalar(key, value, it)
+                    # These are latest-step diagnostics; task scores above are
+                    # masked means over the complete logging interval.
+                    for key, value in self._m1_joint_real_step_metrics.items():
+                        if key.startswith("wm/") or key == "real/ee_success_hold_rate":
+                            self.writer.add_scalar(key, value, it)
+                    self._m1_joint_log_metrics = {**self._m1_joint_real_step_metrics, **real_window}
                     self.writer.add_scalar("prior/actor_ready", float(self.m1_joint_trainer.actor_ready), it)
                     self.writer.add_scalar("prior/state_source_privileged", 1.0, it)
                     self.writer.add_scalar("prior/l_task_fraction_real", float((self.command.task_type == 0).float().mean()), it)
@@ -1511,7 +1723,15 @@ class Trainer:
                             term = key.removeprefix("policy/imag_r/")
                             self.writer.add_scalar(f"{task_prefix}/reward_imag/{term}", value / max(agg_n, 1), it)
                 with torch.no_grad():
-                    if self.is_main and self.buffer.size > 2048:
+                    if self.is_main and self.is_m1_prior_joint and bool(self.buffer.window_mask(8).any()):
+                        wm_components = self.wm_trainer.online_error_components(
+                            self.buffer, n=min(256, max(self.env.num_envs, 8)), k=8,
+                        )
+                        for key, value in wm_components.items():
+                            self.writer.add_scalar(f"wm/replay_open_loop/{key}", value, it)
+                        self._m1_wm_replay_diagnostics = wm_components
+                        err = None
+                    elif self.is_main and self.buffer.size > 2048:
                         err = self.wm_trainer.online_error(self.buffer, n=256, k=8)
                         self.writer.add_scalar("wm/nse_1step", float(err[0]), it)
                         self.writer.add_scalar("wm/nse_8step", float(err[-1]), it)
@@ -1544,6 +1764,58 @@ class Trainer:
                         f"WM-only {self.wm_only_updates}/{wm_only_target} actor-ramp {agg.get('policy/actor_ramp_scale', 0.0):.3f} | "
                         f"t sim/wm/pi {timers['sim']:.1f}/{timers['wm']:.1f}/{timers['policy']:.1f}s"
                     )
+                    if self.is_m1_prior_joint:
+                        real = getattr(self, "_m1_joint_log_metrics", self._m1_joint_real_step_metrics)
+                        phase = self.m1_joint_trainer.stage
+                        wm_nse1 = self._m1_wm_replay_diagnostics.get("nse_1step", float("nan"))
+                        wm_nse8 = self._m1_wm_replay_diagnostics.get("nse_8step", float("nan"))
+                        wm_ready = self.m1_joint_trainer.last_wm_readiness.get("schedule/wm_ready", 0.0)
+                        readiness = self.m1_joint_trainer.actor_readiness_diagnostics
+                        actor_gate_failures = [
+                            key.removeprefix("schedule/actor_readiness_").removesuffix("_pass")
+                            for key, value in readiness.items()
+                            if key.endswith("_pass") and not bool(value)
+                        ]
+                        wm_gate = self.m1_joint_trainer.last_wm_readiness
+                        wm_gate_failures = [
+                            key.removeprefix("schedule/wm_readiness_").removesuffix("_pass")
+                            for key, value in wm_gate.items()
+                            if key.endswith("_pass") and not bool(value)
+                        ]
+                        gpu_peak = torch.cuda.max_memory_allocated(self.device) / (1024 ** 3)
+                        task_summary = []
+                        for key in (
+                            "real/base_velocity_xy_rmse", "real/yaw_rate_error",
+                            "real/M/ee_distance", "real/M/ee_progress",
+                        ):
+                            if key in real:
+                                task_summary.append(f"{key.removeprefix('real/') } {real[key]:.4f}")
+                        task_text = " | ".join(task_summary) if task_summary else "task metrics pending"
+                        prior_summary = "/".join((
+                            _format_m1_aggregate(agg, agg_n, "prior/task_loss"),
+                            _format_m1_aggregate(agg, agg_n, "prior/smooth_loss"),
+                            _format_m1_aggregate(agg, agg_n, "prior/grad_norm", 3),
+                        ))
+                        actor_summary = "/".join((
+                            _format_m1_aggregate(agg, agg_n, "actor/tracking_error"),
+                            _format_m1_aggregate(agg, agg_n, "actor/grad_norm", 3),
+                        ))
+                        wm_summary = "/".join((
+                            _format_m1_metric(wm_nse1), _format_m1_metric(wm_nse8),
+                        ))
+                        msg = (
+                            f"it {it} | {elapsed/3600:.2f} h | {sch.log_interval / dt_log:.1f} it/s | "
+                            f"M1 WM NSE1/8 {wm_summary} | "
+                            f"prior task/smooth/grad {prior_summary} | "
+                            f"actor track/grad {actor_summary} | "
+                            f"{task_text} | phase {phase} | wm_ready {int(bool(wm_ready))} | "
+                            f"actor_ready {int(bool(readiness['schedule/actor_ready']))}"
+                            f"[{','.join(actor_gate_failures) or 'pass'}] "
+                            f"wm_gate [{','.join(wm_gate_failures) or 'pass'}] | "
+                            f"updates wm/prior/actor {self.m1_joint_trainer.wm_optimizer_steps}/"
+                            f"{self.m1_joint_trainer.prior_optimizer_steps}/{self.m1_joint_trainer.actor_optimizer_steps} | "
+                            f"GPU peak {gpu_peak:.2f} GiB | t sim/wm/pi {timers['sim']:.1f}/{timers['wm']:.1f}/{timers['policy']:.1f}s"
+                        )
                     print(msg, flush=True)
                 agg, agg_n = {}, 0
                 finished_returns, finished_lens = [], []
@@ -1552,6 +1824,11 @@ class Trainer:
                 self.task_diag_sum = {}
                 self.m1_step_metric_sum = {}
                 self.m1_step_metric_count.zero_()
+                if self.is_m1_prior_joint:
+                    self._m1_metric_sum = {}
+                    self._m1_metric_count = {}
+                    self._m1_episode_counts = {"L": 0, "M": 0}
+                    self._m1_episode_falls = {"L": 0, "M": 0}
                 timers = {k: 0.0 for k in timers}
             if self.iteration % sch.checkpoint_interval == 0:
                 self.save("ckpt_latest.pt")

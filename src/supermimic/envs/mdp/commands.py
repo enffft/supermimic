@@ -29,7 +29,7 @@ from mjlab.utils.lab_api.math import (
 )
 
 from supermimic.envs.mdp.motion_library import MotionLibrary
-from supermimic.kinematics.rotations import heading_yaw
+from supermimic.kinematics.rotations import heading_yaw, wrap_to_pi
 
 if TYPE_CHECKING:
     from mjlab.entity import Entity
@@ -81,7 +81,8 @@ class MultiClipMotionCommand(CommandTerm):
         self._gamma_pow = cfg.gamma ** torch.arange(self.max_ep_steps, device=self.device, dtype=torch.float64)
         self.bootstrap_fn = None  # optional: env_ids -> value estimate for truncated episodes
 
-        for k in ("error_anchor_pos", "error_anchor_rot", "error_body_pos", "error_body_rot",
+        for k in ("error_anchor_pos", "error_anchor_rot", "error_anchor_yaw",
+                  "error_root_pos", "error_root_yaw", "error_body_pos", "error_body_rot",
                   "error_joint_pos", "error_joint_vel", "sampling_entropy", "episode_return_to_go"):
             self.metrics[k] = torch.zeros(n, device=self.device)
 
@@ -187,6 +188,13 @@ class MultiClipMotionCommand(CommandTerm):
     def _update_metrics(self):
         self.metrics["error_anchor_pos"] = torch.norm(self.anchor_pos_w - self.robot_anchor_pos_w, dim=-1)
         self.metrics["error_anchor_rot"] = quat_error_magnitude(self.anchor_quat_w, self.robot_anchor_quat_w)
+        self.metrics["error_anchor_yaw"] = wrap_to_pi(
+            heading_yaw(self.anchor_quat_w) - heading_yaw(self.robot_anchor_quat_w)
+        ).abs()
+        self.metrics["error_root_pos"] = torch.norm(self.root_pos_w - self.robot_root_pos_w, dim=-1)
+        self.metrics["error_root_yaw"] = wrap_to_pi(
+            heading_yaw(self.root_quat_w) - heading_yaw(self.robot_root_quat_w)
+        ).abs()
         self.metrics["error_body_pos"] = torch.norm(self.body_pos_relative_w - self.robot_body_pos_w, dim=-1).mean(-1)
         self.metrics["error_body_rot"] = quat_error_magnitude(self.body_quat_relative_w, self.robot_body_quat_w).mean(-1)
         self.metrics["error_joint_pos"] = torch.norm(self.joint_pos - self.robot_joint_pos, dim=-1)
@@ -1303,10 +1311,20 @@ class M1PriorJointCommand(CommandTerm):
         self._hold_seconds = torch.zeros(self.num_envs, device=self.device)
         self._episode_success = torch.zeros(self.num_envs, dtype=torch.bool, device=self.device)
         self.metrics["base_velocity_error"] = torch.zeros(self.num_envs, device=self.device)
+        self.metrics["base_velocity_xy_error"] = torch.zeros(self.num_envs, device=self.device)
+        self.metrics["base_velocity_xy_squared_error"] = torch.zeros(self.num_envs, device=self.device)
+        self.metrics["base_vertical_velocity"] = torch.zeros(self.num_envs, device=self.device)
         self.metrics["yaw_rate_error"] = torch.zeros(self.num_envs, device=self.device)
+        self.metrics["task_l_sample"] = torch.zeros(self.num_envs, device=self.device)
+        self.metrics["task_m_sample"] = torch.zeros(self.num_envs, device=self.device)
+        for name in ("command_vx", "command_vy", "command_wz", "base_vx_body", "base_vy_body",
+                     "base_yaw_rate", "wheel_rate_abs_mean"):
+            self.metrics[name] = torch.zeros(self.num_envs, device=self.device)
         self.metrics["ee_distance"] = torch.zeros(self.num_envs, device=self.device)
         self.metrics["ee_progress"] = torch.zeros(self.num_envs, device=self.device)
         self.metrics["base_displacement"] = torch.zeros(self.num_envs, device=self.device)
+        self.metrics["base_tilt_rad"] = torch.zeros(self.num_envs, device=self.device)
+        self.metrics["base_stable"] = torch.ones(self.num_envs, device=self.device)
         self.metrics["ee_success"] = torch.zeros(self.num_envs, device=self.device)
         self._last_ee_distance = torch.zeros(self.num_envs, device=self.device)
 
@@ -1370,17 +1388,47 @@ class M1PriorJointCommand(CommandTerm):
     def _update_metrics(self) -> None:
         root_pos = self.robot.data.root_link_pos_w - self._env.scene.env_origins
         q = self.robot.data.root_link_quat_w
-        from supermimic.kinematics.rotations import quat_apply_inverse
+        from supermimic.motion_prior.velocity import velocity_command_errors_from_components
 
-        body_v = quat_apply_inverse(q, self.robot.data.root_link_lin_vel_w)
-        body_w = self.robot.data.root_link_ang_vel_b
-        self.metrics["base_velocity_error"] = torch.linalg.vector_norm(body_v - self.velocity_command_body, dim=-1)
-        self.metrics["yaw_rate_error"] = (body_w[:, 2] - self.velocity_command_body[:, 2]).abs()
+        xy_error, xy_sq_error, yaw_error, vertical_velocity = velocity_command_errors_from_components(
+            q, self.robot.data.root_link_lin_vel_w,
+            self.robot.data.root_link_ang_vel_b[:, 2], self.velocity_command_body,
+        )
+        is_l = self.task_type == 0
+        self.metrics["base_velocity_xy_error"] = torch.linalg.vector_norm(xy_error, dim=-1) * is_l
+        self.metrics["base_velocity_xy_squared_error"] = xy_sq_error * is_l
+        # Backward-compatible alias; the value is horizontal XY error only.
+        self.metrics["base_velocity_error"] = self.metrics["base_velocity_xy_error"]
+        self.metrics["base_vertical_velocity"] = vertical_velocity * is_l
+        self.metrics["yaw_rate_error"] = yaw_error.abs() * is_l
+        self.metrics["task_l_sample"] = is_l.to(self.velocity_command_body.dtype)
+        self.metrics["task_m_sample"] = (self.task_type == 1).to(self.velocity_command_body.dtype)
+        self.metrics["command_vx"] = self.velocity_command_body[:, 0]
+        self.metrics["command_vy"] = self.velocity_command_body[:, 1]
+        self.metrics["command_wz"] = self.velocity_command_body[:, 2]
+        self.metrics["base_vx_body"] = self.velocity_command_body[:, 0] + xy_error[:, 0]
+        self.metrics["base_vy_body"] = self.velocity_command_body[:, 1] + xy_error[:, 1]
+        self.metrics["base_yaw_rate"] = self.robot.data.root_link_ang_vel_b[:, 2]
+        from supermimic.robots.spec import M1_JOINTS
+
+        wheel_ids = [M1_JOINTS.index(n) for n in ("FAR_FOOT_JOINT", "FBL_FOOT_JOINT", "RAR_FOOT_JOINT", "RBL_FOOT_JOINT")]
+        self.metrics["wheel_rate_abs_mean"] = self.robot.data.joint_vel[:, wheel_ids].abs().mean(-1)
         tcp = self.robot.data.body_link_pos_w[:, self._tcp_body_ids].mean(dim=1) - self._env.scene.env_origins
         distance = torch.linalg.vector_norm(tcp - self.target_position_world, dim=-1)
+        from supermimic.motion_prior.metrics import root_tilt_and_stability
+
+        base_tilt, base_stable = root_tilt_and_stability(
+            q, self.robot.data.root_link_pos_w[:, 2],
+            minimum_height_m=self.cfg.success_minimum_base_height_m,
+            maximum_tilt_rad=self.cfg.success_maximum_tilt_rad,
+        )
+        self.metrics["base_tilt_rad"] = base_tilt
+        self.metrics["base_stable"] = base_stable.to(root_pos.dtype)
         self.metrics["ee_distance"] = torch.where(self.task_type == 1, distance, torch.zeros_like(distance))
         self.metrics["base_displacement"] = torch.linalg.vector_norm(root_pos - self.initial_base_position_world, dim=-1)
-        self.metrics["ee_success"] = ((distance < self.cfg.success_distance) & (self.task_type == 1)).float()
+        self.metrics["ee_success"] = (
+            (distance < self.cfg.success_distance) & (self.task_type == 1) & base_stable
+        ).float()
 
     def record_real_step(self) -> None:
         self._update_metrics()
@@ -1388,7 +1436,11 @@ class M1PriorJointCommand(CommandTerm):
         progress = self._last_ee_distance - distance
         self.metrics["ee_progress"] = torch.where(self.task_type == 1, progress, torch.zeros_like(progress))
         self._last_ee_distance = distance.clone()
-        within = (distance < self.cfg.success_distance) & (self.task_type == 1)
+        within = (
+            (distance < self.cfg.success_distance)
+            & (self.task_type == 1)
+            & self.metrics["base_stable"].bool()
+        )
         self._hold_seconds = torch.where(within, self._hold_seconds + float(self._env.step_dt), torch.zeros_like(self._hold_seconds))
         self._episode_success |= self._hold_seconds >= 0.5
 
@@ -1405,6 +1457,8 @@ class M1PriorJointCommand(CommandTerm):
             "minimum_target_height": float(self.cfg.minimum_target_height),
             "maximum_target_height": float(self.cfg.maximum_target_height),
             "success_distance": float(self.cfg.success_distance),
+            "success_minimum_base_height_m": float(self.cfg.success_minimum_base_height_m),
+            "success_maximum_tilt_rad": float(self.cfg.success_maximum_tilt_rad),
         }
 
 
@@ -1422,6 +1476,8 @@ class M1PriorJointCommandCfg(CommandTermCfg):
     minimum_target_height: float = 0.10
     maximum_target_height: float = 1.20
     success_distance: float = 0.08
+    success_minimum_base_height_m: float = 0.22
+    success_maximum_tilt_rad: float = math.radians(70.0)
     resampling_time_range: tuple[float, float] = (1.0e9, 1.0e9)
 
     def __post_init__(self):
@@ -1433,7 +1489,9 @@ class M1PriorJointCommandCfg(CommandTermCfg):
             bounds = getattr(self, key)
             if len(bounds) != 2 or bounds[0] > bounds[1]:
                 raise ValueError(f"{key} must be an ordered range")
-        if not 0 < self.success_distance or not 0 < self.minimum_target_height < self.maximum_target_height:
+        if (not 0 < self.success_distance or not 0 < self.minimum_target_height < self.maximum_target_height
+                or self.success_minimum_base_height_m <= 0
+                or not 0 < self.success_maximum_tilt_rad < math.pi):
             raise ValueError("M1 prior target bounds are invalid")
 
     def build(self, env: ManagerBasedRlEnv) -> M1PriorJointCommand:

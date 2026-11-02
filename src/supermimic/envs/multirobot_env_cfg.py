@@ -286,6 +286,8 @@ def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
                 target_y_range=a.m1_joint_target_y_range,
                 target_z_range=a.m1_joint_target_z_range,
                 success_distance=a.m1_success_distance,
+                success_minimum_base_height_m=a.m1_fall_height,
+                success_maximum_tilt_rad=math.radians(a.velocity_fall_tilt_deg),
             )
         }
         rewards = {"data_collection_zero": RewardTermCfg(func=m1_prior_data_collection_reward, weight=1.0)}

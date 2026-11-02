@@ -88,6 +88,8 @@ class M1AlternatingTrainer:
         self._plan_has_sampled_latent: torch.Tensor | None = None
         self.last_prior_metrics: dict[str, float] = {}
         self.last_actor_metrics: dict[str, float] = {}
+        self.last_wm_metrics: dict[str, float] = {}
+        self.last_wm_readiness: dict[str, float] = {}
 
     def set_lr(self, *, prior_lr: float, actor_lr: float) -> None:
         for group in self.prior_optimizer.param_groups:
@@ -97,20 +99,76 @@ class M1AlternatingTrainer:
 
     @property
     def actor_ready(self) -> bool:
+        return bool(self.actor_readiness_diagnostics["schedule/actor_ready"])
+
+    @property
+    def actor_readiness_diagnostics(self) -> dict[str, float]:
         cfg = self.cfg
-        if len(self._actor_ready_window) < int(cfg.readiness_min_samples):
-            return False
-        if self.actor_optimizer_steps < int(cfg.actor_pretrain_updates):
-            return False
-        means = {key: sum(row[key] for row in self._actor_ready_window) / len(self._actor_ready_window)
-                 for key in self._actor_ready_window[0]}
-        return (
-            means["survival"] >= cfg.readiness_min_survival
-            and means["root_tracking_error"] <= cfg.readiness_max_root_tracking_error
-            and means["arm_tracking_error"] <= cfg.readiness_max_arm_tracking_error
-            and means["wheel_tracking_error"] <= cfg.readiness_max_wheel_tracking_error
-            and means["action_saturation"] <= cfg.readiness_max_action_saturation
+        count = len(self._actor_ready_window)
+        enough_samples = count >= int(cfg.readiness_min_samples)
+        enough_pretrain = self.actor_optimizer_steps >= int(cfg.actor_pretrain_updates)
+        means = ({key: sum(row[key] for row in self._actor_ready_window) / count
+                  for key in self._actor_ready_window[0]} if count else {})
+        checks = {
+            "samples": enough_samples,
+            "pretrain": enough_pretrain,
+            "survival": enough_samples and means.get("survival", 0.0) >= cfg.readiness_min_survival,
+            "root_tracking": enough_samples and means.get("root_tracking_error", float("inf")) <= cfg.readiness_max_root_tracking_error,
+            "arm_tracking": enough_samples and means.get("arm_tracking_error", float("inf")) <= cfg.readiness_max_arm_tracking_error,
+            "wheel_tracking": enough_samples and means.get("wheel_tracking_error", float("inf")) <= cfg.readiness_max_wheel_tracking_error,
+            "action_saturation": enough_samples and means.get("action_saturation", float("inf")) <= cfg.readiness_max_action_saturation,
+        }
+        result = {
+            "schedule/actor_ready": float(all(checks.values())),
+            "schedule/actor_readiness_samples": float(count),
+            "schedule/actor_readiness_samples_pass": float(checks["samples"]),
+            "schedule/actor_readiness_pretrain_pass": float(checks["pretrain"]),
+            "schedule/actor_readiness_survival_pass": float(checks["survival"]),
+            "schedule/actor_readiness_root_tracking_pass": float(checks["root_tracking"]),
+            "schedule/actor_readiness_arm_tracking_pass": float(checks["arm_tracking"]),
+            "schedule/actor_readiness_wheel_tracking_pass": float(checks["wheel_tracking"]),
+            "schedule/actor_readiness_action_saturation_pass": float(checks["action_saturation"]),
+        }
+        for key, value in means.items():
+            result[f"schedule/actor_readiness_mean_{key}"] = float(value)
+        return result
+
+    def _wm_readiness(self, *, policy_allowed: bool) -> dict[str, float]:
+        cfg = self.cfg
+        enough_events = self.wm_update_events >= int(cfg.wm_readiness_min_events)
+        nse1 = self.last_wm_metrics.get("nse_1step", float("nan"))
+        nseh = self.last_wm_metrics.get("nse_kstep", float("nan"))
+        finite = bool(np.isfinite(nse1) and np.isfinite(nseh))
+        thresholds_configured = (
+            cfg.wm_readiness_max_nse_1 is not None
+            and cfg.wm_readiness_max_nse_horizon is not None
         )
+        nse1_pass = cfg.wm_readiness_max_nse_1 is not None and nse1 <= cfg.wm_readiness_max_nse_1
+        nseh_pass = cfg.wm_readiness_max_nse_horizon is not None and nseh <= cfg.wm_readiness_max_nse_horizon
+        # This is a replay-batch readiness diagnostic, not an independent
+        # held-out validation score. Optional quality thresholds stay unset
+        # until a task-specific held-out set has been measured.
+        fit_ready = policy_allowed and enough_events and finite
+        # Without both task-specific replay quality thresholds we cannot call
+        # the WM quality gate ready. Actor-only smoke/warmup can still proceed.
+        ready = fit_ready and thresholds_configured and nse1_pass and nseh_pass
+        result = {
+            "schedule/wm_ready": float(ready),
+            "schedule/wm_fit_ready": float(fit_ready),
+            "schedule/wm_quality_thresholds_configured": float(thresholds_configured),
+            "schedule/wm_readiness_policy_warmup_pass": float(policy_allowed),
+            "schedule/wm_readiness_min_events_pass": float(enough_events),
+            "schedule/wm_readiness_finite_replay_metric_pass": float(finite),
+            "schedule/wm_readiness_nse1_pass": float(nse1_pass),
+            "schedule/wm_readiness_nseh_pass": float(nseh_pass),
+            "schedule/wm_update_events": float(self.wm_update_events),
+            "schedule/wm_optimizer_steps": float(self.wm_optimizer_steps),
+        }
+        if np.isfinite(nse1):
+            result["schedule/wm_readiness_nse1_replay"] = float(nse1)
+        if np.isfinite(nseh):
+            result["schedule/wm_readiness_nseh_replay"] = float(nseh)
+        return result
 
     @staticmethod
     def _prior_state_history(start) -> torch.Tensor:
@@ -356,25 +414,24 @@ class M1AlternatingTrainer:
         output: dict[str, float] = {}
         for _ in range(int(self.cfg.wm_updates_per_event)):
             metrics = self.wm_trainer.update(self.buffer)
+            self.last_wm_metrics = dict(metrics)
             self.wm_update_events += 1
             self.wm_optimizer_steps += int(self.wm_trainer.cfg.batches_per_update)
             for key, value in metrics.items():
                 alias = {"nse_1step": "nse_1", "nse_kstep": f"nse_{self.wm_trainer.cfg.window}"}.get(key, key)
                 output[f"wm/{alias}"] = value
-        ready = self.actor_ready or (
-            not bool(self.cfg.freeze_prior)
-            and self.actor_optimizer_steps >= int(self.cfg.actor_pretrain_updates)
-        )
-        if not policy_allowed:
+        wm_readiness = self._wm_readiness(policy_allowed=policy_allowed)
+        self.last_wm_readiness = dict(wm_readiness)
+        wm_ready = bool(wm_readiness["schedule/wm_ready"])
+        ready = self.actor_ready
+        fit_ready = bool(wm_readiness["schedule/wm_fit_ready"])
+        if not fit_ready:
             self.stage = "wm_warmup"
         elif not ready:
             self.stage = "actor_tracking_warmup"
-            for _ in range(int(self.cfg.actor_updates_per_event)):
-                output.update(self._update_actor())
-        elif self.actor_optimizer_steps < int(self.cfg.actor_pretrain_updates) + int(self.cfg.prior_warmup_updates):
+        elif (not wm_ready or
+              self.actor_optimizer_steps < int(self.cfg.actor_pretrain_updates) + int(self.cfg.prior_warmup_updates)):
             self.stage = "prior_frozen_tracking_warmup"
-            for _ in range(int(self.cfg.actor_updates_per_event)):
-                output.update(self._update_actor())
         elif int(self.cfg.prior_updates_per_event) > 0:
             self.stage = "joint_alternating"
             for _ in range(int(self.cfg.prior_updates_per_event)):
@@ -383,6 +440,7 @@ class M1AlternatingTrainer:
                 output.update(self._update_actor())
         else:
             self.stage = "actor_only_prior_frozen"
+        if self.stage in ("actor_tracking_warmup", "prior_frozen_tracking_warmup"):
             for _ in range(int(self.cfg.actor_updates_per_event)):
                 output.update(self._update_actor())
         output.update(self._real_metrics)
@@ -395,9 +453,14 @@ class M1AlternatingTrainer:
             "schedule/prior_optimizer_steps": float(self.prior_optimizer_steps),
             "schedule/actor_optimizer_steps": float(self.actor_optimizer_steps),
             "schedule/phase": float(phase_code),
-            "prior/actor_ready": float(ready),
+            "schedule/training_phase": float(phase_code),
+            "schedule/actor_ready": float(ready),
+            "schedule/prior_unfrozen": float(self.stage == "joint_alternating"),
+            "prior/actor_ready": float(ready),  # compatibility alias
             "prior_state_source/privileged": 1.0,
         })
+        output.update(wm_readiness)
+        output.update(self.actor_readiness_diagnostics)
         return output
 
     def checkpoint(self, *, iteration: int, config_snapshot: dict, command_state: dict,

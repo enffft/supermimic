@@ -93,3 +93,58 @@ class WorldModelTrainer:
         """k-step open-loop error on (recent) replay windows; (k,) tensor."""
         w = buffer.sample_windows(n, k)
         return self.wm.rollout_error(w.states, w.a_exec, w.xi)
+
+    @torch.no_grad()
+    def online_error_components(self, buffer: ReplayBuffer, n: int = 256, k: int = 8) -> dict[str, float]:
+        """Replay-resampled open-loop error, split into physical M1 state groups.
+
+        This is a diagnostic sample from training replay, not a held-out
+        validation estimate. Errors are measured after each predicted state is
+        fed back into the next World Model step.
+        """
+        if self.wm.spec.nj != 22:
+            raise ValueError("component diagnostics are defined for the M1 22-joint state")
+        w = buffer.sample_windows(n, k)
+        spec = self.wm.spec
+        state = w.states[0]
+        per_step: list[dict[str, torch.Tensor]] = []
+        for step in range(k):
+            state = self.wm.step(state, w.a_exec[step], w.xi)
+            truth = w.states[step + 1]
+            err = spec.error_vector(state, truth) * spec.err_scale
+            q_error = err[..., 12:34]
+            qd_error = err[..., 34:56]
+            from supermimic.robots.spec import M1_AMP_JOINTS, M1_JOINTS
+
+            leg_ids = torch.tensor(
+                [M1_JOINTS.index(name) for name in M1_AMP_JOINTS[:12]],
+                device=state.device,
+            )
+            arm_ids = torch.tensor(
+                [M1_JOINTS.index(name) for name in M1_AMP_JOINTS[12:]],
+                device=state.device,
+            )
+            wheel_ids = torch.as_tensor(spec.wheel_indices, device=state.device)
+            groups = {
+                "nse": err.square().div(spec.err_scale.square()).mean(-1).mean(),
+                "root_position_rmse_m": err[..., 0:3].square().sum(-1).mean().sqrt(),
+                "root_orientation_rmse_rad": err[..., 3:6].square().sum(-1).mean().sqrt(),
+                "root_velocity_rmse_m_s": err[..., 6:9].square().sum(-1).mean().sqrt(),
+                "root_angular_velocity_rmse_rad_s": err[..., 9:12].square().sum(-1).mean().sqrt(),
+                "leg_position_rmse_rad": q_error.index_select(-1, leg_ids).square().mean().sqrt(),
+                "arm_position_rmse_rad": q_error.index_select(-1, arm_ids).square().mean().sqrt(),
+                "wheel_position_rmse_rad": q_error.index_select(-1, wheel_ids).square().mean().sqrt(),
+                "leg_velocity_rmse_rad_s": qd_error.index_select(-1, leg_ids).square().mean().sqrt(),
+                "arm_velocity_rmse_rad_s": qd_error.index_select(-1, arm_ids).square().mean().sqrt(),
+                "wheel_velocity_rmse_rad_s": qd_error.index_select(-1, wheel_ids).square().mean().sqrt(),
+            }
+            per_step.append(groups)
+        result: dict[str, float] = {}
+        for index in sorted({0, k - 1}):
+            prefix = "nse_1step" if index == 0 else f"nse_{k}step"
+            for name, value in per_step[index].items():
+                if name == "nse":
+                    result[prefix] = float(value)
+                else:
+                    result[f"{prefix}/{name}"] = float(value)
+        return result

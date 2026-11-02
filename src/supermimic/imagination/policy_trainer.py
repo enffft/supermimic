@@ -131,6 +131,18 @@ class PolicyTrainer:
                         "root_height_m": [float(x) for x in ro.root_height[1:].mean(dim=1)],
                         "tilt_feature": [float(x) for x in ro.tilt[1:].mean(dim=1)],
                     }
+                    if ro.e_root.shape[-1] == 4:
+                        self.last_imag_diagnostics.update({
+                            "root_error_xy_m": [
+                                float(x) for x in ro.e_root[1:, ..., :2].norm(dim=-1).mean(dim=1)
+                            ],
+                            "root_error_z_m": [
+                                float(x) for x in ro.e_root[1:, ..., 2].abs().mean(dim=1)
+                            ],
+                            "root_error_yaw_rad": [
+                                float(x) for x in ro.e_root[1:, ..., 3].abs().mean(dim=1)
+                            ],
+                        })
                 feat, goals, e_root = self._critic_inputs(ro)
                 if cfg.use_critic:
                     v_H = self.critic(feat[-1], goals[-1], xi_norm, e_root[-1])

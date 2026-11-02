@@ -16,6 +16,7 @@ from supermimic.kinematics.rotations import (
     wrap_to_pi,
 )
 from supermimic.motion_prior.reference import reference_tracking_errors
+from supermimic.motion_prior.velocity import velocity_command_errors
 from supermimic.robots.spec import M1_JOINTS, M1_LEG_JOINTS
 
 
@@ -32,7 +33,10 @@ class M1JointLossCfg:
     energy_weight: float = 0.0
     control_effort_surrogate_weight: float = 0.0
     feasibility_weight: float = 1.0
-    smoothness_weight: float = 0.01
+    # Calibrated on reset-state CVAE prior_mean: at 0.001, direct reference
+    # smoothness gradients were 5.6x the L task gradient; 0.0001 reduced this
+    # proxy ratio to 0.56. Recheck after task-specific WM/Actor calibration.
+    smoothness_weight: float = 0.0001
     anchor_weight: float = 0.02
     supervised_weight: float = 0.0
     # Actor tracking weights (losses are already normalized by physical scale).
@@ -41,7 +45,7 @@ class M1JointLossCfg:
     actor_leg_weight: float = 0.25
     actor_arm_weight: float = 1.0
     actor_wheel_weight: float = 0.5
-    actor_tcp_weight: float = 0.0
+    actor_tcp_weight: float = 0.0  # reserved; TCP reference loss is not implemented in v1
     actor_stability_weight: float = 1.0
     actor_control_weight: float = 0.01
     # Explicitly named physical thresholds used by soft feasibility/smoothness terms.
@@ -90,12 +94,16 @@ def _task_planner_terms(states: torch.Tensor, task_type: torch.Tensor,
     m_mask = (task_type == 1).to(states.dtype)[None, :]
     velocity_command = velocity_command.to(device=states.device, dtype=states.dtype)
     fixed_world_target = fixed_world_target.to(device=states.device, dtype=states.dtype)
-    body_v = quat_apply_inverse(state[..., 3:7], state[..., 29:32])
-    v_err = F.smooth_l1_loss(body_v, velocity_command[None].expand_as(body_v), reduction="none")
-    l_vel = (v_err[..., :2] / 0.5).mean(-1) + (v_err[..., 2] / 1.0)
-    yaw_rate = state[..., 34]
-    yaw_err = F.smooth_l1_loss(yaw_rate, velocity_command[None, :, 2].expand_as(yaw_rate), reduction="none")
-    l_per_step = cfg.l_linear_velocity_weight * l_vel + cfg.l_yaw_rate_weight * yaw_err
+    linear_error, _, yaw_rate_error, _ = velocity_command_errors(
+        state, velocity_command[None].expand(state.shape[0], -1, -1),
+    )
+    l_linear = F.smooth_l1_loss(
+        linear_error, torch.zeros_like(linear_error), reduction="none",
+    ).div(0.5).mean(-1)
+    l_yaw = F.smooth_l1_loss(
+        yaw_rate_error, torch.zeros_like(yaw_rate_error), reduction="none",
+    )
+    l_per_step = cfg.l_linear_velocity_weight * l_linear + cfg.l_yaw_rate_weight * l_yaw
     l_task = (l_per_step * l_mask).sum() / (l_mask.sum() * state.shape[0]).clamp_min(1.0)
 
     if fk is None:
@@ -130,6 +138,8 @@ def _task_planner_terms(states: torch.Tensor, task_type: torch.Tensor,
     ).clamp_min(1.0)
     return {
         "task_l": l_task,
+        "task_l_linear_velocity": (l_linear * l_mask).sum() / (l_mask.sum() * state.shape[0]).clamp_min(1.0),
+        "task_l_yaw_rate": (l_yaw * l_mask).sum() / (l_mask.sum() * state.shape[0]).clamp_min(1.0),
         "task_m": m_task,
         "task_progress_m": (m_progress * m_mask[0]).sum() / m_mask[0].sum().clamp_min(1.0),
         "terminal_error_m": (d_final * m_mask[0]).sum() / m_mask[0].sum().clamp_min(1.0),

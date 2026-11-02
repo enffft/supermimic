@@ -45,6 +45,10 @@ class EnvCfg:
     compact_library: bool = False
     anchor_obs: bool | None = None  # default: enabled for M1, disabled for G1/Go2
     anchor_orientation_obs: bool = False  # G1 orientation-only (6D) alternative; mutually exclusive with anchor_obs
+    # G1's deployable Actor contract is proprioception history + the external
+    # reference Goal. Anchor-relative pose is a simulator-only privileged signal
+    # and must be opted out of explicitly for historical experiments.
+    g1_pure_proprio: bool = True
     velocity_debug_objective: bool = False  # smoke-test only; not a selected Go2 reward
     # Match Go2-SuperMimic's action exploration: 0.1 iid noise on 75% of
     # environments and temporally correlated OU noise on the remaining 25%.
@@ -134,6 +138,24 @@ class EnvCfg:
     m1_joint_target_z_range: tuple[float, float] = (-0.15, 0.15)
 
 
+def validate_g1_actor_contract(env: EnvCfg, robot_name: str | None = None) -> None:
+    """Reject non-deployable G1 motion inputs before constructing an experiment."""
+    name = (robot_name or env.robot_name).lower().replace("-", "_")
+    if name != "g1" or env.task_name != "motion_tracking" or not env.g1_pure_proprio:
+        return
+    if env.anchor_obs or env.anchor_orientation_obs:
+        raise ValueError(
+            "G1 pure-proprio Actor cannot use anchor-relative pose; set "
+            "env.anchor_obs=False and env.anchor_orientation_obs=False (or "
+            "explicitly set env.g1_pure_proprio=False for a legacy privileged run)"
+        )
+    if env.motion_goal_schema != "root_joint":
+        raise ValueError(
+            "G1 pure-proprio training requires the deployable 68D/frame root_joint "
+            "Goal; full_body Goal is a separate research experiment"
+        )
+
+
 @dataclass
 class ScheduleCfg:
     total_iterations: int = 320_000  # env steps (plan D12 reading A)
@@ -177,13 +199,18 @@ class M1JointTrainingCfg:
     actor_pretrain_updates: int = 0
     prior_warmup_updates: int = 0
     freeze_prior: bool = True  # hold CVAE fixed until the measured Actor-readiness gate passes
+    wm_readiness_min_events: int = 200
+    # Optional limits are deliberately unset until task-specific held-out WM
+    # calibration exists. Finite replay losses alone are not a quality claim.
+    wm_readiness_max_nse_1: float | None = None
+    wm_readiness_max_nse_horizon: float | None = None
     grad_clip_norm: float = 1.0
     readiness_window_steps: int = 500
     readiness_min_samples: int = 100
     readiness_min_survival: float = 0.90
-    readiness_max_root_tracking_error: float = 0.20
-    readiness_max_arm_tracking_error: float = 0.25
-    readiness_max_wheel_tracking_error: float = 0.75
+    readiness_max_root_tracking_error: float = 0.20  # root xyz Euclidean error, metres
+    readiness_max_arm_tracking_error: float = 0.25  # Piper joint position RMSE, radians
+    readiness_max_wheel_tracking_error: float = 0.75  # wheel angular-rate RMSE, rad/s
     readiness_max_action_saturation: float = 0.10
     task_type: str = "balanced"  # balanced | L | M; LM is not enabled in v1
     l_task_fraction: float = 0.5

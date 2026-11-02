@@ -15,6 +15,41 @@ LATENT_DIM = 32
 ACT_DIM = 29
 
 
+@dataclass(frozen=True)
+class ActorInputContract:
+    """Deployment-facing inputs accepted by the Actor.
+
+    ``obs_hist`` is the five-term proprioception history (joint position,
+    joint velocity, base angular velocity, projected gravity, previous clean
+    action). ``goal`` is an external task reference. World-model state, ``xi``,
+    root error, contacts, torque and critic features are absent by design.
+    """
+
+    history: int
+    num_joints: int
+    goal_dim: int
+
+    @property
+    def proprioception_dim_per_frame(self) -> int:
+        return 3 * self.num_joints + 6
+
+    @property
+    def obs_dim(self) -> int:
+        return self.history * self.proprioception_dim_per_frame
+
+    def validate(self, obs_hist: torch.Tensor, goal: torch.Tensor) -> None:
+        if obs_hist.ndim != 2 or obs_hist.shape[-1] != self.obs_dim:
+            raise ValueError(
+                f"Actor expects obs_hist shape (N, {self.obs_dim}), got {tuple(obs_hist.shape)}"
+            )
+        if goal.ndim != 2 or goal.shape[-1] != self.goal_dim:
+            raise ValueError(
+                f"Actor expects goal shape (N, {self.goal_dim}), got {tuple(goal.shape)}"
+            )
+        if obs_hist.shape[0] != goal.shape[0]:
+            raise ValueError("Actor observation and Goal batch sizes must match")
+
+
 @dataclass
 class PolicyCfg:
     encoder_hidden: tuple[int, ...] = (2048, 1024, 512, 256)
@@ -103,6 +138,7 @@ class Policy(nn.Module):
     def __init__(self, cfg: PolicyCfg):
         super().__init__()
         self.cfg = cfg
+        self.input_contract = ActorInputContract(cfg.history, cfg.num_joints, cfg.goal_dim)
         # Preserve the encoded checkpoint module names exactly. Direct mode creates no
         # unused encoder parameters or buffers.
         self.encoders = nn.ModuleDict(
@@ -111,6 +147,7 @@ class Policy(nn.Module):
         self.decoder = Decoder(cfg)
 
     def forward(self, obs_hist: torch.Tensor, goal: torch.Tensor, interface: str | None = None) -> torch.Tensor:
+        self.input_contract.validate(obs_hist, goal)
         if self.cfg.goal_encoding == "direct":
             return self.decoder(goal, obs_hist)
         interface = interface or self.cfg.goal_interface

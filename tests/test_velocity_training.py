@@ -100,6 +100,21 @@ def test_direction_reward_handles_forward_reverse_sideways_and_zero_commands():
     assert torch.all(direction.abs() <= params.cfg.command_direction)
 
 
+def test_zero_speed_baseline_makes_standing_nonzero_command_reward_neutral():
+    params = _params()
+    params.cfg.zero_speed_baseline = True
+    params.cfg.tracking_sigma_sq = 0.09
+    state, _ = _states(batch=2)
+    goal = torch.tensor([[0.3, 0.0, 0.0], [0.0, 0.0, 0.4]])
+    terms = velocity_reward_terms(
+        state, state, goal, torch.zeros(2, 12), torch.zeros(2, 12), params
+    )
+    # With zero body velocity, the target-tracking advantage is exactly zero;
+    # the policy cannot solve a moving command by standing still.
+    torch.testing.assert_close(terms["track_lin_vel_xy"], torch.zeros(2))
+    torch.testing.assert_close(terms["track_yaw_rate"], torch.zeros(2))
+
+
 def test_analytic_go2_termination_is_near_zero_standing_and_differentiable_at_failure_margin():
     from supermimic.imagination.tasks import VelocityCommandTask
 

@@ -60,6 +60,9 @@ def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
     policy_terms = {
         "joint_pos": ObservationTermCfg(
             func=sm_obs.joint_pos_rel_masked,
+            # ``joint_pos_biased`` is the simulated encoder reading.  It is a
+            # proprioceptive signal available to a real Go2 controller; the
+            # hidden true joint state is never fed to the Actor.
             params={"biased": True, "wheel_joint_names": robot.wheel_joint_names, "asset_cfg": joint_cfg},
             noise=noise(-0.01, 0.01),
         ),
@@ -198,6 +201,8 @@ def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
                     "linear_tracking": a.velocity_reward_linear_tracking,
                     "yaw_tracking": a.velocity_reward_yaw_tracking,
                     "command_direction": a.velocity_reward_direction,
+                    "tracking_sigma_sq": a.velocity_reward_tracking_sigma_sq,
+                    "zero_speed_baseline": a.velocity_reward_zero_speed_baseline,
                     "min_safe_height": a.velocity_min_safe_height,
                 },
             )

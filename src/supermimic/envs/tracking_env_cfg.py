@@ -95,6 +95,8 @@ class SuperMimicEnvCfgArgs:
     velocity_reward_linear_tracking: float = 3.0
     velocity_reward_yaw_tracking: float = 1.2
     velocity_reward_direction: float = 0.5
+    velocity_reward_tracking_sigma_sq: float = 0.09
+    velocity_reward_zero_speed_baseline: bool = True
     velocity_curriculum: bool = True
     velocity_curriculum_initial_stage: int = 0
     velocity_curriculum_fixed_stage: int | None = None

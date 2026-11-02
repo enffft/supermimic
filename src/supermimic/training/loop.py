@@ -229,6 +229,8 @@ class Trainer:
                 velocity_reward_linear_tracking=cfg.env.velocity_reward_linear_tracking,
                 velocity_reward_yaw_tracking=cfg.env.velocity_reward_yaw_tracking,
                 velocity_reward_direction=cfg.env.velocity_reward_direction,
+                velocity_reward_tracking_sigma_sq=cfg.env.velocity_reward_tracking_sigma_sq,
+                velocity_reward_zero_speed_baseline=cfg.env.velocity_reward_zero_speed_baseline,
                 velocity_curriculum=cfg.env.velocity_curriculum,
                 velocity_curriculum_initial_stage=cfg.env.velocity_curriculum_initial_stage,
                 velocity_curriculum_fixed_stage=cfg.env.velocity_curriculum_fixed_stage,
@@ -335,6 +337,8 @@ class Trainer:
                 linear_tracking=cfg.env.velocity_reward_linear_tracking,
                 yaw_tracking=cfg.env.velocity_reward_yaw_tracking,
                 command_direction=cfg.env.velocity_reward_direction,
+                tracking_sigma_sq=cfg.env.velocity_reward_tracking_sigma_sq,
+                zero_speed_baseline=cfg.env.velocity_reward_zero_speed_baseline,
                 min_safe_height=cfg.env.velocity_min_safe_height,
             )
             default_joint_pos = robot.data.default_joint_pos[0].detach().clone()
@@ -1130,6 +1134,12 @@ class Trainer:
                 if self.is_go2_velocity and self.is_main:
                     self.writer.add_scalar("go2/curriculum_stage", float(self.command.stage), it)
                     self.writer.add_scalar("go2/curriculum_eval_count", float(self.command.eval_count), it)
+                    # Always expose the deployment-facing command/response
+                    # error, even before a full curriculum evaluation window
+                    # is complete.
+                    self.writer.add_scalar("go2/command_speed", float(self.command.metrics["command_speed"].mean()), it)
+                    self.writer.add_scalar("go2/real_vel_error_xy", float(self.command.metrics["real_vel_error_xy"].mean()), it)
+                    self.writer.add_scalar("go2/real_yaw_error", float(self.command.metrics["real_yaw_error"].mean()), it)
                     for key, value in self.command.last_eval_metrics.items():
                         if isinstance(value, (float, int)) and math.isfinite(float(value)):
                             self.writer.add_scalar(f"go2/{key}", float(value), it)

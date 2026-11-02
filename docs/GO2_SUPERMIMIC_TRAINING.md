@@ -70,6 +70,10 @@ Actor Goal 为机身坐标下的 `[v_x, v_y, yaw_rate]`，形状 `(N,3)`。Stage
 
 Go2 动作是 12 个关节位置目标。`NoisyJointPositionAction.process_actions` 保留干净动作 `a`，以 `a_exec=clip(a+noise,-1,1)` 执行并写入 Replay Buffer；25% 环境使用 OU 噪声，其余使用 Gaussian 噪声。OU 状态按 `x←x-θx·dt+σ√dt·N(0,1)` 更新，episode reset 时重置；World Model 训练用执行动作 `a_exec`，Actor observation 和动作惩罚仍用干净动作。
 
+速度跟踪 Actor 的部署输入保持为本体感知历史和外部速度指令：10 帧的关节位置、关节速度、机身角速度、投影重力、上一动作，以及当前 body-frame `[v_x, v_y, yaw_rate]` 指令。Actor 不读取 root linear velocity、MuJoCo actuator force、joint acceleration、contact state 或 World Model 的隐变量；这些量只用于训练奖励、动力学拟合和终止判断。这个接口与公开 Go2-SuperMimic 的部署约束一致：不可在实机获得的状态不能进入 Actor。
+
+新的速度跟踪配置使用 `tracking_sigma_sq=0.09`，并从速度跟踪核中减去同一命令下原地站立的基线奖励。这样非零速度指令不会被“保持站立”策略大量占据，Actor 必须产生实际速度才能获得正的 tracking advantage；yaw 也使用相同的基线校正。
+
 ## Reward 实现与系数
 
 真实环境的 11 个 RewardTerm 和想象任务都调用 `tasks/velocity_reward.py::velocity_reward_terms`。真实端传 MuJoCo 测得的 actuator force 与 joint acceleration；想象端从 Actor 动作和预测状态构造 PD 力矩 proxy、并用相邻预测关节速度差分计算加速度。Reward core 返回每秒 reward rate；真实 RewardManager 和 `VelocityCommandTask.reward_terms` 各自只乘一次 `dt=0.02`。

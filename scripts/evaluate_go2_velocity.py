@@ -15,7 +15,15 @@ from supermimic.policy.nets import Policy, PolicyCfg
 from supermimic.robots.spec import get_robot_spec
 
 
-COMMANDS = ((0.3, 0.0, 0.0), (0.5, 0.0, 0.0))
+# Cover the deployment command interface, including the standing, lateral and
+# yaw cases.  Forward-only evaluation can hide a broken body-frame command.
+COMMANDS = (
+    (0.0, 0.0, 0.0),
+    (0.3, 0.0, 0.0),
+    (0.5, 0.0, 0.0),
+    (0.0, 0.3, 0.0),
+    (0.0, 0.0, 0.4),
+)
 
 
 def evaluate_command(

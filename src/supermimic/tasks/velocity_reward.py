@@ -28,6 +28,7 @@ class VelocityRewardCfg:
     joint_limit: float = -1.0
     base_height_low: float = -5.0
     tracking_sigma_sq: float = 0.25
+    zero_speed_baseline: bool = False
     upright_sigma_sq: float = 0.16
     min_safe_height: float = 0.22
     action_clip: float = 1.0
@@ -149,15 +150,27 @@ def velocity_reward_terms(
     below = F.relu(limits[..., 0] - q)
     above = F.relu(q - limits[..., 1])
     q_error = q - params.default_joint_pos
+    linear_track = torch.exp(-goal_lin_error_sq / params.cfg.tracking_sigma_sq)
+    yaw_track = torch.exp(-yaw_error_sq / params.cfg.tracking_sigma_sq)
+    if params.cfg.zero_speed_baseline:
+        # Subtract the reward obtained by standing still for this command. A
+        # nonzero target therefore gives the Actor a positive advantage only
+        # when it actually moves toward the requested velocity.
+        linear_track = linear_track - torch.exp(
+            -goal[..., :2].square().sum(-1) / params.cfg.tracking_sigma_sq
+        )
+        yaw_track = yaw_track - torch.exp(
+            -goal[..., 2].square() / params.cfg.tracking_sigma_sq
+        )
     terms = {
-        "track_lin_vel_xy": params.cfg.linear_tracking * torch.exp(-goal_lin_error_sq / params.cfg.tracking_sigma_sq),
+        "track_lin_vel_xy": params.cfg.linear_tracking * linear_track,
         "command_direction": params.cfg.command_direction
         * (torch.linalg.vector_norm(goal[..., :2], dim=-1) / (torch.linalg.vector_norm(goal[..., :2], dim=-1) + 0.1))
         * torch.tanh(
             ((lin_vel_b[..., :2] * goal[..., :2]).sum(-1)
              / torch.linalg.vector_norm(goal[..., :2], dim=-1).clamp_min(1e-4)) / 0.3
         ),
-        "track_yaw_rate": params.cfg.yaw_tracking * torch.exp(-yaw_error_sq / params.cfg.tracking_sigma_sq),
+        "track_yaw_rate": params.cfg.yaw_tracking * yaw_track,
         "upright": params.cfg.upright * torch.exp(-gravity_b[..., :2].square().sum(-1) / params.cfg.upright_sigma_sq),
         "base_lin_vel_z": params.cfg.base_lin_vel_z * lin_vel_w[..., 2].square(),
         "base_ang_vel_xy": params.cfg.base_ang_vel_xy * ang_vel_b[..., :2].square().sum(-1),
@@ -181,6 +194,8 @@ def go2_velocity_reward_term(
     linear_tracking: float = 3.0,
     yaw_tracking: float = 1.2,
     command_direction: float = 0.5,
+    tracking_sigma_sq: float = 0.25,
+    zero_speed_baseline: bool = False,
     min_safe_height: float = 0.22,
 ) -> torch.Tensor:
     """RewardManager adapter; caches the shared core and records real command metrics."""
@@ -212,6 +227,8 @@ def go2_velocity_reward_term(
                 linear_tracking=float(linear_tracking),
                 yaw_tracking=float(yaw_tracking),
                 command_direction=float(command_direction),
+                tracking_sigma_sq=float(tracking_sigma_sq),
+                zero_speed_baseline=bool(zero_speed_baseline),
                 min_safe_height=float(min_safe_height),
             ),
         )

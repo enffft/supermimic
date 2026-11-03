@@ -18,6 +18,7 @@ from supermimic.motion_prior.reference import decode_future31
 from supermimic.motion_prior.rollout import differentiable_m1_rollout
 from supermimic.policy.nets import M1PriorConditionedActor
 from supermimic.robots.spec import M1_JOINTS, RobotSpec, get_robot_spec
+from supermimic.tasks.action_contract import serialize_m1_action_contract
 from supermimic.world_model.wm_trainer import WorldModelTrainer
 from supermimic.world_model.world_model import WorldModel
 
@@ -220,7 +221,9 @@ class M1AlternatingTrainer:
 
     @torch.no_grad()
     def record_real_step(self, next_state: torch.Tensor, action: torch.Tensor,
-                         phase: torch.Tensor, terminated: torch.Tensor) -> dict[str, float]:
+                         phase: torch.Tensor, terminated: torch.Tensor, *,
+                         executed_action: torch.Tensor | None = None,
+                         physical_setpoint: torch.Tensor | None = None) -> dict[str, float]:
         if self._plan is None or self._plan_anchor_state is None:
             raise RuntimeError("real-step metrics require an active reference plan")
         phase = phase.reshape(-1).long().clamp(0, 9)
@@ -229,8 +232,10 @@ class M1AlternatingTrainer:
         target = ref_state[rows, phase]
         root_error = torch.linalg.vector_norm(next_state[:, :3] - target[:, :3], dim=-1)
         arm_ids = [M1_JOINTS.index(f"piper_x_joint{i}") for i in range(1, 7)]
+        leg_ids = [M1_JOINTS.index(name) for name in self.robot_spec.amp_joint_names[:12]]
         wheel_ids = [M1_JOINTS.index(n) for n in ("FAR_FOOT_JOINT", "FBL_FOOT_JOINT", "RAR_FOOT_JOINT", "RBL_FOOT_JOINT")]
         arm_error = (next_state[:, 7:29][:, arm_ids] - target[:, 7:29][:, arm_ids]).square().mean(-1).sqrt()
+        leg_error = (next_state[:, 7:29][:, leg_ids] - target[:, 7:29][:, leg_ids]).square().mean(-1).sqrt()
         wheel_error = (next_state[:, 35:57][:, wheel_ids] - target[:, 35:57][:, wheel_ids]).square().mean(-1).sqrt()
         from supermimic.kinematics.rotations import quat_apply_inverse
 
@@ -238,15 +243,61 @@ class M1AlternatingTrainer:
         gravity[:, 2] = -1.0
         gravity_body = quat_apply_inverse(next_state[:, 3:7], gravity)
         base_tilt = torch.acos((-gravity_body[:, 2]).clamp(-1.0 + 1e-6, 1.0 - 1e-6))
+        executed = action if executed_action is None else executed_action
+        if physical_setpoint is None:
+            from supermimic.tasks.action_contract import mixed_m1_setpoints
+
+            wheel_mask = torch.tensor(
+                [name.endswith("FOOT_JOINT") for name in self.robot_joint_names],
+                dtype=torch.bool, device=action.device,
+            )
+            action_scales = action.new_tensor(self.robot_spec.action_scales)
+            target_bounds = (
+                action.new_tensor(self.robot_spec.position_target_bounds)
+                if self.robot_spec.position_target_bounds else None
+            )
+            physical_setpoint = mixed_m1_setpoints(
+                executed, self.default_joint_pos.to(action), action_scales, wheel_mask,
+                self.soft_limits.to(action), target_bounds,
+            )
+        position_mask = torch.tensor(
+            [not name.endswith("FOOT_JOINT") for name in self.robot_joint_names],
+            dtype=torch.bool, device=action.device,
+        )
+        soft_limits = self.soft_limits.to(physical_setpoint)
+        at_soft_limit = (
+            (physical_setpoint <= soft_limits[:, 0] + 1e-5)
+            | (physical_setpoint >= soft_limits[:, 1] - 1e-5)
+        ) & position_mask
+        if self.robot_spec.position_target_bounds:
+            action_bounds = physical_setpoint.new_tensor(self.robot_spec.position_target_bounds)
+            at_action_limit = (
+                (physical_setpoint <= action_bounds[:, 0] + 1e-5)
+                | (physical_setpoint >= action_bounds[:, 1] - 1e-5)
+            ) & position_mask
+        else:
+            at_action_limit = torch.zeros_like(position_mask)
         metrics = {
             "survival": float((~terminated.bool()).float().mean()),
             "root_tracking_error": float(root_error.mean()),
+            "leg_tracking_error": float(leg_error.mean()),
             "arm_tracking_error": float(arm_error.mean()),
             "wheel_tracking_error": float(wheel_error.mean()),
             "action_saturation": float((action.abs() >= 0.98).float().mean()),
+            "executed_action_saturation": float((executed.abs() >= 0.98).float().mean()),
+            "joint_target_soft_limit_saturation": float(at_soft_limit.float().sum() / position_mask.sum().clamp_min(1) / len(action)),
+            "joint_target_action_envelope_saturation": float(at_action_limit.float().sum() / position_mask.sum().clamp_min(1) / len(action)),
             "base_height_m": float(next_state[:, 2].mean()),
             "base_tilt_rad": float(base_tilt.mean()),
         }
+        for name, joint_id in zip(
+            ("FAR_FOOT_JOINT", "FBL_FOOT_JOINT", "RAR_FOOT_JOINT", "RBL_FOOT_JOINT"), wheel_ids,
+        ):
+            metrics[f"wheel_reference_rate/{name}"] = float(target[:, 35 + joint_id].mean())
+            metrics[f"wheel_actual_rate/{name}"] = float(next_state[:, 35 + joint_id].mean())
+            metrics[f"wheel_rate_error/{name}"] = float((next_state[:, 35 + joint_id] - target[:, 35 + joint_id]).square().mean().sqrt())
+        for axis, axis_name in enumerate(("x", "y", "z")):
+            metrics[f"prior/reference_root_delta_{axis}_m"] = float(self._plan[:, -1, axis].mean())
         self._actor_ready_window.append(metrics)
         self._real_metrics = {
             f"real/{key}": value for key, value in metrics.items()
@@ -395,7 +446,7 @@ class M1AlternatingTrainer:
         self.last_prior_metrics["imag/planner_return"] = -sums.get("task", float("nan"))
         if "imag_survival" in sums:
             self.last_prior_metrics["imag/survival"] = sums["imag_survival"]
-        self.last_prior_metrics["prior/goal_sensitivity"] = self._goal_sensitivity()
+        self.last_prior_metrics.update(self._goal_sensitivity())
         return self.last_prior_metrics
 
     def _update_actor(self) -> dict[str, float]:
@@ -465,25 +516,63 @@ class M1AlternatingTrainer:
             return float(((current - initial) / scales).square().mean().sqrt())
 
     @torch.no_grad()
-    def _goal_sensitivity(self) -> float:
-        if self.buffer.size == 0:
-            return float("nan")
-        start = self.buffer.sample_starts(min(4, self.buffer.E), self.actor.cfg.history)
-        alternative_task = 1 - start.task_type
-        alternative_goal = task_goal8(
-            start.state, alternative_task, start.velocity_command, start.fixed_world_target,
+    def _goal_sensitivity(self) -> dict[str, float]:
+        metric_names = (
+            "prior/L/vx_goal_sensitivity", "prior/L/vy_goal_sensitivity",
+            "prior/L/wz_goal_sensitivity", "prior/M/ee_goal_sensitivity",
+            "prior/task_switch_sensitivity",
         )
+        empty = {name: float("nan") for name in metric_names}
+        if self.buffer.size == 0:
+            return empty
+        start = self.buffer.sample_starts(min(32, self.buffer.E), self.actor.cfg.history)
         state_history = self._prior_state_history(start)
-        base = self.prior(state_history, task_goal8(
+        scales = state_history.new_tensor([0.5] * 3 + [1.0] * 6 + [2.0] * 12 + [2.0] * 6 + [10.0] * 4)
+        result = dict(empty)
+
+        for task_code, goal_slice, deltas, keys in (
+            (0, (0, 3), (0.03, 0.02, 0.04), metric_names[:3]),
+            (1, (3, 6), (0.05, 0.05, 0.05), (metric_names[3],) * 3),
+        ):
+            selected = (start.task_type == task_code).nonzero(as_tuple=False).flatten()
+            if selected.numel() == 0:
+                continue
+            history = state_history.index_select(0, selected)
+            goal = task_goal8(
+                start.state[selected], start.task_type[selected],
+                start.velocity_command[selected], start.fixed_world_target[selected],
+            )
+            baseline = self.prior(history, goal, mode="prior_mean")
+            alternatives = goal.repeat(3, 1)
+            histories = history.repeat(3, 1, 1)
+            for axis, delta in enumerate(deltas):
+                row = axis * selected.numel()
+                alternatives[row:row + selected.numel(), goal_slice[0] + axis] += delta
+            predictions = self.prior(histories, alternatives, mode="prior_mean")
+            differences = ((predictions.reshape(3, selected.numel(), 10, 31)
+                            - baseline.unsqueeze(0)) / scales).square().mean(dim=(1, 2, 3)).sqrt()
+            if task_code == 0:
+                for name, value in zip(keys, differences):
+                    result[name] = float(value)
+            else:
+                result[metric_names[3]] = float(differences.square().mean().sqrt())
+
+        alternate_task = 1 - start.task_type
+        base_goal = task_goal8(
             start.state, start.task_type, start.velocity_command, start.fixed_world_target,
-        ))
-        alternative = self.prior(state_history, alternative_goal)
-        scales = base.new_tensor([0.5] * 3 + [1.0] * 6 + [2.0] * 12 + [2.0] * 6 + [10.0] * 4)
-        return float(((base - alternative) / scales).square().mean().sqrt())
+        )
+        alternate_goal = task_goal8(
+            start.state, alternate_task, start.velocity_command, start.fixed_world_target,
+        )
+        base = self.prior(state_history, base_goal, mode="prior_mean")
+        alternative = self.prior(state_history, alternate_goal, mode="prior_mean")
+        result[metric_names[4]] = float(((base - alternative) / scales).square().mean().sqrt())
+        return result
 
     def update_event(self, *, policy_allowed: bool) -> dict[str, float]:
         """One event: real replay WM updates, then (when ready) Prior→Actor."""
         output: dict[str, float] = {}
+        prior_optimizer_steps_before = self.prior_optimizer_steps
         for _ in range(int(self.cfg.wm_updates_per_event)):
             metrics = self.wm_trainer.update(self.buffer)
             self.last_wm_metrics = dict(metrics)
@@ -510,9 +599,14 @@ class M1AlternatingTrainer:
             for _ in range(int(self.cfg.actor_updates_per_event)):
                 output.update(self._update_actor())
         elif mode == "controlled_joint_experiment" and controlled_ready:
-            self.stage = "controlled_joint_experiment"
-            for _ in range(int(self.cfg.prior_updates_per_event)):
-                output.update(self._update_prior())
+            if int(self.cfg.prior_updates_per_event) > 0:
+                self.stage = "controlled_joint_experiment"
+                for _ in range(int(self.cfg.prior_updates_per_event)):
+                    output.update(self._update_prior())
+            else:
+                # Keep the controlled safety gate, but report actor-only mode
+                # when a direction audit has disabled Prior optimization.
+                self.stage = "actor_only_prior_frozen"
             for _ in range(int(self.cfg.actor_updates_per_event)):
                 output.update(self._update_actor())
         elif mode == "controlled_joint_experiment":
@@ -552,7 +646,7 @@ class M1AlternatingTrainer:
             "schedule/phase": float(phase_code),
             "schedule/training_phase": float(phase_code),
             "schedule/actor_ready": float(ready),
-            "schedule/prior_unfrozen": float(self.stage == "joint_alternating"),
+            "schedule/prior_unfrozen": float(self.prior_optimizer_steps > prior_optimizer_steps_before),
             "prior/actor_ready": float(ready),  # compatibility alias
             "prior_state_source/privileged": 1.0,
         })
@@ -596,19 +690,7 @@ class M1AlternatingTrainer:
             "prior_mode": self.cfg.prior_mode,
             "prior_input_compatibility": self.prior.input_compatibility,
             "actor_schema": asdict(self.actor.cfg),
-            "action_mapping": {
-                "contract_version": self.robot_spec.action_contract_version,
-                "default_pose_profile": self.robot_spec.default_pose_profile,
-                "default_joint_pos": self.robot_spec.default_joint_pos,
-                "joint_names": self.robot_joint_names,
-                "wheel_joint_names": ("FAR_FOOT_JOINT", "FBL_FOOT_JOINT", "RAR_FOOT_JOINT", "RBL_FOOT_JOINT"),
-                "position_control_count": 18, "wheel_velocity_control_count": 4,
-                "action_modes": self.robot_spec.action_modes,
-                "action_scales": self.robot_spec.action_scales,
-                "position_target_bounds": self.robot_spec.position_target_bounds,
-                "position_mapping": "asymmetric_default_to_absolute_bounds_v3;clamp_soft_limits",
-                "wheel_mapping": "clip(action,-1,1)*wheel_scale_rad_s",
-            },
+            "action_mapping": serialize_m1_action_contract(self.robot_spec),
             "goal_mapping": "Goal8[vx,vy,wz,ee_dx_heading,ee_dy_heading,ee_dz_heading,velocity_valid,ee_valid]",
             "tcp_convention": "piper_x_link7 for CVAE Future, Planner FK, and m1_prior_joint real target/metrics",
             "reference_horizon": 10,
@@ -637,26 +719,20 @@ class M1AlternatingTrainer:
             if checkpoint.get(key) != expected:
                 raise ValueError(f"joint resume {key} mismatch: saved={checkpoint.get(key)!r}, current={expected!r}")
         saved_source = checkpoint.get("prior_source", {})
-        if saved_source.get("sha256") != expected_source.get("sha256"):
-            raise ValueError("joint resume Motion Prior source checkpoint/hash mismatch")
+        source_keys = (
+            "path", "sha256", "step", "feature_version", "condition_contract", "model_config",
+            "dataset_hash", "split_hash",
+            "normalization_hash", "target_contract", "assurance_mode", "strict_fcl_only",
+            "input_compatibility",
+        )
+        if any(saved_source.get(key) != expected_source.get(key) for key in source_keys):
+            raise ValueError("joint resume Motion Prior source/checkpoint provenance mismatch")
         if checkpoint.get("loss_coefficients") != asdict(self.loss_cfg):
             raise ValueError("joint resume loss coefficient/schema mismatch")
         if checkpoint.get("training_mode", "auto_joint") != self.cfg.training_mode:
             raise ValueError("joint resume training mode mismatch")
         saved_action = checkpoint.get("action_mapping", {})
-        current_action = {
-            "contract_version": self.robot_spec.action_contract_version,
-            "default_pose_profile": self.robot_spec.default_pose_profile,
-            "default_joint_pos": self.robot_spec.default_joint_pos,
-            "joint_names": self.robot_joint_names,
-            "wheel_joint_names": ("FAR_FOOT_JOINT", "FBL_FOOT_JOINT", "RAR_FOOT_JOINT", "RBL_FOOT_JOINT"),
-            "position_control_count": 18, "wheel_velocity_control_count": 4,
-            "action_modes": self.robot_spec.action_modes,
-            "action_scales": self.robot_spec.action_scales,
-            "position_target_bounds": self.robot_spec.position_target_bounds,
-            "position_mapping": "asymmetric_default_to_absolute_bounds_v3;clamp_soft_limits",
-            "wheel_mapping": "clip(a,-1,1)*wheel_scale_rad_s",
-        }
+        current_action = serialize_m1_action_contract(self.robot_spec)
         if saved_action != current_action:
             raise ValueError("joint resume M1 Action Contract v3, pose profile, or setpoint bounds mismatch")
         snapshot = checkpoint.get("config", {})
@@ -687,7 +763,13 @@ class M1AlternatingTrainer:
         if "numpy" in rng:
             np.random.set_state(rng["numpy"])
         if "torch_cpu" in rng:
-            torch.set_rng_state(rng["torch_cpu"])
+            # The full checkpoint is loaded with map_location=self.device, so
+            # its CPU RNG byte tensor is moved to CUDA on GPU runs. PyTorch's
+            # CPU generator only accepts a CPU ByteTensor.
+            torch.set_rng_state(rng["torch_cpu"].detach().to(device="cpu", dtype=torch.uint8))
         if torch.cuda.is_available() and rng.get("torch_cuda") is not None:
-            torch.cuda.set_rng_state_all(rng["torch_cuda"])
+            torch.cuda.set_rng_state_all([
+                state.detach().to(device="cpu", dtype=torch.uint8)
+                for state in rng["torch_cuda"]
+            ])
         return int(checkpoint["iteration"])

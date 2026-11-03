@@ -18,6 +18,7 @@ PRIOR_INPUT_COMPATIBILITY = ("legacy_v1", "train_constant_compat_v1")
 _Q6_CONDITION_INDICES = tuple(i * STATE_DIM + 30 for i in range(HISTORY))
 _QD6_CONDITION_INDICES = tuple(i * STATE_DIM + 48 for i in range(HISTORY))
 _TRAIN_CONSTANT_CONDITION_INDICES = _Q6_CONDITION_INDICES + _QD6_CONDITION_INDICES
+_TRAIN_CONSTANT_MAX_STD = 1.0e-3
 
 
 class _CVAECore(nn.Module):
@@ -86,6 +87,24 @@ class M1MotionPrior(nn.Module):
                 or not torch.isfinite(self.y_mean).all() or not torch.isfinite(self.y_std).all()
                 or torch.any(self.x_std <= 0) or torch.any(self.y_std <= 0)):
             raise ValueError("invalid AMP CVAE normalization")
+        self._validate_input_compatibility()
+
+    def _validate_input_compatibility(self) -> None:
+        """Keep mean projection exclusive to checkpoints trained on constants.
+
+        V3.3 has real q6/qd6 variance. Projecting those dimensions to their
+        training means silently discards motion, so fail at load and inference
+        if that compatibility policy is paired with non-constant statistics.
+        """
+        if self.input_compatibility != "train_constant_compat_v1":
+            return
+        index = torch.tensor(_TRAIN_CONSTANT_CONDITION_INDICES, device=self.x_std.device)
+        std = self.x_std.index_select(0, index)
+        if bool((std > _TRAIN_CONSTANT_MAX_STD).any()):
+            raise ValueError(
+                "train_constant_compat_v1 is only valid for tiny-std q6/qd6 checkpoints; "
+                f"maximum selected std is {float(std.max()):.6g}"
+            )
 
     def forward_features(self, state_features: torch.Tensor, task_goal: torch.Tensor, *,
                          mode: Literal["prior_mean", "prior_sample"] = "prior_mean",
@@ -101,6 +120,7 @@ class M1MotionPrior(nn.Module):
             task_goal = task_goal.to(device=state_features.device, dtype=state_features.dtype)
         condition = torch.cat((state_features.flatten(1), task_goal), dim=-1)
         if self.input_compatibility == "train_constant_compat_v1":
+            self._validate_input_compatibility()
             index = torch.tensor(_TRAIN_CONSTANT_CONDITION_INDICES, device=condition.device)
             target = self.x_mean.index_select(0, index).expand(condition.shape[0], -1)
             condition = condition.clone()

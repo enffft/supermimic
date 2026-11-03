@@ -97,11 +97,18 @@ class Trainer:
             raise ValueError("M1 joint resume includes the WM; do not also pass --init-wm-from")
         is_m1_prior_joint = cfg.env.task_name == "m1_prior_joint"
         if is_m1_prior_joint:
-            cfg.env.m1_pose_profile = cfg.env.m1_pose_profile or "dataset_carry"
+            if cfg.env.m1_pose_profile is None:
+                cfg.env.m1_pose_profile = (
+                    "dataset_v3_3_l_high_carry" if cfg.m1_joint_training.task_type == "L"
+                    else "dataset_carry"
+                )
+            if cfg.env.m1_action_contract not in (None, "v3"):
+                raise ValueError("M1 prior/Actor training requires --env.m1-action-contract v3")
+            cfg.env.m1_action_contract = "v3"
             robot_spec = get_robot_spec(
                 cfg.env.robot_name,
                 m1_pose_profile=cfg.env.m1_pose_profile,
-                m1_action_contract="v3",
+                m1_action_contract=cfg.env.m1_action_contract,
             )
         else:
             robot_spec = get_robot_spec(cfg.env.robot_name)
@@ -269,6 +276,7 @@ class Trainer:
                 robot_name=robot_spec.name,
                 task_name=cfg.env.task_name,
                 m1_pose_profile=cfg.env.m1_pose_profile,
+                m1_action_contract=cfg.env.m1_action_contract,
                 num_envs=cfg.env.num_envs,
                 history_length=cfg.env.history_length,
                 future_frames=cfg.env.future_frames,
@@ -987,11 +995,17 @@ class Trainer:
         return {
             "base_velocity_xy_error": torch.linalg.vector_norm(velocity_xy_error, dim=-1),
             "base_velocity_xy_squared_error": velocity_xy_squared_error,
+            "base_vx_squared_error": velocity_xy_error[:, 0].square(),
+            "base_vy_squared_error": velocity_xy_error[:, 1].square(),
             "command_vx": velocity_command[:, 0],
             "command_vy": velocity_command[:, 1],
             "command_wz": velocity_command[:, 2],
             "base_vx_body": velocity_command[:, 0] + velocity_xy_error[:, 0],
             "base_vy_body": velocity_command[:, 1] + velocity_xy_error[:, 1],
+            "positive_command_negative_vx": (
+                (velocity_command[:, 0] > 0.05)
+                & ((velocity_command[:, 0] + velocity_xy_error[:, 0]) < 0.0)
+            ).to(state.dtype),
             "base_yaw_rate": state[:, 34],
             "wheel_rate_abs_mean": state[:, 35:57][:, wheel_ids].abs().mean(-1),
             "base_vertical_velocity": body_vertical_velocity,
@@ -1261,7 +1275,10 @@ class Trainer:
                 fixed_target_before = self.command.target_position_world.clone()
                 initial_base_before = self.command.initial_base_position_world.clone()
                 previous_ee_distance = self.command._last_ee_distance.clone()
-            action_buffer_ptr = self.buffer.ptr.clone() if self.is_go2_task else None
+            action_buffer_ptr = (
+                self.buffer.ptr.clone()
+                if self.is_go2_task or self.is_m1_prior_joint else None
+            )
             action_ou_mask = (
                 self.recorder.action_term._ou_mask.clone() if self.is_go2_task else None
             )
@@ -1276,8 +1293,16 @@ class Trainer:
                     terminal_row = (self.buffer.ptr[ended] - 1) % self.buffer.T
                     metric_next_state[ended] = self.buffer.s[ended, terminal_row]
                 if m1_diagnostics_due:
+                    # env.step() auto-resets terminal environments before it
+                    # returns, which clears ActionTerm.executed_raw and its
+                    # physical setpoint. ReplayRecorder wrote this transition
+                    # before reset, so read the exact per-step executed action
+                    # from the captured ring-buffer cursor instead.
+                    m1_env_ids = torch.arange(env.num_envs, device=self.device)
+                    executed_action = self.buffer.a_exec[m1_env_ids, action_buffer_ptr]
                     real_metrics = self.m1_joint_trainer.record_real_step(
                         metric_next_state, action, phase_used, term,
+                        executed_action=executed_action,
                     )
                     self._m1_joint_real_step_metrics = dict(real_metrics)
                 task_metrics = self._measure_m1_joint_task_step(
@@ -1312,7 +1337,16 @@ class Trainer:
 
                     l_rmse_sq = task_masked_mean(task_metrics["base_velocity_xy_squared_error"], is_l)
                     if l_rmse_sq is not None:
-                        self._m1_joint_real_step_metrics["real/L/base_velocity_xy_rmse"] = float(l_rmse_sq.clamp_min(0).sqrt())
+                        vector_rmse = l_rmse_sq.clamp_min(0).sqrt()
+                        vx_rmse_sq = task_masked_mean(task_metrics["base_vx_squared_error"], is_l)
+                        vy_rmse_sq = task_masked_mean(task_metrics["base_vy_squared_error"], is_l)
+                        self._m1_joint_real_step_metrics["real/L/base_velocity_xy_vector_rmse"] = float(vector_rmse)
+                        self._m1_joint_real_step_metrics["real/L/base_velocity_xy_rmse"] = float(vector_rmse)
+                        self._m1_joint_real_step_metrics["real/L/base_velocity_xy_per_axis_rmse"] = float(
+                            ((vx_rmse_sq + vy_rmse_sq) * 0.5).clamp_min(0).sqrt()
+                        )
+                        self._m1_joint_real_step_metrics["real/L/vx_rmse"] = float(vx_rmse_sq.clamp_min(0).sqrt())
+                        self._m1_joint_real_step_metrics["real/L/vy_rmse"] = float(vy_rmse_sq.clamp_min(0).sqrt())
                         for name, value in l_metrics.items():
                             if name == "base_velocity_xy_squared_error":
                                 continue
@@ -1325,6 +1359,9 @@ class Trainer:
                             self._m1_joint_real_step_metrics[f"real/M/{name}"] = float(mean)
                 for name, values, mask in (
                     ("real/L/base_velocity_xy_squared_error", task_metrics["base_velocity_xy_squared_error"], is_l),
+                    ("real/L/base_vx_squared_error", task_metrics["base_vx_squared_error"], is_l),
+                    ("real/L/base_vy_squared_error", task_metrics["base_vy_squared_error"], is_l),
+                    ("real/L/positive_command_negative_vx_fraction", task_metrics["positive_command_negative_vx"], is_l),
                     ("real/L/yaw_rate_error", task_metrics["yaw_rate_error"], is_l),
                     ("real/L/base_vertical_velocity", task_metrics["base_vertical_velocity"], is_l),
                     ("real/L/command_vx", task_metrics["command_vx"], is_l),
@@ -1730,10 +1767,22 @@ class Trainer:
                         if count <= 0:
                             continue
                         value = float(total / count)
-                        if key == "real/L/base_velocity_xy_squared_error":
+                        if key in (
+                            "real/L/base_velocity_xy_squared_error",
+                            "real/L/base_vx_squared_error", "real/L/base_vy_squared_error",
+                        ):
                             value = max(value, 0.0) ** 0.5
-                            key = "real/L/base_velocity_xy_rmse"
+                            key = {
+                                "real/L/base_velocity_xy_squared_error": "real/L/base_velocity_xy_vector_rmse",
+                                "real/L/base_vx_squared_error": "real/L/vx_rmse",
+                                "real/L/base_vy_squared_error": "real/L/vy_rmse",
+                            }[key]
                         real_window[key] = value
+                    if "real/L/vx_rmse" in real_window and "real/L/vy_rmse" in real_window:
+                        real_window["real/L/base_velocity_xy_per_axis_rmse"] = (
+                            (real_window["real/L/vx_rmse"] ** 2 + real_window["real/L/vy_rmse"] ** 2) / 2.0
+                        ) ** 0.5
+                        real_window["real/L/base_velocity_xy_rmse"] = real_window["real/L/base_velocity_xy_vector_rmse"]
                     real_window["real/L_sample_count"] = float(
                         self._m1_metric_count.get("real/L/yaw_rate_error", 0)
                     )

@@ -27,7 +27,10 @@ class DataCfg:
 class EnvCfg:
     robot_name: str = "g1"  # g1 | go2 | m1_piper
     task_name: str = "motion_tracking"  # motion_tracking | velocity_command | chase_ball | world_point_reach
-    m1_pose_profile: Literal["legacy_manipulation", "dataset_carry"] | None = None
+    m1_pose_profile: Literal[
+        "legacy_manipulation", "dataset_carry", "dataset_v3_3_l_high_carry",
+    ] | None = None
+    m1_action_contract: Literal["v2", "v3"] | None = None
     velocity_policy_encoding: Literal["direct", "encoded"] = "direct"  # encoded is for legacy Go2 checkpoints
     direct_action_output: Literal["identity", "tanh"] = "tanh"  # set identity only to resume/evaluate legacy direct checkpoints
     velocity_wm_batch_size: int = 1024
@@ -131,9 +134,10 @@ class EnvCfg:
     m1_leg_action_magnitude_weight: float = -0.002
     m1_joint_task_type: str = "balanced"  # balanced | L | M; LM is research-only in v1
     m1_joint_l_task_fraction: float = 0.5
-    m1_joint_vx_range: tuple[float, float] = (0.15, 0.50)
-    m1_joint_vy_range: tuple[float, float] = (-0.20, 0.20)
-    m1_joint_wz_range: tuple[float, float] = (-0.40, 0.40)
+    # V3.3 L frame-wise effective Goal P1/P99, rounded outward slightly.
+    m1_joint_vx_range: tuple[float, float] = (-0.09, 0.145)
+    m1_joint_vy_range: tuple[float, float] = (-0.05, 0.055)
+    m1_joint_wz_range: tuple[float, float] = (-0.17, 0.18)
     m1_joint_target_x_range: tuple[float, float] = (0.12, 0.36)
     m1_joint_target_y_range: tuple[float, float] = (-0.20, 0.20)
     m1_joint_target_z_range: tuple[float, float] = (-0.15, 0.15)
@@ -182,12 +186,12 @@ class M1JointTrainingCfg:
     """Opt-in, checkpoint-versioned L/M CVAE prior and tracking-Actor training."""
 
     enabled: bool = False
-    prior_checkpoint: Path = Path("/home/yifeiy/AMP-LOCO-M1/logs/motion_prior/cvae_v1_strict_fcl_2272/checkpoint_best_val.pt")
-    expected_prior_sha256: str | None = "1624741585c9a5dac7301bfb500ebf920a2c4e87f101ec1b60c945f86367106d"
+    prior_checkpoint: Path = Path("/home/yifeiy/AMP-LOCO-M1/logs/motion_prior/cvae_v1_v3_3_mixed_3272_goal_l_holdout_20261103/checkpoint_best_val.pt")
+    expected_prior_sha256: str | None = "05a858520790d474f6c1c3dd1f791507c3da91f68899ca88f00348ea4bbff10c"
     resume: Path | None = None  # separate format from old M1/G1/Go2 checkpoints
     state_source: Literal["privileged", "estimated"] = "privileged"
     prior_mode: Literal["prior_mean", "prior_sample"] = "prior_mean"
-    prior_input_compatibility: Literal["legacy_v1", "train_constant_compat_v1"] = "train_constant_compat_v1"
+    prior_input_compatibility: Literal["legacy_v1", "train_constant_compat_v1"] = "legacy_v1"
     prior_horizon: int = 10
     actor_horizon: int = 10
     replanning_cadence: int = 10

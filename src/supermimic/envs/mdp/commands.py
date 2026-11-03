@@ -1467,9 +1467,9 @@ class M1PriorJointCommandCfg(CommandTermCfg):
     entity_name: str = "robot"
     task_type: str = "balanced"  # balanced | L | M
     l_task_fraction: float = 0.5
-    vx_range: tuple[float, float] = (0.15, 0.50)
-    vy_range: tuple[float, float] = (-0.20, 0.20)
-    wz_range: tuple[float, float] = (-0.40, 0.40)
+    vx_range: tuple[float, float] = (-0.09, 0.145)
+    vy_range: tuple[float, float] = (-0.05, 0.055)
+    wz_range: tuple[float, float] = (-0.17, 0.18)
     target_x_range: tuple[float, float] = (0.12, 0.36)
     target_y_range: tuple[float, float] = (-0.20, 0.20)
     target_z_range: tuple[float, float] = (-0.15, 0.15)

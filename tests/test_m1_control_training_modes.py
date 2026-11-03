@@ -7,7 +7,9 @@ import pytest
 import torch
 
 
-def _phase_test_trainer(mode: str, *, freeze_prior: bool, safe: bool = True):
+def _phase_test_trainer(
+    mode: str, *, freeze_prior: bool, safe: bool = True, prior_updates_per_event: int = 1,
+):
     from supermimic.motion_prior.trainer import M1AlternatingTrainer
 
     trainer = object.__new__(M1AlternatingTrainer)
@@ -15,7 +17,7 @@ def _phase_test_trainer(mode: str, *, freeze_prior: bool, safe: bool = True):
         training_mode=mode,
         freeze_prior=freeze_prior,
         wm_updates_per_event=1,
-        prior_updates_per_event=1,
+        prior_updates_per_event=prior_updates_per_event,
         actor_updates_per_event=1,
         wm_readiness_min_events=1,
         wm_readiness_max_nse_1=1.0,
@@ -169,3 +171,13 @@ def test_m1_controlled_joint_requires_explicit_unfreeze_and_real_safety():
     trainer.update_event(policy_allowed=True)
     assert trainer.stage == "controlled_joint_experiment"
     assert updates == {"actor": 2, "prior": 1}
+
+
+def test_m1_controlled_mode_with_zero_prior_updates_reports_actor_only():
+    trainer, updates = _phase_test_trainer(
+        "controlled_joint_experiment", freeze_prior=False, prior_updates_per_event=0,
+    )
+    metrics = trainer.update_event(policy_allowed=True)
+    assert trainer.stage == "actor_only_prior_frozen"
+    assert updates == {"actor": 1, "prior": 0}
+    assert metrics["schedule/prior_unfrozen"] == 0.0

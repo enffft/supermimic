@@ -11,7 +11,8 @@ import torch
 
 from supermimic.motion_prior.cvae import FEATURE_VERSION, PRIOR_INPUT_COMPATIBILITY, M1MotionPrior
 
-EXPECTED_MOTION_PRIOR_SHA256 = "1624741585c9a5dac7301bfb500ebf920a2c4e87f101ec1b60c945f86367106d"
+EXPECTED_MOTION_PRIOR_SHA256 = "05a858520790d474f6c1c3dd1f791507c3da91f68899ca88f00348ea4bbff10c"
+LEGACY_MOTION_PRIOR_SHA256 = "1624741585c9a5dac7301bfb500ebf920a2c4e87f101ec1b60c945f86367106d"
 
 
 def sha256_file(path: str | Path) -> str:
@@ -85,8 +86,12 @@ def load_m1_motion_prior(path: str | Path, *, device: str | torch.device = "cpu"
     prior.source = {
         "path": str(path.resolve()), "sha256": actual_sha,
         "step": int(ckpt["step"]), "feature_version": FEATURE_VERSION,
+        "condition_contract": str(meta["condition_contract"]),
+        "model_config": dict(model_cfg),
         "dataset_hash": str(meta["dataset_hash"]), "split_hash": str(meta["split_hash"]),
         "normalization_hash": str(recorded_norm_hash), "target_contract": meta["target_contract"],
+        "assurance_mode": meta.get("assurance_mode"),
+        "strict_fcl_only": meta.get("strict_fcl_only"),
         "input_compatibility": input_compatibility,
         "projected_condition_indices": ("q6/qd6 all four history frames"
             if input_compatibility == "train_constant_compat_v1" else ()),

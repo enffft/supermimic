@@ -68,6 +68,10 @@ def differentiable_m1_rollout(
         ))
         a_exec = clamp_executed_action(a, 1.0)
         s_next = wm.step(s, a_exec, start.xi)
+        # The physical transition uses a_exec, while mjlab's proprioceptive
+        # last_action term reports the raw policy output. Keep both contracts
+        # explicit: WM input gets the executed action; the next actor obs gets
+        # the policy action, matching ReplayBuffer.a and ActionManager.action.
         obs_next = analytic_observation(s_next, a, start.xi, default_joint_pos, wheel_indices)
         hist = torch.cat((hist[1:], obs_next[None]), dim=0)
         states.append(s_next)

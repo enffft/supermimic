@@ -35,10 +35,14 @@ from supermimic.tasks.world_point_reward import WORLD_POINT_REWARD_NAMES, m1_pri
 
 def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
     prior_joint_task = a.task_name == "m1_prior_joint"
-    pose_profile = a.m1_pose_profile or ("dataset_carry" if prior_joint_task else "legacy_manipulation")
+    pose_profile = a.m1_pose_profile or (
+        "dataset_v3_3_l_high_carry" if prior_joint_task and a.m1_joint_task_type == "L" else
+        "dataset_carry" if prior_joint_task else "legacy_manipulation"
+    )
+    action_contract = a.m1_action_contract or ("v3" if prior_joint_task else "v2")
     robot = get_robot_spec(
         a.robot_name, m1_pose_profile=pose_profile,
-        m1_action_contract="v3" if prior_joint_task else "v2",
+        m1_action_contract=action_contract,
     )
     motion_task = a.task_name == "motion_tracking"
     velocity_task = a.task_name == "velocity_command"

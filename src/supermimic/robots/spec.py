@@ -114,30 +114,39 @@ M1_CARRY_DEFAULT = (
     0.0, -1.1, 2.0, 0.0,
     0.0, 0.50, -0.40, 0.30, 0.0, 0.0,
 )
-# Absolute radians from AMP Bank v2.5 reference p1/p99 plus a 0.05 rad
-# margin, clipped to the URDF 90% soft limits and Piper SDK limits. Wheel
-# slots use explicit unused [0,0] sentinels.
+# V3.3's L bank uses the versioned nominal_high stance and carry arm pose.
+# These values are the exact generator defaults and the P0/P50/P100 values
+# across all 999 L motion initial frames.
+M1_V33_L_HIGH_CARRY_DEFAULT = (
+    0.0, 0.8812830158963126, -1.6184887638693073, 0.0,
+    0.0, 0.8812830158963126, -1.6184887638693073, 0.0,
+    0.0, -0.8812830158963126, 1.6184887638693073, 0.0,
+    0.0, -0.8812830158963126, 1.6184887638693073, 0.0,
+    0.0, 0.50, -0.40, 0.30, 0.0, 0.0,
+)
+
+# Absolute radians from V3.3 mixed-bank P1/P99 references plus 0.05 rad,
+# intersected with the URDF 90% soft limits and Piper SDK limits. The source
+# bank has 923,892 frames. Wheel slots use explicit unused [0,0] sentinels.
 M1_POSITION_TARGET_BOUNDS_V3_BY_NAME = {
-    "FAR_ABAD_JOINT": (-0.31298, 0.36099),
-    "FAR_HIP_JOINT": (0.53814, 1.56619),
-    "FAR_KNEE_JOINT": (-2.52090, -1.66946),
-    "FBL_ABAD_JOINT": (-0.35488, 0.31071),
-    "FBL_HIP_JOINT": (0.56885, 1.58435),
-    "FBL_KNEE_JOINT": (-2.52090, -1.68615),
-    "RAR_ABAD_JOINT": (-0.30770, 0.34571),
-    "RAR_HIP_JOINT": (-1.57743, -0.61997),
-    "RAR_KNEE_JOINT": (1.57674, 2.52090),
-    "RBL_ABAD_JOINT": (-0.37172, 0.30733),
-    "RBL_HIP_JOINT": (-1.59972, -0.60404),
-    "RBL_KNEE_JOINT": (1.59689, 2.52090),
-    "piper_x_joint1": (-0.53457, 0.61986),
-    "piper_x_joint2": (0.15700, 2.84280),
-    "piper_x_joint3": (-1.88899, -0.30207),
-    "piper_x_joint4": (-0.41415, 0.60037),
-    "piper_x_joint5": (-0.36002, 0.29504),
-    # q6 has no motion support in this bank; this is a conservative bounded
-    # control envelope, not a claim that the prior learned q6 motion.
-    "piper_x_joint6": (-0.05, 0.05),
+    "FAR_ABAD_JOINT": (-0.36324, 0.43849),
+    "FAR_HIP_JOINT": (0.61401, 1.46816),
+    "FAR_KNEE_JOINT": (-2.52090, -1.19558),
+    "FBL_ABAD_JOINT": (-0.40312, 0.39113),
+    "FBL_HIP_JOINT": (0.60863, 1.47425),
+    "FBL_KNEE_JOINT": (-2.52090, -1.14031),
+    "RAR_ABAD_JOINT": (-0.38559, 0.41193),
+    "RAR_HIP_JOINT": (-1.52413, -0.64906),
+    "RAR_KNEE_JOINT": (1.14922, 2.52090),
+    "RBL_ABAD_JOINT": (-0.43197, 0.37001),
+    "RBL_HIP_JOINT": (-1.53056, -0.65860),
+    "RBL_KNEE_JOINT": (1.17965, 2.52090),
+    "piper_x_joint1": (-0.46264, 0.51819),
+    "piper_x_joint2": (0.29709, 2.78807),
+    "piper_x_joint3": (-1.72607, -0.32987),
+    "piper_x_joint4": (-0.39860, 0.41906),
+    "piper_x_joint5": (-0.28104, 0.21721),
+    "piper_x_joint6": (-1.05, 0.05),
 }
 M1_ACTION_SCALES = tuple(
     5.0 if n.endswith("FOOT_JOINT") else
@@ -195,11 +204,17 @@ def get_robot_spec(name: str, *, m1_pose_profile: str | None = None,
         )
     if key in ("m1", "m1_piper", "m1piper"):
         pose_profile = m1_pose_profile or "legacy_manipulation"
-        if pose_profile not in ("legacy_manipulation", "dataset_carry"):
-            raise ValueError("M1 pose profile must be legacy_manipulation or dataset_carry")
+        if pose_profile not in ("legacy_manipulation", "dataset_carry", "dataset_v3_3_l_high_carry"):
+            raise ValueError(
+                "M1 pose profile must be legacy_manipulation, dataset_carry, or dataset_v3_3_l_high_carry"
+            )
         if m1_action_contract not in ("v2", "v3"):
             raise ValueError("M1 action contract must be v2 or v3")
-        defaults = M1_DEFAULT if pose_profile == "legacy_manipulation" else M1_CARRY_DEFAULT
+        defaults = (
+            M1_DEFAULT if pose_profile == "legacy_manipulation" else
+            M1_V33_L_HIGH_CARRY_DEFAULT if pose_profile == "dataset_v3_3_l_high_carry" else
+            M1_CARRY_DEFAULT
+        )
         action_modes = tuple(
             "velocity" if n in M1_LEG_JOINTS and n.endswith("FOOT_JOINT") else "position"
             for n in M1_JOINTS
@@ -224,15 +239,18 @@ def get_robot_spec(name: str, *, m1_pose_profile: str | None = None,
             action_scales=scales,
             kp=tuple(0.0 if n.endswith("FOOT_JOINT") else (32.0 if n.startswith("piper_") else 250.0) for n in M1_JOINTS),
             kd=tuple(0.5 if n.endswith("FOOT_JOINT") else (1.0 if n.startswith("piper_") else 9.0) for n in M1_JOINTS),
-            default_base_height=0.3892858, control_dt=0.02,
+            default_base_height=(0.47 if pose_profile == "dataset_v3_3_l_high_carry" else 0.3892858), control_dt=0.02,
             tracked_body_names=("BASE_LINK", "FAR_ABAD_LINK", "FAR_HIP_LINK", "FAR_KNEE_LINK", "FBL_ABAD_LINK", "FBL_HIP_LINK", "FBL_KNEE_LINK", "RAR_ABAD_LINK", "RAR_HIP_LINK", "RAR_KNEE_LINK", "RBL_ABAD_LINK", "RBL_HIP_LINK", "RBL_KNEE_LINK", "piper_x_link7"),
             root_body_name="BASE_LINK", anchor_body_name="BASE_LINK",
             model_path=Path("/home/yifeiy/AMP-LOCO-M1/resources/robots/zg_m1_piper_x/zg_m1_piper_x.urdf"),
             wheel_joint_names=tuple(n for n in M1_LEG_JOINTS if n.endswith("FOOT_JOINT")),
             amp_joint_names=M1_AMP_JOINTS, foot_geom_regex=r".*FOOT.*",
             actuator_model_version=actuator_version,
-            default_pose_profile=("m1_pose_dataset_carry_v1" if pose_profile == "dataset_carry"
-                                  else "m1_pose_legacy_manipulation_v1"),
+            default_pose_profile=(
+                "m1_pose_dataset_v3_3_l_high_carry_v1" if pose_profile == "dataset_v3_3_l_high_carry" else
+                "m1_pose_dataset_carry_v1" if pose_profile == "dataset_carry" else
+                "m1_pose_legacy_manipulation_v1"
+            ),
             action_contract_version=contract_version,
             position_target_bounds=target_bounds,
         )

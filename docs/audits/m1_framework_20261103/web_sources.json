@@ -1,0 +1,84 @@
+{
+  "retrieved_on": "2026-11-03 Asia/Shanghai",
+  "method": "Public HTTPS via requests; GitHub contents API with pinned commit SHA for code",
+  "repositories": [
+    {
+      "repo": "CuboiLeo/SuperMimic-Reproduced",
+      "sha": "ba6105349069bf040f1fdad60873d13138d505a2",
+      "files_read": {
+        "README.md": "6b29da73c4fcafec974b0d649efbaa9df0fd4e4bfc9f30a04f4d0565e5d3ffa9",
+        "src/supermimic/imagination/objective.py": "3c93ec24c0f26db7bd4d60c5da50bc4a4d711a70a72ba0c9dfc7b078f082f774",
+        "src/supermimic/imagination/rollout.py": "f217001b4cc70114f0197d79833dd55c00170e67e6b6e16d070fb4e383448aac"
+      }
+    },
+    {
+      "repo": "zita-ch/supermimic_vibed",
+      "sha": "0525a23a2dcfa61f8543f98b84c075fe66d9d286",
+      "files_read": {
+        "README.md": "7761ec87a90fd04170e1f0ef018e126fa12b0d2cbb993e2d367a4f976cc13f69",
+        "supermimic/train.py": "b94569605bd3ff96a49d4903bb791bb54bc4695a03f1914c8447c0ec7dd1e6bd"
+      }
+    },
+    {
+      "repo": "Motphys/Uni-SuperMimic",
+      "sha": "92e361d9e4ad077bc93df636b87bf73bf891cb09",
+      "files_read": {
+        "README.md": "151b094c60e74da437a7f23834d33f86c5c898b5068ca25654fe9d91f15f1d35"
+      }
+    },
+    {
+      "repo": "nicklashansen/tdmpc2",
+      "sha": "332f19e4aba4bffe2dc736f45ea7f7bdc585903a",
+      "files_read": {
+        "README.md": "a51fb57e7ef47ac5755a3958739d08d2651cea8d41edf36e82a052138d29d214",
+        "tdmpc2/tdmpc2.py": "de4531ce18fc1dd459f91a664c011a2db14324d34d1fc7b52e058db050c07ab8"
+      }
+    },
+    {
+      "repo": "jiawei-ren/diffmimic",
+      "sha": "d0db48a4af12d8c73924d88973db69a4d104595c",
+      "files_read": {
+        "README.md": "3fd7e8aeece601c92b116a775df6162f86947d98fd34739e9adca71c582a22d5",
+        "diffmimic/mimic_envs/humanoid_mimic_train.py": "c4cdd9fe0ce165385fd558dcce2ef573874aa7bb1cc08e2cbe761fc5ac3f9cc7"
+      }
+    },
+    {
+      "repo": "NVlabs/DiffRL",
+      "sha": "a4c0dd1696d3c3b885ce85a3cb64370b580cb913",
+      "branch": "main",
+      "description": "[ICLR 2022] Accelerated Policy Learning with Parallel Differentiable Simulation",
+      "files_read": {
+        "README.md": "04fa11e4c44a9d002329eb083f039760a2f67b6fb0ce73d219a04598547a900c"
+      }
+    }
+  ],
+  "papers": [
+    {
+      "url": "https://arxiv.org/abs/2610.28480",
+      "title": "SuperMimic",
+      "access": "abstract and PDF section 3.3, section 4.3, Appendix Table A.6",
+      "pdf_sha256": "fe213017ab062f4acc3965da89abd3c29969163e144a2628a662b8ce46691009"
+    },
+    {
+      "url": "https://arxiv.org/abs/2410.03441",
+      "title": "CLoSD",
+      "access": "abstract, official repository README, project page"
+    },
+    {
+      "url": "https://short-horizon-actor-critic.github.io/",
+      "title": "SHAC",
+      "access": "project abstract and official repository README"
+    },
+    {
+      "url": "https://www.tdmpc2.com/",
+      "title": "TD-MPC2",
+      "access": "project page and official planner implementation"
+    },
+    {
+      "url": "https://diffmimic.github.io/",
+      "title": "DiffMimic",
+      "access": "project page and official demonstration replay implementation"
+    }
+  ],
+  "limits": "Repository benchmark claims are author-reported; none independently reproduced. Read README only for Uni-SuperMimic."
+}

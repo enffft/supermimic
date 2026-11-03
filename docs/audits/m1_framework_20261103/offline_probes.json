@@ -1,0 +1,251 @@
+{
+  "python": "/home/yifeiy/miniconda3/envs/supermimic/bin/python",
+  "scope": "CPU loss arithmetic and source identity; no physical rollout or training",
+  "supermimic_head": "fed03f98d2c5b6df27ee72dbed95dddc52d19625",
+  "amp_head": "d3dcb3d9735d28cb5d0f774b379336022ddf7fcf",
+  "source_sha256": {
+    "src/supermimic/motion_prior/losses.py": "2d2ea15038a82574a66c916c95b41a7a2c1649a67b797ddc21eb15dee556ba77",
+    "src/supermimic/motion_prior/trainer.py": "f26ddd60d4fa4233b98d575d95b59717ae3e73c68d100f0ed6a2151388c2a783",
+    "src/supermimic/motion_prior/features.py": "619aada01670c3cb29911e6c3f971644703c8d60e40d1eda410c960af9a458f1",
+    "src/supermimic/motion_prior/rollout.py": "a4135b4e2735d4e9c7f823415c14f7c6593760ffd745b4baea71f4aca99a120c",
+    "src/supermimic/policy/nets.py": "991d35bc53edfd38d801333a06c56e6f7d320bfa7120005f60d4cbcc727525f4",
+    "scripts/audit_m1_action22_real_response.py": "34be544fb502c562f3767b816ba3c6e684489868df4145386753a7b1c74c43bf",
+    "/home/yifeiy/下载/SuperMimic_M1_最终系统框架_V1_2026-11-03.md": "911de5c30456351735fbeafc3d383c20c8fe2a6561ee1de6646ae648a7619201",
+    "/home/yifeiy/AMP-LOCO-M1/motion_prior/cvae_features.py": "0a389e19237c481873da73843cacbf45848a357370d03f19b0a4923b92dc6161",
+    "/home/yifeiy/AMP-LOCO-M1/motion_prior/cvae_data.py": "b953ffa934738e85a8e30da4a23592aec2369d0cd8a96630be57de16250b3c38"
+  },
+  "termination_counterexample": {
+    "assumption": "synthetic TCP, safe geometry, WM predicts immediate termination; tests loss ordering only",
+    "safe_stationary_30cm": {
+      "total": 3.299999952316284,
+      "tracking": 0.0,
+      "bc": 0.0,
+      "task": 3.299999952316284,
+      "root_position": 0.0,
+      "root_rotation": 0.0,
+      "leg_position": 0.0,
+      "arm_position": 0.0,
+      "wheel_velocity": 0.0,
+      "stability": 0.0,
+      "control": 0.0,
+      "failure_loss": 0.0,
+      "action_rate": 0.0,
+      "joint_speed": 0.0,
+      "joint_acceleration": 0.0,
+      "action_saturation": 0.0,
+      "task_l_task": 0.0,
+      "task_l_linear_velocity_task": 0.0,
+      "task_l_yaw_rate_task": 0.0,
+      "task_m_task": 3.299999952316284,
+      "task_progress_m_task": 0.0,
+      "terminal_error_m_task": 0.30000001192092896,
+      "base_drift_m_task": 0.0,
+      "m_base_drift_task": 0.0
+    },
+    "predicted_immediate_failure": {
+      "total": 1.0,
+      "tracking": 0.0,
+      "bc": 0.0,
+      "task": 0.0,
+      "root_position": 0.0,
+      "root_rotation": 0.0,
+      "leg_position": 0.0,
+      "arm_position": 0.0,
+      "wheel_velocity": 0.0,
+      "stability": 0.0,
+      "control": 0.0,
+      "failure_loss": 1.0,
+      "action_rate": 0.0,
+      "joint_speed": 0.0,
+      "joint_acceleration": 0.0,
+      "action_saturation": 0.0,
+      "task_l_task": 0.0,
+      "task_l_linear_velocity_task": 0.0,
+      "task_l_yaw_rate_task": 0.0,
+      "task_m_task": 0.0,
+      "task_progress_m_task": 0.0,
+      "terminal_error_m_task": 0.0,
+      "base_drift_m_task": 0.0,
+      "m_base_drift_task": 0.0
+    },
+    "predicted_failure_with_low_base_021m": {
+      "total": 1.040000081062317,
+      "tracking": 0.0,
+      "bc": 0.0,
+      "task": 0.0,
+      "root_position": 0.0,
+      "root_rotation": 0.0,
+      "leg_position": 0.0,
+      "arm_position": 0.0,
+      "wheel_velocity": 0.0,
+      "stability": 0.04000004380941391,
+      "control": 0.0,
+      "failure_loss": 1.0,
+      "action_rate": 0.0,
+      "joint_speed": 0.0,
+      "joint_acceleration": 0.0,
+      "action_saturation": 0.0,
+      "task_l_task": 0.0,
+      "task_l_linear_velocity_task": 0.0,
+      "task_l_yaw_rate_task": 0.0,
+      "task_m_task": 0.0,
+      "task_progress_m_task": 0.0,
+      "terminal_error_m_task": 0.0,
+      "base_drift_m_task": 0.0,
+      "m_base_drift_task": 0.0
+    },
+    "failure_has_lower_total": true
+  },
+  "task_scales": {
+    "stationary_l_vx_goal_012": 0.007199999876320362,
+    "stationary_m_distance_030": 3.299999952316284,
+    "loss_ratio_not_parameter_gradient_ratio": 458.3333435058594,
+    "m_tcp_dx_gradient_by_future_step": [
+      -0.10000000149011612,
+      -0.10000000149011612,
+      -0.10000000149011612,
+      -0.10000000149011612,
+      -0.10000000149011612,
+      -0.10000000149011612,
+      -0.10000000149011612,
+      -0.10000000149011612,
+      -0.10000000149011612,
+      -20.100000381469727
+    ],
+    "last_vs_first_step_gradient_ratio": 201.0
+  },
+  "initial_velocity_boundary": {
+    "actual_vx": 0.0,
+    "reference_segment_vx": 1.0,
+    "implied_first_acceleration_m_s2": 50.0,
+    "reported_smoothness_terms": {
+      "smooth_root_acceleration": 0.0,
+      "smooth_root_jerk": 0.0,
+      "smooth_root_angular_acceleration": 0.0,
+      "smooth_root_angular_jerk": 0.0,
+      "smooth_joint_acceleration": 0.0,
+      "smooth_joint_jerk": 0.0,
+      "smooth_wheel_acceleration": 0.0,
+      "smooth_wheel_jerk": 0.0
+    }
+  },
+  "prior_sha256": "05a858520790d474f6c1c3dd1f791507c3da91f68899ca88f00348ea4bbff10c",
+  "nominal_reset_inference_not_physical_execution": [
+    {
+      "profile": "dataset_v3_3_l_high_carry",
+      "task": "L",
+      "vx_goal": 0.12,
+      "goal8": [
+        0.11999999731779099,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      "condition_max_abs_zscore": 4.9186482429504395,
+      "condition_fraction_abs_z_above5": 0.0,
+      "predicted_root_delta_at_02s": [
+        0.015502972528338432,
+        -2.0476691133808345e-05,
+        3.718386869877577e-05
+      ],
+      "predicted_mean_wheel_rates": [
+        0.8538347482681274,
+        0.8638494610786438,
+        0.8496689796447754,
+        0.8649544715881348
+      ],
+      "kinematic_predicted_tcp_progress_m": 0.012068480253219604
+    },
+    {
+      "profile": "dataset_v3_3_l_high_carry",
+      "task": "L",
+      "vx_goal": -0.06,
+      "goal8": [
+        -0.05999999865889549,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      "condition_max_abs_zscore": 2.687394618988037,
+      "condition_fraction_abs_z_above5": 0.0,
+      "predicted_root_delta_at_02s": [
+        -0.007552994415163994,
+        -1.3045879313722253e-05,
+        -1.539324875921011e-05
+      ],
+      "predicted_mean_wheel_rates": [
+        -0.41854530572891235,
+        -0.40309762954711914,
+        -0.41624921560287476,
+        -0.4028763771057129
+      ],
+      "kinematic_predicted_tcp_progress_m": -0.0076934099197387695
+    },
+    {
+      "profile": "dataset_v3_3_l_high_carry",
+      "task": "M",
+      "vx_goal": 0.0,
+      "goal8": [
+        0.0,
+        0.0,
+        0.0,
+        0.7328332662582397,
+        2.098250661219936e-06,
+        0.33557847142219543,
+        0.0,
+        1.0
+      ],
+      "condition_max_abs_zscore": 1.32899808883667,
+      "condition_fraction_abs_z_above5": 0.0,
+      "predicted_root_delta_at_02s": [
+        0.0017942185513675213,
+        -3.187877155141905e-05,
+        -0.00018843173165805638
+      ],
+      "predicted_mean_wheel_rates": [
+        0.07269850373268127,
+        0.10571736097335815,
+        0.07931582629680634,
+        0.10473642498254776
+      ],
+      "kinematic_predicted_tcp_progress_m": -0.006097853183746338
+    },
+    {
+      "profile": "dataset_carry",
+      "task": "M",
+      "vx_goal": 0.0,
+      "goal8": [
+        0.0,
+        0.0,
+        0.0,
+        0.7328332662582397,
+        2.098250661219936e-06,
+        0.33557844161987305,
+        0.0,
+        1.0
+      ],
+      "condition_max_abs_zscore": 1.3289979696273804,
+      "condition_fraction_abs_z_above5": 0.0,
+      "predicted_root_delta_at_02s": [
+        0.00037858053110539913,
+        -0.0001253106165677309,
+        -2.360236248932779e-05
+      ],
+      "predicted_mean_wheel_rates": [
+        0.045066580176353455,
+        0.046658724546432495,
+        0.0496876984834671,
+        0.04525282606482506
+      ],
+      "kinematic_predicted_tcp_progress_m": 0.0008395016193389893
+    }
+  ]
+}

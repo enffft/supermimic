@@ -299,3 +299,173 @@ def test_online_planner_uses_phase_action_and_replans_on_reset_or_goal_change():
 
     trainer.act(proprio, changed_goal, history, torch.tensor([0]))
     assert trainer.prior.calls == 3  # an episode reset always regenerates the plan
+
+
+def test_expected_termination_failure_cost_orders_early_failures_and_has_finite_gradients():
+    from supermimic.motion_prior.losses import expected_termination_failure_cost
+
+    full_survival = torch.ones(10, 1)
+    fail_first = torch.zeros(10, 1)
+    fail_third = torch.tensor([1.0, 1.0, *([0.0] * 8)]).unsqueeze(-1)
+    full_cost = expected_termination_failure_cost(full_survival, reference=full_survival)
+    first_cost = expected_termination_failure_cost(fail_first, reference=fail_first)
+    third_cost = expected_termination_failure_cost(fail_third, reference=fail_third)
+    assert full_cost == 0 and first_cost == 1
+    torch.testing.assert_close(third_cost, torch.tensor(0.8))
+    assert first_cost > third_cost > full_cost
+
+    fail_logits = torch.linspace(-2.0, 2.0, 10, requires_grad=True)[:, None]
+    survival = torch.cumprod(1.0 - fail_logits.sigmoid(), dim=0)
+    cost = expected_termination_failure_cost(survival, reference=survival)
+    grad, = torch.autograd.grad(cost, fail_logits)
+    assert torch.isfinite(cost) and torch.isfinite(grad).all()
+    assert torch.all(grad > 0)  # lowering terminal probability lowers failure cost
+
+
+def test_immediate_failure_is_costly_for_far_m_reach_and_large_l_velocity_error():
+    from supermimic.motion_prior.losses import M1JointLossCfg, actor_losses
+
+    class RootAsTcp:
+        def __call__(self, qpos, qvel):
+            del qvel
+            return {"pos": qpos[:, None, :3]}
+
+    horizon = 10
+    states = torch.zeros(horizon, 1, 57)
+    states[..., 2] = 0.47
+    states[..., 3] = 1.0
+    actions = torch.zeros(horizon, 1, 22, requires_grad=True)
+    reference = states.detach().clone()
+    previous = torch.zeros(1, 22)
+    soft_limits = torch.tensor([[-3.0, 3.0]] * 22)
+    fail_now = torch.zeros(horizon, 1)
+    first_state_safety = torch.zeros(horizon, 1)
+    first_state_safety[0] = 1
+
+    # L: a large positive speed command is missed, but termination cannot mask
+    # the complete objective to zero.
+    l_states = states.clone()
+    l_states[..., 29] = -1.0
+    l = actor_losses(
+        l_states, reference, actions, previous, soft_limits=soft_limits,
+        cfg=M1JointLossCfg(), task_type=torch.tensor([0]),
+        velocity_command=torch.tensor([[0.3, 0.0, 0.0]]),
+        fixed_world_target=torch.zeros(1, 3), fk=RootAsTcp(),
+        reference_actions=torch.zeros_like(actions), initial_state=states[0],
+        valid_mask=torch.zeros(horizon, 1), safety_mask=first_state_safety,
+        survival_probability=fail_now,
+    )
+    assert l["task"] == 0  # hard post-termination task mask stays explicit
+    assert l["failure_loss"] == 1 and l["total"] >= 1
+    assert all(torch.isfinite(v).all() for v in l.values() if isinstance(v, torch.Tensor))
+
+    # M: a far fixed target cannot become a zero-loss shortcut after an early
+    # predicted fall; the terminal state remains in the dense safety mask.
+    m = actor_losses(
+        states, reference, actions, previous, soft_limits=soft_limits,
+        cfg=M1JointLossCfg(), task_type=torch.tensor([1]),
+        velocity_command=torch.zeros(1, 3),
+        fixed_world_target=torch.tensor([[20.0, 0.0, 0.47]]), fk=RootAsTcp(),
+        reference_actions=torch.zeros_like(actions), initial_state=states[0],
+        valid_mask=torch.zeros(horizon, 1), safety_mask=first_state_safety,
+        survival_probability=fail_now,
+    )
+    assert m["task"] == 0
+    assert m["failure_loss"] == 1 and m["total"] >= 1
+
+
+def test_task_loss_gradient_reaches_actions_with_soft_survival_and_hard_mask():
+    from supermimic.motion_prior.losses import M1JointLossCfg, actor_losses
+
+    class RootAsTcp:
+        def __call__(self, qpos, qvel):
+            del qvel
+            return {"pos": qpos[:, None, :3]}
+
+    horizon = 10
+    actions = torch.zeros(horizon, 1, 22, requires_grad=True)
+    states = torch.zeros(horizon, 1, 57)
+    states[..., 2] = 0.47
+    states[..., 3] = 1.0
+    states[..., 29] = actions[..., 0]
+    survival = torch.ones(horizon, 1)
+    terms = actor_losses(
+        states, states.detach(), actions, torch.zeros(1, 22),
+        soft_limits=torch.tensor([[-3.0, 3.0]] * 22), cfg=M1JointLossCfg(),
+        task_type=torch.tensor([0]), velocity_command=torch.tensor([[0.2, 0.0, 0.0]]),
+        fixed_world_target=torch.zeros(1, 3), fk=RootAsTcp(), reference_actions=actions.detach(),
+        initial_state=states[0], valid_mask=torch.ones(horizon, 1),
+        safety_mask=torch.ones(horizon, 1), survival_probability=survival,
+    )
+    grad, = torch.autograd.grad(terms["task"], actions)
+    assert torch.isfinite(grad).all() and grad[..., 0].abs().sum() > 0
+
+
+def test_rollout_uses_positive_termination_logit_as_failure_and_keeps_soft_gradient():
+    from supermimic.motion_prior.rollout import differentiable_m1_rollout
+
+    spec = _spec()
+    start = _start()
+    wheel_slot = spec.joint_names.index("FAR_FOOT_JOINT")
+
+    class TerminationWM(_WheelResponseWM):
+        def termination_logits(self, state):
+            # In the production WM, BCE labels done=1 as a positive logit.
+            return 10.0 * state[:, 29] - 1.5
+
+    class EchoActor:
+        cfg = SimpleNamespace(history=2)
+
+        def __call__(self, proprio, goal, ref):
+            del proprio, goal
+            return ref
+
+    future = _future()
+    future[..., 27:31] = 1.0
+    future.requires_grad_(True)
+    goal = torch.tensor([[0.2, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0]])
+    rollout = differentiable_m1_rollout(
+        TerminationWM(wheel_slot), EchoActor(), start, goal, future,
+        torch.tensor(spec.default_joint_pos), robot_spec=spec, horizon=3,
+    )
+    assert not rollout.prior_valid_mask[0].item()
+    assert rollout.prior_safety_mask[0].item()
+    assert rollout.prior_survival_probability[0, 0] < 0.5
+    grad, = torch.autograd.grad(rollout.prior_survival_probability[-1].sum(), future)
+    assert torch.isfinite(grad).all() and grad[..., 27:31].abs().sum() > 0
+
+
+def test_fixed_balanced_env_slots_are_exact_and_survive_episode_resets():
+    from supermimic.envs.mdp.commands import M1PriorJointCommand, fixed_balanced_task_labels
+
+    labels = fixed_balanced_task_labels(2048, 0.5, "cpu")
+    assert torch.equal(torch.bincount(labels, minlength=2), torch.tensor([1024, 1024]))
+    cfg = SimpleNamespace(
+        task_type="balanced", balanced_fixed_quota=True, l_task_fraction=0.5,
+        vx_range=(-0.09, 0.145), vx_stop_fraction=0.15, vx_reverse_fraction=0.35,
+        vy_range=(-0.05, 0.055), wz_range=(-0.17, 0.18),
+    )
+    command = SimpleNamespace(
+        cfg=cfg, device=torch.device("cpu"), task_type=labels.clone(),
+        velocity_command_body=torch.zeros(2048, 3),
+        target_position_world=torch.zeros(2048, 3),
+        _hold_seconds=torch.zeros(2048), _episode_success=torch.zeros(2048, dtype=torch.bool),
+    )
+    original = command.task_type.clone()
+    M1PriorJointCommand._resample_command(command, torch.arange(2048))
+    assert torch.equal(command.task_type, original)
+    assert torch.equal(torch.bincount(command.task_type, minlength=2), torch.tensor([1024, 1024]))
+    assert torch.equal(command.velocity_command_body[command.task_type == 1], torch.zeros(1024, 3))
+
+
+def test_balanced_checkpoint_can_be_evaluated_for_either_fixed_task():
+    from scripts.evaluate_m1_prior_joint import _resolve_saved_task_type
+
+    checkpoint = {"task_sampler_state": {"task_type": "balanced"}}
+    assert _resolve_saved_task_type(checkpoint, "L") == "L"
+    assert _resolve_saved_task_type(checkpoint, "M") == "M"
+    with pytest.raises(ValueError, match="requires task_type"):
+        _resolve_saved_task_type(checkpoint)
+    fixed_l = {"task_sampler_state": {"task_type": "L"}}
+    with pytest.raises(ValueError, match="differs"):
+        _resolve_saved_task_type(fixed_l, "M")

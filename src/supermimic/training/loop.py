@@ -100,7 +100,10 @@ class Trainer:
         if is_m1_prior_joint:
             if cfg.env.m1_pose_profile is None:
                 cfg.env.m1_pose_profile = (
-                    "dataset_v3_3_l_high_carry" if cfg.m1_joint_training.task_type == "L"
+                    "dataset_v3_3_l_high_carry" if (
+                        cfg.m1_joint_training.task_type == "L"
+                        or cfg.env.m1_joint_balanced_fixed_quota
+                    )
                     else "dataset_carry"
                 )
             if cfg.env.m1_action_contract not in (None, "v3"):
@@ -364,6 +367,7 @@ class Trainer:
                 m1_leg_action_magnitude_weight=cfg.env.m1_leg_action_magnitude_weight,
                 m1_joint_task_type=cfg.env.m1_joint_task_type,
                 m1_joint_l_task_fraction=cfg.env.m1_joint_l_task_fraction,
+                m1_joint_balanced_fixed_quota=cfg.env.m1_joint_balanced_fixed_quota,
                 m1_joint_vx_range=cfg.env.m1_joint_vx_range,
                 m1_joint_vx_stop_fraction=cfg.env.m1_joint_vx_stop_fraction,
                 m1_joint_vx_reverse_fraction=cfg.env.m1_joint_vx_reverse_fraction,
@@ -1239,8 +1243,11 @@ class Trainer:
                 decay_end_fraction=exploration_cfg.exploration_decay_end_fraction,
             )
         t_start = time.time()
+        checkpoint_interval_seconds = max(0.0, float(sch.checkpoint_interval_minutes) * 60.0)
+        next_wall_checkpoint = checkpoint_interval_seconds
         timers = {"sim": 0.0, "wm": 0.0, "policy": 0.0}
         agg: dict[str, float] = {}
+        agg_counts: dict[str, int] = {}
         agg_n = 0
         finished_returns: list[float] = []
         finished_lens: list[float] = []
@@ -1386,7 +1393,10 @@ class Trainer:
                         for name, value in l_metrics.items():
                             if name == "base_velocity_xy_squared_error":
                                 continue
-                            mean = task_masked_mean(value, is_l)
+                            metric_mask = is_l
+                            if name == "positive_command_negative_vx_fraction":
+                                metric_mask = is_l & (task_metrics["command_vx"] > 0.05)
+                            mean = task_masked_mean(value, metric_mask)
                             if mean is not None:
                                 self._m1_joint_real_step_metrics[f"real/L/{name}"] = float(mean)
                     for name, value in m_metrics.items():
@@ -1397,7 +1407,11 @@ class Trainer:
                     ("real/L/base_velocity_xy_squared_error", task_metrics["base_velocity_xy_squared_error"], is_l),
                     ("real/L/base_vx_squared_error", task_metrics["base_vx_squared_error"], is_l),
                     ("real/L/base_vy_squared_error", task_metrics["base_vy_squared_error"], is_l),
-                    ("real/L/positive_command_negative_vx_fraction", task_metrics["positive_command_negative_vx"], is_l),
+                    (
+                        "real/L/positive_command_negative_vx_fraction",
+                        task_metrics["positive_command_negative_vx"],
+                        is_l & (task_metrics["command_vx"] > 0.05),
+                    ),
                     ("real/L/yaw_rate_error", task_metrics["yaw_rate_error"], is_l),
                     ("real/L/base_vertical_velocity", task_metrics["base_vertical_velocity"], is_l),
                     ("real/L/command_vx", task_metrics["command_vx"], is_l),
@@ -1605,6 +1619,7 @@ class Trainer:
                         self.num_updates += 1
                         for k, v in joint_metrics.items():
                             agg[k] = agg.get(k, 0.0) + v
+                            agg_counts[k] = agg_counts.get(k, 0) + 1
                         agg["wm/lr"] = wm_lr
                         agg["prior/lr"] = prior_lr
                         agg["actor/lr"] = actor_scheduled_lr
@@ -1653,9 +1668,13 @@ class Trainer:
                             timers["policy"] += time.perf_counter() - t0
                     self.num_updates += 1
                     for k, v in m_wm.items():
-                        agg[f"wm/{k}"] = agg.get(f"wm/{k}", 0.0) + v
+                        key = f"wm/{k}"
+                        agg[key] = agg.get(key, 0.0) + v
+                        agg_counts[key] = agg_counts.get(key, 0) + 1
                     for k, v in m_pi.items():
-                        agg[f"policy/{k}"] = agg.get(f"policy/{k}", 0.0) + v
+                        key = f"policy/{k}"
+                        agg[key] = agg.get(key, 0.0) + v
+                        agg_counts[key] = agg_counts.get(key, 0) + 1
                     agg["wm/lr"] = wm_lr
                     agg["policy/actor_lr"] = actor_lr
                     agg["policy/critic_lr"] = critic_lr
@@ -1682,7 +1701,7 @@ class Trainer:
                 else:
                     n_finished = len(finished_returns)
                 if not self.is_main:
-                    agg, agg_n = {}, 0
+                    agg, agg_counts, agg_n = {}, {}, 0
                     finished_returns, finished_lens = [], []
                     finished_falls = []
                     timers = {k: 0.0 for k in timers}
@@ -1692,7 +1711,9 @@ class Trainer:
                         "wm/lr", "prior/lr", "actor/lr", "schedule/wm_only_updates",
                     )
                     for k, v in agg.items():
-                        self.writer.add_scalar(k, v / (1 if k in last_value_keys else agg_n), it)
+                        metric_count = agg_counts.get(k, agg_n) if self.is_m1_prior_joint else agg_n
+                        denominator = 1 if k in last_value_keys else metric_count
+                        self.writer.add_scalar(k, v / max(denominator, 1), it)
                 if self.is_main and self.policy_trainer is not None and self.policy_trainer.last_imag_diagnostics:
                     self.writer.add_text(
                         "imag/step_diagnostics",
@@ -1853,7 +1874,22 @@ class Trainer:
                     self.writer.add_scalar("prior/actor_ready", float(self.m1_joint_trainer.actor_ready), it)
                     self.writer.add_scalar("prior/state_source_privileged", 1.0, it)
                     self.writer.add_scalar("prior/l_task_fraction_real", float((self.command.task_type == 0).float().mean()), it)
+                    self.writer.add_scalar("env/task_l_count", float((self.command.task_type == 0).sum()), it)
+                    self.writer.add_scalar("env/task_m_count", float((self.command.task_type == 1).sum()), it)
+                    self.writer.add_scalar("real/episodes_l_window", float(self._m1_episode_counts["L"]), it)
+                    self.writer.add_scalar("real/episodes_m_window", float(self._m1_episode_counts["M"]), it)
                     self.writer.add_scalar("prior/optimizer_steps", float(self.m1_joint_trainer.prior_optimizer_steps), it)
+                    self.writer.add_scalar(
+                        "prior/calibration_rolled_back_optimizer_steps",
+                        float(self.m1_joint_trainer._prior_calibration_rolled_back_updates), it,
+                    )
+                    self.writer.add_scalar(
+                        "prior/calibration_status_code",
+                        float({"not_started": 0, "snapshot_saved": 1, "in_progress": 2,
+                               "accepted": 3, "rejected_rollback": 4,
+                               "no_calibration_to_validate": 5}.get(
+                                   self.m1_joint_trainer._prior_calibration_status, -1)), it,
+                    )
                     self.writer.add_scalar("actor/optimizer_steps", float(self.m1_joint_trainer.actor_optimizer_steps), it)
                     self.writer.add_scalar("wm/update_events", float(self.m1_joint_trainer.wm_update_events), it)
                     self.writer.add_scalar("wm/optimizer_steps", float(self.m1_joint_trainer.wm_optimizer_steps), it)
@@ -1966,7 +2002,7 @@ class Trainer:
                             f"GPU peak {gpu_peak:.2f} GiB | t sim/wm/pi {timers['sim']:.1f}/{timers['wm']:.1f}/{timers['policy']:.1f}s"
                         )
                     print(msg, flush=True)
-                agg, agg_n = {}, 0
+                agg, agg_counts, agg_n = {}, {}, 0
                 finished_returns, finished_lens = [], []
                 finished_falls = []
                 self.real_reward_term_sum = {}
@@ -1982,6 +2018,11 @@ class Trainer:
             if self.iteration % sch.checkpoint_interval == 0:
                 self.save("ckpt_latest.pt")
                 self.save(f"ckpt_{self.iteration:07d}.pt")
+            if checkpoint_interval_seconds and time.time() - t_start >= next_wall_checkpoint:
+                while time.time() - t_start >= next_wall_checkpoint:
+                    wall_minutes = int(round(next_wall_checkpoint / 60.0))
+                    self.save(f"ckpt_wall_{wall_minutes:03d}m.pt")
+                    next_wall_checkpoint += checkpoint_interval_seconds
             if sch.stop_at_iteration is not None and self.iteration >= sch.stop_at_iteration:
                 if self.is_main:
                     print(f"[INFO] stop_at_iteration reached ({self.iteration}), stopping", flush=True)

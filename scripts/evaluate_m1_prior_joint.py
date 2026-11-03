@@ -46,8 +46,9 @@ def _inverse_reference_action(q_target, wheel_rate, *, spec, default, scales, wh
 
 
 def _command_in_saved_range(command, command_state):
+    tolerance = 1e-6
     return all(
-        float(bounds[0]) <= float(command[index]) <= float(bounds[1])
+        float(bounds[0]) - tolerance <= float(command[index]) <= float(bounds[1]) + tolerance
         for index, bounds in enumerate((
             command_state.get("vx_range", (-float("inf"), float("inf"))),
             command_state.get("vy_range", (-float("inf"), float("inf"))),
@@ -56,16 +57,36 @@ def _command_in_saved_range(command, command_state):
     )
 
 
+def _target_offset_in_saved_range(offset, command_state):
+    tolerance = 1e-6
+    return all(
+        float(bounds[0]) - tolerance <= float(offset[axis]) <= float(bounds[1]) + tolerance
+        for axis, bounds in enumerate((
+            command_state.get("target_x_range", (0.12, 0.36)),
+            command_state.get("target_y_range", (-0.20, 0.20)),
+            command_state.get("target_z_range", (-0.15, 0.15)),
+        ))
+    )
+
+
 def _resolve_saved_task_type(checkpoint: dict, requested: str | None = None) -> str:
-    """Select the checkpoint's task contract, rejecting accidental overrides."""
+    """Select L or M from a fixed or balanced checkpoint without weakening its contract."""
     if requested is not None and requested not in ("L", "M"):
         raise ValueError("task_type must be L or M when explicitly set")
     sampler = checkpoint.get("task_sampler_state", {})
     saved = sampler.get("task_type")
+    if saved == "balanced":
+        if requested is None:
+            raise ValueError("balanced checkpoint evaluation requires task_type='L' or task_type='M'")
+        return requested
     if saved not in ("L", "M"):
         saved = checkpoint.get("config", {}).get("m1_joint_training", {}).get("task_type")
+    if saved == "balanced":
+        if requested is None:
+            raise ValueError("balanced checkpoint evaluation requires task_type='L' or task_type='M'")
+        return requested
     if saved not in ("L", "M"):
-        raise ValueError("checkpoint does not contain a supported fixed L/M task definition")
+        raise ValueError("checkpoint does not contain a supported L/M or balanced task definition")
     if requested is not None and requested != saved:
         raise ValueError(f"requested task_type {requested!r} differs from saved checkpoint task {saved!r}")
     return saved
@@ -101,6 +122,17 @@ def evaluate(
     if is_action22_v4 and ckpt.get("reference_adapter_schema") != "future31_to_interleaved_action22_v1":
         raise ValueError("v4 checkpoint has an unsupported Future31 to Action22 adapter schema")
     spec = m1_robot_spec_from_checkpoint(ckpt)
+    reset_contract = ckpt.get("reset_contract")
+    if reset_contract is not None:
+        if reset_contract.get("profile") != spec.default_pose_profile:
+            raise ValueError("checkpoint reset pose profile differs from its saved Action Contract")
+        if reset_contract.get("task_conditional") is not False:
+            raise ValueError("task-conditional reset is unsupported by this Action22 evaluator")
+        if tuple(reset_contract.get("default_joint_pos", ())) != tuple(spec.default_joint_pos):
+            raise ValueError("checkpoint reset joint pose differs from its saved Action Contract")
+        if abs(float(reset_contract.get("default_base_height_m", float("nan")))
+               - float(spec.default_base_height)) > 1e-8:
+            raise ValueError("checkpoint reset base height differs from its saved Action Contract")
     contract_type = "v3" if spec.action_contract_version.endswith("v3") else "v2"
     actor_cfg = dict(ckpt["actor_schema"])
     if isinstance(actor_cfg.get("hidden"), list):
@@ -416,6 +448,7 @@ def evaluate(
             "prior_source": source,
             "prior_input_compatibility": prior_input_compatibility,
             "default_pose_profile": spec.default_pose_profile,
+            "reset_contract": reset_contract,
             "action_mapping": ckpt["action_mapping"],
             "task_sampler_state": sampler,
             "groups": {},
@@ -489,14 +522,7 @@ def evaluate(
                 })
             else:
                 offset = M_OFFSETS[i]
-                target_in_range = all(
-                    float(bounds[0]) <= float(offset[axis]) <= float(bounds[1])
-                    for axis, bounds in enumerate((
-                        sampler.get("target_x_range", (0.12, 0.36)),
-                        sampler.get("target_y_range", (-0.20, 0.20)),
-                        sampler.get("target_z_range", (-0.15, 0.15)),
-                    ))
-                )
+                target_in_range = _target_offset_in_saved_range(offset, sampler)
                 metrics.update({
                     "target_offset_m": offset.tolist(),
                     "command_in_saved_training_range": target_in_range,

@@ -112,6 +112,15 @@ class M1AlternatingTrainer:
         self.last_wm_metrics: dict[str, float] = {}
         self.last_wm_readiness: dict[str, float] = {}
         self._last_gate_diagnostics: dict[str, float] = {}
+        self._prior_calibration_wm: WorldModel | None = None
+        self._prior_calibration_wm_sha256: str | None = None
+        self._prior_calibration_checkpoint: str | None = None
+        self._prior_calibration_checkpoint_signature: tuple[str, int, int] | None = None
+        self._prior_calibration_backup: dict | None = None
+        self._prior_calibration_status = "not_started"
+        self._prior_calibration_rolled_back_updates = 0
+        self._prior_calibration_validation: dict | None = None
+        self._force_prior_frozen = False
 
     def set_lr(self, *, prior_lr: float, actor_lr: float) -> None:
         for group in self.prior_optimizer.param_groups:
@@ -272,7 +281,10 @@ class M1AlternatingTrainer:
         return self._real_metrics
 
     def _one_micro_rollout(self, micro: int, *, planner: bool):
-        start = self.buffer.sample_starts(micro, self.actor.cfg.history)
+        start = self.buffer.sample_starts(
+            micro, self.actor.cfg.history,
+            task_balanced=bool(getattr(self.cfg, "balanced_replay_sampling", False)),
+        )
         goal = task_goal8(start.state, start.task_type, start.velocity_command, start.fixed_world_target)
         state_history = self._prior_state_history(start)
         if planner:
@@ -285,8 +297,9 @@ class M1AlternatingTrainer:
                 reference = self._sample_prior(state_history, goal)
             reference = reference.detach()
             anchor = None
+        rollout_wm = self._prior_calibration_wm if planner and self._prior_calibration_wm is not None else self.wm
         rollout = differentiable_m1_rollout(
-            self.wm, self.actor, start, goal, reference, self.default_joint_pos,
+            rollout_wm, self.actor, start, goal, reference, self.default_joint_pos,
             robot_spec=self.robot_spec,
             horizon=int(self.cfg.prior_horizon if planner else self.cfg.actor_horizon),
         )
@@ -303,6 +316,10 @@ class M1AlternatingTrainer:
                 action_diagnostics=rollout.action_diagnostics,
                 direct_valid_mask=rollout.prior_valid_mask,
                 actor_valid_mask=rollout.actor_valid_mask,
+                direct_safety_mask=rollout.prior_safety_mask,
+                actor_safety_mask=rollout.actor_safety_mask,
+                direct_survival_probability=rollout.prior_survival_probability,
+                actor_survival_probability=rollout.actor_survival_probability,
             )
         else:
             terms = actor_losses(
@@ -315,17 +332,46 @@ class M1AlternatingTrainer:
                 reference_actions=rollout.reference_actions.transpose(0, 1),
                 initial_state=start.state,
                 valid_mask=rollout.actor_valid_mask,
+                safety_mask=rollout.actor_safety_mask,
+                survival_probability=rollout.actor_survival_probability,
             )
+        if start.task_type is not None:
+            is_l = (start.task_type == 0).to(start.state.dtype)
+            is_m = (start.task_type == 1).to(start.state.dtype)
+            terms["replay/task_l_count"] = is_l.sum().detach()
+            terms["replay/task_m_count"] = is_m.sum().detach()
+            terms["imag/actor_valid_fraction_l"] = (
+                rollout.actor_valid_mask.to(start.state.dtype) * is_l[None]
+            ).sum() / (rollout.actor_valid_mask.shape[0] * is_l.sum()).clamp_min(1.0)
+            terms["imag/actor_valid_fraction_m"] = (
+                rollout.actor_valid_mask.to(start.state.dtype) * is_m[None]
+            ).sum() / (rollout.actor_valid_mask.shape[0] * is_m.sum()).clamp_min(1.0)
+            terms["imag/prior_valid_fraction_l"] = (
+                rollout.prior_valid_mask.to(start.state.dtype) * is_l[None]
+            ).sum() / (rollout.prior_valid_mask.shape[0] * is_l.sum()).clamp_min(1.0)
+            terms["imag/prior_valid_fraction_m"] = (
+                rollout.prior_valid_mask.to(start.state.dtype) * is_m[None]
+            ).sum() / (rollout.prior_valid_mask.shape[0] * is_m.sum()).clamp_min(1.0)
+            terms["replay/task_l_fraction"] = is_l.mean().detach()
         return terms, rollout
 
     def _update_prior(self) -> dict[str, float]:
+        if self._prior_calibration_backup is None:
+            self._prior_calibration_backup = {
+                "prior": deepcopy(self.prior.state_dict()),
+                "optimizer": deepcopy(self.prior_optimizer.state_dict()),
+                "optimizer_steps": int(self.prior_optimizer_steps),
+                "prior_sha256": module_sha256(self.prior),
+            }
+            self._prior_calibration_status = "snapshot_saved"
         n_micro = int(self.cfg.batch_size) // int(self.cfg.micro_batch_size)
         self.prior_optimizer.zero_grad(set_to_none=True)
         self.actor_optimizer.zero_grad(set_to_none=True)
         self.wm_trainer.opt.zero_grad(set_to_none=True)
         sums: dict[str, float] = {}
         try:
-            with frozen_parameters(self.actor, self.wm):
+            planner_wm = self._prior_calibration_wm or self.wm
+            with frozen_parameters(self.actor, planner_wm):
                 for _ in range(n_micro):
                     terms, _ = self._one_micro_rollout(int(self.cfg.micro_batch_size), planner=True)
                     if not torch.isfinite(terms["total"]):
@@ -333,7 +379,8 @@ class M1AlternatingTrainer:
                     (terms["total"] / n_micro).backward()
                     for name, value in terms.items():
                         if value.ndim == 0:
-                            sums[name] = sums.get(name, 0.0) + float(value.detach()) / n_micro
+                            divisor = 1 if name in ("replay/task_l_count", "replay/task_m_count") else n_micro
+                            sums[name] = sums.get(name, 0.0) + float(value.detach()) / divisor
                 prior_parameters = [p for p in self.prior.parameters() if p.requires_grad and p.grad is not None]
                 if not prior_parameters:
                     raise RuntimeError("Planner loss has no gradient path to Motion Prior parameters")
@@ -354,6 +401,7 @@ class M1AlternatingTrainer:
             self.wm_trainer.opt.zero_grad(set_to_none=True)
             self.prior_optimizer.zero_grad(set_to_none=True)
         self.prior_optimizer_steps += 1
+        self._prior_calibration_status = "in_progress"
         sums["grad_norm"] = float(grad_norm)
         sums["reference_shift"] = self._reference_shift()
         self.last_prior_metrics = {f"prior/{key}": value for key, value in sums.items()}
@@ -377,7 +425,8 @@ class M1AlternatingTrainer:
                     (terms["total"] / n_micro).backward()
                     for name, value in terms.items():
                         if value.ndim == 0:
-                            sums[name] = sums.get(name, 0.0) + float(value.detach()) / n_micro
+                            divisor = 1 if name in ("replay/task_l_count", "replay/task_m_count") else n_micro
+                            sums[name] = sums.get(name, 0.0) + float(value.detach()) / divisor
                 actor_parameters = list(self.actor.parameters())
                 if any(p.grad is None for p in actor_parameters):
                     raise RuntimeError("Actor task/tracking loss did not reach every Actor parameter")
@@ -458,10 +507,49 @@ class M1AlternatingTrainer:
         result[names[4]] = float(((a - b) / scales).square().mean().sqrt())
         return result
 
+    def _load_prior_calibration_wm(self, evidence: dict) -> str | None:
+        """Load the exact WM checkpoint audited by MuJoCo and freeze that snapshot."""
+        checkpoint_path = evidence.get("checkpoint")
+        if not checkpoint_path:
+            return None
+        path = Path(checkpoint_path).expanduser().resolve()
+        if not path.is_file():
+            return None
+        identity = str(path)
+        stat = path.stat()
+        signature = (identity, int(stat.st_mtime_ns), int(stat.st_size))
+        if self._prior_calibration_checkpoint_signature != signature:
+            checkpoint = torch.load(path, map_location="cpu", weights_only=False)
+            if checkpoint.get("format") != self.CHECKPOINT_FORMAT:
+                return None
+            if checkpoint.get("action_mapping") != serialize_m1_action_contract(self.robot_spec):
+                return None
+            if checkpoint.get("prior_source", {}).get("sha256") != self.prior.source.get("sha256"):
+                return None
+            expected_reset = {
+                "profile": self.robot_spec.default_pose_profile,
+                "task_conditional": False,
+                "default_base_height_m": float(self.robot_spec.default_base_height),
+                "default_joint_pos": tuple(self.robot_spec.default_joint_pos),
+            }
+            if checkpoint.get("reset_contract", expected_reset) != expected_reset:
+                return None
+            snapshot = deepcopy(self.wm).eval()
+            snapshot.load_state_dict(checkpoint["wm"], strict=True)
+            snapshot.requires_grad_(False)
+            snapshot_sha = module_sha256(snapshot)
+            if checkpoint.get("world_model_sha256") != snapshot_sha:
+                return None
+            self._prior_calibration_wm = snapshot
+            self._prior_calibration_wm_sha256 = snapshot_sha
+            self._prior_calibration_checkpoint = identity
+            self._prior_calibration_checkpoint_signature = signature
+        return self._prior_calibration_wm_sha256
+
     def _prior_gate(self) -> dict[str, float]:
         evidence_path = self.cfg.prior_gate_evidence_path
         checks = {"evidence_present": False, "action_response": False, "actor_task": False,
-                  "real_task_safety": False, "wm_matches": False, "action_mapping_matches": False,
+                  "real_task_safety": False, "wm_snapshot_matches": False, "action_mapping_matches": False,
                   "heldout_coverage": False}
         details: dict[str, float] = {"schedule/prior_gate_pass": 0.0}
         evidence: dict = {}
@@ -474,7 +562,11 @@ class M1AlternatingTrainer:
                     checks["action_response"] = evidence.get("action_response_pass") is True
                     checks["actor_task"] = evidence.get("actor_task_pass") is True
                     checks["real_task_safety"] = evidence.get("real_task_safety_pass") is True
-                    checks["wm_matches"] = evidence.get("world_model_sha256") == module_sha256(self.wm)
+                    snapshot_sha = self._load_prior_calibration_wm(evidence)
+                    checks["wm_snapshot_matches"] = (
+                        snapshot_sha is not None
+                        and evidence.get("world_model_sha256") == snapshot_sha
+                    )
                     saved_mapping = evidence.get("action_mapping")
                     expected_mapping = serialize_m1_action_contract(self.robot_spec)
                     # Evidence is JSON, so tuples in the in-memory Action
@@ -488,10 +580,15 @@ class M1AlternatingTrainer:
                 except (OSError, ValueError, TypeError):
                     pass
         actor_ready = self.actor_ready
-        all_checks = all(checks.values()) and actor_ready and not self.cfg.freeze_prior
+        force_frozen = bool(getattr(self, "_force_prior_frozen", False))
+        all_checks = all(checks.values()) and actor_ready and not self.cfg.freeze_prior and not force_frozen
         details.update({f"schedule/prior_gate_{key}": float(value) for key, value in checks.items()})
         details["schedule/prior_gate_actor_ready"] = float(actor_ready)
         details["schedule/prior_gate_freeze_config_clear"] = float(not self.cfg.freeze_prior)
+        details["schedule/prior_gate_force_frozen"] = float(force_frozen)
+        details["schedule/prior_calibration_wm_sha256_present"] = float(
+            getattr(self, "_prior_calibration_wm_sha256", None) is not None
+        )
         details["schedule/prior_gate_pass"] = float(all_checks)
         if evidence:
             details["schedule/prior_gate_heldout_state_count"] = float(evidence.get("heldout_state_count", 0))
@@ -502,7 +599,10 @@ class M1AlternatingTrainer:
         output: dict[str, float] = {}
         prior_steps_before = self.prior_optimizer_steps
         for _ in range(int(self.cfg.wm_updates_per_event)):
-            self.last_wm_metrics = dict(self.wm_trainer.update(self.buffer))
+            self.last_wm_metrics = dict(self.wm_trainer.update(
+                self.buffer,
+                task_balanced=bool(getattr(self.cfg, "balanced_replay_sampling", False)),
+            ))
             self.wm_update_events += 1
             self.wm_optimizer_steps += int(self.wm_trainer.cfg.batches_per_update)
         for key, value in self.last_wm_metrics.items():
@@ -546,10 +646,33 @@ class M1AlternatingTrainer:
         output.update(self.actor_readiness_diagnostics)
         return output
 
-    def set_validation_result(self, *, passed: bool) -> None:
-        """Record an externally run fixed-seed MuJoCo validation decision."""
+    def set_validation_result(self, *, passed: bool, metrics: dict | None = None) -> None:
+        """Accept calibration only with comparison evidence; otherwise restore prior+optimizer."""
         self.stage = "validation"
         self._last_validation_pass = bool(passed)
+        if self._prior_calibration_backup is None:
+            self._prior_calibration_status = "no_calibration_to_validate"
+            self._prior_calibration_validation = {"passed": bool(passed), "metrics": metrics or {}}
+            return
+        if passed and not metrics:
+            raise ValueError("accepting a Prior calibration requires L/M Actor/Prior Direct and safety comparison metrics")
+        self._prior_calibration_validation = {"passed": bool(passed), "metrics": metrics or {}}
+        if passed:
+            self._prior_calibration_status = "accepted"
+            self._prior_calibration_backup = None
+            return
+        backup = self._prior_calibration_backup
+        self.prior.load_state_dict(backup["prior"], strict=True)
+        self.prior_optimizer.load_state_dict(backup["optimizer"])
+        self._prior_calibration_rolled_back_updates += max(
+            0, int(self.prior_optimizer_steps) - int(backup["optimizer_steps"]),
+        )
+        restored_sha = module_sha256(self.prior)
+        if restored_sha != backup["prior_sha256"]:
+            raise RuntimeError("Prior calibration rollback did not restore the saved valid weights")
+        self._prior_calibration_status = "rejected_rollback"
+        self._force_prior_frozen = True
+        self._prior_calibration_backup = None
 
     def checkpoint(self, *, iteration: int, config_snapshot: dict, command_state: dict,
                    wm_only_updates: int = 0) -> dict:
@@ -573,6 +696,13 @@ class M1AlternatingTrainer:
             "prior_optimizer": self.prior_optimizer.state_dict(),
             "actor_optimizer": self.actor_optimizer.state_dict(),
             "task_sampler_state": command_state,
+            "reset_contract": {
+                "profile": self.robot_spec.default_pose_profile,
+                "task_conditional": False,
+                "default_base_height_m": float(self.robot_spec.default_base_height),
+                "default_joint_pos": tuple(self.robot_spec.default_joint_pos),
+            },
+            "balanced_replay_sampling": bool(getattr(self.cfg, "balanced_replay_sampling", False)),
             "rng_state": {
                 "python": random.getstate(), "numpy": np.random.get_state(),
                 "torch_cpu": torch.get_rng_state(),
@@ -598,6 +728,16 @@ class M1AlternatingTrainer:
             "world_model_sha256": module_sha256(self.wm),
             "prior_gate_evidence_path": str(self.cfg.prior_gate_evidence_path) if self.cfg.prior_gate_evidence_path else None,
             "prior_gate_diagnostics": dict(self._last_gate_diagnostics),
+            "prior_calibration": {
+                "status": self._prior_calibration_status,
+                "wm_snapshot_sha256": self._prior_calibration_wm_sha256,
+                "wm_snapshot_checkpoint": self._prior_calibration_checkpoint,
+                "backup": deepcopy(self._prior_calibration_backup),
+                "validation": deepcopy(self._prior_calibration_validation),
+                "force_prior_frozen": self._force_prior_frozen,
+                "rolled_back_optimizer_steps": self._prior_calibration_rolled_back_updates,
+                "current_prior_sha256": module_sha256(self.prior),
+            },
             "exploration": {
                 "enabled": self.cfg.exploration_enabled,
                 "env_fraction": self.cfg.exploration_env_fraction,
@@ -639,6 +779,16 @@ class M1AlternatingTrainer:
             raise ValueError("Action22 resume Motion Prior provenance mismatch")
         if checkpoint.get("task_sampler_state") != self.command.state_dict():
             raise ValueError("Action22 resume task sampler/command range mismatch")
+        expected_reset = {
+            "profile": self.robot_spec.default_pose_profile,
+            "task_conditional": False,
+            "default_base_height_m": float(self.robot_spec.default_base_height),
+            "default_joint_pos": tuple(self.robot_spec.default_joint_pos),
+        }
+        if checkpoint.get("reset_contract", expected_reset) != expected_reset:
+            raise ValueError("Action22 resume reset pose contract mismatch")
+        if checkpoint.get("balanced_replay_sampling", False) != bool(getattr(self.cfg, "balanced_replay_sampling", False)):
+            raise ValueError("Action22 resume Replay task-balancing contract mismatch")
         for key, module in (("wm", self.wm), ("motion_prior", self.prior),
                             ("prior_initial", self.prior_initial), ("actor", self.actor)):
             if key not in checkpoint:
@@ -655,6 +805,15 @@ class M1AlternatingTrainer:
         self._actor_ready_window.clear()
         self._actor_ready_window.extend(checkpoint.get("actor_readiness_window", []))
         self._last_gate_diagnostics = dict(checkpoint.get("prior_gate_diagnostics", {}))
+        calibration = checkpoint.get("prior_calibration", {})
+        self._prior_calibration_status = str(calibration.get("status", "not_started"))
+        self._prior_calibration_wm_sha256 = calibration.get("wm_snapshot_sha256")
+        self._prior_calibration_checkpoint = calibration.get("wm_snapshot_checkpoint")
+        self._prior_calibration_checkpoint_signature = None
+        self._prior_calibration_backup = deepcopy(calibration.get("backup"))
+        self._prior_calibration_validation = deepcopy(calibration.get("validation"))
+        self._force_prior_frozen = bool(calibration.get("force_prior_frozen", False))
+        self._prior_calibration_rolled_back_updates = int(calibration.get("rolled_back_optimizer_steps", 0))
         rng = checkpoint.get("rng_state", {})
         if "python" in rng: random.setstate(rng["python"])
         if "numpy" in rng: np.random.set_state(rng["numpy"])

@@ -34,6 +34,10 @@ class M1Action22Rollout:
     prior_direct_states: torch.Tensor
     actor_valid_mask: torch.Tensor
     prior_valid_mask: torch.Tensor
+    actor_safety_mask: torch.Tensor
+    prior_safety_mask: torch.Tensor
+    actor_survival_probability: torch.Tensor
+    prior_survival_probability: torch.Tensor
     action_diagnostics: dict[str, torch.Tensor]
 
 
@@ -94,6 +98,12 @@ def differentiable_m1_rollout(
     actor_executed_actions: list[torch.Tensor] = []
     actor_valid_rows: list[torch.Tensor] = []
     prior_valid_rows: list[torch.Tensor] = []
+    actor_safety_rows: list[torch.Tensor] = []
+    prior_safety_rows: list[torch.Tensor] = []
+    actor_survival_rows: list[torch.Tensor] = []
+    prior_survival_rows: list[torch.Tensor] = []
+    actor_prob_survived = torch.ones(batch, dtype=start.state.dtype, device=start.state.device)
+    prior_prob_survived = torch.ones_like(actor_prob_survived)
     actor_alive = torch.ones(batch, dtype=torch.bool, device=start.state.device)
     prior_alive = torch.ones(batch, dtype=torch.bool, device=start.state.device)
     for k in range(horizon):
@@ -109,6 +119,11 @@ def differentiable_m1_rollout(
         direct_executed = clamp_executed_action(u_k)
         direct_next = wm.step(direct_state, direct_executed, start.xi)
 
+        # The transition into a terminal state remains a valid safety sample;
+        # later imagined states are excluded by the hard alive mask.
+        actor_safety_rows.append(actor_alive)
+        prior_safety_rows.append(prior_alive)
+
         # Observation history follows the real environment contract: the
         # previous-action observation stores the policy output; WM state
         # transition uses the final bounded action.
@@ -117,10 +132,20 @@ def differentiable_m1_rollout(
         )
         obs_history = torch.cat((obs_history[1:], obs_next.unsqueeze(0)), dim=0)
         if hasattr(wm, "termination_logits"):
-            actor_survived = torch.sigmoid(wm.termination_logits(actor_next.detach())).reshape(-1) < 0.5
-            direct_survived = torch.sigmoid(wm.termination_logits(direct_next.detach())).reshape(-1) < 0.5
+            # WorldModel termination labels are positive for terminal successor
+            # states (BCEWithLogitsLoss(done)); sigmoid(logit) is p_fail.
+            actor_p_fail = torch.sigmoid(wm.termination_logits(actor_next)).reshape(-1)
+            direct_p_fail = torch.sigmoid(wm.termination_logits(direct_next)).reshape(-1)
+            actor_prob_survived = actor_prob_survived * (1.0 - actor_p_fail)
+            prior_prob_survived = prior_prob_survived * (1.0 - direct_p_fail)
+            # Keep the discrete mask for rollout diagnostics and hard episode
+            # semantics. Detach its state input so this branch is not a gradient.
+            actor_survived = actor_p_fail.detach() < 0.5
+            direct_survived = direct_p_fail.detach() < 0.5
             actor_alive = actor_alive & actor_survived
             prior_alive = prior_alive & direct_survived
+        actor_survival_rows.append(actor_prob_survived)
+        prior_survival_rows.append(prior_prob_survived)
         actor_valid_rows.append(actor_alive)
         prior_valid_rows.append(prior_alive)
         actor_actions.append(raw_action)
@@ -140,5 +165,9 @@ def differentiable_m1_rollout(
         prior_direct_states=torch.stack(direct_states, dim=0),
         actor_valid_mask=torch.stack(actor_valid_rows, dim=0),
         prior_valid_mask=torch.stack(prior_valid_rows, dim=0),
+        actor_safety_mask=torch.stack(actor_safety_rows, dim=0),
+        prior_safety_mask=torch.stack(prior_safety_rows, dim=0),
+        actor_survival_probability=torch.stack(actor_survival_rows, dim=0),
+        prior_survival_probability=torch.stack(prior_survival_rows, dim=0),
         action_diagnostics=action_diagnostics,
     )

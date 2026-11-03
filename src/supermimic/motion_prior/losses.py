@@ -25,6 +25,7 @@ class M1JointLossCfg:
     planner_task_weight: float = 1.0
     planner_actor_task_weight: float = 0.25
     planner_dynamics_weight: float = 0.5
+    termination_failure_weight: float = 1.0
     out_of_envelope_weight: float = 0.1
     actor_task_weight: float = 1.0
     actor_bc_weight: float = 0.05
@@ -87,6 +88,23 @@ def _joint_velocity_limits(device: torch.device, cfg: M1JointLossCfg) -> torch.T
             # Conservative planner operating cap below the M1 asset's 110 rad/s limit.
             limits[M1_JOINTS.index(name)] = cfg.maximum_wheel_rate_rad_s
     return limits
+
+
+def expected_termination_failure_cost(survival_probability: torch.Tensor | None,
+                                      *, reference: torch.Tensor) -> torch.Tensor:
+    """Expected fraction of the planning horizon lost to early termination.
+
+    ``survival_probability[k]`` is the cumulative probability of reaching the
+    successor state at step k. An immediate certain failure costs 1, failure
+    after three surviving steps costs (H-3)/H, and full survival costs 0.
+    The cost remains differentiable through the soft WM termination head.
+    """
+    if survival_probability is None:
+        return reference.new_zeros(())
+    if survival_probability.ndim != 2 or survival_probability.shape[0] < 1:
+        raise ValueError("survival_probability must have shape [H,B] with H >= 1")
+    survival = survival_probability.clamp(0.0, 1.0)
+    return (1.0 - survival).mean()
 
 
 def _task_planner_terms(states: torch.Tensor, task_type: torch.Tensor,
@@ -299,6 +317,10 @@ def planner_losses(
     action_diagnostics: dict[str, torch.Tensor] | None = None,
     direct_valid_mask: torch.Tensor | None = None,
     actor_valid_mask: torch.Tensor | None = None,
+    direct_safety_mask: torch.Tensor | None = None,
+    actor_safety_mask: torch.Tensor | None = None,
+    direct_survival_probability: torch.Tensor | None = None,
+    actor_survival_probability: torch.Tensor | None = None,
 ) -> dict[str, torch.Tensor]:
     """Planner objective with separate direct-WM and Actor task paths."""
     task = _task_planner_terms(states, task_type, velocity_command, fixed_world_target, fk, tcp_index, cfg, direct_valid_mask)
@@ -326,7 +348,14 @@ def planner_losses(
         + physical["arm_position"]
         + 0.5 * physical["wheel_velocity"]
     )
-    feasibility = _feasibility(states, soft_limits, cfg, direct_valid_mask)
+    direct_safety_mask = direct_valid_mask if direct_safety_mask is None else direct_safety_mask
+    actor_safety_mask = actor_valid_mask if actor_safety_mask is None else actor_safety_mask
+    feasibility_direct = _feasibility(states, soft_limits, cfg, direct_safety_mask)
+    feasibility_actor = (
+        _feasibility(actor_states, soft_limits, cfg, actor_safety_mask)
+        if actor_states is not None else feasibility_direct
+    )
+    feasibility = 0.5 * (feasibility_direct + feasibility_actor)
     smooth_terms = _reference_smoothness_terms(initial, reference, cfg)
     smoothness = torch.stack(tuple(smooth_terms.values())).sum()
     anchor_terms = _anchor_group_terms(reference, initial_reference)
@@ -337,6 +366,9 @@ def planner_losses(
     if actions.shape[0] > 1:
         effort_surrogate = effort_surrogate + 0.25 * torch.diff(actions, dim=0).square().mean()
     energy = actions.new_zeros(())  # no validated differentiable M1 actuator model is available yet
+    failure_direct = expected_termination_failure_cost(direct_survival_probability, reference=states)
+    failure_actor = expected_termination_failure_cost(actor_survival_probability, reference=states)
+    failure = 0.5 * (failure_direct + failure_actor) if actor_states is not None else failure_direct
     out_of_envelope = (
         F.relu(raw_reference_actions.abs() - 1.0).square().mean()
         if raw_reference_actions is not None else actions.new_zeros(())
@@ -350,12 +382,16 @@ def planner_losses(
         + cfg.smoothness_weight * smoothness
         + cfg.anchor_weight * anchor + cfg.energy_weight * energy
         + cfg.control_effort_surrogate_weight * effort_surrogate
+        + cfg.termination_failure_weight * failure
     )
     return {
         "total": total,
         "task": task_direct,
         "task_direct": task_direct,
         "task_actor": task_actor,
+        "failure_loss": failure,
+        "failure_direct": failure_direct,
+        "failure_actor": failure_actor,
         "task_l": task["task_l"],
         "task_m": task["task_m"],
         "task_l_actor": actor_task_terms["task_l"],
@@ -364,6 +400,8 @@ def planner_losses(
         "terminal_error": task["terminal_error_m"],
         "base_drift": task["base_drift_m"],
         "dynamics": dynamics,
+        "feasibility_direct": feasibility_direct,
+        "feasibility_actor": feasibility_actor,
         **{f"dynamics_{key}": value for key, value in physical.items()},
         "energy": energy,
         "control_effort_surrogate": effort_surrogate,
@@ -394,6 +432,8 @@ def actor_losses(
     reference_actions: torch.Tensor | None = None,
     initial_state: torch.Tensor | None = None,
     valid_mask: torch.Tensor | None = None,
+    safety_mask: torch.Tensor | None = None,
+    survival_probability: torch.Tensor | None = None,
 ) -> dict[str, torch.Tensor]:
     """Actor objective: Task + grouped reference style + small candidate-action BC."""
     if states.shape != reference_states.shape:
@@ -408,6 +448,13 @@ def actor_losses(
         if valid_mask.shape != states.shape[:2]:
             raise ValueError("Actor valid_mask must have shape [H,B]")
         valid = valid_mask.to(device=states.device, dtype=states.dtype)
+
+    if safety_mask is None:
+        safety = valid
+    else:
+        if safety_mask.shape != states.shape[:2]:
+            raise ValueError("Actor safety_mask must have shape [H,B]")
+        safety = safety_mask.to(device=states.device, dtype=states.dtype)
 
     def masked_mean(value: torch.Tensor, mask: torch.Tensor = valid) -> torch.Tensor:
         expanded = mask
@@ -432,11 +479,17 @@ def actor_losses(
     q = state[..., 7:29]
     mask = _joint_mask(state.device)
     limits = soft_limits[mask]
-    limit = masked_mean(
+    def safety_mean(value: torch.Tensor) -> torch.Tensor:
+        expanded = safety
+        while expanded.ndim < value.ndim:
+            expanded = expanded.unsqueeze(-1)
+        expanded = expanded.expand_as(value)
+        return (value * expanded).sum() / expanded.sum().clamp_min(1.0)
+
+    stability = safety_mean(low.square()) + safety_mean(tilt_cost.square()) + safety_mean(
         F.relu(limits[:, 0] - q[..., mask]).square()
         + F.relu(q[..., mask] - limits[:, 1]).square()
     )
-    stability = masked_mean(low.square()) + masked_mean(tilt_cost.square()) + limit
     action_path = torch.cat((previous_action[None], actions), dim=0)
     action_rate = masked_mean(torch.diff(action_path, dim=0).square())
     qd = state[..., 35:57]
@@ -463,13 +516,15 @@ def actor_losses(
         task = task_terms["task_l"] + task_terms["task_m"] + task_terms["m_base_drift"]
     else:
         task = actions.new_zeros(())
+    failure = expected_termination_failure_cost(survival_probability, reference=states)
     total = (
         track + cfg.actor_bc_weight * bc + cfg.actor_task_weight * task
         + cfg.actor_stability_weight * stability + cfg.actor_control_weight * control
+        + cfg.termination_failure_weight * failure
     )
     return {
         "total": total, "tracking": track, "bc": bc, "task": task, **parts,
-        "stability": stability, "control": control,
+        "stability": stability, "control": control, "failure_loss": failure,
         "action_rate": action_rate, "joint_speed": joint_speed,
         "joint_acceleration": joint_acc, "action_saturation": saturation,
         **{f"{key}_task": value for key, value in task_terms.items() if value.ndim == 0},

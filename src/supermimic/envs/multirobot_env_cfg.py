@@ -36,7 +36,9 @@ from supermimic.tasks.world_point_reward import WORLD_POINT_REWARD_NAMES, m1_pri
 def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
     prior_joint_task = a.task_name == "m1_prior_joint"
     pose_profile = a.m1_pose_profile or (
-        "dataset_v3_3_l_high_carry" if prior_joint_task and a.m1_joint_task_type == "L" else
+        "dataset_v3_3_l_high_carry" if prior_joint_task and (
+            a.m1_joint_task_type == "L" or a.m1_joint_balanced_fixed_quota
+        ) else
         "dataset_carry" if prior_joint_task else "legacy_manipulation"
     )
     action_contract = a.m1_action_contract or ("v3" if prior_joint_task else "v2")
@@ -291,6 +293,8 @@ def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
             "m1_prior_joint": M1PriorJointCommandCfg(
                 entity_name="robot", task_type=a.m1_joint_task_type,
                 l_task_fraction=a.m1_joint_l_task_fraction,
+                balanced_fixed_quota=a.m1_joint_balanced_fixed_quota,
+                reset_pose_profile=pose_profile,
                 vx_range=a.m1_joint_vx_range, vy_range=a.m1_joint_vy_range,
                 vx_stop_fraction=a.m1_joint_vx_stop_fraction,
                 vx_reverse_fraction=a.m1_joint_vx_reverse_fraction,

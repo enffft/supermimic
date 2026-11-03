@@ -1288,6 +1288,16 @@ class WorldPointCommandCfg(CommandTermCfg):
         return WorldPointCommand(self, env)
 
 
+def fixed_balanced_task_labels(num_envs: int, l_task_fraction: float, device) -> torch.Tensor:
+    """Create immutable episode-independent L/M environment slots."""
+    if num_envs < 1 or not 0.0 <= l_task_fraction <= 1.0:
+        raise ValueError("fixed task quota needs a positive environment count and valid L fraction")
+    n_l = int(round(num_envs * l_task_fraction))
+    labels = torch.ones(num_envs, dtype=torch.long, device=device)
+    labels[torch.randperm(num_envs, device=device)[:n_l]] = 0
+    return labels
+
+
 class M1PriorJointCommand(CommandTerm):
     """Episode-fixed L/M context for the optional CVAE joint-training task.
 
@@ -1302,6 +1312,10 @@ class M1PriorJointCommand(CommandTerm):
         super().__init__(cfg, env)
         self.robot = env.scene[cfg.entity_name]
         self.task_type = torch.zeros(self.num_envs, dtype=torch.long, device=self.device)
+        if cfg.task_type == "balanced" and cfg.balanced_fixed_quota:
+            self.task_type.copy_(fixed_balanced_task_labels(
+                self.num_envs, cfg.l_task_fraction, self.device,
+            ))
         self.velocity_command_body = torch.zeros(self.num_envs, 3, device=self.device)
         self.target_position_world = torch.zeros(self.num_envs, 3, device=self.device)
         self.initial_base_position_world = torch.zeros(self.num_envs, 3, device=self.device)
@@ -1341,7 +1355,8 @@ class M1PriorJointCommand(CommandTerm):
         if env_ids.numel() == 0:
             return
         if self.cfg.task_type == "balanced":
-            self.task_type[env_ids] = (torch.rand(env_ids.numel(), device=self.device) >= self.cfg.l_task_fraction).long()
+            if not self.cfg.balanced_fixed_quota:
+                self.task_type[env_ids] = (torch.rand(env_ids.numel(), device=self.device) >= self.cfg.l_task_fraction).long()
         else:
             self.task_type[env_ids] = 0 if self.cfg.task_type == "L" else 1
         vx_lo, vx_hi = self.cfg.vx_range
@@ -1361,6 +1376,8 @@ class M1PriorJointCommand(CommandTerm):
             self.velocity_command_body[env_ids, 0] = vx_lo + torch.rand(env_ids.numel(), device=self.device) * (vx_hi - vx_lo)
         for i, bounds in enumerate((self.cfg.vy_range, self.cfg.wz_range), start=1):
             self.velocity_command_body[env_ids, i] = bounds[0] + torch.rand(env_ids.numel(), device=self.device) * (bounds[1] - bounds[0])
+        is_l = self.task_type[env_ids] == 0
+        self.velocity_command_body[env_ids] *= is_l[:, None]
         self.target_position_world[env_ids] = 0.0
         self._hold_seconds[env_ids] = 0.0
         self._episode_success[env_ids] = False
@@ -1463,6 +1480,8 @@ class M1PriorJointCommand(CommandTerm):
         return {
             "task_type": self.cfg.task_type,
             "l_task_fraction": self.cfg.l_task_fraction,
+            "balanced_fixed_quota": bool(self.cfg.balanced_fixed_quota),
+            "reset_pose_profile": self.cfg.reset_pose_profile,
             "vx_range": tuple(self.cfg.vx_range),
             "vx_stop_fraction": float(self.cfg.vx_stop_fraction),
             "vx_reverse_fraction": float(self.cfg.vx_reverse_fraction),
@@ -1484,6 +1503,8 @@ class M1PriorJointCommandCfg(CommandTermCfg):
     entity_name: str = "robot"
     task_type: str = "balanced"  # balanced | L | M
     l_task_fraction: float = 0.5
+    balanced_fixed_quota: bool = False
+    reset_pose_profile: str = "dataset_carry"
     vx_range: tuple[float, float] = (-0.09, 0.145)
     vx_stop_fraction: float = 0.15
     vx_reverse_fraction: float = 0.35
@@ -1502,6 +1523,8 @@ class M1PriorJointCommandCfg(CommandTermCfg):
     def __post_init__(self):
         if self.task_type not in ("balanced", "L", "M"):
             raise ValueError("M1 joint task_type must be balanced, L, or M; LM is not enabled in v1")
+        if self.balanced_fixed_quota and self.task_type != "balanced":
+            raise ValueError("balanced_fixed_quota is valid only when task_type='balanced'")
         if not 0.0 <= self.l_task_fraction <= 1.0:
             raise ValueError("l_task_fraction must be within [0,1]")
         if not 0.0 <= self.vx_stop_fraction <= 1.0 or not 0.0 <= self.vx_reverse_fraction <= 1.0:

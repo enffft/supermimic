@@ -8,6 +8,8 @@ import torch
 
 
 def _gate_trainer(tmp_path=None, *, freeze_prior=False):
+    from types import SimpleNamespace
+
     from supermimic.motion_prior.trainer import M1AlternatingTrainer
     from supermimic.robots.spec import get_robot_spec
 
@@ -27,6 +29,13 @@ def _gate_trainer(tmp_path=None, *, freeze_prior=False):
     trainer.robot_spec = get_robot_spec(
         "m1_piper", m1_pose_profile="dataset_v3_3_l_high_carry", m1_action_contract="v3",
     )
+    trainer.command = SimpleNamespace(cfg=SimpleNamespace(reset_pose_profile="dataset_v3_3_l_high_carry"))
+    trainer.prior = SimpleNamespace(source={"sha256": "prior-test-sha"})
+    trainer._prior_calibration_wm = None
+    trainer._prior_calibration_wm_sha256 = None
+    trainer._prior_calibration_checkpoint = None
+    trainer._prior_calibration_checkpoint_signature = None
+    trainer._force_prior_frozen = False
     trainer.actor_optimizer_steps = 1
     trainer._actor_ready_window = deque([{
         "survival": 1.0,
@@ -123,19 +132,92 @@ def test_prior_gate_accepts_only_matching_complete_evidence(tmp_path):
 
     evidence_path = tmp_path / "gate.json"
     trainer = _gate_trainer(evidence_path, freeze_prior=False)
+    spec = trainer.robot_spec
+    from supermimic.motion_prior.trainer import M1AlternatingTrainer
+    from supermimic.tasks.action_contract import serialize_m1_action_contract
+
+    wm_sha = module_sha256(trainer.wm)
+    checkpoint_path = tmp_path / "wm_snapshot.pt"
+    torch.save({
+        "format": M1AlternatingTrainer.CHECKPOINT_FORMAT,
+        "wm": trainer.wm.state_dict(),
+        "world_model_sha256": wm_sha,
+        "action_mapping": serialize_m1_action_contract(spec),
+        "prior_source": {"sha256": "prior-test-sha"},
+        "reset_contract": {
+            "profile": spec.default_pose_profile,
+            "task_conditional": False,
+            "default_base_height_m": float(spec.default_base_height),
+            "default_joint_pos": tuple(spec.default_joint_pos),
+        },
+    }, checkpoint_path)
     evidence_path.write_text(json.dumps({
         "audit_type": "m1_real_mujoco_wm_action_response_v1",
         "action_response_pass": True,
         "actor_task_pass": True,
         "real_task_safety_pass": True,
-        "world_model_sha256": module_sha256(trainer.wm),
+        "world_model_sha256": wm_sha,
+        "checkpoint": str(checkpoint_path),
         "action_mapping": serialize_m1_action_contract(trainer.robot_spec),
         "heldout_state_count": 128,
     }))
+    # A later live WM update must not invalidate calibration against this
+    # immutable checkpoint snapshot.
+    with torch.no_grad():
+        trainer.wm.weight.add_(0.25)
     result = trainer._prior_gate()
     assert result["schedule/prior_gate_pass"] == 1.0
+    assert result["schedule/prior_gate_wm_snapshot_matches"] == 1.0
+    assert trainer._prior_calibration_wm_sha256 == wm_sha
 
     trainer.cfg.freeze_prior = True
     result = trainer._prior_gate()
     assert result["schedule/prior_gate_pass"] == 0.0
     assert result["schedule/prior_gate_freeze_config_clear"] == 0.0
+
+
+def test_prior_validation_failure_restores_weights_and_optimizer_then_freezes():
+    from copy import deepcopy
+
+    from supermimic.motion_prior.trainer import M1AlternatingTrainer, module_sha256
+
+    trainer = object.__new__(M1AlternatingTrainer)
+    trainer.stage = "prior_calibration"
+    trainer._last_validation_pass = None
+    trainer.prior = torch.nn.Linear(3, 2)
+    trainer.prior_optimizer = torch.optim.Adam(trainer.prior.parameters(), lr=1e-3)
+    loss = trainer.prior(torch.ones(1, 3)).square().sum()
+    loss.backward(); trainer.prior_optimizer.step(); trainer.prior_optimizer.zero_grad(set_to_none=True)
+    weight_before = deepcopy(trainer.prior.state_dict())
+    optimizer_before = deepcopy(trainer.prior_optimizer.state_dict())
+    hash_before = module_sha256(trainer.prior)
+    trainer.prior_optimizer_steps = 0
+    trainer._prior_calibration_backup = {
+        "prior": weight_before, "optimizer": optimizer_before,
+        "optimizer_steps": 0, "prior_sha256": hash_before,
+    }
+    trainer._prior_calibration_status = "in_progress"
+    trainer._prior_calibration_rolled_back_updates = 0
+    trainer._force_prior_frozen = False
+    trainer._prior_calibration_validation = None
+    with torch.no_grad():
+        for parameter in trainer.prior.parameters():
+            parameter.add_(1.0)
+    trainer.prior_optimizer_steps = 1
+
+    trainer.set_validation_result(passed=False, metrics={"real_task_safety_pass": False})
+    assert module_sha256(trainer.prior) == hash_before
+    restored_optimizer = trainer.prior_optimizer.state_dict()
+    assert restored_optimizer["param_groups"] == optimizer_before["param_groups"]
+    assert restored_optimizer["state"].keys() == optimizer_before["state"].keys()
+    for parameter_id, expected_state in optimizer_before["state"].items():
+        for key, expected_value in expected_state.items():
+            current_value = restored_optimizer["state"][parameter_id][key]
+            if isinstance(expected_value, torch.Tensor):
+                torch.testing.assert_close(current_value, expected_value, rtol=0, atol=0)
+            else:
+                assert current_value == expected_value
+    assert trainer.prior_optimizer_steps == 1  # retain actual optimizer operation count
+    assert trainer._prior_calibration_rolled_back_updates == 1
+    assert trainer._prior_calibration_status == "rejected_rollback"
+    assert trainer._force_prior_frozen

@@ -1,0 +1,251 @@
+/home/yifeiy/miniconda3/envs/supermimic/lib/python3.12/site-packages/mujoco_warp/_src/io.py:301: UserWarning:
+        CUDA version < 12.4 detected
+        - graph capture may be unreliable for < 12.3
+        - conditional graph nodes are not available for < 12.4
+          Model.opt.graph_conditional should be set to False
+
+  warp_util.check_toolkit_driver()
+Setting seed: 20261103
+Warp 1.18.0 initialized:
+   CUDA Toolkit 12.9, Driver 12.2
+   Devices:
+     "cpu"      : "x86_64"
+     "cuda:0"   : "NVIDIA GeForce RTX 4070 SUPER" (12 GiB, sm_89, mempool enabled)
+   Kernel cache:
+     /home/yifeiy/.cache/warp/1.18.0
+[WARNING] CUDA Graphs disabled: driver 12.2 < 12.4
+
++-----------------------------------+
+|          Base Environment         |
++------------------------+----------+
+| Property               | Value    |
++------------------------+----------+
+| Number of environments | 2048     |
+| Environment device     | cuda:0   |
+| Environment seed       | 20261103 |
+| Physics step-size      | 0.005    |
+| Environment step-size  | 0.02     |
++------------------------+----------+
+
+[INFO] <EventManager> contains 2 active terms.
++-------------------------------------+
+| Active Event Terms in Mode: 'reset' |
++-------+-----------------------------+
+| Index | Name                        |
++-------+-----------------------------+
+|   0   | reset_scene_to_default      |
++-------+-----------------------------+
++---------------------------------------+
+| Active Event Terms in Mode: 'startup' |
++-----------+---------------------------+
+|   Index   | Name                      |
++-----------+---------------------------+
+|     0     | foot_friction             |
++-----------+---------------------------+
++-----------------------------+
+| Domain Randomization Fields |
++--------+--------------------+
+| Index  | Field Name         |
++--------+--------------------+
+|   0    | geom_friction      |
++--------+--------------------+
+
+Module repeat_array_kernel_31f1cdc7 ab09835 load on device 'cuda:0' took 0.84 ms  (cached)
+[INFO] <CommandManager> contains 1 active terms.
++----------------------------------------------+
+|             Active Command Terms             |
++-------+----------------+---------------------+
+| Index | Name           |         Type        |
++-------+----------------+---------------------+
+|   0   | m1_prior_joint | M1PriorJointCommand |
++-------+----------------+---------------------+
+
+[INFO] <ActionManager> contains 1 active terms.
++---------------------------------+
+| Active Action Terms (shape: 22) |
++--------+--------+---------------+
+| Index  | Name   |     Dimension |
++--------+--------+---------------+
+|   0    | mixed  |            22 |
++--------+--------+---------------+
+
+[INFO] <ObservationManager> contains 2 groups.
++-------------------------------------------------------------+
+| Active Observation Terms in Group: 'policy' (shape: (360,)) |
++--------+-------------------------+--------------------------+
+| Index  | Name                    |          Shape           |
++--------+-------------------------+--------------------------+
+|   0    | joint_pos               |    (110,)  ← 5×(22,)     |
+|   1    | joint_vel               |    (110,)  ← 5×(22,)     |
+|   2    | base_ang_vel            |     (15,)  ← 5×(3,)      |
+|   3    | projected_gravity       |     (15,)  ← 5×(3,)      |
+|   4    | actions                 |    (110,)  ← 5×(22,)     |
++--------+-------------------------+--------------------------+
++---------------------------------------------------------+
+| Active Observation Terms in Group: 'goal' (shape: (8,)) |
++-------------+---------------------------+---------------+
+|    Index    | Name                      |     Shape     |
++-------------+---------------------------+---------------+
+|      0      | prior_goal8               |      (8,)     |
++-------------+---------------------------+---------------+
+
+[INFO] <TerminationManager> contains 3 active terms.
++--------------------------------+
+|    Active Termination Terms    |
++-------+-------------+----------+
+| Index | Name        | Time Out |
++-------+-------------+----------+
+|   0   | time_out    |   True   |
+|   1   | root_height |  False   |
+|   2   | root_tilt   |  False   |
++-------+-------------+----------+
+
+[INFO] <RewardManager> contains 1 active terms.
++---------------------------------------+
+|          Active Reward Terms          |
++-------+----------------------+--------+
+| Index | Name                 | Weight |
++-------+----------------------+--------+
+|   0   | data_collection_zero |    1.0 |
++-------+----------------------+--------+
+
+[INFO] <NullCurriculumManager> (inactive)
+[INFO] <NullMetricsManager> (inactive)
+[INFO] <RecorderManager> contains 1 active terms.
++-----------------------+
+| Active Recorder Terms |
++----------+------------+
+|  Index   |    Name    |
++----------+------------+
+|    0     |   replay   |
++----------+------------+
+[INFO] M1 CVAE strict load: /home/yifeiy/AMP-LOCO-M1/logs/motion_prior/cvae_v1_v3_3_mixed_3272_goal_l_holdout_20261103/checkpoint_best_val.pt sha256=05a858520790d474f6c1c3dd1f791507c3da91f68899ca88f00348ea4bbff10c step=9600; prior_state_source=privileged; input_compatibility=legacy_v1
+[INFO] params: world model 8.73M, policy 0.34M, critic 0.000M
+Module reset_data__locals__reset_xfrc_applied_b0a4c05b b0a4c05 load on device 'cuda:0' took 1.01 ms  (cached)
+Module reset_data__locals__reset_M_2263bd42 2263bd4 load on device 'cuda:0' took 0.71 ms  (cached)
+Module reset_data__locals__reset_mocap_8058fd6f 8058fd6 load on device 'cuda:0' took 0.72 ms  (cached)
+Module reset_data__locals__reset_contact_adcd3765 adcd376 load on device 'cuda:0' took 0.63 ms  (cached)
+Module reset_data__locals__reset_sleep_3246b46a 3246b46 load on device 'cuda:0' took 0.49 ms  (cached)
+Module reset_data__locals__reset_nworld_9d8fd945 9d8fd94 load on device 'cuda:0' took 0.48 ms  (cached)
+Module mujoco_warp._src.smooth 43a6a77 load on device 'cuda:0' took 1.55 ms  (cached)
+Module _nxn_broadphase__locals__kernel_32304148 3230414 load on device 'cuda:0' took 0.58 ms  (cached)
+Module _nxn_broadphase__locals__kernel_32304148 2a885b9 load on device 'cuda:0' took 0.70 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_2f3971ff 2f3971f load on device 'cuda:0' took 1.60 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_2dd06598 2dd0659 load on device 'cuda:0' took 1.18 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_6e5a61f7 6e5a61f load on device 'cuda:0' took 1.79 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_e1dbbf95 e1dbbf9 load on device 'cuda:0' took 1.07 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_e1c599c1 e1c599c load on device 'cuda:0' took 1.26 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_cd32121e cd32121 load on device 'cuda:0' took 1.91 ms  (cached)
+Module _primitive_narrowphase__locals__primitive_narrowphase_3b42183f 3b42183 load on device 'cuda:0' took 1.00 ms  (cached)
+Module mujoco_warp._src.constraint 8d4d513 load on device 'cuda:0' took 0.95 ms  (cached)
+Module _friction_dof__locals__kernel_4aeb9e20 4aeb9e2 load on device 'cuda:0' took 0.83 ms  (cached)
+Module _limit_slide_hinge__locals__kernel_a0cedfd2 a0cedfd load on device 'cuda:0' took 0.62 ms  (cached)
+Module _efc_contact_init__locals__kernel_5bd64944 5bd6494 load on device 'cuda:0' took 0.36 ms  (cached)
+Module _efc_contact_jac_dense__locals__kernel_e9660760 29b28db load on device 'cuda:0' took 0.70 ms  (cached)
+Module _efc_contact_update__locals__kernel_55b2a711 55b2a71 load on device 'cuda:0' took 0.84 ms  (cached)
+Module mujoco_warp._src.forward 70fadf5 load on device 'cuda:0' took 2.06 ms  (cached)
+Module mujoco_warp._src.passive 0de6fd1 load on device 'cuda:0' took 1.72 ms  (cached)
+Module _qfrc_passive_kernel__locals__kernel_20315922 2031592 load on device 'cuda:0' took 0.49 ms  (cached)
+Module _qfrc_smooth__locals__kernel_2c4e0694 2c4e069 load on device 'cuda:0' took 0.63 ms  (cached)
+Module mujoco_warp._src.support 970ef9a load on device 'cuda:0' took 0.58 ms  (cached)
+Module _tile_cholesky_factorize_solve_block__locals__kernel_f228e0fd bd735d6 load on device 'cuda:0' took 22.85 ms  (cached)
+Module _solve_init_dof__locals__kernel_45eb01ed 45eb01e load on device 'cuda:0' took 0.60 ms  (cached)
+Module mujoco_warp._src.solver e4420b7 load on device 'cuda:0' took 1.12 ms  (cached)
+Module _solve_init_jaref_kernel__locals__kernel_5b4e3dc2 5b4e3dc load on device 'cuda:0' took 0.65 ms  (cached)
+Module mul_m_kernel__locals___mul_m_6d916077 6d91607 load on device 'cuda:0' took 0.61 ms  (cached)
+Module _update_constraint_efc__locals__kernel_e1de18c7 e1de18c load on device 'cuda:0' took 0.71 ms  (cached)
+Module _update_constraint_init_qfrc_constraint_dense__locals__kernel_41ee2214 41ee221 load on device 'cuda:0' took 0.42 ms  (cached)
+Module _update_gradient_zero_grad_dot__locals__kernel_c4230897 c423089 load on device 'cuda:0' took 0.82 ms  (cached)
+Module _update_gradient_grad__locals__kernel_21379838 2137983 load on device 'cuda:0' took 0.65 ms  (cached)
+Module _update_gradient_JTDAJ_dense_tiled__locals__kernel_72b3ec8e 54503b5 load on device 'cuda:0' took 0.86 ms  (cached)
+Module _update_gradient_cholesky__locals__kernel_b2007c7c 4433254 load on device 'cuda:0' took 21.82 ms  (cached)
+Module _linesearch_iterative_kernel__locals__kernel_682a1ed1 b5a52fa load on device 'cuda:0' took 0.83 ms  (cached)
+Module _update_constraint_efc__locals__kernel_a341871c a341871 load on device 'cuda:0' took 0.65 ms  (cached)
+Module _update_constraint_init_qfrc_constraint_dense__locals__kernel_79955176 7995517 load on device 'cuda:0' took 0.73 ms  (cached)
+Module _update_gradient_zero_grad_dot__locals__kernel_10c2b083 10c2b08 load on device 'cuda:0' took 0.53 ms  (cached)
+Module _update_gradient_grad__locals__kernel_b8320cbe b8320cb load on device 'cuda:0' took 0.57 ms  (cached)
+Module _update_gradient_cholesky__locals__kernel_fe39ce87 c62071c load on device 'cuda:0' took 21.38 ms  (cached)
+Module _solve_done__locals__kernel_6a473e76 6a473e7 load on device 'cuda:0' took 0.65 ms  (cached)
+Module mujoco_warp._src.derivative 011f1dc load on device 'cuda:0' took 2.44 ms  (cached)
+Module _next_time_builder__locals___next_time_a5c1f1e5 a5c1f1e load on device 'cuda:0' took 0.54 ms  (cached)
+it 50 | 0.01 h | 1.3 it/s | M1 WM NSE1/8 0.0380/1.1121 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/n/a | M/ee_distance 0.3575 | M/ee_progress -0.0753 | phase wm_warmup | wm_ready 0 | actor_ready 0[samples,pretrain,survival,root_tracking,arm_tracking,wheel_tracking,action_saturation] wm_gate [pass] | updates wm/prior/actor 4/0/0 | GPU peak 0.28 GiB | t sim/wm/pi 35.8/1.8/0.0s
+it 100 | 0.02 h | 1.4 it/s | M1 WM NSE1/8 0.0997/2.3136 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/n/a | M/ee_distance 0.3743 | M/ee_progress -0.0921 | phase wm_warmup | wm_ready 0 | actor_ready 0[samples,pretrain,survival,root_tracking,arm_tracking,wheel_tracking,action_saturation] wm_gate [pass] | updates wm/prior/actor 24/0/0 | GPU peak 0.28 GiB | t sim/wm/pi 35.4/0.9/0.0s
+it 150 | 0.03 h | 1.4 it/s | M1 WM NSE1/8 0.1099/1.8921 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/n/a | M/ee_distance 0.3562 | M/ee_progress -0.0740 | phase wm_warmup | wm_ready 0 | actor_ready 0[samples,pretrain,survival,root_tracking,arm_tracking,wheel_tracking,action_saturation] wm_gate [pass] | updates wm/prior/actor 44/0/0 | GPU peak 0.28 GiB | t sim/wm/pi 35.6/1.0/0.0s
+it 200 | 0.04 h | 1.4 it/s | M1 WM NSE1/8 0.1143/1.5958 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/n/a | M/ee_distance 0.3316 | M/ee_progress -0.0495 | phase wm_warmup | wm_ready 0 | actor_ready 0[samples,pretrain,survival,root_tracking,arm_tracking,wheel_tracking,action_saturation] wm_gate [pass] | updates wm/prior/actor 64/0/0 | GPU peak 0.28 GiB | t sim/wm/pi 35.4/0.9/0.0s
+it 250 | 0.05 h | 1.4 it/s | M1 WM NSE1/8 0.1101/1.4861 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/n/a | M/ee_distance 0.3236 | M/ee_progress -0.0414 | phase wm_warmup | wm_ready 0 | actor_ready 0[samples,pretrain,survival,root_tracking,arm_tracking,wheel_tracking,action_saturation] wm_gate [pass] | updates wm/prior/actor 84/0/0 | GPU peak 0.28 GiB | t sim/wm/pi 35.5/0.9/0.0s
+it 300 | 0.06 h | 1.4 it/s | M1 WM NSE1/8 0.1033/1.2198 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/n/a | M/ee_distance 0.3206 | M/ee_progress -0.0384 | phase wm_warmup | wm_ready 0 | actor_ready 0[samples,pretrain,survival,root_tracking,arm_tracking,wheel_tracking,action_saturation] wm_gate [pass] | updates wm/prior/actor 104/0/0 | GPU peak 0.28 GiB | t sim/wm/pi 35.4/0.9/0.0s
+it 350 | 0.07 h | 1.4 it/s | M1 WM NSE1/8 0.1001/1.0398 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/n/a | M/ee_distance 0.3304 | M/ee_progress -0.0482 | phase wm_warmup | wm_ready 0 | actor_ready 0[samples,pretrain,survival,root_tracking,arm_tracking,wheel_tracking,action_saturation] wm_gate [pass] | updates wm/prior/actor 124/0/0 | GPU peak 0.28 GiB | t sim/wm/pi 35.4/0.9/0.0s
+it 400 | 0.08 h | 1.4 it/s | M1 WM NSE1/8 0.1123/0.9473 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/n/a | M/ee_distance 0.3484 | M/ee_progress -0.0662 | phase wm_warmup | wm_ready 0 | actor_ready 0[samples,pretrain,survival,root_tracking,arm_tracking,wheel_tracking,action_saturation] wm_gate [pass] | updates wm/prior/actor 144/0/0 | GPU peak 0.28 GiB | t sim/wm/pi 35.4/0.9/0.0s
+it 450 | 0.09 h | 1.4 it/s | M1 WM NSE1/8 0.0969/0.8704 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/n/a | M/ee_distance 0.3700 | M/ee_progress -0.0878 | phase wm_warmup | wm_ready 0 | actor_ready 0[samples,pretrain,survival,root_tracking,arm_tracking,wheel_tracking,action_saturation] wm_gate [pass] | updates wm/prior/actor 164/0/0 | GPU peak 0.28 GiB | t sim/wm/pi 35.4/0.9/0.0s
+it 500 | 0.10 h | 1.4 it/s | M1 WM NSE1/8 0.0934/0.8381 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/n/a | M/ee_distance 0.3984 | M/ee_progress -0.1162 | phase wm_warmup | wm_ready 0 | actor_ready 0[samples,pretrain,survival,root_tracking,arm_tracking,wheel_tracking,action_saturation] wm_gate [pass] | updates wm/prior/actor 184/0/0 | GPU peak 0.28 GiB | t sim/wm/pi 35.5/0.9/0.0s
+it 550 | 0.11 h | 1.2 it/s | M1 WM NSE1/8 0.0253/0.2914 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/1.052 | M/ee_distance 0.3578 | M/ee_progress -0.0758 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[samples,pretrain,survival,root_tracking,arm_tracking,wheel_tracking,action_saturation] wm_gate [pass] | updates wm/prior/actor 204/0/4 | GPU peak 0.29 GiB | t sim/wm/pi 35.4/5.0/4.3s
+it 600 | 0.13 h | 1.1 it/s | M1 WM NSE1/8 0.0967/0.9209 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/6.777 | M/ee_distance 0.3751 | M/ee_progress -0.0931 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[samples,pretrain,survival,root_tracking,arm_tracking,wheel_tracking,action_saturation] wm_gate [pass] | updates wm/prior/actor 224/0/24 | GPU peak 0.29 GiB | t sim/wm/pi 35.6/11.3/11.3s
+it 650 | 0.14 h | 1.1 it/s | M1 WM NSE1/8 0.1531/1.5098 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/5.171 | M/ee_distance 0.3111 | M/ee_progress -0.0291 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[samples,pretrain,survival,root_tracking,arm_tracking,wheel_tracking,action_saturation] wm_gate [pass] | updates wm/prior/actor 244/0/44 | GPU peak 0.29 GiB | t sim/wm/pi 35.7/11.7/11.7s
+it 700 | 0.15 h | 1.1 it/s | M1 WM NSE1/8 0.1451/1.1266 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/4.988 | M/ee_distance 0.2759 | M/ee_progress 0.0061 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[samples,pretrain,survival,root_tracking,arm_tracking,wheel_tracking,action_saturation] wm_gate [pass] | updates wm/prior/actor 264/0/64 | GPU peak 0.29 GiB | t sim/wm/pi 35.7/11.7/11.7s
+it 750 | 0.17 h | 1.1 it/s | M1 WM NSE1/8 0.0717/0.7309 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/5.214 | M/ee_distance 0.3030 | M/ee_progress -0.0211 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[samples,pretrain,survival,root_tracking,arm_tracking,wheel_tracking,action_saturation] wm_gate [pass] | updates wm/prior/actor 284/0/84 | GPU peak 0.29 GiB | t sim/wm/pi 35.8/11.5/11.5s
+it 800 | 0.18 h | 1.1 it/s | M1 WM NSE1/8 0.0735/0.6997 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/5.722 | M/ee_distance 0.3808 | M/ee_progress -0.0993 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[samples,pretrain,survival,root_tracking,arm_tracking,wheel_tracking,action_saturation] wm_gate [pass] | updates wm/prior/actor 304/0/104 | GPU peak 0.29 GiB | t sim/wm/pi 36.0/11.3/11.3s
+it 850 | 0.19 h | 1.1 it/s | M1 WM NSE1/8 0.0694/0.4881 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/5.152 | M/ee_distance 0.3838 | M/ee_progress -0.1021 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[samples,pretrain,survival,root_tracking,arm_tracking,wheel_tracking,action_saturation] wm_gate [pass] | updates wm/prior/actor 324/0/124 | GPU peak 0.29 GiB | t sim/wm/pi 35.5/11.2/11.2s
+it 900 | 0.20 h | 1.1 it/s | M1 WM NSE1/8 0.0787/0.4124 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/3.939 | M/ee_distance 0.3596 | M/ee_progress -0.0778 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[samples,pretrain,survival,root_tracking,arm_tracking,wheel_tracking,action_saturation] wm_gate [pass] | updates wm/prior/actor 344/0/144 | GPU peak 0.29 GiB | t sim/wm/pi 35.6/11.7/11.7s
+it 950 | 0.22 h | 1.1 it/s | M1 WM NSE1/8 0.1185/0.6094 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/4.169 | M/ee_distance 0.4369 | M/ee_progress -0.1550 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[samples,pretrain,survival,root_tracking,arm_tracking,wheel_tracking,action_saturation] wm_gate [pass] | updates wm/prior/actor 364/0/164 | GPU peak 0.29 GiB | t sim/wm/pi 35.3/10.9/10.9s
+it 1000 | 0.23 h | 1.1 it/s | M1 WM NSE1/8 0.0475/0.2522 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/7.437 | M/ee_distance 0.4916 | M/ee_progress -0.2097 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[pretrain,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 384/0/184 | GPU peak 0.29 GiB | t sim/wm/pi 35.5/11.3/11.3s
+it 1050 | 0.24 h | 1.1 it/s | M1 WM NSE1/8 0.2472/1.0494 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/14.426 | M/ee_distance 0.7508 | M/ee_progress -0.4698 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[pretrain,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 404/0/204 | GPU peak 0.29 GiB | t sim/wm/pi 35.5/11.3/11.3s
+it 1100 | 0.26 h | 1.1 it/s | M1 WM NSE1/8 0.3992/2.9395 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/8.316 | M/ee_distance 0.3154 | M/ee_progress -0.0344 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[pretrain,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 424/0/224 | GPU peak 0.29 GiB | t sim/wm/pi 35.5/11.1/11.1s
+it 1150 | 0.27 h | 1.1 it/s | M1 WM NSE1/8 0.4176/2.5846 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/5.717 | M/ee_distance 0.3568 | M/ee_progress -0.0753 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[pretrain,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 444/0/244 | GPU peak 0.29 GiB | t sim/wm/pi 35.8/11.1/11.1s
+it 1200 | 0.28 h | 1.1 it/s | M1 WM NSE1/8 0.1759/0.9425 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/3.708 | M/ee_distance 0.3243 | M/ee_progress -0.0420 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[pretrain,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 464/0/264 | GPU peak 0.29 GiB | t sim/wm/pi 35.8/11.2/11.2s
+it 1250 | 0.30 h | 1.1 it/s | M1 WM NSE1/8 0.1846/0.9984 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/2.725 | M/ee_distance 0.3253 | M/ee_progress -0.0424 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[pretrain,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 484/0/284 | GPU peak 0.29 GiB | t sim/wm/pi 35.8/11.1/11.1s
+it 1300 | 0.31 h | 1.1 it/s | M1 WM NSE1/8 0.1584/0.9377 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/5.280 | M/ee_distance 0.3093 | M/ee_progress -0.0259 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[pretrain,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 504/0/304 | GPU peak 0.29 GiB | t sim/wm/pi 35.8/11.3/11.3s
+it 1350 | 0.32 h | 1.0 it/s | M1 WM NSE1/8 0.2067/1.0772 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/4.969 | M/ee_distance 0.3150 | M/ee_progress -0.0312 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[pretrain,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 524/0/324 | GPU peak 0.29 GiB | t sim/wm/pi 38.2/11.2/11.2s
+it 1400 | 0.34 h | 1.1 it/s | M1 WM NSE1/8 0.1905/1.0740 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/5.339 | M/ee_distance 0.3441 | M/ee_progress -0.0608 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[pretrain,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 544/0/344 | GPU peak 0.29 GiB | t sim/wm/pi 36.0/11.5/11.5s
+it 1450 | 0.35 h | 1.1 it/s | M1 WM NSE1/8 0.1324/0.8198 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/4.762 | M/ee_distance 0.3594 | M/ee_progress -0.0775 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[pretrain,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 564/0/364 | GPU peak 0.29 GiB | t sim/wm/pi 35.9/11.6/11.6s
+it 1500 | 0.36 h | 1.1 it/s | M1 WM NSE1/8 0.1263/0.8380 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/4.859 | M/ee_distance 0.4089 | M/ee_progress -0.1271 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[wheel_tracking] wm_gate [pass] | updates wm/prior/actor 584/0/384 | GPU peak 0.29 GiB | t sim/wm/pi 35.8/11.5/11.5s
+it 1550 | 0.37 h | 1.1 it/s | M1 WM NSE1/8 0.2487/1.2585 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/8.089 | M/ee_distance 0.2323 | M/ee_progress 0.0480 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[wheel_tracking] wm_gate [pass] | updates wm/prior/actor 604/0/404 | GPU peak 0.29 GiB | t sim/wm/pi 35.8/11.3/11.3s
+it 1600 | 0.39 h | 1.1 it/s | M1 WM NSE1/8 0.2189/1.1937 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/7.616 | M/ee_distance 0.2928 | M/ee_progress -0.0132 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[wheel_tracking] wm_gate [pass] | updates wm/prior/actor 624/0/424 | GPU peak 0.29 GiB | t sim/wm/pi 35.8/11.4/11.4s
+it 1650 | 0.40 h | 1.0 it/s | M1 WM NSE1/8 0.2387/1.1492 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/7.844 | M/ee_distance 0.2893 | M/ee_progress -0.0102 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[wheel_tracking] wm_gate [pass] | updates wm/prior/actor 644/0/444 | GPU peak 0.29 GiB | t sim/wm/pi 36.1/11.6/11.6s
+it 1700 | 0.41 h | 1.0 it/s | M1 WM NSE1/8 0.2470/1.1039 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/8.168 | M/ee_distance 0.2197 | M/ee_progress 0.0603 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[wheel_tracking] wm_gate [pass] | updates wm/prior/actor 664/0/464 | GPU peak 0.29 GiB | t sim/wm/pi 36.2/11.8/11.8s
+it 1750 | 0.43 h | 1.1 it/s | M1 WM NSE1/8 0.2436/1.0666 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/10.364 | M/ee_distance 0.2409 | M/ee_progress 0.0390 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[wheel_tracking] wm_gate [pass] | updates wm/prior/actor 684/0/484 | GPU peak 0.29 GiB | t sim/wm/pi 36.0/11.4/11.4s
+it 1800 | 0.44 h | 1.1 it/s | M1 WM NSE1/8 0.2147/0.9898 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/9.270 | M/ee_distance 0.2509 | M/ee_progress 0.0291 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[wheel_tracking] wm_gate [pass] | updates wm/prior/actor 704/0/504 | GPU peak 0.29 GiB | t sim/wm/pi 35.8/10.8/10.8s
+it 1850 | 0.45 h | 1.1 it/s | M1 WM NSE1/8 0.2020/0.8850 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/9.356 | M/ee_distance 0.2587 | M/ee_progress 0.0211 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[wheel_tracking] wm_gate [pass] | updates wm/prior/actor 724/0/524 | GPU peak 0.29 GiB | t sim/wm/pi 35.5/10.3/10.3s
+it 1900 | 0.47 h | 1.1 it/s | M1 WM NSE1/8 0.1812/0.9128 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/9.625 | M/ee_distance 0.2911 | M/ee_progress -0.0118 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[wheel_tracking] wm_gate [pass] | updates wm/prior/actor 744/0/544 | GPU peak 0.29 GiB | t sim/wm/pi 35.5/10.2/10.2s
+it 1950 | 0.48 h | 1.1 it/s | M1 WM NSE1/8 0.2236/1.0206 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/9.521 | M/ee_distance 0.3320 | M/ee_progress -0.0522 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[wheel_tracking] wm_gate [pass] | updates wm/prior/actor 764/0/564 | GPU peak 0.29 GiB | t sim/wm/pi 35.6/10.5/10.5s
+it 2000 | 0.49 h | 1.1 it/s | M1 WM NSE1/8 0.2294/1.1068 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/12.013 | M/ee_distance 0.3694 | M/ee_progress -0.0897 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[wheel_tracking] wm_gate [pass] | updates wm/prior/actor 784/0/584 | GPU peak 0.29 GiB | t sim/wm/pi 35.5/10.3/10.3s
+it 2050 | 0.50 h | 1.1 it/s | M1 WM NSE1/8 0.2193/1.0555 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/11.277 | M/ee_distance 0.3125 | M/ee_progress -0.0280 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[wheel_tracking] wm_gate [pass] | updates wm/prior/actor 804/0/604 | GPU peak 0.29 GiB | t sim/wm/pi 35.6/10.2/10.2s
+it 2100 | 0.52 h | 1.1 it/s | M1 WM NSE1/8 0.2295/0.9584 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/12.699 | M/ee_distance 0.3772 | M/ee_progress -0.0929 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[wheel_tracking] wm_gate [pass] | updates wm/prior/actor 824/0/624 | GPU peak 0.29 GiB | t sim/wm/pi 35.5/10.3/10.3s
+it 2150 | 0.53 h | 1.1 it/s | M1 WM NSE1/8 0.2504/1.0280 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/11.347 | M/ee_distance 0.3383 | M/ee_progress -0.0532 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[wheel_tracking] wm_gate [pass] | updates wm/prior/actor 844/0/644 | GPU peak 0.29 GiB | t sim/wm/pi 36.0/10.8/10.8s
+it 2200 | 0.54 h | 1.1 it/s | M1 WM NSE1/8 0.2737/1.1398 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/18.472 | M/ee_distance 0.3977 | M/ee_progress -0.1132 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[wheel_tracking] wm_gate [pass] | updates wm/prior/actor 864/0/664 | GPU peak 0.29 GiB | t sim/wm/pi 35.7/10.8/10.8s
+it 2250 | 0.56 h | 1.1 it/s | M1 WM NSE1/8 0.2731/1.1110 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/9.135 | M/ee_distance 0.4484 | M/ee_progress -0.1642 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[wheel_tracking] wm_gate [pass] | updates wm/prior/actor 884/0/684 | GPU peak 0.29 GiB | t sim/wm/pi 35.8/10.8/10.8s
+it 2300 | 0.57 h | 1.1 it/s | M1 WM NSE1/8 0.2214/0.9777 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/9.295 | M/ee_distance 0.4678 | M/ee_progress -0.1844 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[wheel_tracking] wm_gate [pass] | updates wm/prior/actor 904/0/704 | GPU peak 0.29 GiB | t sim/wm/pi 35.6/10.3/10.3s
+it 2350 | 0.58 h | 1.1 it/s | M1 WM NSE1/8 0.2315/1.0508 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/11.333 | M/ee_distance 0.5370 | M/ee_progress -0.2550 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[wheel_tracking] wm_gate [pass] | updates wm/prior/actor 924/0/724 | GPU peak 0.29 GiB | t sim/wm/pi 35.6/10.4/10.4s
+it 2400 | 0.59 h | 1.1 it/s | M1 WM NSE1/8 0.2111/0.9914 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/13.847 | M/ee_distance 0.5928 | M/ee_progress -0.3111 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[wheel_tracking] wm_gate [pass] | updates wm/prior/actor 944/0/744 | GPU peak 0.29 GiB | t sim/wm/pi 35.6/10.2/10.2s
+it 2450 | 0.61 h | 1.1 it/s | M1 WM NSE1/8 0.1980/0.8009 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/15.170 | M/ee_distance 0.5889 | M/ee_progress -0.3083 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[arm_tracking,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 964/0/764 | GPU peak 0.29 GiB | t sim/wm/pi 35.6/10.3/10.3s
+it 2500 | 0.62 h | 1.1 it/s | M1 WM NSE1/8 0.1816/0.8632 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/13.655 | M/ee_distance 0.6321 | M/ee_progress -0.3518 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[arm_tracking,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 984/0/784 | GPU peak 0.29 GiB | t sim/wm/pi 35.6/10.2/10.2s
+it 2550 | 0.63 h | 1.1 it/s | M1 WM NSE1/8 0.1852/0.8042 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/16.990 | M/ee_distance 0.5307 | M/ee_progress -0.2517 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[arm_tracking,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 1004/0/804 | GPU peak 0.29 GiB | t sim/wm/pi 35.6/10.3/10.3s
+it 2600 | 0.65 h | 1.1 it/s | M1 WM NSE1/8 0.1761/0.7352 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/15.176 | M/ee_distance 0.5797 | M/ee_progress -0.2991 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[arm_tracking,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 1024/0/824 | GPU peak 0.29 GiB | t sim/wm/pi 35.6/10.3/10.3s
+it 2650 | 0.66 h | 1.1 it/s | M1 WM NSE1/8 0.1676/0.7453 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/16.419 | M/ee_distance 0.5552 | M/ee_progress -0.2732 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[arm_tracking,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 1044/0/844 | GPU peak 0.29 GiB | t sim/wm/pi 35.5/10.1/10.1s
+it 2700 | 0.67 h | 1.1 it/s | M1 WM NSE1/8 0.1754/0.6919 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/19.995 | M/ee_distance 0.6223 | M/ee_progress -0.3397 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[arm_tracking,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 1064/0/864 | GPU peak 0.29 GiB | t sim/wm/pi 35.5/10.1/10.1s
+it 2750 | 0.68 h | 1.1 it/s | M1 WM NSE1/8 0.1888/0.7119 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/19.072 | M/ee_distance 0.6165 | M/ee_progress -0.3337 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[arm_tracking,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 1084/0/884 | GPU peak 0.29 GiB | t sim/wm/pi 35.7/10.6/10.6s
+it 2800 | 0.70 h | 1.1 it/s | M1 WM NSE1/8 0.1750/0.6810 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/19.878 | M/ee_distance 0.7391 | M/ee_progress -0.4564 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[arm_tracking,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 1104/0/904 | GPU peak 0.29 GiB | t sim/wm/pi 35.6/10.3/10.3s
+it 2850 | 0.71 h | 1.1 it/s | M1 WM NSE1/8 0.1489/0.6125 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/16.888 | M/ee_distance 0.8770 | M/ee_progress -0.5940 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[arm_tracking,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 1124/0/924 | GPU peak 0.29 GiB | t sim/wm/pi 35.7/10.6/10.6s
+it 2900 | 0.72 h | 1.1 it/s | M1 WM NSE1/8 0.1509/0.5249 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/10.445 | M/ee_distance 0.7529 | M/ee_progress -0.4699 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[arm_tracking,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 1144/0/944 | GPU peak 0.29 GiB | t sim/wm/pi 35.9/10.8/10.8s
+it 2950 | 0.73 h | 1.1 it/s | M1 WM NSE1/8 0.2179/0.7283 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/10.117 | M/ee_distance 0.4562 | M/ee_progress -0.1756 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[arm_tracking,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 1164/0/964 | GPU peak 0.29 GiB | t sim/wm/pi 35.7/10.5/10.5s
+it 3000 | 0.75 h | 1.1 it/s | M1 WM NSE1/8 0.2598/0.7041 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/9.983 | M/ee_distance 0.2755 | M/ee_progress 0.0022 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[arm_tracking,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 1184/0/984 | GPU peak 0.29 GiB | t sim/wm/pi 35.6/10.2/10.2s
+it 3050 | 0.76 h | 1.1 it/s | M1 WM NSE1/8 0.1926/0.5925 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/11.578 | M/ee_distance 0.2835 | M/ee_progress -0.0060 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[arm_tracking,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 1204/0/1004 | GPU peak 0.29 GiB | t sim/wm/pi 35.6/10.3/10.3s
+it 3100 | 0.77 h | 1.1 it/s | M1 WM NSE1/8 0.1730/0.6040 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/10.777 | M/ee_distance 0.2847 | M/ee_progress -0.0068 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[arm_tracking,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 1224/0/1024 | GPU peak 0.29 GiB | t sim/wm/pi 35.7/10.4/10.4s
+it 3150 | 0.79 h | 1.1 it/s | M1 WM NSE1/8 0.1749/0.5830 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/17.243 | M/ee_distance 0.3095 | M/ee_progress -0.0308 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[arm_tracking,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 1244/0/1044 | GPU peak 0.29 GiB | t sim/wm/pi 35.7/10.5/10.5s
+it 3200 | 0.80 h | 1.1 it/s | M1 WM NSE1/8 0.2131/0.6064 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/10.575 | M/ee_distance 0.2627 | M/ee_progress 0.0177 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[arm_tracking,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 1264/0/1064 | GPU peak 0.29 GiB | t sim/wm/pi 36.1/11.2/11.2s
+it 3250 | 0.81 h | 1.0 it/s | M1 WM NSE1/8 0.1401/0.5208 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/12.153 | M/ee_distance 0.2916 | M/ee_progress -0.0107 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[arm_tracking,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 1284/0/1084 | GPU peak 0.29 GiB | t sim/wm/pi 36.5/12.2/12.2s
+it 3300 | 0.83 h | 1.1 it/s | M1 WM NSE1/8 0.1699/0.5262 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/11.694 | M/ee_distance 0.2656 | M/ee_progress 0.0168 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[arm_tracking,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 1304/0/1104 | GPU peak 0.29 GiB | t sim/wm/pi 35.6/10.3/10.3s
+it 3350 | 0.84 h | 1.1 it/s | M1 WM NSE1/8 0.1243/0.4906 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/12.269 | M/ee_distance 0.2886 | M/ee_progress -0.0066 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[arm_tracking,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 1324/0/1124 | GPU peak 0.29 GiB | t sim/wm/pi 35.6/10.3/10.3s
+it 3400 | 0.85 h | 1.1 it/s | M1 WM NSE1/8 0.0841/0.3901 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/19.129 | M/ee_distance 0.4158 | M/ee_progress -0.1346 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[arm_tracking,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 1344/0/1144 | GPU peak 0.29 GiB | t sim/wm/pi 35.5/10.1/10.1s
+it 3450 | 0.86 h | 1.1 it/s | M1 WM NSE1/8 0.1347/0.7148 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/13.938 | M/ee_distance 0.3976 | M/ee_progress -0.1167 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[arm_tracking,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 1364/0/1164 | GPU peak 0.29 GiB | t sim/wm/pi 35.6/10.4/10.4s
+it 3500 | 0.88 h | 1.1 it/s | M1 WM NSE1/8 0.1138/0.6254 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/10.445 | M/ee_distance 0.3590 | M/ee_progress -0.0793 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[arm_tracking,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 1384/0/1184 | GPU peak 0.29 GiB | t sim/wm/pi 35.7/10.5/10.5s
+it 3550 | 0.89 h | 1.1 it/s | M1 WM NSE1/8 0.1227/0.5183 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/8.258 | M/ee_distance 0.2888 | M/ee_progress -0.0112 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[arm_tracking,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 1404/0/1204 | GPU peak 0.29 GiB | t sim/wm/pi 35.6/10.5/10.5s
+it 3600 | 0.90 h | 1.1 it/s | M1 WM NSE1/8 0.1560/0.6565 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/7.349 | M/ee_distance 0.2224 | M/ee_progress 0.0528 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[arm_tracking,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 1424/0/1224 | GPU peak 0.29 GiB | t sim/wm/pi 35.6/10.3/10.3s
+it 3650 | 0.91 h | 1.1 it/s | M1 WM NSE1/8 0.1882/0.7552 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/7.757 | M/ee_distance 0.1892 | M/ee_progress 0.0850 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[arm_tracking,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 1444/0/1244 | GPU peak 0.29 GiB | t sim/wm/pi 35.6/10.2/10.2s
+it 3700 | 0.93 h | 1.1 it/s | M1 WM NSE1/8 0.1486/0.6660 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/7.256 | M/ee_distance 0.1851 | M/ee_progress 0.0862 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[arm_tracking,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 1464/0/1264 | GPU peak 0.29 GiB | t sim/wm/pi 35.6/10.4/10.4s
+it 3750 | 0.94 h | 1.1 it/s | M1 WM NSE1/8 0.1497/0.6978 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/7.340 | M/ee_distance 0.1789 | M/ee_progress 0.0911 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[arm_tracking,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 1484/0/1284 | GPU peak 0.29 GiB | t sim/wm/pi 35.7/10.4/10.4s
+it 3800 | 0.95 h | 1.1 it/s | M1 WM NSE1/8 0.1575/0.6738 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/8.185 | M/ee_distance 0.1744 | M/ee_progress 0.0965 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[arm_tracking,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 1504/0/1304 | GPU peak 0.29 GiB | t sim/wm/pi 35.7/10.7/10.7s
+it 3850 | 0.97 h | 1.1 it/s | M1 WM NSE1/8 0.1554/0.7367 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/8.751 | M/ee_distance 0.1518 | M/ee_progress 0.1220 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[arm_tracking,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 1524/0/1324 | GPU peak 0.29 GiB | t sim/wm/pi 35.6/10.1/10.1s
+it 3900 | 0.98 h | 1.1 it/s | M1 WM NSE1/8 0.1495/0.6326 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/9.559 | M/ee_distance 0.1792 | M/ee_progress 0.0943 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[arm_tracking,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 1544/0/1344 | GPU peak 0.29 GiB | t sim/wm/pi 35.7/10.5/10.5s
+it 3950 | 0.99 h | 1.1 it/s | M1 WM NSE1/8 0.1718/0.7337 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/7.564 | M/ee_distance 0.1879 | M/ee_progress 0.0850 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[arm_tracking,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 1564/0/1364 | GPU peak 0.29 GiB | t sim/wm/pi 35.8/10.7/10.7s
+it 4000 | 1.00 h | 1.1 it/s | M1 WM NSE1/8 0.1590/0.6283 | prior task/smooth/grad n/a/n/a/n/a | actor track/grad n/a/9.311 | M/ee_distance 0.1571 | M/ee_progress 0.1167 | phase actor_prior_frozen | wm_ready 0 | actor_ready 0[arm_tracking,wheel_tracking] wm_gate [pass] | updates wm/prior/actor 1584/0/1384 | GPU peak 0.29 GiB | t sim/wm/pi 35.9/10.8/10.8s
+[INFO] max_hours reached, stopping

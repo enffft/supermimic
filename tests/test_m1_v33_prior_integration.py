@@ -214,6 +214,19 @@ def test_fixed_evaluation_defaults_to_saved_task_and_rejects_mismatch():
     assert _resolve_saved_task_type({"config": {"m1_joint_training": {"task_type": "M"}}}) == "M"
 
 
+def test_fixed_evaluation_range_checks_tolerate_float32_boundary_roundoff():
+    from scripts.evaluate_m1_prior_joint import _command_in_saved_range, _target_offset_in_saved_range
+
+    sampler = {
+        "vx_range": (-0.09, 0.145), "vy_range": (-0.05, 0.055), "wz_range": (-0.17, 0.18),
+        "target_x_range": (0.12, 0.36), "target_y_range": (-0.20, 0.20),
+        "target_z_range": (-0.15, 0.15),
+    }
+    assert _command_in_saved_range((0.119999997, 0.0, 0.0), sampler)
+    assert _target_offset_in_saved_range((0.119999997, 0.0, 0.119999997), sampler)
+    assert not _target_offset_in_saved_range((0.10, 0.0, 0.0), sampler)
+
+
 def _make_checkpoint_trainer(*, prior, robot_spec=None, cfg=None):
     from supermimic.data.replay_buffer import ReplayBuffer
     from supermimic.motion_prior.trainer import M1AlternatingTrainer

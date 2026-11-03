@@ -134,6 +134,7 @@ class EnvCfg:
     m1_leg_action_magnitude_weight: float = -0.002
     m1_joint_task_type: str = "balanced"  # balanced | L | M; LM is research-only in v1
     m1_joint_l_task_fraction: float = 0.5
+    m1_joint_balanced_fixed_quota: bool = False
     # V3.3 L frame-wise effective Goal P1/P99, rounded outward slightly.
     m1_joint_vx_range: tuple[float, float] = (-0.09, 0.145)
     m1_joint_vx_stop_fraction: float = 0.15
@@ -178,6 +179,7 @@ class ScheduleCfg:
     lr_decay_fraction: float = 250_000 / 320_000
     log_interval: int = 50  # iterations
     checkpoint_interval: int = 4000  # iterations
+    checkpoint_interval_minutes: float = 0.0  # optional wall-clock snapshots; 0 disables
     max_hours: float | None = None
     # Optional absolute global-iteration stop; leaves total_iterations/LR schedule unchanged.
     stop_at_iteration: int | None = None
@@ -230,6 +232,7 @@ class M1JointTrainingCfg:
     readiness_max_action_saturation: float = 0.10
     task_type: str = "balanced"  # balanced | L | M; LM is not enabled in v1
     l_task_fraction: float = 0.5
+    balanced_replay_sampling: bool = True
     loss: M1JointLossCfg = field(default_factory=M1JointLossCfg)
 
 

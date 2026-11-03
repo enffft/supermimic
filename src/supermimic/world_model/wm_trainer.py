@@ -57,7 +57,7 @@ class WorldModelTrainer:
             refs = [ReferenceFrame(None, None, None, None, r.root_pos_w[j * n : (j + 1) * n], r.root_quat_w[j * n : (j + 1) * n]) for j in range(k)]
         return self.wm.window_loss(w.states, w.a_exec, w.xi, w.done, refs)
 
-    def update(self, buffer: ReplayBuffer) -> dict[str, float]:
+    def update(self, buffer: ReplayBuffer, *, task_balanced: bool = False) -> dict[str, float]:
         agg: dict[str, torch.Tensor] = {}
         micro = self.cfg.micro_batch_size or self.cfg.batch_size
         if micro <= 0 or self.cfg.batch_size <= 0 or self.cfg.batch_size % micro:
@@ -70,13 +70,20 @@ class WorldModelTrainer:
             self.opt.zero_grad(set_to_none=True)
             batch_metrics: dict[str, torch.Tensor] = {}
             for _ in range(n_micro):
-                w = buffer.sample_windows(micro, self.cfg.window)
+                w = buffer.sample_windows(micro, self.cfg.window, task_balanced=task_balanced)
                 loss, m = self.loss_on(w)
                 # Each micro-batch contributes its share of the logical mean loss.
                 (loss / n_micro).backward()
                 batch_metrics["loss"] = batch_metrics.get("loss", 0.0) + loss.detach() / n_micro
                 for k, v in m.items():
                     batch_metrics[k] = batch_metrics.get(k, 0.0) + v.detach() / n_micro
+                if w.task_type is not None:
+                    batch_metrics["task_l_batch_count"] = batch_metrics.get(
+                        "task_l_batch_count", 0.0,
+                    ) + (w.task_type == 0).float().sum()
+                    batch_metrics["task_m_batch_count"] = batch_metrics.get(
+                        "task_m_batch_count", 0.0,
+                    ) + (w.task_type == 1).float().sum()
             allreduce_grads(self.wm)
             gn = torch.nn.utils.clip_grad_norm_(
                 self.wm.parameters(), self.cfg.grad_clip, error_if_nonfinite=True
@@ -86,7 +93,13 @@ class WorldModelTrainer:
             for k, v in batch_metrics.items():
                 agg[k] = agg.get(k, 0.0) + v
         # Single host sync per update (keeps the CPU queuing GPU work across minibatches).
-        return {k: float(v) / self.cfg.batches_per_update for k, v in agg.items()}
+        result = {k: float(v) / self.cfg.batches_per_update for k, v in agg.items()}
+        l_count, m_count = result.get("task_l_batch_count", 0.0), result.get("task_m_batch_count", 0.0)
+        total_count = l_count + m_count
+        if total_count:
+            result["task_l_batch_fraction"] = l_count / total_count
+            result["task_m_batch_fraction"] = m_count / total_count
+        return result
 
     @torch.no_grad()
     def online_error(self, buffer: ReplayBuffer, n: int = 1024, k: int = 8) -> torch.Tensor:

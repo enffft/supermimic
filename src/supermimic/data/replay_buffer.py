@@ -24,6 +24,7 @@ class WindowBatch:
     reward: torch.Tensor  # (k, n)
     done: torch.Tensor  # (k, n) whether each transition reaches a terminal state
     frame: torch.Tensor  # (k, n) target frame of each transition
+    task_type: torch.Tensor | None = None  # (n,) optional M1 L/M context
 
 
 @dataclass
@@ -157,8 +158,24 @@ class ReplayBuffer:
         return idx // self.T, idx % self.T
 
     @torch.no_grad()
-    def sample_windows(self, n: int, k: int) -> WindowBatch:
-        e, t = self._sample_from_mask(self.window_mask(k), n)
+    def _sample_task_balanced(self, mask: torch.Tensor, n: int) -> tuple[torch.Tensor, torch.Tensor]:
+        if self.task_type is None:
+            raise ValueError("task-balanced Replay sampling requires M1 task context")
+        counts = (n // 2, n - n // 2)
+        rows = [
+            self._sample_from_mask(mask & (self.task_type == task_code), count)
+            for task_code, count in enumerate(counts) if count
+        ]
+        env_ids = torch.cat([pair[0] for pair in rows])
+        time_ids = torch.cat([pair[1] for pair in rows])
+        order = torch.randperm(n, device=self.device)
+        return env_ids[order], time_ids[order]
+
+    @torch.no_grad()
+    def sample_windows(self, n: int, k: int, *, task_balanced: bool = False) -> WindowBatch:
+        valid = self.window_mask(k)
+        e, t = (self._sample_task_balanced(valid, n) if task_balanced
+                else self._sample_from_mask(valid, n))
         offs = torch.arange(k + 1, device=self.device)
         tt = (t[None, :] + offs[:, None]) % self.T  # (k+1, n)
         ee = e[None, :].expand(k + 1, n)
@@ -172,15 +189,17 @@ class ReplayBuffer:
             # label with the corresponding predicted successor states[j + 1].
             done=self.done[ee[:-1], tt[:-1]],
             frame=self.frame[ee[:-1], tt[:-1]],
+            task_type=self.task_type[e, t] if self.task_type is not None else None,
         )
 
     @torch.no_grad()
-    def sample_starts(self, n: int, hist: int) -> StartBatch:
+    def sample_starts(self, n: int, hist: int, *, task_balanced: bool = False) -> StartBatch:
         mask = self.valid & ~self.terminal
         t_idx = torch.arange(self.T, device=self.device)[None, :]
         dist_to_ptr = (self.ptr[:, None] - t_idx - 1) % self.T
         mask &= dist_to_ptr < self.T - hist - 1  # keep history rows from being overwritten underneath
-        e, t = self._sample_from_mask(mask, n)
+        e, t = (self._sample_task_balanced(mask, n) if task_balanced
+                else self._sample_from_mask(mask, n))
         offs = torch.arange(hist, device=self.device) - (hist - 1)  # -(hist-1) .. 0
         tt = (t[None, :] + offs[:, None]) % self.T  # (hist, n)
         ee = e[None, :].expand(hist, n)

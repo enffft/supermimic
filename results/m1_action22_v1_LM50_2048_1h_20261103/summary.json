@@ -1,0 +1,426 @@
+{
+  "run_name": "m1_action22_v1_LM50_2048_1h_20261103",
+  "git_head_at_run": "f7858a6cf327e668de84341681292beeb061293e",
+  "git_worktree_at_run": "dirty; training used the M1 working-tree implementation on top of git_head_at_run",
+  "post_start_source_changes": [
+    "metric aggregation denominator and positive-command direction metric were corrected after the running Python process started; the process did not hot-reload these changes"
+  ],
+  "task": "balanced L/M fixed quota",
+  "num_envs": 2048,
+  "iterations": 4000,
+  "elapsed_training_hours": 1.0,
+  "prior_updates": 0,
+  "wm_optimizer_steps": 1584,
+  "actor_optimizer_steps": 1384,
+  "wm_only_updates": 200,
+  "actual_task_quota_per_iteration": {
+    "L": 1024,
+    "M": 1024
+  },
+  "replay_batch_quota": {
+    "L": 16,
+    "M": 16
+  },
+  "prior": {
+    "path": "/home/yifeiy/AMP-LOCO-M1/logs/motion_prior/cvae_v1_v3_3_mixed_3272_goal_l_holdout_20261103/checkpoint_best_val.pt",
+    "sha256": "05a858520790d474f6c1c3dd1f791507c3da91f68899ca88f00348ea4bbff10c",
+    "feature_version": "m1_cvae_motion_prior_v1_state53_goal8_future31",
+    "input_compatibility": "legacy_v1",
+    "projected_condition_indices": [],
+    "normalization_hash": "0dea5b4cac9a7297ad27e1e4d4192211a6f7af7cd138c73046b2ed7c80dd904f",
+    "strict_fcl_only": false
+  },
+  "reset_contract": {
+    "profile": "m1_pose_dataset_v3_3_l_high_carry_v1",
+    "task_conditional": false,
+    "default_base_height_m": 0.47,
+    "default_joint_pos": [
+      0.0,
+      0.8812830158963126,
+      -1.6184887638693073,
+      0.0,
+      0.0,
+      0.8812830158963126,
+      -1.6184887638693073,
+      0.0,
+      0.0,
+      -0.8812830158963126,
+      1.6184887638693073,
+      0.0,
+      0.0,
+      -0.8812830158963126,
+      1.6184887638693073,
+      0.0,
+      0.0,
+      0.5,
+      -0.4,
+      0.3,
+      0.0,
+      0.0
+    ]
+  },
+  "action_mapping": {
+    "contract_version": "m1_mixed_action_v3",
+    "default_pose_profile": "m1_pose_dataset_v3_3_l_high_carry_v1",
+    "default_joint_pos": [
+      0.0,
+      0.8812830158963126,
+      -1.6184887638693073,
+      0.0,
+      0.0,
+      0.8812830158963126,
+      -1.6184887638693073,
+      0.0,
+      0.0,
+      -0.8812830158963126,
+      1.6184887638693073,
+      0.0,
+      0.0,
+      -0.8812830158963126,
+      1.6184887638693073,
+      0.0,
+      0.0,
+      0.5,
+      -0.4,
+      0.3,
+      0.0,
+      0.0
+    ],
+    "joint_names": [
+      "FAR_ABAD_JOINT",
+      "FAR_HIP_JOINT",
+      "FAR_KNEE_JOINT",
+      "FAR_FOOT_JOINT",
+      "FBL_ABAD_JOINT",
+      "FBL_HIP_JOINT",
+      "FBL_KNEE_JOINT",
+      "FBL_FOOT_JOINT",
+      "RAR_ABAD_JOINT",
+      "RAR_HIP_JOINT",
+      "RAR_KNEE_JOINT",
+      "RAR_FOOT_JOINT",
+      "RBL_ABAD_JOINT",
+      "RBL_HIP_JOINT",
+      "RBL_KNEE_JOINT",
+      "RBL_FOOT_JOINT",
+      "piper_x_joint1",
+      "piper_x_joint2",
+      "piper_x_joint3",
+      "piper_x_joint4",
+      "piper_x_joint5",
+      "piper_x_joint6"
+    ],
+    "wheel_joint_names": [
+      "FAR_FOOT_JOINT",
+      "FBL_FOOT_JOINT",
+      "RAR_FOOT_JOINT",
+      "RBL_FOOT_JOINT"
+    ],
+    "position_control_count": 18,
+    "wheel_velocity_control_count": 4,
+    "action_modes": [
+      "position",
+      "position",
+      "position",
+      "velocity",
+      "position",
+      "position",
+      "position",
+      "velocity",
+      "position",
+      "position",
+      "position",
+      "velocity",
+      "position",
+      "position",
+      "position",
+      "velocity",
+      "position",
+      "position",
+      "position",
+      "position",
+      "position",
+      "position"
+    ],
+    "action_scales": [
+      0.0,
+      0.0,
+      0.0,
+      5.0,
+      0.0,
+      0.0,
+      0.0,
+      5.0,
+      0.0,
+      0.0,
+      0.0,
+      5.0,
+      0.0,
+      0.0,
+      0.0,
+      5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "position_target_bounds": [
+      [
+        -0.36324,
+        0.43849
+      ],
+      [
+        0.61401,
+        1.46816
+      ],
+      [
+        -2.5209,
+        -1.19558
+      ],
+      [
+        0.0,
+        0.0
+      ],
+      [
+        -0.40312,
+        0.39113
+      ],
+      [
+        0.60863,
+        1.47425
+      ],
+      [
+        -2.5209,
+        -1.14031
+      ],
+      [
+        0.0,
+        0.0
+      ],
+      [
+        -0.38559,
+        0.41193
+      ],
+      [
+        -1.52413,
+        -0.64906
+      ],
+      [
+        1.14922,
+        2.5209
+      ],
+      [
+        0.0,
+        0.0
+      ],
+      [
+        -0.43197,
+        0.37001
+      ],
+      [
+        -1.53056,
+        -0.6586
+      ],
+      [
+        1.17965,
+        2.5209
+      ],
+      [
+        0.0,
+        0.0
+      ],
+      [
+        -0.46264,
+        0.51819
+      ],
+      [
+        0.29709,
+        2.78807
+      ],
+      [
+        -1.72607,
+        -0.32987
+      ],
+      [
+        -0.3986,
+        0.41906
+      ],
+      [
+        -0.28104,
+        0.21721
+      ],
+      [
+        -1.05,
+        0.05
+      ]
+    ],
+    "position_mapping": "asymmetric_default_to_absolute_bounds_v3;clamp_soft_limits",
+    "wheel_mapping": "clip(action,-1,1)*wheel_scale_rad_s"
+  },
+  "fixed_evaluations": {
+    "seed": 20261103,
+    "num_envs": 64,
+    "steps": 500,
+    "domain_randomization": false,
+    "reports": [
+      {
+        "label": "final_L_actor",
+        "path": "L_actor.json"
+      },
+      {
+        "label": "final_L_prior_direct",
+        "path": "L_prior_direct.json"
+      },
+      {
+        "label": "final_M_actor",
+        "path": "M_actor.json"
+      },
+      {
+        "label": "final_M_prior_direct",
+        "path": "M_prior_direct.json"
+      },
+      {
+        "label": "015m_L_actor",
+        "path": "015m/L_actor.json"
+      },
+      {
+        "label": "015m_M_actor",
+        "path": "015m/M_actor.json"
+      },
+      {
+        "label": "030m_L_actor",
+        "path": "030m/L_actor.json"
+      },
+      {
+        "label": "030m_M_actor",
+        "path": "030m/M_actor.json"
+      },
+      {
+        "label": "045m_L_actor",
+        "path": "045m/L_actor.json"
+      },
+      {
+        "label": "045m_M_actor",
+        "path": "045m/M_actor.json"
+      }
+    ]
+  },
+  "gpu_monitor": {
+    "samples": 752,
+    "memory_used_mib": {
+      "min": 656.0,
+      "mean": 4535.434840425532,
+      "max": 9078.0
+    },
+    "gpu_util_percent": {
+      "min": 5.0,
+      "mean": 76.38962765957447,
+      "max": 94.0
+    },
+    "power_w": {
+      "min": 22.89,
+      "mean": 67.32071808510638,
+      "max": 72.28
+    },
+    "temperature_c": {
+      "min": 43.0,
+      "mean": 47.17553191489362,
+      "max": 57.0
+    }
+  },
+  "snapshots": [
+    {
+      "name": "ckpt_latest.pt",
+      "bytes": 115430766,
+      "sha256": "fd7ed2fa1a6440fd4b4e37a3c597a9683397ff5f554acfd94a836a0a32b96fa3",
+      "not_committed": true
+    },
+    {
+      "name": "ckpt_wall_015m.pt",
+      "bytes": 115168835,
+      "sha256": "be3e9676a864e478e563eb71f85e16d4b0eabfb898c246af36abff9e35fa8217",
+      "not_committed": true
+    },
+    {
+      "name": "ckpt_wall_030m.pt",
+      "bytes": 115254851,
+      "sha256": "3f106734667baeaaa73a3602d445f58b09cbfc8ff5079ec766faa99baa301953",
+      "not_committed": true
+    },
+    {
+      "name": "ckpt_wall_045m.pt",
+      "bytes": 115342659,
+      "sha256": "bb70887f48fff7f21c07ce3cedf68b7479e2a9f2cb916ede39846c630ed10827",
+      "not_committed": true
+    },
+    {
+      "name": "ckpt_wall_060m.pt",
+      "bytes": 115429571,
+      "sha256": "953e995ac70140f52e7f2666abfcc7cff03f080fd3aad3801b437cb6f2fb337f",
+      "not_committed": true
+    }
+  ],
+  "selected_final_scalars": {
+    "env/task_l_count": {
+      "step": 4000,
+      "value": 1024.0
+    },
+    "env/task_m_count": {
+      "step": 4000,
+      "value": 1024.0
+    },
+    "real/L_sample_count": {
+      "step": 4000,
+      "value": 51200.0
+    },
+    "real/M_sample_count": {
+      "step": 4000,
+      "value": 51200.0
+    },
+    "schedule/actor_optimizer_steps": {
+      "step": 4000,
+      "value": 1374.5
+    },
+    "schedule/actor_ready": {
+      "step": 4000,
+      "value": 0.0
+    },
+    "schedule/prior_optimizer_steps": {
+      "step": 4000,
+      "value": 0.0
+    },
+    "schedule/wm_optimizer_steps": {
+      "step": 4000,
+      "value": 1574.5
+    },
+    "wm/nse_1step": {
+      "step": 4000,
+      "value": 0.16665059328079224
+    },
+    "wm/nse_kstep": {
+      "step": 4000,
+      "value": 0.6622505784034729
+    },
+    "real/L_fall_rate": {
+      "step": 4000,
+      "value": 0.9849056601524353
+    },
+    "real/M_fall_rate": {
+      "step": 4000,
+      "value": 0.7142857313156128
+    },
+    "actor/grad_norm": {
+      "step": 4000,
+      "value": 9.311185836791992
+    },
+    "schedule/prior_gate_pass": {
+      "step": 4000,
+      "value": 0.0
+    }
+  },
+  "tensorboard_scalar_tags": 226,
+  "source_log_dir": "logs/m1_prior_actor/m1_action22_v1_LM50_2048_1h_20261103",
+  "note": "Checkpoint binaries are deliberately excluded from this results artifact; hashes and sizes are recorded."
+}

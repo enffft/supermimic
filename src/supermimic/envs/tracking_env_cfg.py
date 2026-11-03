@@ -167,6 +167,7 @@ class SuperMimicEnvCfgArgs:
     m1_leg_action_magnitude_weight: float = -0.002
     m1_joint_task_type: str = "balanced"
     m1_joint_l_task_fraction: float = 0.5
+    m1_joint_balanced_fixed_quota: bool = False
     m1_joint_vx_range: tuple[float, float] = (-0.09, 0.145)
     m1_joint_vx_stop_fraction: float = 0.15
     m1_joint_vx_reverse_fraction: float = 0.35

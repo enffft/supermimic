@@ -1344,7 +1344,22 @@ class M1PriorJointCommand(CommandTerm):
             self.task_type[env_ids] = (torch.rand(env_ids.numel(), device=self.device) >= self.cfg.l_task_fraction).long()
         else:
             self.task_type[env_ids] = 0 if self.cfg.task_type == "L" else 1
-        for i, bounds in enumerate((self.cfg.vx_range, self.cfg.vy_range, self.cfg.wz_range)):
+        vx_lo, vx_hi = self.cfg.vx_range
+        if vx_lo < 0.0 < vx_hi:
+            choice = torch.rand(env_ids.numel(), device=self.device)
+            stop = choice < self.cfg.vx_stop_fraction
+            reverse = ((choice >= self.cfg.vx_stop_fraction)
+                       & (choice < self.cfg.vx_stop_fraction + self.cfg.vx_reverse_fraction))
+            positive = ~(stop | reverse)
+            vx = torch.zeros(env_ids.numel(), device=self.device)
+            if reverse.any():
+                vx[reverse] = vx_lo + torch.rand(int(reverse.sum()), device=self.device) * (-vx_lo)
+            if positive.any():
+                vx[positive] = torch.rand(int(positive.sum()), device=self.device) * vx_hi
+            self.velocity_command_body[env_ids, 0] = vx
+        else:
+            self.velocity_command_body[env_ids, 0] = vx_lo + torch.rand(env_ids.numel(), device=self.device) * (vx_hi - vx_lo)
+        for i, bounds in enumerate((self.cfg.vy_range, self.cfg.wz_range), start=1):
             self.velocity_command_body[env_ids, i] = bounds[0] + torch.rand(env_ids.numel(), device=self.device) * (bounds[1] - bounds[0])
         self.target_position_world[env_ids] = 0.0
         self._hold_seconds[env_ids] = 0.0
@@ -1449,6 +1464,8 @@ class M1PriorJointCommand(CommandTerm):
             "task_type": self.cfg.task_type,
             "l_task_fraction": self.cfg.l_task_fraction,
             "vx_range": tuple(self.cfg.vx_range),
+            "vx_stop_fraction": float(self.cfg.vx_stop_fraction),
+            "vx_reverse_fraction": float(self.cfg.vx_reverse_fraction),
             "vy_range": tuple(self.cfg.vy_range),
             "wz_range": tuple(self.cfg.wz_range),
             "target_x_range": tuple(self.cfg.target_x_range),
@@ -1467,9 +1484,11 @@ class M1PriorJointCommandCfg(CommandTermCfg):
     entity_name: str = "robot"
     task_type: str = "balanced"  # balanced | L | M
     l_task_fraction: float = 0.5
-    vx_range: tuple[float, float] = (0.15, 0.50)
-    vy_range: tuple[float, float] = (-0.20, 0.20)
-    wz_range: tuple[float, float] = (-0.40, 0.40)
+    vx_range: tuple[float, float] = (-0.09, 0.145)
+    vx_stop_fraction: float = 0.15
+    vx_reverse_fraction: float = 0.35
+    vy_range: tuple[float, float] = (-0.05, 0.055)
+    wz_range: tuple[float, float] = (-0.17, 0.18)
     target_x_range: tuple[float, float] = (0.12, 0.36)
     target_y_range: tuple[float, float] = (-0.20, 0.20)
     target_z_range: tuple[float, float] = (-0.15, 0.15)
@@ -1485,6 +1504,10 @@ class M1PriorJointCommandCfg(CommandTermCfg):
             raise ValueError("M1 joint task_type must be balanced, L, or M; LM is not enabled in v1")
         if not 0.0 <= self.l_task_fraction <= 1.0:
             raise ValueError("l_task_fraction must be within [0,1]")
+        if not 0.0 <= self.vx_stop_fraction <= 1.0 or not 0.0 <= self.vx_reverse_fraction <= 1.0:
+            raise ValueError("vx stop/reverse command fractions must be in [0,1]")
+        if self.vx_stop_fraction + self.vx_reverse_fraction > 1.0:
+            raise ValueError("vx stop and reverse fractions cannot sum above one")
         for key in ("vx_range", "vy_range", "wz_range", "target_x_range", "target_y_range", "target_z_range"):
             bounds = getattr(self, key)
             if len(bounds) != 2 or bounds[0] > bounds[1]:

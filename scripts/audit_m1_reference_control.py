@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 import torch
@@ -12,9 +13,108 @@ from supermimic.envs import SuperMimicEnvCfgArgs, make_env
 from supermimic.envs.state_io import StateIO
 from supermimic.motion_prior import load_m1_motion_prior
 from supermimic.motion_prior.features import task_goal8
-from supermimic.motion_prior.reference import decode_future31
-from supermimic.policy.nets import M1PriorActorCfg, M1PriorConditionedActor
+from supermimic.motion_prior.reference import decode_future31, future31_to_m1_action22
+from supermimic.policy.nets import (
+    LegacyM1FutureConditionedActor, LegacyM1PriorActorCfg,
+    M1ActionReferenceActor, M1ActionReferenceActorCfg,
+)
 from supermimic.robots.spec import M1_JOINTS, M1_LEG_JOINTS, get_robot_spec
+from supermimic.tasks.action_contract import inverse_m1_setpoint_action, m1_robot_spec_from_checkpoint
+
+PIPER_SDK_POSITION_LIMITS = (
+    (-2.6179, 2.6179), (0.0, 3.14), (-2.967, 0.0),
+    (-1.745, 1.745), (-1.22, 1.22), (-2.09439, 2.09439),
+)
+PIPER_SDK_MAX_SPEED_RAD_S = 3.0
+PIPER_SDK_POSITION_LIMITS_BY_NAME = {
+    f"piper_x_joint{i}": value for i, value in enumerate(PIPER_SDK_POSITION_LIMITS, start=1)
+}
+
+
+def _urdf_joint_limits() -> dict[str, tuple[float, float, float]]:
+    path = Path("/home/yifeiy/AMP-LOCO-M1/resources/robots/zg_m1_piper_x/zg_m1_piper_x.urdf")
+    result = {}
+    for joint in ET.parse(path).getroot().findall("joint"):
+        node = joint.find("limit")
+        if node is not None:
+            result[str(joint.get("name"))] = (
+                float(node.get("lower", "-inf")), float(node.get("upper", "inf")),
+                float(node.get("velocity", "inf")),
+            )
+    return result
+
+
+def _classify_references(ref_state, *, spec, urdf_limits):
+    counts = {
+        "position_joint_reference_frames": 0,
+        "velocity_joint_reference_frames": 0,
+        "out_of_action_envelope_position_frames": 0,
+        "urdf_position_violation_frames": 0,
+        "sdk_position_violation_frames": 0,
+        "urdf_velocity_violation_frames": 0,
+        "sdk_velocity_violation_frames": 0,
+        "wheel_out_of_action_envelope_frames": 0,
+    }
+    per_joint = {}
+    bounds = ref_state.new_tensor(spec.position_target_bounds) if spec.position_target_bounds else None
+    wheel_names = {"FAR_FOOT_JOINT", "FBL_FOOT_JOINT", "RAR_FOOT_JOINT", "RBL_FOOT_JOINT"}
+    for joint_id, name in enumerate(M1_JOINTS):
+        qd = ref_state[..., 35 + joint_id]
+        hard_lo, hard_hi, hard_speed = urdf_limits.get(
+            name, (-float("inf"), float("inf"), float("inf")),
+        )
+        urdf_velocity = qd.abs() > hard_speed
+        if name in wheel_names:
+            outside_envelope = qd.abs() > spec.action_scales[joint_id]
+            counts["wheel_out_of_action_envelope_frames"] += int(outside_envelope.sum())
+            sdk_position = torch.zeros_like(urdf_velocity)
+            sdk_velocity = torch.zeros_like(urdf_velocity)
+            urdf_position = torch.zeros_like(urdf_velocity)
+            pos_frames = 0
+        else:
+            q = ref_state[..., 7 + joint_id]
+            if bounds is None:
+                scale, default = spec.action_scales[joint_id], spec.default_joint_pos[joint_id]
+                outside_envelope = (q < default - scale) | (q > default + scale)
+            else:
+                outside_envelope = (q < bounds[joint_id, 0]) | (q > bounds[joint_id, 1])
+            urdf_position = (q < hard_lo) | (q > hard_hi)
+            sdk = PIPER_SDK_POSITION_LIMITS_BY_NAME.get(name)
+            sdk_position = torch.zeros_like(urdf_position) if sdk is None else (q < sdk[0]) | (q > sdk[1])
+            sdk_velocity = torch.zeros_like(urdf_velocity) if sdk is None else qd.abs() > min(hard_speed, PIPER_SDK_MAX_SPEED_RAD_S)
+            pos_frames = q.numel()
+            counts["position_joint_reference_frames"] += pos_frames
+            counts["out_of_action_envelope_position_frames"] += int(outside_envelope.sum())
+            counts["urdf_position_violation_frames"] += int(urdf_position.sum())
+            counts["sdk_position_violation_frames"] += int(sdk_position.sum())
+        counts["velocity_joint_reference_frames"] += qd.numel()
+        counts["urdf_velocity_violation_frames"] += int(urdf_velocity.sum())
+        counts["sdk_velocity_violation_frames"] += int(sdk_velocity.sum())
+        per_joint[name] = {
+            "position_frame_count": int(pos_frames),
+            "position_out_of_action_envelope_fraction": float(outside_envelope.float().mean()),
+            "urdf_position_violation_fraction": float(urdf_position.float().mean()),
+            "sdk_position_violation_fraction": float(sdk_position.float().mean()),
+            "urdf_velocity_violation_fraction": float(urdf_velocity.float().mean()),
+            "sdk_velocity_violation_fraction": float(sdk_velocity.float().mean()),
+        }
+    position_n = max(counts["position_joint_reference_frames"], 1)
+    velocity_n = max(counts["velocity_joint_reference_frames"], 1)
+    counts["out_of_action_envelope_fraction"] = counts["out_of_action_envelope_position_frames"] / position_n
+    counts["urdf_limit_violation_fraction"] = (
+        counts["urdf_position_violation_frames"] + counts["urdf_velocity_violation_frames"]
+    ) / (position_n + velocity_n)
+    counts["sdk_limit_violation_fraction"] = (
+        counts["sdk_position_violation_frames"] + counts["sdk_velocity_violation_frames"]
+    ) / (position_n + velocity_n)
+    counts["velocity_limit_violation_fraction"] = counts["urdf_velocity_violation_frames"] / velocity_n
+    counts["per_joint"] = per_joint
+    return counts
+
+
+def _reference_to_action(q_target, wheel_rate, *, spec, default, scales, wheel_mask):
+    del default, scales, wheel_mask
+    return inverse_m1_setpoint_action(q_target, wheel_rate, robot_spec=spec)
 
 
 def _summarize(rows: dict[str, list[torch.Tensor]]) -> dict[str, float]:
@@ -46,21 +146,52 @@ def audit(
         raise TypeError("checkpoint does not contain the versioned M1 Actor schema")
     actor_cfg = {key: tuple(value) if isinstance(value, list) and key == "hidden" else value
                  for key, value in actor_cfg.items()}
-    actor = M1PriorConditionedActor(M1PriorActorCfg(**actor_cfg)).to(device)
+    is_action22_v4 = checkpoint.get("format") == "supermimic_m1_action22_reference_v1"
+    if is_action22_v4 and checkpoint.get("reference_adapter_schema") != "future31_to_interleaved_action22_v1":
+        raise ValueError("unsupported Action22 reference adapter schema")
+    actor = (
+        M1ActionReferenceActor(M1ActionReferenceActorCfg(**actor_cfg)).to(device)
+        if is_action22_v4 else
+        LegacyM1FutureConditionedActor(LegacyM1PriorActorCfg(**actor_cfg)).to(device)
+    )
     actor.load_state_dict(checkpoint["actor"], strict=True)
     actor.eval()
 
     source = checkpoint["prior_source"]
+    spec = m1_robot_spec_from_checkpoint(checkpoint)
+    training_cfg = checkpoint.get("config", {}).get("m1_joint_training", {})
+    input_compatibility = checkpoint.get(
+        "prior_input_compatibility", training_cfg.get("prior_input_compatibility", "train_constant_compat_v1"),
+    )
     prior = load_m1_motion_prior(
         source["path"], device=device, expected_sha256=source["sha256"],
+        input_compatibility=input_compatibility,
     )
-    spec = get_robot_spec("m1_piper")
+    if source.get("input_compatibility", input_compatibility) != input_compatibility:
+        raise ValueError("saved Motion Prior input compatibility differs from source provenance")
+    urdf_joint_limits = _urdf_joint_limits()
+    sampler = checkpoint.get("task_sampler_state", {})
+    profile = {
+        "m1_pose_legacy_manipulation_v1": "legacy_manipulation",
+        "m1_pose_dataset_carry_v1": "dataset_carry",
+        "m1_pose_dataset_v3_3_l_high_carry_v1": "dataset_v3_3_l_high_carry",
+    }[spec.default_pose_profile]
+    contract = "v3" if spec.action_contract_version.endswith("v3") else "v2"
     args = SuperMimicEnvCfgArgs(
         npz_files=[], robot_name="m1_piper", task_name="m1_prior_joint",
+        m1_pose_profile=profile, m1_action_contract=contract,
         num_envs=num_envs, history_length=actor.cfg.history,
         action_noise_std=0.0, obs_noise=False, reset_noise=False,
         domain_randomization=False, replay_capacity=32, seed=seed,
         m1_joint_task_type=task_type,
+        m1_joint_vx_range=tuple(sampler.get("vx_range", (-0.09, 0.145))),
+        m1_joint_vx_stop_fraction=float(sampler.get("vx_stop_fraction", 0.15)),
+        m1_joint_vx_reverse_fraction=float(sampler.get("vx_reverse_fraction", 0.35)),
+        m1_joint_vy_range=tuple(sampler.get("vy_range", (-0.05, 0.055))),
+        m1_joint_wz_range=tuple(sampler.get("wz_range", (-0.17, 0.18))),
+        m1_joint_target_x_range=tuple(sampler.get("target_x_range", (0.12, 0.36))),
+        m1_joint_target_y_range=tuple(sampler.get("target_y_range", (-0.20, 0.20))),
+        m1_joint_target_z_range=tuple(sampler.get("target_z_range", (-0.15, 0.15))),
     )
     env = make_env(args, device=device)
     try:
@@ -84,7 +215,14 @@ def audit(
             "task_type": task_type,
             "num_envs": num_envs,
             "control_dt_s": float(env.step_dt),
+            "motion_prior_source": source,
+            "prior_input_compatibility": input_compatibility,
+            "default_pose_profile": spec.default_pose_profile,
+            "action_mapping": checkpoint["action_mapping"],
             "action_scales": {name: float(scale) for name, scale in zip(M1_JOINTS, spec.action_scales)},
+            "reference_not_dynamically_validated": True,
+            "prior_assurance_mode": source.get("assurance_mode"),
+            "strict_fcl_only": source.get("strict_fcl_only"),
             "scenarios": {},
         }
         for scenario in ("actor", "inverse_action", "projected_reference_actor"):
@@ -102,9 +240,13 @@ def audit(
 
             if scenario == "projected_reference_actor":
                 q = ref_state[..., 7:29].clone()
+                if spec.position_target_bounds:
+                    bounds = torch.tensor(spec.position_target_bounds, device=device)
+                    lower, upper = bounds[:, 0], bounds[:, 1]
+                else:
+                    lower, upper = default - scales, default + scales
                 q[..., amp_ids] = torch.maximum(
-                    torch.minimum(q[..., amp_ids], default[amp_ids] + scales[amp_ids]),
-                    default[amp_ids] - scales[amp_ids],
+                    torch.minimum(q[..., amp_ids], upper[amp_ids]), lower[amp_ids],
                 )
                 q[..., amp_ids] = torch.maximum(
                     torch.minimum(q[..., amp_ids], limits[amp_ids, 1]), limits[amp_ids, 0],
@@ -116,6 +258,10 @@ def audit(
                 ref_state = decode_future31(state, projected)
             else:
                 actor_reference = reference
+            actor_actions_ref = (
+                future31_to_m1_action22(actor_reference, robot_spec=spec)
+                if is_action22_v4 else None
+            )
 
             sums: dict[str, list[torch.Tensor]] = {
                 "root_position_error_m": [], "leg_position_rmse_rad": [],
@@ -127,16 +273,20 @@ def audit(
                 with torch.no_grad():
                     if scenario == "inverse_action":
                         q_target = ref_state[:, phase, 7:29]
-                        action = torch.where(
-                            wheel_mask,
-                            ref_state[:, phase, 35:57] / scales,
-                            (q_target - default) / scales,
-                        ).clamp(-1.0, 1.0)
-                    else:
-                        action = actor(
-                            observations["policy"], observations["goal"], actor_reference,
-                            torch.full((num_envs,), phase, device=device, dtype=state.dtype),
+                        action = _reference_to_action(
+                            q_target, ref_state[:, phase, 35:57], spec=spec,
+                            default=default, scales=scales, wheel_mask=wheel_mask,
                         )
+                    else:
+                        if is_action22_v4:
+                            action = actor(
+                                observations["policy"], observations["goal"], actor_actions_ref[:, phase],
+                            )
+                        else:
+                            action = actor(
+                                observations["policy"], observations["goal"], actor_reference,
+                                torch.full((num_envs,), phase, device=device, dtype=state.dtype),
+                            )
                 next_obs, _, terminated, truncated, _ = env.step(action)
                 measured = state_io.read()
                 valid = ~(terminated | truncated)
@@ -172,15 +322,32 @@ def audit(
         goal = task_goal8(initial, command.task_type, command.velocity_command_body, command.target_position_world)
         with torch.no_grad():
             ref = prior(history, goal)
+            reference_states = decode_future31(initial, ref)
+        result["reference_safety_classification"] = _classify_references(
+            reference_states, spec=spec, urdf_limits=urdf_joint_limits,
+        )
         q_reference = torch.zeros(num_envs, 10, 22, device=device)
         q_reference[..., amp_ids] = ref[..., 9:27]
         position_delta = q_reference[..., amp_ids] - default[amp_ids]
-        amp_scales = scales[amp_ids]
+        if spec.position_target_bounds:
+            target_bounds = torch.tensor(spec.position_target_bounds, device=device)[amp_ids]
+            action_upper = target_bounds[:, 1] - default[amp_ids]
+            action_lower = default[amp_ids] - target_bounds[:, 0]
+            normalized_position_action = torch.where(
+                position_delta >= 0.0,
+                position_delta / action_upper.clamp_min(1.0e-8),
+                position_delta / action_lower.clamp_min(1.0e-8),
+            )
+            envelope_lower, envelope_upper = target_bounds[:, 0], target_bounds[:, 1]
+        else:
+            normalized_position_action = position_delta / scales[amp_ids]
+            envelope_lower = default[amp_ids] - scales[amp_ids]
+            envelope_upper = default[amp_ids] + scales[amp_ids]
         amp_limits = limits[amp_ids]
         result["reference_reachability"] = {
             "position_delta_p5_p50_p95_rad": torch.quantile(position_delta.flatten(), torch.tensor([0.05, 0.5, 0.95], device=device)).cpu().tolist(),
-            "position_outside_setpoint_fraction": float((position_delta.abs() > amp_scales).float().mean()),
-            "position_near_setpoint_saturation_fraction": float((position_delta.abs() > 0.9 * amp_scales).float().mean()),
+            "position_outside_setpoint_fraction": float(((q_reference[..., amp_ids] < envelope_lower) | (q_reference[..., amp_ids] > envelope_upper)).float().mean()),
+            "position_near_setpoint_saturation_fraction": float((normalized_position_action.abs() > 0.9).float().mean()),
             "position_outside_soft_limit_fraction": float(((q_reference[..., amp_ids] < amp_limits[:, 0]) | (q_reference[..., amp_ids] > amp_limits[:, 1])).float().mean()),
             "wheel_rate_p5_p50_p95_rad_s": torch.quantile(ref[..., 27:31].flatten(), torch.tensor([0.05, 0.5, 0.95], device=device)).cpu().tolist(),
             "wheel_outside_setpoint_fraction": float((ref[..., 27:31].abs() > 5.0).float().mean()),
@@ -199,8 +366,9 @@ def audit(
                 "delta_from_default_p5_p50_p95_rad": torch.quantile(
                     delta.flatten(), torch.tensor([0.05, 0.5, 0.95], device=device),
                 ).cpu().tolist(),
-                "outside_setpoint_fraction": float((delta.abs() > scales[joint_id]).float().mean()),
-                "near_setpoint_saturation_fraction": float((delta.abs() > 0.9 * scales[joint_id]).float().mean()),
+                "action_bounds_rad": [float(envelope_lower[amp_joint_names.index(joint_name)]), float(envelope_upper[amp_joint_names.index(joint_name)])],
+                "outside_setpoint_fraction": float(((joint_ref < envelope_lower[amp_joint_names.index(joint_name)]) | (joint_ref > envelope_upper[amp_joint_names.index(joint_name)])).float().mean()),
+                "near_setpoint_saturation_fraction": float((normalized_position_action[..., amp_joint_names.index(joint_name)].abs() > 0.9).float().mean()),
                 "outside_soft_limit_fraction": float(
                     ((joint_ref < joint_limit[0]) | (joint_ref > joint_limit[1])).float().mean(),
                 ),

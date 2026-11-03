@@ -88,9 +88,10 @@ def main():
         updated.load_state_dict(saved['motion_prior'])
         result['L_final_prior_sweep'] = sweep(updated)
         result['L_checkpoint'] = {k: saved[k] for k in ('iteration', 'wm_optimizer_steps', 'actor_optimizer_steps', 'prior_optimizer_steps')}
-        from supermimic.policy.nets import M1PriorActorCfg, M1PriorConditionedActor
+        # Read-only diagnostic for the archived pre-Action22 v2 Actor.
+        from supermimic.policy.nets import LegacyM1PriorActorCfg, LegacyM1FutureConditionedActor
         from supermimic.world_model.heads import analytic_observation, flatten_history_term_major
-        actor = M1PriorConditionedActor(M1PriorActorCfg(**saved['actor_schema']))
+        actor = LegacyM1FutureConditionedActor(LegacyM1PriorActorCfg(**saved['actor_schema']))
         actor.load_state_dict(saved['actor'])
         obs = analytic_observation(history[:, -1], torch.zeros(1, 22), torch.zeros(1, 26),
                                    torch.tensor(spec.default_joint_pos), tuple(wheel_ids))

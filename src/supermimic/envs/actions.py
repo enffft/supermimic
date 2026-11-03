@@ -15,7 +15,9 @@ import torch
 from mjlab.envs.mdp.actions import JointPositionAction, JointPositionActionCfg
 from mjlab.managers.action_manager import ActionTerm, ActionTermCfg
 
-from supermimic.tasks.action_contract import clamp_executed_action, mixed_m1_setpoints
+from supermimic.tasks.action_contract import (
+    add_bounded_action_exploration, clamp_executed_action, mixed_m1_setpoints,
+)
 
 if TYPE_CHECKING:
     from mjlab.envs import ManagerBasedRlEnv
@@ -135,8 +137,19 @@ class MixedM1Action(ActionTerm):
         self._raw_actions = torch.zeros(self.num_envs, self._action_dim, device=self.device)
         self._executed_raw = torch.zeros_like(self._raw_actions)
         self._physical_setpoint = torch.zeros_like(self._raw_actions)
+        self._exploration_noise = torch.zeros_like(self._raw_actions)
+        self._exploration_mask = torch.zeros(self.num_envs, dtype=torch.bool, device=self.device)
+        self._applied_noise = torch.zeros_like(self._raw_actions)
         self._scale = torch.tensor(cfg.action_scales, dtype=torch.float32, device=self.device).expand(self.num_envs, -1)
+        self._position_target_bounds = (
+            torch.tensor(cfg.position_target_bounds, dtype=torch.float32, device=self.device)
+            .expand(self.num_envs, -1, -1) if cfg.position_target_bounds else None
+        )
         self._noise_std = float(cfg.noise_std)
+        self._action_clip = float(cfg.action_clip)
+        self._explicit_exploration_only = bool(cfg.explicit_exploration_only)
+        if self._explicit_exploration_only and self._action_clip != 1.0:
+            raise ValueError("M1 Action22-reference execution uses the fixed normalized range [-1,1]")
 
     @property
     def action_dim(self) -> int:
@@ -168,14 +181,33 @@ class MixedM1Action(ActionTerm):
 
     def process_actions(self, actions: torch.Tensor) -> None:
         self._raw_actions[:] = actions
-        noisy = actions + self._noise_std * torch.randn_like(actions) if self._noise_std > 0 else actions
-        self._executed_raw = clamp_executed_action(noisy, self.cfg.action_clip)
+        if self._explicit_exploration_only:
+            if self._noise_std != 0.0:
+                raise RuntimeError("M1 Action22-reference internal noise is disabled; use explicit collection exploration")
+            self._applied_noise = self._exploration_noise * self._exploration_mask[:, None].to(actions.dtype)
+            self._executed_raw = add_bounded_action_exploration(
+                actions, self._exploration_noise, self._exploration_mask,
+            )
+        else:
+            gaussian = self._noise_std * torch.randn_like(actions) if self._noise_std > 0.0 else torch.zeros_like(actions)
+            self._applied_noise = gaussian
+            self._executed_raw = clamp_executed_action(actions + gaussian, self._action_clip)
+        self._exploration_noise.zero_()
+        self._exploration_mask.zero_()
+
+    def set_exploration(self, noise: torch.Tensor, environment_mask: torch.Tensor) -> None:
+        """Set one explicit collection-time perturbation before ``env.step``."""
+        if noise.shape != self._raw_actions.shape or environment_mask.shape != (self.num_envs,):
+            raise ValueError("M1 exploration noise/mask shape mismatch")
+        self._exploration_noise[:] = noise
+        self._exploration_mask[:] = environment_mask.to(device=self.device, dtype=torch.bool)
 
     def apply_actions(self) -> None:
         q0 = self._entity.data.default_joint_pos[:, self._joint_ids]
         full_limits = self._entity.data.soft_joint_pos_limits[:, self._joint_ids]
         self._physical_setpoint[:] = mixed_m1_setpoints(
             self._executed_raw, q0, self._scale, self._wheel_mask, full_limits,
+            self._position_target_bounds,
         )
         position_target = self._physical_setpoint[:, self._position_action_idx]
         wheel_target = self._physical_setpoint[:, self._wheel_action_idx]
@@ -186,6 +218,9 @@ class MixedM1Action(ActionTerm):
         self._raw_actions[env_ids] = 0.0
         self._executed_raw[env_ids] = 0.0
         self._physical_setpoint[env_ids] = 0.0
+        self._exploration_noise[env_ids] = 0.0
+        self._exploration_mask[env_ids] = False
+        self._applied_noise[env_ids] = 0.0
 
 
 @dataclass(kw_only=True)
@@ -193,6 +228,8 @@ class MixedM1ActionCfg(ActionTermCfg):
     joint_names: tuple[str, ...]
     wheel_joint_names: tuple[str, ...]
     action_scales: tuple[float, ...]
+    position_target_bounds: tuple[tuple[float, float], ...] = ()
+    explicit_exploration_only: bool = False
     noise_std: float = 0.1
     action_clip: float = 1.0
 

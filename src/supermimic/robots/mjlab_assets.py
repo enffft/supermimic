@@ -12,7 +12,7 @@ from pathlib import Path
 
 import mujoco
 
-from supermimic.robots.spec import M1_ARM_JOINTS, M1_LEG_JOINTS, M1_JOINTS, get_robot_spec
+from supermimic.robots.spec import M1_ARM_JOINTS, M1_LEG_JOINTS, M1_JOINTS, RobotSpec, get_robot_spec
 
 
 def _name_unnamed_geoms(spec: mujoco.MjSpec) -> None:
@@ -416,13 +416,13 @@ def load_robot_spec_model(name: str) -> mujoco.MjModel:
     return model
 
 
-def get_robot_entity_cfg(name: str):
+def get_robot_entity_cfg(name: str | RobotSpec):
     """Build a mjlab EntityCfg with name-matched initial state and native PD drives."""
     from mjlab.actuator import BuiltinPositionActuatorCfg, BuiltinVelocityActuatorCfg
     from mjlab.entity import EntityArticulationInfoCfg, EntityCfg
     from mjlab.utils.spec_config import CollisionCfg
 
-    robot = get_robot_spec(name)
+    robot = name if isinstance(name, RobotSpec) else get_robot_spec(name)
     if robot.name == "g1":
         from mjlab.asset_zoo.robots import get_g1_robot_cfg
 

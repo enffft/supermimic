@@ -235,14 +235,14 @@ def test_planner_actor_gradient_ownership_and_horizon3_finite_difference():
     from supermimic.motion_prior.losses import M1JointLossCfg, planner_losses
     from supermimic.motion_prior.rollout import differentiable_m1_rollout
     from supermimic.motion_prior.trainer import M1AlternatingTrainer, frozen_parameters
-    from supermimic.policy.nets import M1PriorActorCfg, M1PriorConditionedActor
-    from supermimic.robots.spec import M1_DEFAULT, M1_JOINTS
+    from supermimic.policy.nets import M1ActionReferenceActorCfg, M1ActionReferenceActor
+    from supermimic.robots.spec import M1_JOINTS, get_robot_spec
 
     if not PRIOR_PATH.is_file():
         pytest.fail(f"required AMP CVAE checkpoint missing: {PRIOR_PATH}")
     device = torch.device("cuda:0")
     prior = load_m1_motion_prior(PRIOR_PATH, device=device, expected_sha256=PRIOR_SHA256)
-    actor = M1PriorConditionedActor(M1PriorActorCfg(history=4, hidden=(64, 32), reference_embedding=16)).to(device)
+    actor = M1ActionReferenceActor(M1ActionReferenceActorCfg(history=4, hidden=(64, 32))).to(device)
     wm = _TinyWM().to(device)
     buffer = _tiny_joint_buffer(device)
     wm_trainer = SimpleNamespace(opt=torch.optim.SGD(wm.parameters(), lr=1e-3), cfg=SimpleNamespace(batches_per_update=1))
@@ -252,9 +252,11 @@ def test_planner_actor_gradient_ownership_and_horizon3_finite_difference():
         prior_lr=1e-4, actor_lr=2e-4, grad_clip_norm=1.0,
         loss=M1JointLossCfg(), wm_updates_per_event=1, prior_updates_per_event=1,
         actor_updates_per_event=1, freeze_prior=True, actor_pretrain_updates=0,
-        training_mode="auto_joint",
-        wm_warmup_exploration_env_fraction=0.0, wm_warmup_exploration_std=0.0,
-        prior_warmup_updates=0, readiness_window_steps=4, readiness_min_samples=4,
+        training_mode="staged_action22_v1", prior_gate_evidence_path=None,
+        exploration_enabled=True, exploration_env_fraction=0.25,
+        exploration_leg_std=0.02, exploration_arm_std=0.015,
+        exploration_wheel_std=0.05, exploration_decay_end_fraction=0.75,
+        readiness_window_steps=4, readiness_min_samples=4,
         readiness_min_survival=0.9, readiness_max_root_tracking_error=0.2,
         readiness_max_arm_tracking_error=0.25, readiness_max_wheel_tracking_error=0.75,
         readiness_max_action_saturation=0.1,
@@ -265,10 +267,11 @@ def test_planner_actor_gradient_ownership_and_horizon3_finite_difference():
 
     joint = M1AlternatingTrainer(
         wm=wm, wm_trainer=wm_trainer, prior=prior, actor=actor, buffer=buffer,
-        default_joint_pos=torch.tensor(M1_DEFAULT, device=device),
+        default_joint_pos=torch.tensor(get_robot_spec("m1_piper", m1_pose_profile="dataset_v3_3_l_high_carry", m1_action_contract="v3").default_joint_pos, device=device),
         soft_limits=torch.tensor([[-3.0, 3.0]] * 22, device=device),
         fk=_TinyFK(), tcp_index=0, cfg=cfg, robot_joint_names=tuple(M1_JOINTS),
         robot_model_sha256="test-model", command=_Command(),
+        robot_spec=get_robot_spec("m1_piper", m1_pose_profile="dataset_v3_3_l_high_carry", m1_action_contract="v3"),
     )
 
     # A two-sample, three-step planner loss has a finite Autograd derivative
@@ -279,22 +282,28 @@ def test_planner_actor_gradient_ownership_and_horizon3_finite_difference():
     goal = task_goal8(start.state, start.task_type, start.velocity_command, start.fixed_world_target)
     history = joint._prior_state_history(start)
     parameter = prior.model.decoder[1].bias
-    index = 0
+    # Future31's first leg joint remains differentiable through the physical
+    # state-reference / WM consistency objective even when another output
+    # dimension has saturated the real Action22 envelope.
+    index = 9
 
     def objective():
         ref = prior(history, goal)
         with frozen_parameters(actor, wm):
             rollout = differentiable_m1_rollout(
                 wm, actor, start, goal, ref, joint.default_joint_pos, horizon=3,
+                robot_spec=joint.robot_spec,
             )
             terms = planner_losses(
-                rollout.states, rollout.actions, start.state, ref,
+                rollout.prior_direct_states, rollout.reference_actions.transpose(0, 1), start.state, ref,
                 joint.prior_initial(history, goal), start.task_type,
                 start.velocity_command, start.fixed_world_target,
                 fk=joint.fk, tcp_index=0, soft_limits=joint.soft_limits,
                 cfg=joint.loss_cfg,
+                actor_states=rollout.actor_states,
+                raw_reference_actions=rollout.reference_actions_unclipped,
             )
-        return terms["task"]
+        return terms["total"]
 
     loss = objective()
     grad = torch.autograd.grad(loss, parameter)[0][index]
@@ -324,17 +333,19 @@ def test_planner_actor_gradient_ownership_and_horizon3_finite_difference():
     with frozen_parameters(actor, wm):
         l_rollout = differentiable_m1_rollout(
             wm, actor, l_start, l_goal, l_reference,
-            joint.default_joint_pos, horizon=3,
+            joint.default_joint_pos, robot_spec=joint.robot_spec, horizon=3,
         )
         l_terms = planner_losses(
-            l_rollout.states, l_rollout.actions, l_start.state,
+            l_rollout.prior_direct_states, l_rollout.reference_actions.transpose(0, 1), l_start.state,
             l_reference, joint.prior_initial(history, l_goal), l_task,
             l_command, l_target, fk=joint.fk, tcp_index=0,
             soft_limits=joint.soft_limits, cfg=joint.loss_cfg,
+            actor_states=l_rollout.actor_states,
+            raw_reference_actions=l_rollout.reference_actions_unclipped,
         )
     l_grad = torch.autograd.grad(l_terms["task_l"], parameter, retain_graph=True)[0]
     assert torch.isfinite(l_grad).all() and l_grad.norm() > 1e-8
-    probe_states = l_rollout.states.detach().clone().requires_grad_(True)
+    probe_states = l_rollout.prior_direct_states.detach().clone().requires_grad_(True)
     from supermimic.motion_prior.losses import _task_planner_terms
 
     probe_terms = _task_planner_terms(

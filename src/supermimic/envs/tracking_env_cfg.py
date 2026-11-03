@@ -73,6 +73,10 @@ class SuperMimicEnvCfgArgs:
     npz_files: list[str]
     robot_name: str = "g1"
     task_name: str = "motion_tracking"
+    m1_pose_profile: Literal[
+        "legacy_manipulation", "dataset_carry", "dataset_v3_3_l_high_carry",
+    ] | None = None
+    m1_action_contract: Literal["v2", "v3"] | None = None
     num_envs: int = 4096
     future_frames: int = 10
     motion_goal_schema: Literal["root_joint", "full_body"] = "root_joint"
@@ -163,9 +167,11 @@ class SuperMimicEnvCfgArgs:
     m1_leg_action_magnitude_weight: float = -0.002
     m1_joint_task_type: str = "balanced"
     m1_joint_l_task_fraction: float = 0.5
-    m1_joint_vx_range: tuple[float, float] = (0.15, 0.50)
-    m1_joint_vy_range: tuple[float, float] = (-0.20, 0.20)
-    m1_joint_wz_range: tuple[float, float] = (-0.40, 0.40)
+    m1_joint_vx_range: tuple[float, float] = (-0.09, 0.145)
+    m1_joint_vx_stop_fraction: float = 0.15
+    m1_joint_vx_reverse_fraction: float = 0.35
+    m1_joint_vy_range: tuple[float, float] = (-0.05, 0.055)
+    m1_joint_wz_range: tuple[float, float] = (-0.17, 0.18)
     m1_joint_target_x_range: tuple[float, float] = (0.12, 0.36)
     m1_joint_target_y_range: tuple[float, float] = (-0.20, 0.20)
     m1_joint_target_z_range: tuple[float, float] = (-0.15, 0.15)

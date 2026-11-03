@@ -56,6 +56,11 @@ def state_history_to_cvae53(state_history: torch.Tensor) -> torch.Tensor:
     joint_vel = state_history[..., 35:57].index_select(-1, _AMP_Q_INDEX.to(state_history.device))
     wheel_rate = state_history[..., 35:57].index_select(-1, _AMP_WHEEL_INDEX.to(state_history.device))
     relative_matrix = matrix_from_quat(relative_q)
+    # For the newest frame, its heading is computed from this same rotation.
+    # Therefore row-1/column-0 of R_heading^T R is analytically zero. Assigning
+    # it exactly avoids float32 roundoff becoming a 1e-6-std normalized input.
+    relative_matrix = relative_matrix.clone()
+    relative_matrix[:, -1, 1, 0] = 0.0
     # AMP stores the first matrix column followed by the second matrix column.
     # A row-major reshape of [..., :, :2] interleaves columns and changes the
     # learned CVAE input schema even though it still has six values.

@@ -17,6 +17,91 @@ from supermimic.motion_prior.features import FUTURE31_DIM
 from supermimic.robots.spec import M1_AMP_JOINTS, M1_JOINTS, M1_LEG_JOINTS
 
 
+def future31_to_m1_action22(
+    future: torch.Tensor,
+    *,
+    robot_spec,
+    return_diagnostics: bool = False,
+):
+    """Convert a V3.3 Future31 plan to normalized, interleaved M1 Action22.
+
+    Future31 stores 18 position targets in ``M1_AMP_JOINTS`` order followed
+    by four wheel angular-rate targets in ``robot_spec.wheel_joint_names``
+    order. Action22 instead follows ``robot_spec.joint_names`` (the M1
+    interleaved leg/wheel order followed by the Piper arm). This is a
+    candidate actuator setpoint conversion, not an inverse-dynamics action.
+
+    The returned action is bounded for execution. With ``return_diagnostics``
+    the unbounded inverse-map output is also returned, so losses can retain a
+    useful gradient when a prior predicts outside the V3 action envelope.
+    """
+    from supermimic.tasks.action_contract import inverse_m1_setpoint_action
+
+    if future.ndim != 3 or future.shape[1:] != (10, FUTURE31_DIM):
+        raise ValueError("Future31 must have shape [B,10,31]")
+    if robot_spec.name != "m1_piper" or robot_spec.action_contract_version != "m1_mixed_action_v3":
+        raise ValueError("Future31 Action22 conversion requires the M1 V3 action contract")
+    if not torch.isfinite(future).all():
+        raise ValueError("Future31 contains non-finite values")
+    if tuple(robot_spec.joint_names) != tuple(M1_JOINTS):
+        raise ValueError("M1 V3 Action22 requires the canonical interleaved M1_JOINTS order")
+    if tuple(robot_spec.amp_joint_names) != tuple(M1_AMP_JOINTS):
+        raise ValueError("M1 V3 Action22 requires the canonical M1_AMP_JOINTS order")
+    expected_wheels = tuple(name for name in M1_LEG_JOINTS if name.endswith("FOOT_JOINT"))
+    if tuple(robot_spec.wheel_joint_names) != expected_wheels:
+        raise ValueError("M1 V3 wheel order must match FAR,FBL,RAR,RBL Future31 order")
+
+    batch = future.shape[0]
+    default = future.new_tensor(robot_spec.default_joint_pos)
+    joint_target = default.expand(batch, 10, -1).clone()
+    amp_ids = torch.tensor(
+        [robot_spec.joint_names.index(name) for name in robot_spec.amp_joint_names],
+        dtype=torch.long, device=future.device,
+    )
+    # CopySlices keeps the reference path differentiable with respect to all
+    # 18 Future31 position targets while leaving wheel-position placeholders
+    # at the default pose (the inverse map overwrites their velocity branch).
+    joint_target[..., amp_ids] = future[..., 9:27]
+    wheel_rate = future[..., 27:31]
+    raw_action = inverse_m1_setpoint_action(
+        joint_target, wheel_rate, robot_spec=robot_spec, clip=False,
+    )
+    action = raw_action.clamp(-1.0, 1.0)
+
+    wheel_mask = torch.tensor(
+        [name in robot_spec.wheel_joint_names for name in robot_spec.joint_names],
+        dtype=torch.bool, device=future.device,
+    )
+    bounds = future.new_tensor(robot_spec.position_target_bounds)
+    q = joint_target[..., ~wheel_mask]
+    q_bounds = bounds[~wheel_mask]
+    q_below = (q_bounds[:, 0] - q).clamp_min(0.0)
+    q_above = (q - q_bounds[:, 1]).clamp_min(0.0)
+    wheel_scale = future.new_tensor(robot_spec.action_scales)[
+        torch.tensor(
+            [robot_spec.joint_names.index(name) for name in robot_spec.wheel_joint_names],
+            dtype=torch.long, device=future.device,
+        )
+    ]
+    wheel_excess = (wheel_rate.abs() - wheel_scale).clamp_min(0.0)
+    preclip_excess = (raw_action.abs() - 1.0).clamp_min(0.0)
+    # Smooth, scale-free penalty used by Prior optimization. The clamped
+    # output alone has zero gradient beyond the envelope; this term does not.
+    diagnostics = {
+        "out_of_action_envelope_penalty": preclip_excess.square().mean(),
+        "out_of_action_envelope_fraction": (preclip_excess > 0).to(future.dtype).mean(),
+        "position_envelope_violation_fraction": ((q_below > 0) | (q_above > 0)).to(future.dtype).mean(),
+        "position_envelope_violation_max_rad": torch.maximum(q_below, q_above).amax(),
+        "wheel_rate_violation_fraction": (wheel_excess > 0).to(future.dtype).mean(),
+        "wheel_rate_violation_max_rad_s": wheel_excess.amax(),
+        "position_action_saturation_fraction": (preclip_excess[..., ~wheel_mask] > 0).to(future.dtype).mean(),
+        "wheel_action_saturation_fraction": (preclip_excess[..., wheel_mask] > 0).to(future.dtype).mean(),
+    }
+    if return_diagnostics:
+        return action, raw_action, diagnostics
+    return action
+
+
 def rotation_6d_to_matrix(value: torch.Tensor) -> torch.Tensor:
     """AMP-compatible first-two-column Gram-Schmidt rotation decoder."""
     if value.shape[-1] != 6:
@@ -100,7 +185,11 @@ def decode_future31(state: torch.Tensor, future: torch.Tensor, *, dt: float = 0.
     return torch.cat((qpos, root_lin_vel_w, root_ang_vel_b, joint_vel), dim=-1)
 
 
-def reference_tracking_errors(predicted: torch.Tensor, reference: torch.Tensor) -> dict[str, torch.Tensor]:
+def reference_tracking_errors(
+    predicted: torch.Tensor,
+    reference: torch.Tensor,
+    valid_mask: torch.Tensor | None = None,
+) -> dict[str, torch.Tensor]:
     """Per-component, unit-normalized tracking losses over aligned horizon rows."""
     from supermimic.kinematics.rotations import quat_error_magnitude
     from supermimic.robots.spec import M1_JOINTS
@@ -110,14 +199,25 @@ def reference_tracking_errors(predicted: torch.Tensor, reference: torch.Tensor) 
     leg_ids = [M1_JOINTS.index(n) for n in M1_AMP_JOINTS[:12]]
     arm_ids = [M1_JOINTS.index(n) for n in M1_AMP_JOINTS[12:]]
     wheel_ids = [M1_JOINTS.index(n) for n in ("FAR_FOOT_JOINT", "FBL_FOOT_JOINT", "RAR_FOOT_JOINT", "RBL_FOOT_JOINT")]
-    root_pos = ((predicted[..., :3] - reference[..., :3]) / 0.5).square().mean()
-    root_rot = (quat_error_magnitude(predicted[..., 3:7], reference[..., 3:7]) / 0.5).square().mean()
+    def mean_rows(value: torch.Tensor) -> torch.Tensor:
+        if valid_mask is None:
+            return value.mean()
+        mask = valid_mask.to(device=value.device, dtype=value.dtype)
+        if mask.shape != value.shape[:mask.ndim]:
+            raise ValueError("reference tracking valid_mask must match leading sample dimensions")
+        while mask.ndim < value.ndim:
+            mask = mask.unsqueeze(-1)
+        mask = mask.expand_as(value)
+        return (value * mask).sum() / mask.sum().clamp_min(1.0)
+
+    root_pos = mean_rows(((predicted[..., :3] - reference[..., :3]) / 0.5).square().mean(-1))
+    root_rot = mean_rows((quat_error_magnitude(predicted[..., 3:7], reference[..., 3:7]) / 0.5).square())
     q_pred, q_ref = predicted[..., 7:29], reference[..., 7:29]
     qd_pred, qd_ref = predicted[..., 35:57], reference[..., 35:57]
     return {
         "root_position": root_pos,
         "root_rotation": root_rot,
-        "leg_position": ((q_pred[..., leg_ids] - q_ref[..., leg_ids]) / 2.0).square().mean(),
-        "arm_position": ((q_pred[..., arm_ids] - q_ref[..., arm_ids]) / 2.0).square().mean(),
-        "wheel_velocity": ((qd_pred[..., wheel_ids] - qd_ref[..., wheel_ids]) / 10.0).square().mean(),
+        "leg_position": mean_rows(((q_pred[..., leg_ids] - q_ref[..., leg_ids]) / 2.0).square().mean(-1)),
+        "arm_position": mean_rows(((q_pred[..., arm_ids] - q_ref[..., arm_ids]) / 2.0).square().mean(-1)),
+        "wheel_velocity": mean_rows(((qd_pred[..., wheel_ids] - qd_ref[..., wheel_ids]) / 10.0).square().mean(-1)),
     }

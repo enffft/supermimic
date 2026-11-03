@@ -348,28 +348,36 @@ def test_m1_task_masked_metrics():
     assert task_masked_mean(values, torch.zeros(4, dtype=torch.bool)) is None
 
 
-def test_m1_wm_readiness_requires_configured_quality_limits():
+def test_low_replay_nse_alone_cannot_open_the_prior_gate():
+    from collections import deque
+
     from supermimic.motion_prior.trainer import M1AlternatingTrainer
 
     trainer = object.__new__(M1AlternatingTrainer)
     trainer.cfg = type("Cfg", (), {
-        "wm_readiness_min_events": 2,
-        "wm_readiness_max_nse_1": None,
-        "wm_readiness_max_nse_horizon": None,
+        "prior_gate_evidence_path": None,
+        "freeze_prior": False,
+        "readiness_min_samples": 1,
+        "actor_pretrain_updates": 0,
+        "readiness_min_survival": 0.9,
+        "readiness_max_root_tracking_error": 0.2,
+        "readiness_max_arm_tracking_error": 0.25,
+        "readiness_max_wheel_tracking_error": 0.75,
+        "readiness_max_action_saturation": 0.1,
     })()
-    trainer.wm_update_events = 2
-    trainer.wm_optimizer_steps = 2
+    trainer.actor_optimizer_steps = 1
+    trainer._actor_ready_window = deque([{
+        "survival": 1.0,
+        "root_tracking_error": 0.1,
+        "arm_tracking_error": 0.1,
+        "wheel_tracking_error": 0.1,
+        "action_saturation": 0.0,
+    }])
     trainer.last_wm_metrics = {"nse_1step": 0.02, "nse_kstep": 0.20}
-    diag = trainer._wm_readiness(policy_allowed=True)
-    assert diag["schedule/wm_fit_ready"] == 1.0
-    assert diag["schedule/wm_ready"] == 0.0
-    assert diag["schedule/wm_quality_thresholds_configured"] == 0.0
-    trainer.cfg.wm_readiness_max_nse_1 = 0.10
-    trainer.cfg.wm_readiness_max_nse_horizon = 0.30
-    diag = trainer._wm_readiness(policy_allowed=True)
-    assert diag["schedule/wm_ready"] == 1.0
-    trainer.cfg.wm_readiness_max_nse_horizon = 0.10
-    assert trainer._wm_readiness(policy_allowed=True)["schedule/wm_ready"] == 0.0
+    diag = trainer._prior_gate()
+    assert diag["schedule/prior_gate_pass"] == 0.0
+    assert diag["schedule/prior_gate_action_response"] == 0.0
+    assert diag["schedule/prior_gate_real_task_safety"] == 0.0
 
 
 def test_m1_log_formats_unavailable_metrics_without_nan():

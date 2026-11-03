@@ -22,6 +22,12 @@ from supermimic.robots.spec import M1_JOINTS, M1_LEG_JOINTS
 
 @dataclass
 class M1JointLossCfg:
+    planner_task_weight: float = 1.0
+    planner_actor_task_weight: float = 0.25
+    planner_dynamics_weight: float = 0.5
+    out_of_envelope_weight: float = 0.1
+    actor_task_weight: float = 1.0
+    actor_bc_weight: float = 0.05
     # Planner task objective
     l_linear_velocity_weight: float = 1.0
     l_yaw_rate_weight: float = 0.5
@@ -85,13 +91,23 @@ def _joint_velocity_limits(device: torch.device, cfg: M1JointLossCfg) -> torch.T
 
 def _task_planner_terms(states: torch.Tensor, task_type: torch.Tensor,
                         velocity_command: torch.Tensor, fixed_world_target: torch.Tensor,
-                        fk, tcp_index: int, cfg: M1JointLossCfg) -> dict[str, torch.Tensor]:
+                        fk, tcp_index: int, cfg: M1JointLossCfg,
+                        valid_mask: torch.Tensor | None = None) -> dict[str, torch.Tensor]:
     # states [H+1,B,57], task labels and task contexts are episode-constant.
     state = states[1:]
     batch = states.shape[1]
     task_type = task_type.reshape(batch).to(device=states.device, dtype=torch.long)
-    l_mask = (task_type == 0).to(states.dtype)[None, :]
-    m_mask = (task_type == 1).to(states.dtype)[None, :]
+    if valid_mask is None:
+        valid = torch.ones(state.shape[:2], device=state.device, dtype=state.dtype)
+    else:
+        if valid_mask.shape != state.shape[:2]:
+            raise ValueError("task valid_mask must have shape [H,B]")
+        valid = valid_mask.to(device=state.device, dtype=state.dtype)
+    l_mask = (task_type == 0).to(states.dtype)[None, :] * valid
+    m_mask = (task_type == 1).to(states.dtype)[None, :] * valid
+
+    def masked_mean(value: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
+        return (value * mask).sum() / mask.sum().clamp_min(1.0)
     velocity_command = velocity_command.to(device=states.device, dtype=states.dtype)
     fixed_world_target = fixed_world_target.to(device=states.device, dtype=states.dtype)
     linear_error, _, yaw_rate_error, _ = velocity_command_errors(
@@ -104,7 +120,7 @@ def _task_planner_terms(states: torch.Tensor, task_type: torch.Tensor,
         yaw_rate_error, torch.zeros_like(yaw_rate_error), reduction="none",
     )
     l_per_step = cfg.l_linear_velocity_weight * l_linear + cfg.l_yaw_rate_weight * l_yaw
-    l_task = (l_per_step * l_mask).sum() / (l_mask.sum() * state.shape[0]).clamp_min(1.0)
+    l_task = masked_mean(l_per_step, l_mask)
 
     if fk is None:
         raise ValueError("M planner objective requires the validated M1 differentiable FK model")
@@ -117,15 +133,19 @@ def _task_planner_terms(states: torch.Tensor, task_type: torch.Tensor,
         fk(states[0, :, :qpos_dim], states[0, :, qpos_dim:])["pos"][:, tcp_index] - fixed_world_target,
         dim=-1,
     )
-    d_final = distance[-1]
-    m_path = distance.mean(0)
+    valid_count = valid.sum(0)
+    has_valid = valid_count > 0
+    last_index = (valid_count.to(torch.long) - 1).clamp_min(0)
+    d_final = distance.gather(0, last_index[None]).squeeze(0)
+    m_path = (distance * valid).sum(0) / valid_count.clamp_min(1.0)
     m_progress = d0 - d_final
     m_task = (
         cfg.m_terminal_weight * (d_final / 0.10)
         + cfg.m_path_weight * (m_path / 0.10)
         - cfg.m_progress_weight * (m_progress / 0.10)
     )
-    m_task = (m_task * m_mask[0]).sum() / m_mask[0].sum().clamp_min(1.0)
+    m_env_mask = (task_type == 1).to(states.dtype) * has_valid.to(states.dtype)
+    m_task = (m_task * m_env_mask).sum() / m_env_mask.sum().clamp_min(1.0)
 
     initial_xy = states[0, :, :2]
     base_xy = state[..., :2]
@@ -133,27 +153,37 @@ def _task_planner_terms(states: torch.Tensor, task_type: torch.Tensor,
     yaw = heading_yaw(state[..., 3:7])
     yaw0 = heading_yaw(states[0, :, 3:7])
     base_yaw_drift = wrap_to_pi(yaw - yaw0[None]).abs() / 0.5
-    m_drift = ((base_xy_drift.square() + base_yaw_drift.square()) * m_mask).sum() / (
-        m_mask.sum() * state.shape[0]
-    ).clamp_min(1.0)
+    m_drift = masked_mean(base_xy_drift.square() + base_yaw_drift.square(), m_mask)
     return {
         "task_l": l_task,
-        "task_l_linear_velocity": (l_linear * l_mask).sum() / (l_mask.sum() * state.shape[0]).clamp_min(1.0),
-        "task_l_yaw_rate": (l_yaw * l_mask).sum() / (l_mask.sum() * state.shape[0]).clamp_min(1.0),
+        "task_l_linear_velocity": masked_mean(l_linear, l_mask),
+        "task_l_yaw_rate": masked_mean(l_yaw, l_mask),
         "task_m": m_task,
-        "task_progress_m": (m_progress * m_mask[0]).sum() / m_mask[0].sum().clamp_min(1.0),
-        "terminal_error_m": (d_final * m_mask[0]).sum() / m_mask[0].sum().clamp_min(1.0),
-        "base_drift_m": (
-            (torch.linalg.vector_norm(base_xy - initial_xy[None], dim=-1) * m_mask).sum()
-            / (m_mask.sum() * state.shape[0]).clamp_min(1.0)
-        ),
+        "task_progress_m": (m_progress * m_env_mask).sum() / m_env_mask.sum().clamp_min(1.0),
+        "terminal_error_m": (d_final * m_env_mask).sum() / m_env_mask.sum().clamp_min(1.0),
+        "base_drift_m": masked_mean(torch.linalg.vector_norm(base_xy - initial_xy[None], dim=-1), m_mask),
         "m_base_drift": cfg.m_base_drift_weight * m_drift,
         "tcp_distance_sequence": distance,
     }
 
 
-def _feasibility(states: torch.Tensor, soft_limits: torch.Tensor, cfg: M1JointLossCfg) -> torch.Tensor:
+def _feasibility(states: torch.Tensor, soft_limits: torch.Tensor, cfg: M1JointLossCfg,
+                 valid_mask: torch.Tensor | None = None) -> torch.Tensor:
     state = states[1:]
+    if valid_mask is None:
+        valid = torch.ones(state.shape[:-1], dtype=state.dtype, device=state.device)
+    else:
+        if valid_mask.shape != state.shape[:-1]:
+            raise ValueError("feasibility valid_mask must have shape [H,B]")
+        valid = valid_mask.to(device=state.device, dtype=state.dtype)
+
+    def masked_mean(value: torch.Tensor) -> torch.Tensor:
+        mask = valid
+        while mask.ndim < value.ndim:
+            mask = mask.unsqueeze(-1)
+        mask = mask.expand_as(value)
+        return (value * mask).sum() / mask.sum().clamp_min(1.0)
+
     low = F.relu(cfg.minimum_base_height_m - state[..., 2]) / 0.05
     gravity = state.new_zeros(state.shape[:-1] + (3,))
     gravity[..., 2] = -1.0
@@ -165,15 +195,13 @@ def _feasibility(states: torch.Tensor, soft_limits: torch.Tensor, cfg: M1JointLo
     q_limits = soft_limits[mask]
     below = F.relu(q_limits[None, None, :, 0] - q[..., mask]) / 0.25
     above = F.relu(q[..., mask] - q_limits[None, None, :, 1]) / 0.25
-    qlim = (below.square() + above.square()).mean()
+    qlim = masked_mean(below.square() + above.square())
     velocity_limits = _joint_velocity_limits(state.device, cfg)
     velocity_violation = F.relu(state[..., 35:57].abs() - velocity_limits) / velocity_limits
     wheel_ids = [M1_JOINTS.index(n) for n in ("FAR_FOOT_JOINT", "FBL_FOOT_JOINT", "RAR_FOOT_JOINT", "RBL_FOOT_JOINT")]
     wheel_speed = F.relu(state[..., 35:57][..., wheel_ids].abs() - cfg.maximum_wheel_rate_rad_s) / cfg.maximum_wheel_rate_rad_s
-    return (
-        low.square().mean() + tilt_cost.square().mean() + qlim
-        + velocity_violation.square().mean() + wheel_speed.square().mean()
-    )
+    return (masked_mean(low.square()) + masked_mean(tilt_cost.square()) + qlim
+            + masked_mean(velocity_violation.square()) + masked_mean(wheel_speed.square()))
 
 
 def _reference_smoothness_terms(
@@ -240,6 +268,18 @@ def _anchor_loss(reference: torch.Tensor, initial_reference: torch.Tensor) -> to
     return ((reference - initial_reference) / scales).square().mean()
 
 
+def _anchor_group_terms(reference: torch.Tensor, initial_reference: torch.Tensor) -> dict[str, torch.Tensor]:
+    if reference.shape != initial_reference.shape or reference.shape[-1] != 31:
+        raise ValueError("initial Prior anchor must align with Future31")
+    return {
+        "anchor_root": ((reference[..., :9] - initial_reference[..., :9])
+                        / reference.new_tensor([0.5] * 3 + [1.0] * 6)).square().mean(),
+        "anchor_leg": ((reference[..., 9:21] - initial_reference[..., 9:21]) / 2.0).square().mean(),
+        "anchor_arm": ((reference[..., 21:27] - initial_reference[..., 21:27]) / 2.0).square().mean(),
+        "anchor_wheel": ((reference[..., 27:31] - initial_reference[..., 27:31]) / 10.0).square().mean(),
+    }
+
+
 def planner_losses(
     states: torch.Tensor,
     actions: torch.Tensor,
@@ -254,37 +294,86 @@ def planner_losses(
     tcp_index: int,
     soft_limits: torch.Tensor,
     cfg: M1JointLossCfg,
+    actor_states: torch.Tensor | None = None,
+    raw_reference_actions: torch.Tensor | None = None,
+    action_diagnostics: dict[str, torch.Tensor] | None = None,
+    direct_valid_mask: torch.Tensor | None = None,
+    actor_valid_mask: torch.Tensor | None = None,
 ) -> dict[str, torch.Tensor]:
-    """Motion Prior objective; task error is independent of Actor trajectory error."""
-    task = _task_planner_terms(states, task_type, velocity_command, fixed_world_target, fk, tcp_index, cfg)
-    task_loss = task["task_l"] + task["task_m"] + task["m_base_drift"]
-    feasibility = _feasibility(states, soft_limits, cfg)
+    """Planner objective with separate direct-WM and Actor task paths."""
+    task = _task_planner_terms(states, task_type, velocity_command, fixed_world_target, fk, tcp_index, cfg, direct_valid_mask)
+    task_direct = task["task_l"] + task["task_m"] + task["m_base_drift"]
+    if actor_states is None:
+        actor_task_terms = {key: states.new_zeros(()) for key in ("task_l", "task_m", "m_base_drift")}
+        task_actor = states.new_zeros(())
+    else:
+        actor_task_terms = _task_planner_terms(
+            actor_states, task_type, velocity_command, fixed_world_target, fk, tcp_index, cfg, actor_valid_mask,
+        )
+        task_actor = actor_task_terms["task_l"] + actor_task_terms["task_m"] + actor_task_terms["m_base_drift"]
+
+    from supermimic.motion_prior.reference import decode_future31
+    reference_states = decode_future31(initial, reference)
+    aligned_reference = reference_states[:, :states.shape[0] - 1]
+    physical = reference_tracking_errors(
+        states[1:].transpose(0, 1), aligned_reference,
+        direct_valid_mask.transpose(0, 1) if direct_valid_mask is not None else None,
+    )
+    dynamics = (
+        0.5 * physical["root_position"]
+        + 0.25 * physical["root_rotation"]
+        + 0.25 * physical["leg_position"]
+        + physical["arm_position"]
+        + 0.5 * physical["wheel_velocity"]
+    )
+    feasibility = _feasibility(states, soft_limits, cfg, direct_valid_mask)
     smooth_terms = _reference_smoothness_terms(initial, reference, cfg)
     smoothness = torch.stack(tuple(smooth_terms.values())).sum()
-    anchor = _anchor_loss(reference, initial_reference)
+    anchor_terms = _anchor_group_terms(reference, initial_reference)
+    anchor = torch.stack(tuple(anchor_terms.values())).mean()
     # This is an explicitly named control-effort surrogate. It is not a torque,
     # electrical-energy or mechanical-power estimate and defaults to disabled.
-    effort_surrogate = actions.square().mean() + 0.25 * torch.diff(actions, dim=0).square().mean()
+    effort_surrogate = actions.square().mean()
+    if actions.shape[0] > 1:
+        effort_surrogate = effort_surrogate + 0.25 * torch.diff(actions, dim=0).square().mean()
     energy = actions.new_zeros(())  # no validated differentiable M1 actuator model is available yet
+    out_of_envelope = (
+        F.relu(raw_reference_actions.abs() - 1.0).square().mean()
+        if raw_reference_actions is not None else actions.new_zeros(())
+    )
     total = (
-        task_loss + cfg.feasibility_weight * feasibility + cfg.smoothness_weight * smoothness
+        cfg.planner_task_weight * task_direct
+        + cfg.planner_actor_task_weight * task_actor
+        + cfg.planner_dynamics_weight * dynamics
+        + cfg.feasibility_weight * feasibility
+        + cfg.out_of_envelope_weight * out_of_envelope
+        + cfg.smoothness_weight * smoothness
         + cfg.anchor_weight * anchor + cfg.energy_weight * energy
         + cfg.control_effort_surrogate_weight * effort_surrogate
     )
     return {
         "total": total,
-        "task": task_loss,
+        "task": task_direct,
+        "task_direct": task_direct,
+        "task_actor": task_actor,
         "task_l": task["task_l"],
         "task_m": task["task_m"],
+        "task_l_actor": actor_task_terms["task_l"],
+        "task_m_actor": actor_task_terms["task_m"],
         "task_progress": task["task_progress_m"],
         "terminal_error": task["terminal_error_m"],
         "base_drift": task["base_drift_m"],
+        "dynamics": dynamics,
+        **{f"dynamics_{key}": value for key, value in physical.items()},
         "energy": energy,
         "control_effort_surrogate": effort_surrogate,
         "feasibility": feasibility,
         "smoothness": smoothness,
         **smooth_terms,
         "anchor": anchor,
+        **anchor_terms,
+        "out_of_envelope": out_of_envelope,
+        **(action_diagnostics or {}),
         "supervised": total.new_zeros(()),
     }
 
@@ -297,11 +386,35 @@ def actor_losses(
     *,
     soft_limits: torch.Tensor,
     cfg: M1JointLossCfg,
+    task_type: torch.Tensor | None = None,
+    velocity_command: torch.Tensor | None = None,
+    fixed_world_target: torch.Tensor | None = None,
+    fk=None,
+    tcp_index: int = 0,
+    reference_actions: torch.Tensor | None = None,
+    initial_state: torch.Tensor | None = None,
+    valid_mask: torch.Tensor | None = None,
 ) -> dict[str, torch.Tensor]:
-    """Actor objective: track fixed Prior reference while retaining safety/control terms."""
+    """Actor objective: Task + grouped reference style + small candidate-action BC."""
     if states.shape != reference_states.shape:
         raise ValueError("Actor state trajectory and fixed reference must align exactly")
-    parts = reference_tracking_errors(states, reference_states)
+    parts = reference_tracking_errors(
+        states, reference_states,
+        valid_mask,
+    )
+    if valid_mask is None:
+        valid = torch.ones(states.shape[:2], dtype=states.dtype, device=states.device)
+    else:
+        if valid_mask.shape != states.shape[:2]:
+            raise ValueError("Actor valid_mask must have shape [H,B]")
+        valid = valid_mask.to(device=states.device, dtype=states.dtype)
+
+    def masked_mean(value: torch.Tensor, mask: torch.Tensor = valid) -> torch.Tensor:
+        expanded = mask
+        while expanded.ndim < value.ndim:
+            expanded = expanded.unsqueeze(-1)
+        expanded = expanded.expand_as(value)
+        return (value * expanded).sum() / expanded.sum().clamp_min(1.0)
     track = (
         cfg.actor_root_position_weight * parts["root_position"]
         + cfg.actor_root_rotation_weight * parts["root_rotation"]
@@ -319,22 +432,45 @@ def actor_losses(
     q = state[..., 7:29]
     mask = _joint_mask(state.device)
     limits = soft_limits[mask]
-    limit = (
+    limit = masked_mean(
         F.relu(limits[:, 0] - q[..., mask]).square()
         + F.relu(q[..., mask] - limits[:, 1]).square()
-    ).mean()
-    stability = low.square().mean() + tilt_cost.square().mean() + limit
+    )
+    stability = masked_mean(low.square()) + masked_mean(tilt_cost.square()) + limit
     action_path = torch.cat((previous_action[None], actions), dim=0)
-    action_rate = torch.diff(action_path, dim=0).square().mean()
+    action_rate = masked_mean(torch.diff(action_path, dim=0).square())
     qd = state[..., 35:57]
-    joint_speed = (qd / _joint_velocity_limits(state.device, cfg)).square().mean()
-    joint_acc = (torch.diff(qd, dim=0) / cfg.control_dt / 80.0).square().mean() if qd.shape[0] > 1 else qd.new_zeros(())
-    saturation = F.relu(actions.abs() - 0.95).square().mean()
+    joint_speed = masked_mean((qd / _joint_velocity_limits(state.device, cfg)).square())
+    if qd.shape[0] > 1:
+        pair_valid = valid[1:] * valid[:-1]
+        joint_acc = masked_mean(
+            (torch.diff(qd, dim=0) / cfg.control_dt / 80.0).square(), pair_valid,
+        )
+    else:
+        joint_acc = qd.new_zeros(())
+    saturation = masked_mean(F.relu(actions.abs() - 0.95).square())
     control = action_rate + 0.1 * joint_speed + 0.01 * joint_acc + 0.1 * saturation
-    total = track + cfg.actor_stability_weight * stability + cfg.actor_control_weight * control
+    bc = masked_mean((actions - reference_actions).square()) if reference_actions is not None else actions.new_zeros(())
+    task_terms: dict[str, torch.Tensor] = {}
+    if task_type is not None:
+        if velocity_command is None or fixed_world_target is None:
+            raise ValueError("Actor task loss requires velocity command and fixed world target")
+        initial_state = states[0] if initial_state is None else initial_state
+        task_states = torch.cat((initial_state.unsqueeze(0), states), dim=0)
+        task_terms = _task_planner_terms(
+            task_states, task_type, velocity_command, fixed_world_target, fk, tcp_index, cfg, valid_mask,
+        )
+        task = task_terms["task_l"] + task_terms["task_m"] + task_terms["m_base_drift"]
+    else:
+        task = actions.new_zeros(())
+    total = (
+        track + cfg.actor_bc_weight * bc + cfg.actor_task_weight * task
+        + cfg.actor_stability_weight * stability + cfg.actor_control_weight * control
+    )
     return {
-        "total": total, "tracking": track, **parts,
+        "total": total, "tracking": track, "bc": bc, "task": task, **parts,
         "stability": stability, "control": control,
         "action_rate": action_rate, "joint_speed": joint_speed,
         "joint_acceleration": joint_acc, "action_saturation": saturation,
+        **{f"{key}_task": value for key, value in task_terms.items() if value.ndim == 0},
     }

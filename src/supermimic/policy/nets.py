@@ -155,8 +155,8 @@ class Policy(nn.Module):
 
 
 @dataclass(frozen=True)
-class M1PriorActorCfg:
-    """Versioned Actor contract for the M1 CVAE joint-training experiment."""
+class LegacyM1PriorActorCfg:
+    """Read-only schema for evaluating pre-Action22 M1 v2/v3 checkpoints."""
 
     history: int = 10
     num_joints: int = 22
@@ -166,18 +166,18 @@ class M1PriorActorCfg:
     version: str = "m1_prior_conditioned_actor_v1"
 
 
-class M1PriorConditionedActor(nn.Module):
-    """M1 mixed-action Actor conditioned on the complete future reference.
+class LegacyM1FutureConditionedActor(nn.Module):
+    """Legacy full-Future31 Actor, retained only for explicit old-checkpoint eval.
 
     This is a separate schema from ``Policy``; legacy policy state dictionaries
     and their forward signature remain unchanged. The reference path is
     intentionally differentiable with respect to Future31 during Planner BPTT.
     """
 
-    def __init__(self, cfg: M1PriorActorCfg = M1PriorActorCfg()):
+    def __init__(self, cfg: LegacyM1PriorActorCfg = LegacyM1PriorActorCfg()):
         super().__init__()
         if cfg.num_joints != 22 or cfg.reference_horizon != 10:
-            raise ValueError("M1PriorConditionedActor v1 requires 22 actions and a 10-frame reference")
+            raise ValueError("legacy M1 Actor requires 22 actions and a 10-frame reference")
         self.cfg = cfg
         obs_dim = cfg.history * (3 * cfg.num_joints + 6)
         self.reference_encoder = nn.Sequential(
@@ -239,6 +239,88 @@ class M1PriorConditionedActor(nn.Module):
             phase_code,
         ), dim=-1)
         return torch.tanh(self.decoder(inputs))
+
+
+@dataclass(frozen=True)
+class M1ActionReferenceActorCfg:
+    """Schema for the M1 Action22-reference Actor used by checkpoint format v4."""
+
+    history: int = 5
+    num_joints: int = 22
+    hidden: tuple[int, ...] = (512, 256)
+    residual_scale: float = 0.5
+    version: str = "m1_action_reference_actor_v1"
+
+
+class M1ActionReferenceActor(nn.Module):
+    """Feedback controller conditioned on one current normalized Action22.
+
+    The zero-initialized residual makes the initial policy copy its candidate
+    reference (within the smooth tanh boundary). The network never receives a
+    future sequence, phase, privileged State57, or simulator contact data.
+    """
+
+    def __init__(self, cfg: M1ActionReferenceActorCfg = M1ActionReferenceActorCfg()):
+        super().__init__()
+        if cfg.num_joints != 22 or cfg.history < 1 or cfg.residual_scale <= 0:
+            raise ValueError("M1 Action22 Actor requires 22 actions, positive history and residual scale")
+        if cfg.version != "m1_action_reference_actor_v1":
+            raise ValueError(f"unsupported M1 Actor schema {cfg.version!r}")
+        self.cfg = cfg
+        self.input_contract = {
+            "proprio_history": (cfg.history, "term_major", 72),
+            "goal8": (8,),
+            "current_ref_action22": (22,),
+            "output": (22,),
+        }
+        obs_dim = cfg.history * 72
+        widths = (obs_dim + 8 + 22, *cfg.hidden)
+        layers: list[nn.Module] = []
+        for din, dout in zip(widths[:-1], widths[1:]):
+            layers.extend((nn.Linear(din, dout), nn.LayerNorm(dout), nn.SiLU()))
+        residual = nn.Linear(widths[-1], 22)
+        nn.init.zeros_(residual.weight)
+        nn.init.zeros_(residual.bias)
+        layers.append(residual)
+        self.residual = nn.Sequential(*layers)
+        # Term-major observation: q, qd, body angular velocity, gravity, last action.
+        self.register_buffer("obs_scale", torch.cat((
+            torch.ones(cfg.history * 22),
+            torch.full((cfg.history * 22,), 1.0 / 5.0),
+            torch.full((cfg.history * 3,), 1.0 / 2.0),
+            torch.ones(cfg.history * 3),
+            torch.ones(cfg.history * 22),
+        )))
+        self.register_buffer("goal_scale", torch.tensor((1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 1.0, 1.0)))
+
+    def forward(
+        self,
+        proprio_history: torch.Tensor,
+        goal8: torch.Tensor,
+        current_ref_action22: torch.Tensor,
+    ) -> torch.Tensor:
+        batch = proprio_history.shape[0] if proprio_history.ndim == 2 else -1
+        expected = (self.cfg.history * 72, 8, 22)
+        values = (proprio_history, goal8, current_ref_action22)
+        labels = ("proprio_history", "goal8", "current_ref_action22")
+        for value, label, width in zip(values, labels, expected):
+            if value.ndim != 2 or value.shape != (batch, width):
+                raise ValueError(f"{label} must have shape [B,{width}]")
+            if value.device != proprio_history.device or value.dtype != proprio_history.dtype:
+                raise ValueError("all M1 Actor inputs must share device and dtype")
+            if not torch.isfinite(value).all():
+                raise ValueError(f"{label} contains non-finite values")
+        if current_ref_action22.detach().abs().amax() > 1.0 + 1.0e-6:
+            raise ValueError("current_ref_action22 must be normalized to [-1,1]")
+        inputs = torch.cat((
+            proprio_history * self.obs_scale,
+            goal8 * self.goal_scale,
+            current_ref_action22,
+        ), dim=-1)
+        reference = current_ref_action22.clamp(-0.999, 0.999)
+        logit_reference = torch.atanh(reference)
+        residual = self.residual(inputs) * float(self.cfg.residual_scale)
+        return torch.tanh(logit_reference + residual)
 
 
 class Critic(nn.Module):

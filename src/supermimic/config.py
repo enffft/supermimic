@@ -27,6 +27,10 @@ class DataCfg:
 class EnvCfg:
     robot_name: str = "g1"  # g1 | go2 | m1_piper
     task_name: str = "motion_tracking"  # motion_tracking | velocity_command | chase_ball | world_point_reach
+    m1_pose_profile: Literal[
+        "legacy_manipulation", "dataset_carry", "dataset_v3_3_l_high_carry",
+    ] | None = None
+    m1_action_contract: Literal["v2", "v3"] | None = None
     velocity_policy_encoding: Literal["direct", "encoded"] = "direct"  # encoded is for legacy Go2 checkpoints
     direct_action_output: Literal["identity", "tanh"] = "tanh"  # set identity only to resume/evaluate legacy direct checkpoints
     velocity_wm_batch_size: int = 1024
@@ -130,9 +134,12 @@ class EnvCfg:
     m1_leg_action_magnitude_weight: float = -0.002
     m1_joint_task_type: str = "balanced"  # balanced | L | M; LM is research-only in v1
     m1_joint_l_task_fraction: float = 0.5
-    m1_joint_vx_range: tuple[float, float] = (0.15, 0.50)
-    m1_joint_vy_range: tuple[float, float] = (-0.20, 0.20)
-    m1_joint_wz_range: tuple[float, float] = (-0.40, 0.40)
+    # V3.3 L frame-wise effective Goal P1/P99, rounded outward slightly.
+    m1_joint_vx_range: tuple[float, float] = (-0.09, 0.145)
+    m1_joint_vx_stop_fraction: float = 0.15
+    m1_joint_vx_reverse_fraction: float = 0.35
+    m1_joint_vy_range: tuple[float, float] = (-0.05, 0.055)
+    m1_joint_wz_range: tuple[float, float] = (-0.17, 0.18)
     m1_joint_target_x_range: tuple[float, float] = (0.12, 0.36)
     m1_joint_target_y_range: tuple[float, float] = (-0.20, 0.20)
     m1_joint_target_z_range: tuple[float, float] = (-0.15, 0.15)
@@ -178,45 +185,41 @@ class ScheduleCfg:
 
 @dataclass
 class M1JointTrainingCfg:
-    """Opt-in, checkpoint-versioned L/M CVAE prior and tracking-Actor training."""
+    """Staged M1 Action22-reference training and checkpoint contract v4."""
 
     enabled: bool = False
-    prior_checkpoint: Path = Path("/home/yifeiy/AMP-LOCO-M1/logs/motion_prior/cvae_v1_strict_fcl_2272/checkpoint_best_val.pt")
-    expected_prior_sha256: str | None = "1624741585c9a5dac7301bfb500ebf920a2c4e87f101ec1b60c945f86367106d"
+    prior_checkpoint: Path = Path("/home/yifeiy/AMP-LOCO-M1/logs/motion_prior/cvae_v1_v3_3_mixed_3272_goal_l_holdout_20261103/checkpoint_best_val.pt")
+    expected_prior_sha256: str | None = "05a858520790d474f6c1c3dd1f791507c3da91f68899ca88f00348ea4bbff10c"
     resume: Path | None = None  # separate format from old M1/G1/Go2 checkpoints
     state_source: Literal["privileged", "estimated"] = "privileged"
     prior_mode: Literal["prior_mean", "prior_sample"] = "prior_mean"
+    prior_input_compatibility: Literal["legacy_v1", "train_constant_compat_v1"] = "legacy_v1"
     prior_horizon: int = 10
     actor_horizon: int = 10
     replanning_cadence: int = 10
     wm_updates_per_event: int = 1
-    prior_updates_per_event: int = 1
+    # Prior stays frozen until matching held-out MuJoCo evidence is supplied.
+    prior_updates_per_event: int = 0
     actor_updates_per_event: int = 1
-    training_mode: Literal["actor_only", "auto_joint", "controlled_joint_experiment"] = "auto_joint"
-    wm_warmup_exploration_env_fraction: float = 0.0
-    wm_warmup_exploration_std: float = 0.0
+    training_mode: Literal["staged_action22_v1"] = "staged_action22_v1"
+    prior_gate_evidence_path: Path | None = None
+    exploration_enabled: bool = True
+    exploration_env_fraction: float = 0.25
+    exploration_leg_std: float = 0.02
+    exploration_arm_std: float = 0.015
+    exploration_wheel_std: float = 0.05
+    exploration_decay_end_fraction: float = 0.75
     prior_lr: float = 1.0e-5
     actor_lr: float = 2.0e-4
     batch_size: int = 32
     micro_batch_size: int = 8
-    actor_pretrain_updates: int = 0
-    prior_warmup_updates: int = 0
-    freeze_prior: bool = True  # hold CVAE fixed until the measured Actor-readiness gate passes
+    actor_pretrain_updates: int = 384
+    freeze_prior: bool = True
     wm_readiness_min_events: int = 200
     # Optional limits are deliberately unset until task-specific held-out WM
     # calibration exists. Finite replay losses alone are not a quality claim.
     wm_readiness_max_nse_1: float | None = None
     wm_readiness_max_nse_horizon: float | None = None
-    # The controlled research mode is intentionally distinct from auto_joint:
-    # it has explicit minimum WM/Actor warmups and real-state safety checks,
-    # while still logging that the strict held-out quality gate was not met.
-    controlled_joint_min_wm_events: int = 200
-    controlled_joint_actor_pretrain_updates: int = 384
-    controlled_joint_min_real_samples: int = 100
-    controlled_joint_min_survival: float = 0.90
-    controlled_joint_min_base_height_m: float = 0.22
-    controlled_joint_max_base_tilt_rad: float = 0.90
-    controlled_joint_max_action_saturation: float = 0.20
     grad_clip_norm: float = 1.0
     readiness_window_steps: int = 500
     readiness_min_samples: int = 100

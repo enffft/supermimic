@@ -9,9 +9,10 @@ from pathlib import Path
 import numpy as np
 import torch
 
-from supermimic.motion_prior.cvae import FEATURE_VERSION, M1MotionPrior
+from supermimic.motion_prior.cvae import FEATURE_VERSION, PRIOR_INPUT_COMPATIBILITY, M1MotionPrior
 
-EXPECTED_MOTION_PRIOR_SHA256 = "1624741585c9a5dac7301bfb500ebf920a2c4e87f101ec1b60c945f86367106d"
+EXPECTED_MOTION_PRIOR_SHA256 = "05a858520790d474f6c1c3dd1f791507c3da91f68899ca88f00348ea4bbff10c"
+LEGACY_MOTION_PRIOR_SHA256 = "1624741585c9a5dac7301bfb500ebf920a2c4e87f101ec1b60c945f86367106d"
 
 
 def sha256_file(path: str | Path) -> str:
@@ -32,7 +33,8 @@ def _normalization_hash(normalization: dict) -> str:
 
 
 def load_m1_motion_prior(path: str | Path, *, device: str | torch.device = "cpu",
-                         expected_sha256: str | None = None) -> M1MotionPrior:
+                         expected_sha256: str | None = None,
+                         input_compatibility: str = "legacy_v1") -> M1MotionPrior:
     """Load AMP CVAE weights only after schema, metadata and normalization checks.
 
     ``expected_sha256`` can pin a known artifact. Passing ``None`` still checks
@@ -44,6 +46,8 @@ def load_m1_motion_prior(path: str | Path, *, device: str | torch.device = "cpu"
     actual_sha = sha256_file(path)
     if expected_sha256 is not None and actual_sha != expected_sha256:
         raise ValueError(f"AMP M1 CVAE SHA-256 mismatch: expected {expected_sha256}, got {actual_sha}")
+    if input_compatibility not in PRIOR_INPUT_COMPATIBILITY:
+        raise ValueError(f"input_compatibility must be one of {PRIOR_INPUT_COMPATIBILITY}")
     ckpt = torch.load(path, map_location="cpu", weights_only=False)
     required = {"model", "model_config", "normalization", "metadata", "step"}
     missing = required - set(ckpt)
@@ -74,6 +78,7 @@ def load_m1_motion_prior(path: str | Path, *, device: str | torch.device = "cpu"
     prior = M1MotionPrior(
         normalization["x_mean"], normalization["x_std"],
         normalization["y_mean"], normalization["y_std"], **model_cfg,
+        input_compatibility=input_compatibility,
     )
     prior.model.load_state_dict(ckpt["model"], strict=True)
     prior.to(device)
@@ -81,7 +86,14 @@ def load_m1_motion_prior(path: str | Path, *, device: str | torch.device = "cpu"
     prior.source = {
         "path": str(path.resolve()), "sha256": actual_sha,
         "step": int(ckpt["step"]), "feature_version": FEATURE_VERSION,
+        "condition_contract": str(meta["condition_contract"]),
+        "model_config": dict(model_cfg),
         "dataset_hash": str(meta["dataset_hash"]), "split_hash": str(meta["split_hash"]),
         "normalization_hash": str(recorded_norm_hash), "target_contract": meta["target_contract"],
+        "assurance_mode": meta.get("assurance_mode"),
+        "strict_fcl_only": meta.get("strict_fcl_only"),
+        "input_compatibility": input_compatibility,
+        "projected_condition_indices": ("q6/qd6 all four history frames"
+            if input_compatibility == "train_constant_compat_v1" else ()),
     }
     return prior

@@ -355,7 +355,7 @@ def test_immediate_failure_is_costly_for_far_m_reach_and_large_l_velocity_error(
         valid_mask=torch.zeros(horizon, 1), safety_mask=first_state_safety,
         survival_probability=fail_now,
     )
-    assert l["task"] == 0  # hard post-termination task mask stays explicit
+    assert l["task"] > 0  # absorbing task cost survives the hard post-termination mask
     assert l["failure_loss"] == 1 and l["total"] >= 1
     assert all(torch.isfinite(v).all() for v in l.values() if isinstance(v, torch.Tensor))
 
@@ -370,7 +370,7 @@ def test_immediate_failure_is_costly_for_far_m_reach_and_large_l_velocity_error(
         valid_mask=torch.zeros(horizon, 1), safety_mask=first_state_safety,
         survival_probability=fail_now,
     )
-    assert m["task"] == 0
+    assert m["task"] > 0
     assert m["failure_loss"] == 1 and m["total"] >= 1
 
 
@@ -459,7 +459,16 @@ def test_fixed_balanced_env_slots_are_exact_and_survive_episode_resets():
 
 
 def test_balanced_checkpoint_can_be_evaluated_for_either_fixed_task():
-    from scripts.evaluate_m1_prior_joint import _resolve_saved_task_type
+    import importlib.util
+    from pathlib import Path
+
+    spec = importlib.util.spec_from_file_location(
+        "evaluate_m1_prior_joint", Path(__file__).resolve().parents[1] / "scripts/evaluate_m1_prior_joint.py",
+    )
+    module = importlib.util.module_from_spec(spec)
+    assert spec.loader is not None
+    spec.loader.exec_module(module)
+    _resolve_saved_task_type = module._resolve_saved_task_type
 
     checkpoint = {"task_sampler_state": {"task_type": "balanced"}}
     assert _resolve_saved_task_type(checkpoint, "L") == "L"

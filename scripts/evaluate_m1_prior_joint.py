@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 from pathlib import Path
 
 import torch
@@ -10,6 +11,7 @@ import tyro
 
 from supermimic.envs import SuperMimicEnvCfgArgs, make_env
 from supermimic.envs.state_io import StateIO
+from supermimic.envs.sim_context import SimContext
 from supermimic.kinematics.rotations import quat_apply_inverse, quat_error_magnitude
 from supermimic.motion_prior import load_m1_motion_prior
 from supermimic.motion_prior.features import task_goal8
@@ -69,6 +71,22 @@ def _target_offset_in_saved_range(offset, command_state):
     )
 
 
+def _blend_actor_residual(reference: torch.Tensor, actor_action: torch.Tensor, alpha: float) -> torch.Tensor:
+    """Interpolate from exact Prior Direct (0) to the saved Actor (1)."""
+    if not 0.0 <= float(alpha) <= 1.0:
+        raise ValueError("actor_residual_alpha must lie in [0,1]")
+    if reference.shape != actor_action.shape:
+        raise ValueError("Actor and Action22 reference shapes must match")
+    return (reference + float(alpha) * (actor_action - reference)).clamp(-1.0, 1.0)
+
+
+def _tensor_sha256(*values: torch.Tensor) -> str:
+    digest = hashlib.sha256()
+    for value in values:
+        digest.update(value.detach().to(device="cpu").contiguous().numpy().tobytes())
+    return digest.hexdigest()
+
+
 def _resolve_saved_task_type(checkpoint: dict, requested: str | None = None) -> str:
     """Select L or M from a fixed or balanced checkpoint without weakening its contract."""
     if requested is not None and requested not in ("L", "M"):
@@ -102,6 +120,7 @@ def evaluate(
     seed: int = 20261102,
     device: str = "cuda:0",
     controller: str = "actor",
+    actor_residual_alpha: float = 1.0,
     out: Path | None = None,
 ) -> dict:
     if steps <= 0:
@@ -110,17 +129,28 @@ def evaluate(
         raise ValueError("prior_variant must be 'trained' or 'initial'")
     if controller not in ("actor", "prior_direct"):
         raise ValueError("controller must be 'actor' or 'prior_direct'")
+    if not 0.0 <= float(actor_residual_alpha) <= 1.0:
+        raise ValueError("actor_residual_alpha must lie in [0,1]")
 
     ckpt = torch.load(checkpoint, map_location="cpu", weights_only=False)
     checkpoint_format = ckpt.get("format")
     is_action22_v4 = checkpoint_format == "supermimic_m1_action22_reference_v1"
+    is_action22_v5 = checkpoint_format == "supermimic_m1_action22_reference_v2"
+    is_action22_ref = is_action22_v4 or is_action22_v5
     is_legacy = checkpoint_format in (
         "supermimic_m1_prior_actor_joint_v2", "supermimic_m1_prior_actor_joint_v3",
     )
-    if not (is_action22_v4 or is_legacy):
+    if not (is_action22_ref or is_legacy):
         raise ValueError("checkpoint is not a supported M1 Prior/Actor joint checkpoint")
-    if is_action22_v4 and ckpt.get("reference_adapter_schema") != "future31_to_interleaved_action22_v1":
-        raise ValueError("v4 checkpoint has an unsupported Future31 to Action22 adapter schema")
+    if is_action22_ref and ckpt.get("reference_adapter_schema") != "future31_to_interleaved_action22_v1":
+        raise ValueError("Action22 checkpoint has an unsupported Future31 to Action22 adapter schema")
+    if is_action22_v4 and ckpt.get("actor_schema", {}).get("version") != "m1_action_reference_actor_v1":
+        raise ValueError("V4 checkpoints are read-only with the historical Actor V1 inference contract")
+    if is_action22_v5 and (
+        ckpt.get("format_version") != 5
+        or ckpt.get("actor_schema", {}).get("version") != "m1_action_reference_actor_v2_bounded_residual"
+    ):
+        raise ValueError("V5 checkpoint Actor residual schema is incomplete or unsupported")
     spec = m1_robot_spec_from_checkpoint(ckpt)
     reset_contract = ckpt.get("reset_contract")
     if reset_contract is not None:
@@ -139,7 +169,7 @@ def evaluate(
         actor_cfg["hidden"] = tuple(actor_cfg["hidden"])
     actor = (
         M1ActionReferenceActor(M1ActionReferenceActorCfg(**actor_cfg)).to(device)
-        if is_action22_v4 else
+        if is_action22_ref else
         LegacyM1FutureConditionedActor(LegacyM1PriorActorCfg(**actor_cfg)).to(device)
     )
     actor.load_state_dict(ckpt["actor"], strict=True)
@@ -197,6 +227,9 @@ def evaluate(
         obs, _ = env.reset(seed=seed)
         command = env.command_manager.get_term("m1_prior_joint")
         state_io = StateIO(env)
+        sim_context = SimContext(
+            env, spec.foot_geom_regex, com_body_name=spec.anchor_body_name, entity_name="robot",
+        )
         robot = env.scene["robot"]
         state = state_io.read()
         task_codes = torch.zeros(num_envs, dtype=torch.long, device=device)
@@ -212,6 +245,10 @@ def evaluate(
             tcp = robot.data.body_link_pos_w[:, tcp_id].mean(dim=1) - env.scene.env_origins
             target = tcp + M_OFFSETS.to(device)[category]
         command.task_type[:] = task_codes
+        initial_xi = sim_context.read()
+        initial_condition_sha256 = _tensor_sha256(state, initial_xi, task_codes, velocity, target)
+        first_action_sha256 = None
+        first_reference_action_sha256 = None
 
         history = state[:, None].expand(-1, 4, -1).clone()
         reference = torch.zeros(num_envs, 10, 31, device=device, dtype=state.dtype)
@@ -230,6 +267,9 @@ def evaluate(
         ], device=device)
         arm_ids = torch.tensor([M1_JOINTS.index(n) for n in M1_AMP_JOINTS[12:]], device=device)
         leg_ids = torch.tensor([M1_JOINTS.index(n) for n in M1_AMP_JOINTS[:12]], device=device)
+        wheel_action_ids = wheel_ids
+        arm_action_ids = arm_ids
+        leg_action_ids = leg_ids
         scalar_keys = (
             "samples", "xy_sq_sum", "xy_count", "vx_sq_sum", "vy_sq_sum", "yaw_sq_sum", "yaw_count",
             "ee_distance_sum", "ee_progress_sum", "base_displacement_sum",
@@ -244,6 +284,9 @@ def evaluate(
             "prior_reference_first_dx_sum", "prior_reference_first_wrong_direction_count",
             "prior_wheel_wrong_direction_count", "prior_root_wheel_disagreement_count",
             "prior_stop_abs_wheel_rate_sum",
+        "actor_residual_leg_abs_sum", "actor_residual_leg_sq_sum", "actor_residual_leg_count",
+        "actor_residual_arm_abs_sum", "actor_residual_arm_sq_sum", "actor_residual_arm_count",
+        "actor_residual_wheel_abs_sum", "actor_residual_wheel_sq_sum", "actor_residual_wheel_count",
         )
         slots = []
         for _ in names:
@@ -272,7 +315,7 @@ def evaluate(
                 candidate_reference = prior(history, goal, mode="prior_mean")
                 candidate_actions = (
                     future31_to_m1_action22(candidate_reference, robot_spec=spec)
-                    if is_action22_v4 else None
+                    if is_action22_ref else None
                 )
                 candidate_state = decode_future31(state, candidate_reference)
                 plan_dx_first_heading = quat_apply_inverse(
@@ -284,7 +327,7 @@ def evaluate(
                 plan_wheel_mean = candidate_state[..., 35:57].index_select(-1, wheel_ids).mean(1)
                 plan_wheel_scalar = plan_wheel_mean.mean(-1)
                 reference = torch.where(due[:, None, None], candidate_reference, reference)
-                if is_action22_v4:
+                if is_action22_ref:
                     reference_actions = torch.where(due[:, None, None], candidate_actions, reference_actions)
                 if step == 0:
                     ref_state = candidate_state
@@ -294,13 +337,36 @@ def evaluate(
                 row_ids = torch.arange(num_envs, device=device)
                 current_reference_action = reference_actions[row_ids, phase]
                 if controller == "prior_direct":
-                    if not is_action22_v4:
-                        raise ValueError("prior_direct evaluation requires an Action22-reference v4 checkpoint")
+                    if not is_action22_ref:
+                        raise ValueError("prior_direct evaluation requires an Action22-reference V4/V5 checkpoint")
                     action = current_reference_action
-                elif is_action22_v4:
-                    action = actor(obs["policy"], goal, current_reference_action)
+                    metric_reference_action = current_reference_action
+                elif is_action22_ref:
+                    actor_action = actor(obs["policy"], goal, current_reference_action)
+                    action = _blend_actor_residual(current_reference_action, actor_action, actor_residual_alpha)
+                    metric_reference_action = current_reference_action
                 else:
-                    action = actor(obs["policy"], goal, reference, phase.to(dtype=state.dtype))
+                    actor_action = actor(obs["policy"], goal, reference, phase.to(dtype=state.dtype))
+                    if actor_residual_alpha != 1.0:
+                        raise ValueError("residual-alpha evaluation is supported only for Action22-reference V4/V5 checkpoints")
+                    action = actor_action
+                    metric_reference_action = torch.zeros_like(actor_action)
+                if controller == "actor":
+                    effective_residual = action - metric_reference_action
+                    for group_name, ids in (
+                        ("leg", leg_action_ids), ("arm", arm_action_ids), ("wheel", wheel_action_ids),
+                    ):
+                        for group_index, row in enumerate(slots):
+                            group_action = effective_residual[category == group_index][:, ids]
+                            for suffix, statistic in (
+                                ("abs_sum", group_action.abs().sum()),
+                                ("sq_sum", group_action.square().sum()),
+                                ("count", group_action.new_tensor(group_action.numel())),
+                            ):
+                                row[f"actor_residual_{group_name}_{suffix}"] += statistic
+                if step == 0:
+                    first_action_sha256 = _tensor_sha256(action)
+                    first_reference_action_sha256 = _tensor_sha256(metric_reference_action)
                 next_obs, _, terminated, truncated, _ = env.step(action)
                 next_state = state_io.read()
                 done = terminated | truncated
@@ -442,7 +508,22 @@ def evaluate(
             "checkpoint": str(checkpoint), "iteration": int(ckpt["iteration"]),
             "task_type": task_type, "num_envs": num_envs, "steps": steps,
             "seed": seed, "domain_randomization": False,
+            "initial_condition_sha256": initial_condition_sha256,
+            "initial_root_height_mean_m": float(state[:, 2].mean()),
+            "initial_xi_sha256": _tensor_sha256(initial_xi),
+            "first_action_sha256": first_action_sha256,
+            "first_reference_action_sha256": first_reference_action_sha256,
             "controller": controller,
+            "actor_residual_alpha": float(actor_residual_alpha if controller == "actor" else 0.0),
+            "evaluation_contract": {
+                "task_type": task_type,
+                "controller": controller,
+                "actor_residual_alpha": float(actor_residual_alpha if controller == "actor" else 0.0),
+                "seed": int(seed), "num_envs": int(num_envs), "steps": int(steps),
+                "domain_randomization": False, "obs_noise": False, "action_noise": 0.0,
+                "initial_condition_sha256": initial_condition_sha256,
+                "fixed_group_names": sorted(names),
+            },
             "prior_weights_variant": prior_variant,
             "prior_swap_diagnostic_uses_same_actor": prior_variant == "initial",
             "prior_source": source,
@@ -476,6 +557,15 @@ def evaluate(
                 "base_height_mean_m": float(row["base_height_sum"] / n),
                 "base_tilt_mean_rad": float(row["base_tilt_sum"] / n),
             }
+            residual_row = row
+            for group_name in ("leg", "arm", "wheel"):
+                count = residual_row[f"actor_residual_{group_name}_count"].clamp_min(1)
+                metrics[f"actor_residual_{group_name}_mean_abs_normalized"] = float(
+                    residual_row[f"actor_residual_{group_name}_abs_sum"] / count
+                )
+                metrics[f"actor_residual_{group_name}_rms_normalized"] = float(
+                    (residual_row[f"actor_residual_{group_name}_sq_sum"] / count).sqrt()
+                )
             if task_type == "L":
                 command = L_COMMANDS[i]
                 n_plans = row["prior_reference_count"].clamp_min(1)
@@ -553,11 +643,13 @@ def main(
     seed: int = 20261102,
     device: str = "cuda:0",
     controller: str = "actor",
+    actor_residual_alpha: float = 1.0,
     out: Path | None = None,
 ) -> None:
     evaluate(checkpoint, task_type=task_type, prior_variant=prior_variant,
              num_envs=num_envs, steps=steps,
-             seed=seed, device=device, controller=controller, out=out)
+             seed=seed, device=device, controller=controller,
+             actor_residual_alpha=actor_residual_alpha, out=out)
 
 
 if __name__ == "__main__":

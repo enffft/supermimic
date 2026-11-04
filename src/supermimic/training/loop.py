@@ -404,7 +404,12 @@ class Trainer:
         self.recorder.real_transition_callback = self.wm.update_real_transition
         if is_m1_prior_joint:
             self.policy = M1ActionReferenceActor(
-                M1ActionReferenceActorCfg(history=cfg.env.history_length),
+                M1ActionReferenceActorCfg(
+                    history=cfg.env.history_length,
+                    leg_delta_max_normalized=cfg.m1_joint_training.actor_leg_delta_max_normalized,
+                    arm_delta_max_normalized=cfg.m1_joint_training.actor_arm_delta_max_normalized,
+                    wheel_delta_max_normalized=cfg.m1_joint_training.actor_wheel_delta_max_normalized,
+                ),
             ).to(self.device)
             self.critic = None  # M1 v1 uses explicit critic-free differentiable task losses
         else:
@@ -807,6 +812,16 @@ class Trainer:
             finally:
                 if tmp_path.exists():
                     tmp_path.unlink()
+            if (name == "ckpt_latest.pt" and self.m1_joint_trainer.actor_optimizer_steps == 0):
+                initial_path = self.log_dir / "ckpt_initial_actor.pt"
+                if not initial_path.exists():
+                    initial_tmp = initial_path.with_name(initial_path.name + ".tmp")
+                    try:
+                        torch.save(state, initial_tmp)
+                        os.replace(initial_tmp, initial_path)
+                    finally:
+                        if initial_tmp.exists():
+                            initial_tmp.unlink()
             return
         state = {
             "iteration": self.iteration,
@@ -1242,6 +1257,12 @@ class Trainer:
                 env_fraction=exploration_cfg.exploration_env_fraction,
                 decay_end_fraction=exploration_cfg.exploration_decay_end_fraction,
             )
+            initial_actor_path = self.log_dir / "ckpt_initial_actor.pt"
+            if (
+                self.iteration == 0 and self.m1_joint_trainer.actor_optimizer_steps == 0
+                and not initial_actor_path.exists()
+            ):
+                self.save("ckpt_initial_actor.pt")
         t_start = time.time()
         checkpoint_interval_seconds = max(0.0, float(sch.checkpoint_interval_minutes) * 60.0)
         next_wall_checkpoint = checkpoint_interval_seconds
@@ -1345,6 +1366,7 @@ class Trainer:
                     executed_action = self.buffer.a_exec[m1_env_ids, action_buffer_ptr]
                     real_metrics = self.m1_joint_trainer.record_real_step(
                         metric_next_state, action, phase_used, term,
+                        truncated=tout,
                         executed_action=executed_action,
                     )
                     self._m1_joint_real_step_metrics = dict(real_metrics)
@@ -1611,7 +1633,10 @@ class Trainer:
                         self.wm_trainer.set_lr(wm_lr)
                         self.m1_joint_trainer.set_lr(prior_lr=prior_lr, actor_lr=actor_scheduled_lr)
                         t0 = time.perf_counter()
-                        joint_metrics = self.m1_joint_trainer.update_event(policy_allowed=policy_enabled)
+                        joint_metrics = self.m1_joint_trainer.update_event(
+                            policy_allowed=policy_enabled,
+                            config_snapshot=self._run_config_snapshot(),
+                        )
                         update_time = time.perf_counter() - t0
                         timers["wm"] += update_time
                         timers["policy"] += update_time if policy_enabled else 0.0

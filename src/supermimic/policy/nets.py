@@ -243,13 +243,17 @@ class LegacyM1FutureConditionedActor(nn.Module):
 
 @dataclass(frozen=True)
 class M1ActionReferenceActorCfg:
-    """Schema for the M1 Action22-reference Actor used by checkpoint format v4."""
+    """Versioned Action22 residual schema for the M1 reference Actor."""
 
     history: int = 5
     num_joints: int = 22
     hidden: tuple[int, ...] = (512, 256)
+    # Kept only to parse historical read-only V4 Actor schemas.
     residual_scale: float = 0.5
-    version: str = "m1_action_reference_actor_v1"
+    leg_delta_max_normalized: float = 0.05
+    arm_delta_max_normalized: float = 0.05
+    wheel_delta_max_normalized: float = 0.10
+    version: str = "m1_action_reference_actor_v2_bounded_residual"
 
 
 class M1ActionReferenceActor(nn.Module):
@@ -262,10 +266,16 @@ class M1ActionReferenceActor(nn.Module):
 
     def __init__(self, cfg: M1ActionReferenceActorCfg = M1ActionReferenceActorCfg()):
         super().__init__()
-        if cfg.num_joints != 22 or cfg.history < 1 or cfg.residual_scale <= 0:
+        if cfg.num_joints != 22 or cfg.history < 1:
             raise ValueError("M1 Action22 Actor requires 22 actions, positive history and residual scale")
-        if cfg.version != "m1_action_reference_actor_v1":
+        if cfg.version not in ("m1_action_reference_actor_v1", "m1_action_reference_actor_v2_bounded_residual"):
             raise ValueError(f"unsupported M1 Actor schema {cfg.version!r}")
+        if cfg.version == "m1_action_reference_actor_v1" and cfg.residual_scale <= 0:
+            raise ValueError("legacy M1 Actor residual_scale must be positive")
+        if cfg.version == "m1_action_reference_actor_v2_bounded_residual":
+            bounds = (cfg.leg_delta_max_normalized, cfg.arm_delta_max_normalized, cfg.wheel_delta_max_normalized)
+            if any(not 0.0 < float(value) <= 2.0 for value in bounds):
+                raise ValueError("bounded Action22 residual limits must lie in (0,2]")
         self.cfg = cfg
         self.input_contract = {
             "proprio_history": (cfg.history, "term_major", 72),
@@ -283,6 +293,17 @@ class M1ActionReferenceActor(nn.Module):
         nn.init.zeros_(residual.bias)
         layers.append(residual)
         self.residual = nn.Sequential(*layers)
+        from supermimic.robots.spec import M1_JOINTS
+        if cfg.version == "m1_action_reference_actor_v2_bounded_residual":
+            limits = []
+            for name in M1_JOINTS:
+                if name.endswith("FOOT_JOINT"):
+                    limits.append(float(cfg.wheel_delta_max_normalized))
+                elif name.startswith("piper_x_joint"):
+                    limits.append(float(cfg.arm_delta_max_normalized))
+                else:
+                    limits.append(float(cfg.leg_delta_max_normalized))
+            self.register_buffer("action_delta_limit", torch.tensor(limits, dtype=torch.float32))
         # Term-major observation: q, qd, body angular velocity, gravity, last action.
         self.register_buffer("obs_scale", torch.cat((
             torch.ones(cfg.history * 22),
@@ -317,10 +338,13 @@ class M1ActionReferenceActor(nn.Module):
             goal8 * self.goal_scale,
             current_ref_action22,
         ), dim=-1)
-        reference = current_ref_action22.clamp(-0.999, 0.999)
-        logit_reference = torch.atanh(reference)
-        residual = self.residual(inputs) * float(self.cfg.residual_scale)
-        return torch.tanh(logit_reference + residual)
+        raw_residual = self.residual(inputs)
+        if self.cfg.version == "m1_action_reference_actor_v1":
+            reference = current_ref_action22.clamp(-0.999, 0.999)
+            logit_reference = torch.atanh(reference)
+            return torch.tanh(logit_reference + raw_residual * float(self.cfg.residual_scale))
+        residual = torch.tanh(raw_residual) * self.action_delta_limit.to(raw_residual)
+        return (current_ref_action22 + residual).clamp(-1.0, 1.0)
 
 
 class Critic(nn.Module):

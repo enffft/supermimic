@@ -51,12 +51,84 @@ def module_sha256(module: torch.nn.Module) -> str:
     return digest.hexdigest()
 
 
-class M1AlternatingTrainer:
-    """Own the v4 Actor/Prior/WM optimizers and their phase/gate boundaries."""
+def actor_loss_gradient_diagnostics(
+    terms: dict[str, torch.Tensor], actions: torch.Tensor,
+    parameters: list[torch.nn.Parameter] | tuple[torch.nn.Parameter, ...],
+) -> dict[str, float]:
+    """Measure loss gradients without writing into optimizer ``.grad`` buffers."""
+    selected = {
+        # Diagnose the actual weighted contributions to the optimized total.
+        "task": terms.get("task_weighted", terms.get("task")),
+        "task_L": terms.get("task_L_weighted", terms.get("task_L")),
+        "task_M": terms.get("task_M_weighted", terms.get("task_M")),
+        "tracking": terms.get("tracking"),
+        "BC": terms.get("bc_weighted", terms.get("bc")),
+        "safety": terms.get("safety_weighted", terms.get("safety", terms.get("stability"))),
+        "failure": terms.get("failure_weighted", terms.get("failure_loss")),
+    }
+    gradients: dict[str, tuple[torch.Tensor | None, ...]] = {}
+    action_gradients: dict[str, torch.Tensor | None] = {}
+    metrics: dict[str, float] = {}
+    for name, value in selected.items():
+        if value is None or not value.requires_grad:
+            grads = tuple(None for _ in parameters)
+            action_grad = None
+        else:
+            computed = torch.autograd.grad(
+                value, (actions, *parameters), retain_graph=True,
+                create_graph=False, allow_unused=True,
+            )
+            action_grad, grads = computed[0], tuple(computed[1:])
+        gradients[name] = grads
+        action_gradients[name] = action_grad
+        param_norm_sq = sum(
+            (grad.detach().float().square().sum() for grad in grads if grad is not None),
+            start=actions.new_zeros((), dtype=torch.float32),
+        )
+        action_norm = (
+            action_grad.detach().float().norm()
+            if action_grad is not None else actions.new_zeros((), dtype=torch.float32)
+        )
+        metrics[f"grad_norm/{name}"] = float(param_norm_sq.sqrt())
+        metrics[f"action_grad_norm/{name}"] = float(action_norm)
 
-    FORMAT_VERSION = 4
-    CHECKPOINT_FORMAT = "supermimic_m1_action22_reference_v1"
-    ACTOR_SCHEMA = "m1_action_reference_actor_v1"
+    def cosine(left: str, right: str, *, action_space: bool) -> float:
+        if action_space:
+            a, b = action_gradients[left], action_gradients[right]
+            if a is None or b is None:
+                return float("nan")
+            dot = (a.detach().float() * b.detach().float()).sum()
+            denom = a.detach().float().norm() * b.detach().float().norm()
+        else:
+            ga, gb = gradients[left], gradients[right]
+            dot = actions.new_zeros((), dtype=torch.float32)
+            na = actions.new_zeros((), dtype=torch.float32)
+            nb = actions.new_zeros((), dtype=torch.float32)
+            for a, b in zip(ga, gb):
+                if a is None or b is None:
+                    continue
+                a, b = a.detach().float(), b.detach().float()
+                dot = dot + (a * b).sum()
+                na = na + a.square().sum()
+                nb = nb + b.square().sum()
+            denom = na.sqrt() * nb.sqrt()
+        return float(dot / denom.clamp_min(1.0e-12))
+
+    for space in ("parameter", "action"):
+        metrics[f"gradient_cosine_{space}/L_vs_M"] = cosine("task_L", "task_M", action_space=space == "action")
+        metrics[f"gradient_cosine_{space}/task_vs_tracking"] = cosine("task", "tracking", action_space=space == "action")
+        metrics[f"gradient_cosine_{space}/task_vs_BC"] = cosine("task", "BC", action_space=space == "action")
+        metrics[f"gradient_cosine_{space}/M_vs_tracking"] = cosine("task_M", "tracking", action_space=space == "action")
+        metrics[f"gradient_cosine_{space}/M_vs_BC"] = cosine("task_M", "BC", action_space=space == "action")
+    return metrics
+
+
+class M1AlternatingTrainer:
+    """Own the bounded-residual Actor/Prior/WM optimizers and gate boundaries."""
+
+    FORMAT_VERSION = 5
+    CHECKPOINT_FORMAT = "supermimic_m1_action22_reference_v2"
+    ACTOR_SCHEMA = "m1_action_reference_actor_v2_bounded_residual"
     REFERENCE_SCHEMA = "future31_to_interleaved_action22_v1"
 
     def __init__(self, *, wm: WorldModel, wm_trainer: WorldModelTrainer, prior,
@@ -73,6 +145,12 @@ class M1AlternatingTrainer:
             raise NotImplementedError("estimated State57 input has no validated M1 estimator connected")
         if cfg.training_mode != "staged_action22_v1":
             raise ValueError("M1 V1 uses the single staged_action22_v1 training state machine")
+        cfg.actor_update_mode = getattr(cfg, "actor_update_mode", "wm_task_gated")
+        cfg.actor_wm_gate_evidence_path = getattr(cfg, "actor_wm_gate_evidence_path", None)
+        if cfg.actor_update_mode not in ("reference_only", "tracking_diagnostic", "wm_task_gated"):
+            raise ValueError(f"unsupported Actor update mode {cfg.actor_update_mode!r}")
+        if actor.cfg.version != self.ACTOR_SCHEMA:
+            raise ValueError("new M1 training requires the bounded-residual Actor V2 schema")
         if int(cfg.prior_updates_per_event) > int(cfg.actor_updates_per_event):
             raise ValueError("Prior updates cannot outnumber Actor updates")
         if cfg.batch_size <= 0 or cfg.micro_batch_size <= 0 or cfg.batch_size % cfg.micro_batch_size:
@@ -216,6 +294,7 @@ class M1AlternatingTrainer:
     @torch.no_grad()
     def record_real_step(self, next_state: torch.Tensor, action: torch.Tensor,
                          phase: torch.Tensor, terminated: torch.Tensor, *,
+                         truncated: torch.Tensor | None = None,
                          executed_action: torch.Tensor | None = None,
                          physical_setpoint: torch.Tensor | None = None) -> dict[str, float]:
         if self._plan is None or self._plan_anchor_state is None:
@@ -259,6 +338,10 @@ class M1AlternatingTrainer:
                            | (physical_setpoint >= mapping_bounds[:, 1] - 1e-5)) & position_mask
         metrics = {
             "survival": float((~terminated.bool()).float().mean()),
+            "real_episode_termination_rate": float(terminated.bool().float().mean()),
+            "real_episode_timeout_rate": float(
+                truncated.bool().float().mean() if truncated is not None else 0.0
+            ),
             "root_tracking_error": float(root_error.mean()),
             "leg_tracking_error": float(leg_error.mean()),
             "arm_tracking_error": float(arm_error.mean()),
@@ -418,10 +501,17 @@ class M1AlternatingTrainer:
         sums: dict[str, float] = {}
         try:
             with frozen_parameters(self.prior, self.wm):
-                for _ in range(n_micro):
-                    terms, _ = self._one_micro_rollout(int(self.cfg.micro_batch_size), planner=False)
+                diagnostic_interval = max(1, int(getattr(self.cfg, "actor_gradient_diagnostic_interval", 50)))
+                diagnose_gradients = self.actor_optimizer_steps % diagnostic_interval == 0
+                for micro in range(n_micro):
+                    terms, rollout = self._one_micro_rollout(int(self.cfg.micro_batch_size), planner=False)
                     if not torch.isfinite(terms["total"]):
                         raise FloatingPointError("non-finite M1 Actor loss")
+                    if micro == 0 and diagnose_gradients:
+                        diagnostic = actor_loss_gradient_diagnostics(
+                            terms, rollout.actor_actions, list(self.actor.parameters()),
+                        )
+                        sums.update({f"diagnostic/{key}": value for key, value in diagnostic.items()})
                     (terms["total"] / n_micro).backward()
                     for name, value in terms.items():
                         if value.ndim == 0:
@@ -594,17 +684,114 @@ class M1AlternatingTrainer:
             details["schedule/prior_gate_heldout_state_count"] = float(evidence.get("heldout_state_count", 0))
         return details
 
-    def update_event(self, *, policy_allowed: bool) -> dict[str, float]:
+    @staticmethod
+    def _gate_task_distribution(task_sampler_state: dict) -> dict:
+        keys = (
+            "task_type", "l_task_fraction", "vx_range", "vy_range", "wz_range",
+            "vx_stop_fraction", "vx_reverse_fraction", "target_x_range",
+            "target_y_range", "target_z_range",
+        )
+        return {key: task_sampler_state.get(key) for key in keys}
+
+    @staticmethod
+    def _hash_contract(value: dict) -> str:
+        encoded = json.dumps(value, sort_keys=True, separators=(",", ":"), default=str)
+        return hashlib.sha256(encoded.encode("utf-8")).hexdigest()
+
+    def _actor_gate_contract(self, config_snapshot: dict, command_state: dict) -> dict:
+        reset_contract = {
+            "profile": self.robot_spec.default_pose_profile,
+            "task_conditional": False,
+            "default_base_height_m": float(self.robot_spec.default_base_height),
+            "default_joint_pos": tuple(self.robot_spec.default_joint_pos),
+        }
+        physics = {
+            "robot_model_sha256": self.robot_model_sha256,
+            "control_dt": config_snapshot.get("control_dt"),
+            "action_mapping": serialize_m1_action_contract(self.robot_spec),
+            "action_modes": config_snapshot.get("action_modes"),
+            "action_scales": config_snapshot.get("action_scales"),
+            "position_target_bounds": config_snapshot.get("position_target_bounds"),
+            "kp": config_snapshot.get("kp"), "kd": config_snapshot.get("kd"),
+            "effort_limits": config_snapshot.get("effort_limits"),
+            "env": config_snapshot.get("env", {}),
+        }
+        task_distribution = self._gate_task_distribution(command_state)
+        return {
+            "robot_identity": "m1_piper",
+            "robot_model_sha256": self.robot_model_sha256,
+            "action_mapping": serialize_m1_action_contract(self.robot_spec),
+            "reset_contract": reset_contract,
+            "physics_contract_sha256": self._hash_contract(physics),
+            "task_distribution": task_distribution,
+            "task_distribution_sha256": self._hash_contract(task_distribution),
+        }
+
+    def _actor_wm_gate(self, config_snapshot: dict, command_state: dict) -> dict[str, float]:
+        """Fail-closed gate for using WM task BPTT to change the Actor."""
+        path_value = getattr(self.cfg, "actor_wm_gate_evidence_path", None)
+        checks = {
+            "evidence_present": False, "action_response": False,
+            "task_gradient_direction": False, "wm_hash_matches": False,
+            "robot_model_matches": False, "action_contract_matches": False,
+            "physics_contract_matches": False, "task_distribution_matches": False,
+            "reset_contract_matches": False, "heldout_coverage": False,
+        }
+        details: dict[str, float] = {"schedule/actor_wm_gate_pass": 0.0}
+        if path_value:
+            evidence_path = Path(path_value).expanduser()
+            try:
+                evidence = json.loads(evidence_path.read_text()) if evidence_path.is_file() else {}
+                checks["evidence_present"] = evidence.get("audit_type") == "m1_wm_mujoco_finite_difference_v1"
+                checks["action_response"] = evidence.get("action_response_pass") is True
+                checks["task_gradient_direction"] = evidence.get("task_gradient_direction_pass") is True
+                checks["wm_hash_matches"] = evidence.get("world_model_sha256") == module_sha256(self.wm)
+                expected = self._actor_gate_contract(config_snapshot, command_state)
+                checks["robot_model_matches"] = evidence.get("robot_model_sha256") == expected["robot_model_sha256"]
+                checks["action_contract_matches"] = json.loads(json.dumps(evidence.get("action_mapping"), sort_keys=True)) == json.loads(json.dumps(expected["action_mapping"], sort_keys=True))
+                checks["physics_contract_matches"] = evidence.get("physics_contract_sha256") == expected["physics_contract_sha256"]
+                checks["task_distribution_matches"] = (
+                    evidence.get("task_distribution_sha256") == expected["task_distribution_sha256"]
+                    and json.loads(json.dumps(evidence.get("task_distribution"), sort_keys=True))
+                    == json.loads(json.dumps(expected["task_distribution"], sort_keys=True))
+                )
+                checks["reset_contract_matches"] = json.loads(json.dumps(evidence.get("reset_contract"), sort_keys=True)) == json.loads(json.dumps(expected["reset_contract"], sort_keys=True))
+                checks["heldout_coverage"] = int(evidence.get("heldout_state_count", 0)) >= 128
+                checkpoint_path = evidence.get("checkpoint")
+                if checks["evidence_present"] and checkpoint_path and Path(checkpoint_path).is_file():
+                    audited = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
+                    checks["wm_hash_matches"] = (
+                        checks["wm_hash_matches"]
+                        and audited.get("world_model_sha256") == evidence.get("world_model_sha256")
+                        and audited.get("format") == self.CHECKPOINT_FORMAT
+                    )
+            except (OSError, ValueError, TypeError, RuntimeError):
+                pass
+        passed = all(checks.values())
+        details.update({f"schedule/actor_wm_gate_{key}": float(value) for key, value in checks.items()})
+        details["schedule/actor_wm_gate_pass"] = float(passed)
+        details["schedule/actor_update_mode"] = float({"reference_only": 0, "tracking_diagnostic": 1, "wm_task_gated": 2}[self.cfg.actor_update_mode])
+        return details
+
+    def update_event(self, *, policy_allowed: bool, config_snapshot: dict | None = None) -> dict[str, float]:
         """One state-machine event: real Replay WM fit, then frozen- or gated-Prior learning."""
         output: dict[str, float] = {}
         prior_steps_before = self.prior_optimizer_steps
-        for _ in range(int(self.cfg.wm_updates_per_event)):
-            self.last_wm_metrics = dict(self.wm_trainer.update(
-                self.buffer,
-                task_balanced=bool(getattr(self.cfg, "balanced_replay_sampling", False)),
-            ))
-            self.wm_update_events += 1
-            self.wm_optimizer_steps += int(self.wm_trainer.cfg.batches_per_update)
+        snapshot = config_snapshot or {}
+        command_state = self.command.state_dict()
+        actor_gate = self._actor_wm_gate(snapshot, command_state)
+        actor_gate_pass = actor_gate["schedule/actor_wm_gate_pass"] > 0.5
+        freeze_wm_for_actor = self.cfg.actor_update_mode == "wm_task_gated" and actor_gate_pass
+        if not freeze_wm_for_actor:
+            for _ in range(int(self.cfg.wm_updates_per_event)):
+                self.last_wm_metrics = dict(self.wm_trainer.update(
+                    self.buffer,
+                    task_balanced=bool(getattr(self.cfg, "balanced_replay_sampling", False)),
+                ))
+                self.wm_update_events += 1
+                self.wm_optimizer_steps += int(self.wm_trainer.cfg.batches_per_update)
+        else:
+            output["schedule/wm_frozen_for_actor_gate"] = 1.0
         for key, value in self.last_wm_metrics.items():
             output[f"wm/{key}"] = float(value)
         finite_wm = all(np.isfinite(value) for value in self.last_wm_metrics.values())
@@ -613,6 +800,7 @@ class M1AlternatingTrainer:
             "schedule/wm_optimizer_steps": float(self.wm_optimizer_steps),
             "schedule/wm_replay_metrics_finite": float(finite_wm),
         })
+        output.update(actor_gate)
         if not policy_allowed:
             self.stage = "wm_warmup"
         else:
@@ -630,8 +818,18 @@ class M1AlternatingTrainer:
                 self.stage = "actor_adaptation"
             else:
                 self.stage = "actor_prior_frozen"
-            for _ in range(int(self.cfg.actor_updates_per_event)):
-                output.update(self._update_actor())
+            actor_update_allowed = (
+                self.cfg.actor_update_mode == "wm_task_gated" and actor_gate_pass and freeze_wm_for_actor
+            )
+            if self.cfg.actor_update_mode == "tracking_diagnostic":
+                output["schedule/actor_tracking_diagnostic_only"] = 1.0
+            elif self.cfg.actor_update_mode == "reference_only":
+                output["schedule/actor_reference_only"] = 1.0
+            elif actor_update_allowed:
+                for _ in range(int(self.cfg.actor_updates_per_event)):
+                    output.update(self._update_actor())
+            else:
+                output["schedule/actor_update_blocked_by_wm_gate"] = 1.0
         output.update(self._real_metrics)
         output.update({
             "schedule/prior_optimizer_steps": float(self.prior_optimizer_steps),
@@ -686,6 +884,7 @@ class M1AlternatingTrainer:
             "actor_optimizer_steps": self.actor_optimizer_steps,
             "training_phase": self.stage,
             "training_mode": self.cfg.training_mode,
+            "actor_update_mode": self.cfg.actor_update_mode,
             "wm_only_updates": int(wm_only_updates),
             "actor_readiness_window": list(self._actor_ready_window),
             "wm": self.wm.state_dict(),
@@ -716,6 +915,8 @@ class M1AlternatingTrainer:
             "prior_mode": self.cfg.prior_mode,
             "prior_input_compatibility": self.prior.input_compatibility,
             "actor_schema": asdict(self.actor.cfg),
+            "actor_gate_contract": self._actor_gate_contract(config_snapshot, command_state),
+            "actor_wm_gate_evidence_path": str(self.cfg.actor_wm_gate_evidence_path) if self.cfg.actor_wm_gate_evidence_path else None,
             "actor_input_contract": self.actor.input_contract,
             "reference_adapter_schema": self.REFERENCE_SCHEMA,
             "action_mapping": serialize_m1_action_contract(self.robot_spec),
@@ -751,7 +952,7 @@ class M1AlternatingTrainer:
 
     def load_checkpoint(self, checkpoint: dict, *, expected_source: dict) -> int:
         if checkpoint.get("format") != self.CHECKPOINT_FORMAT or checkpoint.get("format_version") != self.FORMAT_VERSION:
-            raise ValueError("M1 resume requires Action22-reference checkpoint v4; Future31 Actor v2/v3 is input-incompatible")
+            raise ValueError("M1 resume requires Action22-reference checkpoint V5 with bounded Actor residuals; V4 and Future31 Actor checkpoints are read-only")
         checks = {
             "robot_identity": "m1_piper",
             "robot_joint_names": self.robot_joint_names,
@@ -765,6 +966,7 @@ class M1AlternatingTrainer:
             "action_mapping": serialize_m1_action_contract(self.robot_spec),
             "loss_coefficients": asdict(self.loss_cfg),
             "training_mode": self.cfg.training_mode,
+            "actor_update_mode": self.cfg.actor_update_mode,
         }
         for key, expected in checks.items():
             if checkpoint.get(key) != expected:

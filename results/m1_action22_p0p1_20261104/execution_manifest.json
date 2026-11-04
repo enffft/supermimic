@@ -1,0 +1,87 @@
+{
+  "audit": "m1_action22_p0_p1_remediation_v1",
+  "date": "2026-11-04",
+  "repository": "/home/yifeiy/ws_supermimic",
+  "branch": "main",
+  "baseline_head": "4ba2991de8ec8ff8bff88a13c51a87674c72d430",
+  "branch_or_worktree_created": false,
+  "commit_or_push_performed": false,
+  "other_robot_work_preserved": true,
+  "prior": {
+    "updates": 0,
+    "calibration": "not_run",
+    "source_sha256": "05a858520790d474f6c1c3dd1f791507c3da91f68899ca88f00348ea4bbff10c"
+  },
+  "actor": {
+    "historical_checkpoint_schema": "V4 read_only",
+    "new_training_schema": "V5 bounded normalized Action22 residual",
+    "wm_task_bptt_gate": "blocked",
+    "l_only_short_training": "not_run",
+    "reason": "Available real response checkpoint is V4 and audit coverage is below the required 128 held-out states; L long-horizon WM response is directionally inconsistent with MuJoCo."
+  },
+  "alpha_sweep": {
+    "status": "complete",
+    "checkpoint_count": 5,
+    "tasks": ["L", "M"],
+    "alphas": [0.0, 0.25, 0.5, 0.75, 1.0],
+    "extra_prior_direct_cases": 2,
+    "case_count": 52,
+    "metric_rows": 260,
+    "seed": 20261104,
+    "num_envs": 32,
+    "steps": 300,
+    "domain_randomization": false,
+    "observation_noise": false,
+    "action_noise": 0.0,
+    "summary": "alpha_sweep/summary.json",
+    "csv": "actor_residual_alpha_metrics.csv",
+    "same_condition_hash_scope": "Alpha=0 actor/prior-direct equivalence probe only; main sweep used identical fixed seed and condition config but predates per-case initial hash logging."
+  },
+  "wm_mujoco_action_response": {
+    "checkpoint_schema": "V4",
+    "checkpoint_iteration": 4000,
+    "epsilon_normalized": 0.02,
+    "horizons_steps": [1, 2, 4, 8, 10],
+    "scenarios": ["L_forward", "L_backward", "L_stop", "L_deceleration", "M_forward", "M_side", "M_up"],
+    "output_response_state_count_per_scenario": 16,
+    "output_response_result": "wm_response_v4_16states_eps002.json",
+    "output_aggregate_csv": "wm_response_aggregate.csv",
+    "corrected_task_loss_fd_state_count_per_scenario": 4,
+    "task_loss_result": "wm_task_response_v4_4states_eps002.json",
+    "task_direction_csv": "wm_task_direction_aggregate.csv",
+    "initial_task_loss_result_invalidated": "wm_response_v4_16states_eps002.json stores the first implementation's branch-averaged task loss; per-branch helper fixed and tested before the 4-state follow-up.",
+    "action_response_pass": false,
+    "task_gradient_direction_pass": false,
+    "gate_status": "blocked_legacy_v4_checkpoint_requires_new_v5_audited_snapshot",
+    "epsilon_sensitivity_0p01_0p04": "not_run",
+    "curated_contact_transition_and_near_failure_strata": "not_run"
+  },
+  "tests": {
+    "focused_m1_final": "46 passed",
+    "full_suite": "162 passed, 68 warnings, 183.69s; run before one later-added smoothness boundary test, which passed in final focused suite",
+    "compileall": "passed",
+    "gated_script_bash_n": "passed",
+    "sm_train_help_flag_validation": "42 checked, 0 missing",
+    "git_diff_check": "passed"
+  },
+  "checkpoint_selector": {
+    "script": "scripts/select_m1_action22_best_real_checkpoint.py",
+    "synthetic_accept_rollback_contract_test": "passed as part of focused tests",
+    "real_v5_selection": "not_run; no new V5 training checkpoint exists"
+  },
+  "training": {
+    "new_training_started": false,
+    "wm_optimizer_updates": 0,
+    "actor_optimizer_updates": 0,
+    "prior_optimizer_updates": 0,
+    "reason": "Fail-closed physical Actor Gate blocked Task BPTT; no V5 checkpoint with 128-state matched MuJoCo evidence was available."
+  },
+  "wm_replay_capacity_or_gradient_accumulation_experiment": "not_run; no new training was started",
+  "resources": {
+    "gpu": "NVIDIA RTX 4070 SUPER, 12 GB",
+    "finite_difference_audit_peak_observed_gpu_memory": "about 0.8 GB total visible usage",
+    "finite_difference_audit_process_rss": "about 4.1 GB",
+    "full_pytest_process_peak_rss": "about 6.9 GB; test process exited normally",
+    "outstanding_owned_processes_after_work": "none"
+  }
+}

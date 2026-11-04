@@ -1,0 +1,156 @@
+{
+  "source_csv": "results/m1_action22_v1_LM50_2048_1h_20261103/training_scalars.csv",
+  "scope": "existing logged aggregate telemetry only; not per-loss gradient decomposition",
+  "metrics": {
+    "actor/grad_norm": {
+      "samples": 70,
+      "first_step_value": {
+        "step": 550,
+        "value": 5.258194446563721
+      },
+      "last_step_value": {
+        "step": 4000,
+        "value": 9.311185836791992
+      },
+      "min": 2.724708318710327,
+      "median": 9.333617687225342,
+      "max": 19.994678497314453,
+      "zero_samples": 0
+    },
+    "actor/optimizer_steps": {
+      "samples": 80,
+      "first_step_value": {
+        "step": 50,
+        "value": 0.0
+      },
+      "last_step_value": {
+        "step": 4000,
+        "value": 1384.0
+      },
+      "min": 0.0,
+      "median": 594.0,
+      "max": 1384.0,
+      "zero_samples": 10
+    },
+    "prior/optimizer_steps": {
+      "samples": 80,
+      "first_step_value": {
+        "step": 50,
+        "value": 0.0
+      },
+      "last_step_value": {
+        "step": 4000,
+        "value": 0.0
+      },
+      "min": 0.0,
+      "median": 0.0,
+      "max": 0.0,
+      "zero_samples": 80
+    },
+    "wm/optimizer_steps": {
+      "samples": 160,
+      "first_step_value": {
+        "step": 50,
+        "value": 4.0
+      },
+      "last_step_value": {
+        "step": 4000,
+        "value": 1584.0
+      },
+      "min": 4.0,
+      "median": 794.0,
+      "max": 1584.0,
+      "zero_samples": 0
+    },
+    "wm/replay_open_loop/nse_8step": {
+      "samples": 80,
+      "first_step_value": {
+        "step": 50,
+        "value": 1.1121175289154053
+      },
+      "last_step_value": {
+        "step": 4000,
+        "value": 0.6283453702926636
+      },
+      "min": 0.252167284488678,
+      "median": 0.8380357027053833,
+      "max": 2.939459800720215,
+      "zero_samples": 0
+    },
+    "actor/total": {
+      "samples": 70,
+      "first_step_value": {
+        "step": 550,
+        "value": 4.280517101287842
+      },
+      "last_step_value": {
+        "step": 4000,
+        "value": 1.9549144506454468
+      },
+      "min": 1.6917375326156616,
+      "median": 4.027980446815491,
+      "max": 9.889102935791016,
+      "zero_samples": 0
+    },
+    "actor/task": {
+      "samples": 70,
+      "first_step_value": {
+        "step": 550,
+        "value": 3.584188461303711
+      },
+      "last_step_value": {
+        "step": 4000,
+        "value": 1.698976993560791
+      },
+      "min": 1.4976801872253418,
+      "median": 3.6855324506759644,
+      "max": 9.546652793884277,
+      "zero_samples": 0
+    },
+    "actor/tracking": {
+      "samples": 70,
+      "first_step_value": {
+        "step": 550,
+        "value": 0.011846418492496014
+      },
+      "last_step_value": {
+        "step": 4000,
+        "value": 0.144948810338974
+      },
+      "min": 0.011846418492496014,
+      "median": 0.14258742332458496,
+      "max": 0.28843650221824646,
+      "zero_samples": 0
+    },
+    "actor/bc": {
+      "samples": 70,
+      "first_step_value": {
+        "step": 550,
+        "value": 0.0002013274934142828
+      },
+      "last_step_value": {
+        "step": 4000,
+        "value": 0.2544330358505249
+      },
+      "min": 0.0002013274934142828,
+      "median": 0.26919732987880707,
+      "max": 0.4452758729457855,
+      "zero_samples": 0
+    },
+    "actor/failure_loss": {
+      "samples": 70,
+      "first_step_value": {
+        "step": 550,
+        "value": 0.6841975450515747
+      },
+      "last_step_value": {
+        "step": 4000,
+        "value": 0.012096608988940716
+      },
+      "min": 0.010485249571502209,
+      "median": 0.030772315338253975,
+      "max": 0.6841975450515747,
+      "zero_samples": 0
+    }
+  }
+}

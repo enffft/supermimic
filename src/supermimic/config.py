@@ -204,6 +204,12 @@ class M1JointTrainingCfg:
     prior_updates_per_event: int = 0
     actor_updates_per_event: int = 1
     training_mode: Literal["staged_action22_v1"] = "staged_action22_v1"
+    actor_update_mode: Literal["reference_only", "tracking_diagnostic", "wm_task_gated"] = "wm_task_gated"
+    actor_wm_gate_evidence_path: Path | None = None
+    actor_leg_delta_max_normalized: float = 0.05
+    actor_arm_delta_max_normalized: float = 0.05
+    actor_wheel_delta_max_normalized: float = 0.10
+    actor_gradient_diagnostic_interval: int = 50
     prior_gate_evidence_path: Path | None = None
     exploration_enabled: bool = True
     exploration_env_fraction: float = 0.25

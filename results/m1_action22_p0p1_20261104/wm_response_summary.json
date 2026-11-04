@@ -1,0 +1,277 @@
+{
+  "action_response_audit": {
+    "checkpoint_format": "supermimic_m1_action22_reference_v1",
+    "iteration": 4000,
+    "heldout_state_count": 16,
+    "valid_state_count_by_scenario": {
+      "L_forward": 16,
+      "L_backward": 16,
+      "L_stop": 16,
+      "L_deceleration": 16,
+      "M_forward": 16,
+      "M_side": 16,
+      "M_up": 16
+    },
+    "action_response_pass": false,
+    "task_gradient_direction_pass": false,
+    "eligible_action_bucket_count": 380,
+    "eligible_task_bucket_count": 0,
+    "gate_status": "blocked_legacy_v4_checkpoint_requires_new_v5_audited_snapshot",
+    "epsilon_normalized": 0.02,
+    "horizons_steps": [
+      1,
+      2,
+      4,
+      8,
+      10
+    ],
+    "paired_state_max_abs_error": 5.960464477539063e-08,
+    "paired_xi_max_abs_error": 0.0
+  },
+  "task_direction_audit": {
+    "checkpoint_format": "supermimic_m1_action22_reference_v1",
+    "heldout_state_count": 4,
+    "valid_state_count_by_scenario": {
+      "L_forward": 4,
+      "L_backward": 4,
+      "L_stop": 4,
+      "L_deceleration": 4,
+      "M_forward": 4,
+      "M_side": 4,
+      "M_up": 4
+    },
+    "action_response_pass": false,
+    "task_gradient_direction_pass": false,
+    "eligible_action_bucket_count": 0,
+    "eligible_task_bucket_count": 0,
+    "gate_status": "blocked_legacy_v4_checkpoint_requires_new_v5_audited_snapshot",
+    "epsilon_normalized": 0.02,
+    "horizons_steps": [
+      1,
+      2,
+      4,
+      8,
+      10
+    ]
+  },
+  "task_direction_samples": [
+    {
+      "scenario": "L_forward",
+      "horizon_steps": 1,
+      "usable_task_loss_pairs": 4,
+      "wm_real_task_direction_agreement_fraction": 0.25
+    },
+    {
+      "scenario": "L_forward",
+      "horizon_steps": 2,
+      "usable_task_loss_pairs": 4,
+      "wm_real_task_direction_agreement_fraction": 0.0
+    },
+    {
+      "scenario": "L_forward",
+      "horizon_steps": 4,
+      "usable_task_loss_pairs": 4,
+      "wm_real_task_direction_agreement_fraction": 0.0
+    },
+    {
+      "scenario": "L_forward",
+      "horizon_steps": 8,
+      "usable_task_loss_pairs": 4,
+      "wm_real_task_direction_agreement_fraction": 0.0
+    },
+    {
+      "scenario": "L_forward",
+      "horizon_steps": 10,
+      "usable_task_loss_pairs": 4,
+      "wm_real_task_direction_agreement_fraction": 0.0
+    },
+    {
+      "scenario": "L_backward",
+      "horizon_steps": 1,
+      "usable_task_loss_pairs": 4,
+      "wm_real_task_direction_agreement_fraction": 0.75
+    },
+    {
+      "scenario": "L_backward",
+      "horizon_steps": 2,
+      "usable_task_loss_pairs": 4,
+      "wm_real_task_direction_agreement_fraction": 0.25
+    },
+    {
+      "scenario": "L_backward",
+      "horizon_steps": 4,
+      "usable_task_loss_pairs": 4,
+      "wm_real_task_direction_agreement_fraction": 0.0
+    },
+    {
+      "scenario": "L_backward",
+      "horizon_steps": 8,
+      "usable_task_loss_pairs": 4,
+      "wm_real_task_direction_agreement_fraction": 0.0
+    },
+    {
+      "scenario": "L_backward",
+      "horizon_steps": 10,
+      "usable_task_loss_pairs": 4,
+      "wm_real_task_direction_agreement_fraction": 0.0
+    },
+    {
+      "scenario": "L_stop",
+      "horizon_steps": 1,
+      "usable_task_loss_pairs": 3,
+      "wm_real_task_direction_agreement_fraction": 0.0
+    },
+    {
+      "scenario": "L_stop",
+      "horizon_steps": 2,
+      "usable_task_loss_pairs": 4,
+      "wm_real_task_direction_agreement_fraction": 0.25
+    },
+    {
+      "scenario": "L_stop",
+      "horizon_steps": 4,
+      "usable_task_loss_pairs": 4,
+      "wm_real_task_direction_agreement_fraction": 0.75
+    },
+    {
+      "scenario": "L_stop",
+      "horizon_steps": 8,
+      "usable_task_loss_pairs": 4,
+      "wm_real_task_direction_agreement_fraction": 0.75
+    },
+    {
+      "scenario": "L_stop",
+      "horizon_steps": 10,
+      "usable_task_loss_pairs": 4,
+      "wm_real_task_direction_agreement_fraction": 1.0
+    },
+    {
+      "scenario": "L_deceleration",
+      "horizon_steps": 1,
+      "usable_task_loss_pairs": 3,
+      "wm_real_task_direction_agreement_fraction": 0.3333333333333333
+    },
+    {
+      "scenario": "L_deceleration",
+      "horizon_steps": 2,
+      "usable_task_loss_pairs": 4,
+      "wm_real_task_direction_agreement_fraction": 0.5
+    },
+    {
+      "scenario": "L_deceleration",
+      "horizon_steps": 4,
+      "usable_task_loss_pairs": 4,
+      "wm_real_task_direction_agreement_fraction": 1.0
+    },
+    {
+      "scenario": "L_deceleration",
+      "horizon_steps": 8,
+      "usable_task_loss_pairs": 4,
+      "wm_real_task_direction_agreement_fraction": 0.5
+    },
+    {
+      "scenario": "L_deceleration",
+      "horizon_steps": 10,
+      "usable_task_loss_pairs": 4,
+      "wm_real_task_direction_agreement_fraction": 0.25
+    },
+    {
+      "scenario": "M_forward",
+      "horizon_steps": 1,
+      "usable_task_loss_pairs": 6,
+      "wm_real_task_direction_agreement_fraction": 0.3333333333333333
+    },
+    {
+      "scenario": "M_forward",
+      "horizon_steps": 2,
+      "usable_task_loss_pairs": 8,
+      "wm_real_task_direction_agreement_fraction": 0.25
+    },
+    {
+      "scenario": "M_forward",
+      "horizon_steps": 4,
+      "usable_task_loss_pairs": 8,
+      "wm_real_task_direction_agreement_fraction": 0.75
+    },
+    {
+      "scenario": "M_forward",
+      "horizon_steps": 8,
+      "usable_task_loss_pairs": 8,
+      "wm_real_task_direction_agreement_fraction": 0.75
+    },
+    {
+      "scenario": "M_forward",
+      "horizon_steps": 10,
+      "usable_task_loss_pairs": 8,
+      "wm_real_task_direction_agreement_fraction": 0.75
+    },
+    {
+      "scenario": "M_side",
+      "horizon_steps": 1,
+      "usable_task_loss_pairs": 8,
+      "wm_real_task_direction_agreement_fraction": 1.0
+    },
+    {
+      "scenario": "M_side",
+      "horizon_steps": 2,
+      "usable_task_loss_pairs": 8,
+      "wm_real_task_direction_agreement_fraction": 1.0
+    },
+    {
+      "scenario": "M_side",
+      "horizon_steps": 4,
+      "usable_task_loss_pairs": 8,
+      "wm_real_task_direction_agreement_fraction": 1.0
+    },
+    {
+      "scenario": "M_side",
+      "horizon_steps": 8,
+      "usable_task_loss_pairs": 8,
+      "wm_real_task_direction_agreement_fraction": 1.0
+    },
+    {
+      "scenario": "M_side",
+      "horizon_steps": 10,
+      "usable_task_loss_pairs": 8,
+      "wm_real_task_direction_agreement_fraction": 1.0
+    },
+    {
+      "scenario": "M_up",
+      "horizon_steps": 1,
+      "usable_task_loss_pairs": 8,
+      "wm_real_task_direction_agreement_fraction": 0.5
+    },
+    {
+      "scenario": "M_up",
+      "horizon_steps": 2,
+      "usable_task_loss_pairs": 8,
+      "wm_real_task_direction_agreement_fraction": 0.5
+    },
+    {
+      "scenario": "M_up",
+      "horizon_steps": 4,
+      "usable_task_loss_pairs": 8,
+      "wm_real_task_direction_agreement_fraction": 0.0
+    },
+    {
+      "scenario": "M_up",
+      "horizon_steps": 8,
+      "usable_task_loss_pairs": 8,
+      "wm_real_task_direction_agreement_fraction": 0.5
+    },
+    {
+      "scenario": "M_up",
+      "horizon_steps": 10,
+      "usable_task_loss_pairs": 8,
+      "wm_real_task_direction_agreement_fraction": 0.5
+    }
+  ],
+  "limitations": [
+    "V4 checkpoint; not eligible for V5 actor gate",
+    "16 states for physical output response; insufficient for 128-state gate",
+    "4-state corrected task-loss audit is diagnostic only",
+    "epsilon sensitivity 0.01/0.04 not run",
+    "contact-transition and near-failure state strata not curated"
+  ],
+  "initial_16_state_task_directions_invalid_due_batch_reduction_bug": true
+}

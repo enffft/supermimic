@@ -147,11 +147,20 @@ def audit(
     actor_cfg = {key: tuple(value) if isinstance(value, list) and key == "hidden" else value
                  for key, value in actor_cfg.items()}
     is_action22_v4 = checkpoint.get("format") == "supermimic_m1_action22_reference_v1"
-    if is_action22_v4 and checkpoint.get("reference_adapter_schema") != "future31_to_interleaved_action22_v1":
+    is_action22_v5 = checkpoint.get("format") == "supermimic_m1_action22_reference_v2"
+    is_action22_ref = is_action22_v4 or is_action22_v5
+    if is_action22_ref and checkpoint.get("reference_adapter_schema") != "future31_to_interleaved_action22_v1":
         raise ValueError("unsupported Action22 reference adapter schema")
+    if is_action22_v4 and actor_cfg.get("version") != "m1_action_reference_actor_v1":
+        raise ValueError("V4 Actor checkpoints use the historical read-only inference schema")
+    if is_action22_v5 and (
+        checkpoint.get("format_version") != 5
+        or actor_cfg.get("version") != "m1_action_reference_actor_v2_bounded_residual"
+    ):
+        raise ValueError("V5 checkpoint does not satisfy the bounded-residual Actor schema")
     actor = (
         M1ActionReferenceActor(M1ActionReferenceActorCfg(**actor_cfg)).to(device)
-        if is_action22_v4 else
+        if is_action22_ref else
         LegacyM1FutureConditionedActor(LegacyM1PriorActorCfg(**actor_cfg)).to(device)
     )
     actor.load_state_dict(checkpoint["actor"], strict=True)
@@ -260,7 +269,7 @@ def audit(
                 actor_reference = reference
             actor_actions_ref = (
                 future31_to_m1_action22(actor_reference, robot_spec=spec)
-                if is_action22_v4 else None
+                if is_action22_ref else None
             )
 
             sums: dict[str, list[torch.Tensor]] = {
@@ -278,7 +287,7 @@ def audit(
                             default=default, scales=scales, wheel_mask=wheel_mask,
                         )
                     else:
-                        if is_action22_v4:
+                        if is_action22_ref:
                             action = actor(
                                 observations["policy"], observations["goal"], actor_actions_ref[:, phase],
                             )

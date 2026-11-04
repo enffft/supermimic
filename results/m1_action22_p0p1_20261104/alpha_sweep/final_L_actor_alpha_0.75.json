@@ -1,0 +1,729 @@
+{
+  "checkpoint": "logs/m1_prior_actor/m1_action22_v1_LM50_2048_1h_20261103/ckpt_latest.pt",
+  "iteration": 4000,
+  "task_type": "L",
+  "num_envs": 32,
+  "steps": 300,
+  "seed": 20261104,
+  "domain_randomization": false,
+  "controller": "actor",
+  "actor_residual_alpha": 0.75,
+  "prior_weights_variant": "trained",
+  "prior_swap_diagnostic_uses_same_actor": false,
+  "prior_source": {
+    "path": "/home/yifeiy/AMP-LOCO-M1/logs/motion_prior/cvae_v1_v3_3_mixed_3272_goal_l_holdout_20261103/checkpoint_best_val.pt",
+    "sha256": "05a858520790d474f6c1c3dd1f791507c3da91f68899ca88f00348ea4bbff10c",
+    "step": 9600,
+    "feature_version": "m1_cvae_motion_prior_v1_state53_goal8_future31",
+    "condition_contract": "History[4,53]+Goal[8]; L=Velocity, M/LM=Reach; no future condition",
+    "model_config": {
+      "latent_dim": 32,
+      "hidden_dim": 256,
+      "layers": 3
+    },
+    "dataset_hash": "95f9f0a39b05d5a0d736532d24f897b3b85b8cbf8f74977de620acc9b1a7146e",
+    "split_hash": "b1bb36beb45b141a77f28837df376690abc3e1d6b24dd810d5ee07da40fd2624",
+    "normalization_hash": "0dea5b4cac9a7297ad27e1e4d4192211a6f7af7cd138c73046b2ed7c80dd904f",
+    "target_contract": "Future[10,31], 0.2 seconds at 0.02 seconds/frame",
+    "assurance_mode": "mixed_kinematic_and_sampled_fcl",
+    "strict_fcl_only": false,
+    "input_compatibility": "legacy_v1",
+    "projected_condition_indices": []
+  },
+  "prior_input_compatibility": "legacy_v1",
+  "default_pose_profile": "m1_pose_dataset_v3_3_l_high_carry_v1",
+  "reset_contract": {
+    "profile": "m1_pose_dataset_v3_3_l_high_carry_v1",
+    "task_conditional": false,
+    "default_base_height_m": 0.47,
+    "default_joint_pos": [
+      0.0,
+      0.8812830158963126,
+      -1.6184887638693073,
+      0.0,
+      0.0,
+      0.8812830158963126,
+      -1.6184887638693073,
+      0.0,
+      0.0,
+      -0.8812830158963126,
+      1.6184887638693073,
+      0.0,
+      0.0,
+      -0.8812830158963126,
+      1.6184887638693073,
+      0.0,
+      0.0,
+      0.5,
+      -0.4,
+      0.3,
+      0.0,
+      0.0
+    ]
+  },
+  "action_mapping": {
+    "contract_version": "m1_mixed_action_v3",
+    "default_pose_profile": "m1_pose_dataset_v3_3_l_high_carry_v1",
+    "default_joint_pos": [
+      0.0,
+      0.8812830158963126,
+      -1.6184887638693073,
+      0.0,
+      0.0,
+      0.8812830158963126,
+      -1.6184887638693073,
+      0.0,
+      0.0,
+      -0.8812830158963126,
+      1.6184887638693073,
+      0.0,
+      0.0,
+      -0.8812830158963126,
+      1.6184887638693073,
+      0.0,
+      0.0,
+      0.5,
+      -0.4,
+      0.3,
+      0.0,
+      0.0
+    ],
+    "joint_names": [
+      "FAR_ABAD_JOINT",
+      "FAR_HIP_JOINT",
+      "FAR_KNEE_JOINT",
+      "FAR_FOOT_JOINT",
+      "FBL_ABAD_JOINT",
+      "FBL_HIP_JOINT",
+      "FBL_KNEE_JOINT",
+      "FBL_FOOT_JOINT",
+      "RAR_ABAD_JOINT",
+      "RAR_HIP_JOINT",
+      "RAR_KNEE_JOINT",
+      "RAR_FOOT_JOINT",
+      "RBL_ABAD_JOINT",
+      "RBL_HIP_JOINT",
+      "RBL_KNEE_JOINT",
+      "RBL_FOOT_JOINT",
+      "piper_x_joint1",
+      "piper_x_joint2",
+      "piper_x_joint3",
+      "piper_x_joint4",
+      "piper_x_joint5",
+      "piper_x_joint6"
+    ],
+    "wheel_joint_names": [
+      "FAR_FOOT_JOINT",
+      "FBL_FOOT_JOINT",
+      "RAR_FOOT_JOINT",
+      "RBL_FOOT_JOINT"
+    ],
+    "position_control_count": 18,
+    "wheel_velocity_control_count": 4,
+    "action_modes": [
+      "position",
+      "position",
+      "position",
+      "velocity",
+      "position",
+      "position",
+      "position",
+      "velocity",
+      "position",
+      "position",
+      "position",
+      "velocity",
+      "position",
+      "position",
+      "position",
+      "velocity",
+      "position",
+      "position",
+      "position",
+      "position",
+      "position",
+      "position"
+    ],
+    "action_scales": [
+      0.0,
+      0.0,
+      0.0,
+      5.0,
+      0.0,
+      0.0,
+      0.0,
+      5.0,
+      0.0,
+      0.0,
+      0.0,
+      5.0,
+      0.0,
+      0.0,
+      0.0,
+      5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "position_target_bounds": [
+      [
+        -0.36324,
+        0.43849
+      ],
+      [
+        0.61401,
+        1.46816
+      ],
+      [
+        -2.5209,
+        -1.19558
+      ],
+      [
+        0.0,
+        0.0
+      ],
+      [
+        -0.40312,
+        0.39113
+      ],
+      [
+        0.60863,
+        1.47425
+      ],
+      [
+        -2.5209,
+        -1.14031
+      ],
+      [
+        0.0,
+        0.0
+      ],
+      [
+        -0.38559,
+        0.41193
+      ],
+      [
+        -1.52413,
+        -0.64906
+      ],
+      [
+        1.14922,
+        2.5209
+      ],
+      [
+        0.0,
+        0.0
+      ],
+      [
+        -0.43197,
+        0.37001
+      ],
+      [
+        -1.53056,
+        -0.6586
+      ],
+      [
+        1.17965,
+        2.5209
+      ],
+      [
+        0.0,
+        0.0
+      ],
+      [
+        -0.46264,
+        0.51819
+      ],
+      [
+        0.29709,
+        2.78807
+      ],
+      [
+        -1.72607,
+        -0.32987
+      ],
+      [
+        -0.3986,
+        0.41906
+      ],
+      [
+        -0.28104,
+        0.21721
+      ],
+      [
+        -1.05,
+        0.05
+      ]
+    ],
+    "position_mapping": "asymmetric_default_to_absolute_bounds_v3;clamp_soft_limits",
+    "wheel_mapping": "clip(action,-1,1)*wheel_scale_rad_s"
+  },
+  "task_sampler_state": {
+    "task_type": "balanced",
+    "l_task_fraction": 0.5,
+    "balanced_fixed_quota": true,
+    "reset_pose_profile": "dataset_v3_3_l_high_carry",
+    "vx_range": [
+      -0.09,
+      0.145
+    ],
+    "vx_stop_fraction": 0.15,
+    "vx_reverse_fraction": 0.35,
+    "vy_range": [
+      -0.05,
+      0.055
+    ],
+    "wz_range": [
+      -0.17,
+      0.18
+    ],
+    "target_x_range": [
+      0.12,
+      0.36
+    ],
+    "target_y_range": [
+      -0.2,
+      0.2
+    ],
+    "target_z_range": [
+      -0.15,
+      0.15
+    ],
+    "minimum_target_height": 0.1,
+    "maximum_target_height": 1.2,
+    "success_distance": 0.08,
+    "success_minimum_base_height_m": 0.2,
+    "success_maximum_tilt_rad": 1.2217304763960306
+  },
+  "groups": {
+    "forward_ood": {
+      "samples": 1799,
+      "fall_rate": 1.0,
+      "episode_count": 1,
+      "tracking_root_position_rmse_m": 0.03389366716146469,
+      "tracking_root_rotation_rmse_rad": 0.11506646871566772,
+      "tracking_arm_rmse_rad": 0.2223544716835022,
+      "tracking_leg_rmse_rad": 0.12678125500679016,
+      "tracking_wheel_rmse_rad_s": 2.9985175132751465,
+      "wheel_reference_mean_rad_s_by_joint": [
+        0.6009988784790039,
+        0.6336688995361328,
+        0.6180235147476196,
+        0.6356119513511658
+      ],
+      "wheel_actual_mean_rad_s_by_joint": [
+        1.2350068092346191,
+        0.8236313462257385,
+        -0.150433748960495,
+        0.7745814323425293
+      ],
+      "wheel_tracking_rmse_rad_s_by_joint": [
+        3.170241594314575,
+        2.7000772953033447,
+        2.8707051277160645,
+        3.2222113609313965
+      ],
+      "action_saturation_fraction": 0.025114962831139565,
+      "wheel_rate_abs_mean_rad_s": 2.359132766723633,
+      "base_displacement_mean_m": 0.1002543643116951,
+      "signed_forward_displacement_mean_m": 0.010075435973703861,
+      "mean_episode_duration_s": 4.119999885559082,
+      "base_height_mean_m": 0.47478780150413513,
+      "base_tilt_mean_rad": 0.07561765611171722,
+      "actor_residual_leg_mean_abs_normalized": 0.22530445456504822,
+      "actor_residual_leg_rms_normalized": 0.28265538811683655,
+      "actor_residual_arm_mean_abs_normalized": 0.2901637852191925,
+      "actor_residual_arm_rms_normalized": 0.3625815510749817,
+      "actor_residual_wheel_mean_abs_normalized": 0.22604559361934662,
+      "actor_residual_wheel_rms_normalized": 0.2774628698825836,
+      "command_vx_vy_wz": [
+        0.30000001192092896,
+        0.0,
+        0.0
+      ],
+      "command_in_saved_training_range": false,
+      "ood_test": true,
+      "base_velocity_xy_vector_rmse_m_s": 0.3859933018684387,
+      "base_velocity_xy_per_axis_rmse_m_s": 0.27293848991394043,
+      "base_velocity_xy_rmse_m_s": 0.3859933018684387,
+      "base_vx_rmse_m_s": 0.3093844950199127,
+      "base_vy_rmse_m_s": 0.23080727458000183,
+      "positive_command_negative_vx_fraction": 0.46581435203552246,
+      "prior_reference_root_dx_0p2s_mean_m": 0.006549858953803778,
+      "prior_reference_wrong_direction_fraction": 0.3480663001537323,
+      "prior_reference_first_dx_0p02s_mean_m": 0.0004611957410816103,
+      "prior_reference_first_wrong_direction_fraction": 0.3922652006149292,
+      "prior_reference_stop_abs_dx_0p2s_mean_m": 0.0,
+      "prior_reference_wheel_wrong_direction_fraction": 0.14364640414714813,
+      "prior_root_wheel_direction_disagreement_fraction": 0.3591160178184509,
+      "prior_stop_abs_wheel_rate_mean_rad_s": 0.0,
+      "prior_wheel_reference_mean_rad_s_by_joint": [
+        0.6009335517883301,
+        0.6332252621650696,
+        0.6176812052726746,
+        0.6351863145828247
+      ],
+      "yaw_rate_rmse_rad_s": 0.4472036063671112
+    },
+    "yaw_only_ood": {
+      "samples": 1799,
+      "fall_rate": 1.0,
+      "episode_count": 1,
+      "tracking_root_position_rmse_m": 0.035631269216537476,
+      "tracking_root_rotation_rmse_rad": 0.12380274385213852,
+      "tracking_arm_rmse_rad": 0.21759851276874542,
+      "tracking_leg_rmse_rad": 0.1287854164838791,
+      "tracking_wheel_rmse_rad_s": 3.246997117996216,
+      "wheel_reference_mean_rad_s_by_joint": [
+        0.11155731230974197,
+        0.04682091251015663,
+        0.14368122816085815,
+        0.020479999482631683
+      ],
+      "wheel_actual_mean_rad_s_by_joint": [
+        1.0185129642486572,
+        0.5435001254081726,
+        -0.48322781920433044,
+        0.12705187499523163
+      ],
+      "wheel_tracking_rmse_rad_s_by_joint": [
+        3.0085322856903076,
+        3.3228156566619873,
+        3.326312780380249,
+        3.318918228149414
+      ],
+      "action_saturation_fraction": 0.029208146035671234,
+      "wheel_rate_abs_mean_rad_s": 2.469352960586548,
+      "base_displacement_mean_m": 0.15933193266391754,
+      "signed_forward_displacement_mean_m": 0.02101682871580124,
+      "mean_episode_duration_s": 5.71999979019165,
+      "base_height_mean_m": 0.47238031029701233,
+      "base_tilt_mean_rad": 0.09491336345672607,
+      "actor_residual_leg_mean_abs_normalized": 0.22483424842357635,
+      "actor_residual_leg_rms_normalized": 0.27900955080986023,
+      "actor_residual_arm_mean_abs_normalized": 0.2855553925037384,
+      "actor_residual_arm_rms_normalized": 0.362515926361084,
+      "actor_residual_wheel_mean_abs_normalized": 0.23653872311115265,
+      "actor_residual_wheel_rms_normalized": 0.28448745608329773,
+      "command_vx_vy_wz": [
+        0.0,
+        0.0,
+        0.20000000298023224
+      ],
+      "command_in_saved_training_range": false,
+      "ood_test": true,
+      "base_velocity_xy_vector_rmse_m_s": 0.2630806267261505,
+      "base_velocity_xy_per_axis_rmse_m_s": 0.18602609634399414,
+      "base_velocity_xy_rmse_m_s": 0.2630806267261505,
+      "base_vx_rmse_m_s": 0.13778764009475708,
+      "base_vy_rmse_m_s": 0.22411152720451355,
+      "positive_command_negative_vx_fraction": 0.0,
+      "prior_reference_root_dx_0p2s_mean_m": -0.0038112204056233168,
+      "prior_reference_wrong_direction_fraction": 0.0,
+      "prior_reference_first_dx_0p02s_mean_m": -2.8884049243060872e-05,
+      "prior_reference_first_wrong_direction_fraction": 0.0,
+      "prior_reference_stop_abs_dx_0p2s_mean_m": 0.017354149371385574,
+      "prior_reference_wheel_wrong_direction_fraction": 0.0,
+      "prior_root_wheel_direction_disagreement_fraction": 0.0,
+      "prior_stop_abs_wheel_rate_mean_rad_s": 0.4990684688091278,
+      "prior_wheel_reference_mean_rad_s_by_joint": [
+        0.10516820102930069,
+        0.04081745445728302,
+        0.13679368793964386,
+        0.014490476809442043
+      ],
+      "yaw_rate_rmse_rad_s": 0.47821637988090515
+    },
+    "backward_ood": {
+      "samples": 1499,
+      "fall_rate": 1.0,
+      "episode_count": 1,
+      "tracking_root_position_rmse_m": 0.035296835005283356,
+      "tracking_root_rotation_rmse_rad": 0.15086400508880615,
+      "tracking_arm_rmse_rad": 0.2305709570646286,
+      "tracking_leg_rmse_rad": 0.1336716115474701,
+      "tracking_wheel_rmse_rad_s": 3.1270945072174072,
+      "wheel_reference_mean_rad_s_by_joint": [
+        0.017463434487581253,
+        0.10891317576169968,
+        0.06281522661447525,
+        0.07959708571434021
+      ],
+      "wheel_actual_mean_rad_s_by_joint": [
+        0.7777588367462158,
+        0.9160292744636536,
+        -0.3261457085609436,
+        0.36463603377342224
+      ],
+      "wheel_tracking_rmse_rad_s_by_joint": [
+        2.854963779449463,
+        3.2341291904449463,
+        3.606328248977661,
+        2.7384049892425537
+      ],
+      "action_saturation_fraction": 0.031566500663757324,
+      "wheel_rate_abs_mean_rad_s": 2.3602840900421143,
+      "base_displacement_mean_m": 0.20119966566562653,
+      "signed_forward_displacement_mean_m": -0.03267091140151024,
+      "mean_episode_duration_s": 5.339999675750732,
+      "base_height_mean_m": 0.4664275348186493,
+      "base_tilt_mean_rad": 0.11322548240423203,
+      "actor_residual_leg_mean_abs_normalized": 0.2285095751285553,
+      "actor_residual_leg_rms_normalized": 0.282318651676178,
+      "actor_residual_arm_mean_abs_normalized": 0.28488367795944214,
+      "actor_residual_arm_rms_normalized": 0.36749669909477234,
+      "actor_residual_wheel_mean_abs_normalized": 0.2526833117008209,
+      "actor_residual_wheel_rms_normalized": 0.30847081542015076,
+      "command_vx_vy_wz": [
+        -0.30000001192092896,
+        0.0,
+        0.0
+      ],
+      "command_in_saved_training_range": false,
+      "ood_test": true,
+      "base_velocity_xy_vector_rmse_m_s": 0.3773174285888672,
+      "base_velocity_xy_per_axis_rmse_m_s": 0.26680371165275574,
+      "base_velocity_xy_rmse_m_s": 0.3773174285888672,
+      "base_vx_rmse_m_s": 0.3031584918498993,
+      "base_vy_rmse_m_s": 0.22464066743850708,
+      "positive_command_negative_vx_fraction": 0.0,
+      "prior_reference_root_dx_0p2s_mean_m": -0.005299122538417578,
+      "prior_reference_wrong_direction_fraction": 0.430463582277298,
+      "prior_reference_first_dx_0p02s_mean_m": -0.00019356160191819072,
+      "prior_reference_first_wrong_direction_fraction": 0.45695364475250244,
+      "prior_reference_stop_abs_dx_0p2s_mean_m": 0.0,
+      "prior_reference_wheel_wrong_direction_fraction": 0.5231788158416748,
+      "prior_root_wheel_direction_disagreement_fraction": 0.21192052960395813,
+      "prior_stop_abs_wheel_rate_mean_rad_s": 0.0,
+      "prior_wheel_reference_mean_rad_s_by_joint": [
+        0.02098631113767624,
+        0.10826394706964493,
+        0.06633831560611725,
+        0.07883153855800629
+      ],
+      "yaw_rate_rmse_rad_s": 0.46919313073158264
+    },
+    "stop_id": {
+      "samples": 1500,
+      "fall_rate": 0.0,
+      "episode_count": 0,
+      "tracking_root_position_rmse_m": 0.03463840112090111,
+      "tracking_root_rotation_rmse_rad": 0.0951089933514595,
+      "tracking_arm_rmse_rad": 0.22014890611171722,
+      "tracking_leg_rmse_rad": 0.1306164711713791,
+      "tracking_wheel_rmse_rad_s": 3.2715513706207275,
+      "wheel_reference_mean_rad_s_by_joint": [
+        0.20233532786369324,
+        0.3109900653362274,
+        0.25018638372421265,
+        0.2849905788898468
+      ],
+      "wheel_actual_mean_rad_s_by_joint": [
+        1.2661190032958984,
+        0.9016474485397339,
+        -0.1177813708782196,
+        0.41920629143714905
+      ],
+      "wheel_tracking_rmse_rad_s_by_joint": [
+        2.9528005123138428,
+        3.550142288208008,
+        3.4226174354553223,
+        3.126553773880005
+      ],
+      "action_saturation_fraction": 0.02796969749033451,
+      "wheel_rate_abs_mean_rad_s": 2.4792122840881348,
+      "base_displacement_mean_m": 0.1309381127357483,
+      "signed_forward_displacement_mean_m": -0.06395981460809708,
+      "mean_episode_duration_s": 0.0,
+      "base_height_mean_m": 0.4671618938446045,
+      "base_tilt_mean_rad": 0.09406542032957077,
+      "actor_residual_leg_mean_abs_normalized": 0.2231370061635971,
+      "actor_residual_leg_rms_normalized": 0.2737394869327545,
+      "actor_residual_arm_mean_abs_normalized": 0.2795979082584381,
+      "actor_residual_arm_rms_normalized": 0.3583216965198517,
+      "actor_residual_wheel_mean_abs_normalized": 0.22717830538749695,
+      "actor_residual_wheel_rms_normalized": 0.2731042504310608,
+      "command_vx_vy_wz": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "command_in_saved_training_range": true,
+      "ood_test": false,
+      "base_velocity_xy_vector_rmse_m_s": 0.2241954356431961,
+      "base_velocity_xy_per_axis_rmse_m_s": 0.1585301160812378,
+      "base_velocity_xy_rmse_m_s": 0.2241954356431961,
+      "base_vx_rmse_m_s": 0.13468635082244873,
+      "base_vy_rmse_m_s": 0.1792294681072235,
+      "positive_command_negative_vx_fraction": 0.0,
+      "prior_reference_root_dx_0p2s_mean_m": -0.0007410803227685392,
+      "prior_reference_wrong_direction_fraction": 0.0,
+      "prior_reference_first_dx_0p02s_mean_m": -0.00020453445904422551,
+      "prior_reference_first_wrong_direction_fraction": 0.0,
+      "prior_reference_stop_abs_dx_0p2s_mean_m": 0.015237623825669289,
+      "prior_reference_wheel_wrong_direction_fraction": 0.0,
+      "prior_root_wheel_direction_disagreement_fraction": 0.0,
+      "prior_stop_abs_wheel_rate_mean_rad_s": 0.49929627776145935,
+      "prior_wheel_reference_mean_rad_s_by_joint": [
+        0.20233532786369324,
+        0.31099000573158264,
+        0.25018632411956787,
+        0.2849905490875244
+      ],
+      "yaw_rate_rmse_rad_s": 0.4458940029144287
+    },
+    "forward_id": {
+      "samples": 1498,
+      "fall_rate": 1.0,
+      "episode_count": 2,
+      "tracking_root_position_rmse_m": 0.034820929169654846,
+      "tracking_root_rotation_rmse_rad": 0.20171889662742615,
+      "tracking_arm_rmse_rad": 0.24164938926696777,
+      "tracking_leg_rmse_rad": 0.14877669513225555,
+      "tracking_wheel_rmse_rad_s": 2.7231268882751465,
+      "wheel_reference_mean_rad_s_by_joint": [
+        0.49556267261505127,
+        0.7335781455039978,
+        0.5157222151756287,
+        0.6969828605651855
+      ],
+      "wheel_actual_mean_rad_s_by_joint": [
+        1.377610683441162,
+        1.0856534242630005,
+        0.007776194717735052,
+        0.814578652381897
+      ],
+      "wheel_tracking_rmse_rad_s_by_joint": [
+        2.4400835037231445,
+        2.9033191204071045,
+        2.8550209999084473,
+        2.6696937084198
+      ],
+      "action_saturation_fraction": 0.021452846005558968,
+      "wheel_rate_abs_mean_rad_s": 2.241319417953491,
+      "base_displacement_mean_m": 0.1586228311061859,
+      "signed_forward_displacement_mean_m": 0.021403944119811058,
+      "mean_episode_duration_s": 3.1700000762939453,
+      "base_height_mean_m": 0.45711323618888855,
+      "base_tilt_mean_rad": 0.1620323210954666,
+      "actor_residual_leg_mean_abs_normalized": 0.2366211712360382,
+      "actor_residual_leg_rms_normalized": 0.2898379862308502,
+      "actor_residual_arm_mean_abs_normalized": 0.29596951603889465,
+      "actor_residual_arm_rms_normalized": 0.3659384846687317,
+      "actor_residual_wheel_mean_abs_normalized": 0.21294185519218445,
+      "actor_residual_wheel_rms_normalized": 0.25567272305488586,
+      "command_vx_vy_wz": [
+        0.11999999731779099,
+        0.0,
+        0.0
+      ],
+      "command_in_saved_training_range": true,
+      "ood_test": false,
+      "base_velocity_xy_vector_rmse_m_s": 0.2957995533943176,
+      "base_velocity_xy_per_axis_rmse_m_s": 0.2091618776321411,
+      "base_velocity_xy_rmse_m_s": 0.2957995533943176,
+      "base_vx_rmse_m_s": 0.16224612295627594,
+      "base_vy_rmse_m_s": 0.24733293056488037,
+      "positive_command_negative_vx_fraction": 0.46662217378616333,
+      "prior_reference_root_dx_0p2s_mean_m": 0.003051033243536949,
+      "prior_reference_wrong_direction_fraction": 0.34210526943206787,
+      "prior_reference_first_dx_0p02s_mean_m": 0.0003160444612149149,
+      "prior_reference_first_wrong_direction_fraction": 0.3684210479259491,
+      "prior_reference_stop_abs_dx_0p2s_mean_m": 0.0,
+      "prior_reference_wheel_wrong_direction_fraction": 0.18421052396297455,
+      "prior_root_wheel_direction_disagreement_fraction": 0.30263158679008484,
+      "prior_stop_abs_wheel_rate_mean_rad_s": 0.0,
+      "prior_wheel_reference_mean_rad_s_by_joint": [
+        0.4839622676372528,
+        0.7222799062728882,
+        0.5030965805053711,
+        0.6856686472892761
+      ],
+      "yaw_rate_rmse_rad_s": 0.4191431999206543
+    },
+    "backward_id": {
+      "samples": 1499,
+      "fall_rate": 1.0,
+      "episode_count": 1,
+      "tracking_root_position_rmse_m": 0.035269595682621,
+      "tracking_root_rotation_rmse_rad": 0.15074476599693298,
+      "tracking_arm_rmse_rad": 0.22891190648078918,
+      "tracking_leg_rmse_rad": 0.13680580258369446,
+      "tracking_wheel_rmse_rad_s": 3.252849817276001,
+      "wheel_reference_mean_rad_s_by_joint": [
+        0.1954137682914734,
+        0.3542085289955139,
+        0.23207415640354156,
+        0.32055792212486267
+      ],
+      "wheel_actual_mean_rad_s_by_joint": [
+        0.9900360107421875,
+        1.0998258590698242,
+        -0.17304706573486328,
+        0.50965416431427
+      ],
+      "wheel_tracking_rmse_rad_s_by_joint": [
+        2.977454900741577,
+        3.472254753112793,
+        3.5986440181732178,
+        2.90725040435791
+      ],
+      "action_saturation_fraction": 0.027988355606794357,
+      "wheel_rate_abs_mean_rad_s": 2.431849718093872,
+      "base_displacement_mean_m": 0.16762138903141022,
+      "signed_forward_displacement_mean_m": -0.04538866877555847,
+      "mean_episode_duration_s": 4.599999904632568,
+      "base_height_mean_m": 0.46728065609931946,
+      "base_tilt_mean_rad": 0.11760804057121277,
+      "actor_residual_leg_mean_abs_normalized": 0.23371750116348267,
+      "actor_residual_leg_rms_normalized": 0.29003044962882996,
+      "actor_residual_arm_mean_abs_normalized": 0.28729405999183655,
+      "actor_residual_arm_rms_normalized": 0.36822497844696045,
+      "actor_residual_wheel_mean_abs_normalized": 0.2257494330406189,
+      "actor_residual_wheel_rms_normalized": 0.27352413535118103,
+      "command_vx_vy_wz": [
+        -0.05999999865889549,
+        0.0,
+        0.0
+      ],
+      "command_in_saved_training_range": true,
+      "ood_test": false,
+      "base_velocity_xy_vector_rmse_m_s": 0.28237777948379517,
+      "base_velocity_xy_per_axis_rmse_m_s": 0.19967125356197357,
+      "base_velocity_xy_rmse_m_s": 0.28237777948379517,
+      "base_vx_rmse_m_s": 0.15039916336536407,
+      "base_vy_rmse_m_s": 0.23899227380752563,
+      "positive_command_negative_vx_fraction": 0.0,
+      "prior_reference_root_dx_0p2s_mean_m": -0.002044587628915906,
+      "prior_reference_wrong_direction_fraction": 0.5133333206176758,
+      "prior_reference_first_dx_0p02s_mean_m": -0.0003427053161431104,
+      "prior_reference_first_wrong_direction_fraction": 0.46000000834465027,
+      "prior_reference_stop_abs_dx_0p2s_mean_m": 0.0,
+      "prior_reference_wheel_wrong_direction_fraction": 0.6333333253860474,
+      "prior_root_wheel_direction_disagreement_fraction": 0.2800000011920929,
+      "prior_stop_abs_wheel_rate_mean_rad_s": 0.0,
+      "prior_wheel_reference_mean_rad_s_by_joint": [
+        0.19482339918613434,
+        0.35370808839797974,
+        0.2314634472131729,
+        0.3199044167995453
+      ],
+      "yaw_rate_rmse_rad_s": 0.4918048083782196
+    }
+  },
+  "checkpoint_label": "final",
+  "checkpoint_sha256": "fd7ed2fa1a6440fd4b4e37a3c597a9683397ff5f554acfd94a836a0a32b96fa3",
+  "evaluation_contract": {
+    "seed": 20261104,
+    "num_envs": 32,
+    "steps": 300,
+    "domain_randomization": false,
+    "obs_noise": false,
+    "action_noise": 0.0,
+    "actor_residual_alpha": 0.75,
+    "controller": "actor"
+  }
+}

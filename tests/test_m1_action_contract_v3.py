@@ -80,7 +80,7 @@ def test_old_m1_joint_checkpoint_is_rejected_for_contract_v3():
     from supermimic.motion_prior.trainer import M1AlternatingTrainer
 
     trainer = object.__new__(M1AlternatingTrainer)
-    with pytest.raises(ValueError, match="Action22-reference checkpoint v4"):
+    with pytest.raises(ValueError, match="Action22-reference checkpoint V5"):
         trainer.load_checkpoint(
             {"format": "supermimic_m1_prior_actor_joint_v2", "format_version": 2},
             expected_source={},

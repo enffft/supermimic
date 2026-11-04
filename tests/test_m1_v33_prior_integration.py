@@ -215,7 +215,17 @@ def test_fixed_evaluation_defaults_to_saved_task_and_rejects_mismatch():
 
 
 def test_fixed_evaluation_range_checks_tolerate_float32_boundary_roundoff():
-    from scripts.evaluate_m1_prior_joint import _command_in_saved_range, _target_offset_in_saved_range
+    import importlib.util
+    from pathlib import Path
+
+    spec = importlib.util.spec_from_file_location(
+        "evaluate_m1_prior_joint", Path(__file__).resolve().parents[1] / "scripts/evaluate_m1_prior_joint.py",
+    )
+    module = importlib.util.module_from_spec(spec)
+    assert spec.loader is not None
+    spec.loader.exec_module(module)
+    _command_in_saved_range = module._command_in_saved_range
+    _target_offset_in_saved_range = module._target_offset_in_saved_range
 
     sampler = {
         "vx_range": (-0.09, 0.145), "vy_range": (-0.05, 0.055), "wz_range": (-0.17, 0.18),
@@ -227,7 +237,7 @@ def test_fixed_evaluation_range_checks_tolerate_float32_boundary_roundoff():
     assert not _target_offset_in_saved_range((0.10, 0.0, 0.0), sampler)
 
 
-def _make_checkpoint_trainer(*, prior, robot_spec=None, cfg=None):
+def _make_checkpoint_trainer(*, prior, robot_spec=None, cfg=None, actor_cfg=None):
     from supermimic.data.replay_buffer import ReplayBuffer
     from supermimic.motion_prior.trainer import M1AlternatingTrainer
     from supermimic.policy.nets import M1ActionReferenceActorCfg, M1ActionReferenceActor
@@ -263,7 +273,7 @@ def _make_checkpoint_trainer(*, prior, robot_spec=None, cfg=None):
             return {"task_type": "L", "vx_range": (-0.09, 0.145), "vx_stop_fraction": 0.15,
                     "vx_reverse_fraction": 0.35, "vy_range": (0.0, 0.0), "wz_range": (0.0, 0.0)}
 
-    actor = M1ActionReferenceActor(M1ActionReferenceActorCfg(history=5))
+    actor = M1ActionReferenceActor(actor_cfg or M1ActionReferenceActorCfg(history=5))
     return M1AlternatingTrainer(
         wm=wm, wm_trainer=wm_trainer, prior=prior, actor=actor, buffer=replay,
         default_joint_pos=torch.tensor(spec.default_joint_pos),
@@ -311,7 +321,7 @@ def test_v3_trainer_save_load_restores_weights_optimizer_counters_and_contract(t
     saved = first.checkpoint(
         iteration=51, config_snapshot=config, command_state=first.command.state_dict(),
     )
-    path = tmp_path / "action22_v4.pt"
+    path = tmp_path / "action22_v5.pt"
     torch.save(saved, path)
     restored = torch.load(path, map_location="cpu", weights_only=False)
 
@@ -340,7 +350,7 @@ def test_v3_trainer_save_load_restores_weights_optimizer_counters_and_contract(t
         third = _make_checkpoint_trainer(prior=prior_c)
         assert third.load_checkpoint(mapped_to_cuda, expected_source=prior_c.source) == 51
 
-    with pytest.raises(ValueError, match="Action22-reference checkpoint v4"):
+    with pytest.raises(ValueError, match="Action22-reference checkpoint V5"):
         second.load_checkpoint({**restored, "format": "supermimic_m1_prior_actor_joint_v2", "format_version": 2}, expected_source=prior_b.source)
 
     changed_source = copy.deepcopy(restored)
@@ -367,6 +377,27 @@ def test_v3_trainer_save_load_restores_weights_optimizer_counters_and_contract(t
     with pytest.raises(ValueError, match="Action22 checkpoint action_mapping mismatch"):
         wrong_bounds.load_checkpoint(restored, expected_source=prior_b.source)
 
+    from supermimic.policy.nets import M1ActionReferenceActorCfg
+    wrong_residual_contract = _make_checkpoint_trainer(
+        prior=prior_b,
+        actor_cfg=M1ActionReferenceActorCfg(history=5, wheel_delta_max_normalized=0.20),
+    )
+    with pytest.raises(ValueError, match="Action22 checkpoint actor_schema mismatch"):
+        wrong_residual_contract.load_checkpoint(restored, expected_source=prior_b.source)
+
     second.prior.input_compatibility = "train_constant_compat_v1"
     with pytest.raises(ValueError, match="Action22 checkpoint prior_input_compatibility mismatch"):
         second.load_checkpoint(restored, expected_source=prior_b.source)
+
+
+@pytest.mark.skipif(not NEW_PRIOR.is_file(), reason="local V3.3 prior artifact is unavailable")
+def test_actor_wm_task_gate_is_fail_closed_without_matching_real_evidence():
+    from supermimic.motion_prior import load_m1_motion_prior
+
+    prior = load_m1_motion_prior(NEW_PRIOR, device="cpu", expected_sha256=NEW_SHA256)
+    trainer = _make_checkpoint_trainer(prior=prior)
+    gate = trainer._actor_wm_gate({}, trainer.command.state_dict())
+    assert gate["schedule/actor_wm_gate_pass"] == 0.0
+    assert gate["schedule/actor_wm_gate_evidence_present"] == 0.0
+    assert gate["schedule/actor_wm_gate_action_response"] == 0.0
+    assert gate["schedule/actor_wm_gate_task_gradient_direction"] == 0.0

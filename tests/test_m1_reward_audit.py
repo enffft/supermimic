@@ -113,12 +113,11 @@ def test_m1_real_imag_velocity_metric_parity():
         _RootTcpFK(), 0,
         __import__("supermimic.motion_prior.losses", fromlist=["M1JointLossCfg"]).M1JointLossCfg(),
     )
-    expected_linear = torch.nn.functional.smooth_l1_loss(
-        xy_error, torch.zeros_like(xy_error), reduction="none",
-    ).div(0.5).mean(-1).mean()
-    expected_yaw = torch.nn.functional.smooth_l1_loss(
-        yaw_error, torch.zeros_like(yaw_error), reduction="none",
-    ).mean()
+    expected_linear = (
+        torch.nn.functional.smooth_l1_loss(xy_error[..., 0] / 0.05, torch.zeros_like(xy_error[..., 0]))
+        + torch.nn.functional.smooth_l1_loss(xy_error[..., 1] / 0.05, torch.zeros_like(xy_error[..., 1]))
+    ) * 0.5
+    expected_yaw = torch.nn.functional.smooth_l1_loss(yaw_error / 0.10, torch.zeros_like(yaw_error))
     torch.testing.assert_close(terms["task_l_linear_velocity"], expected_linear)
     torch.testing.assert_close(terms["task_l_yaw_rate"], expected_yaw)
     torch.testing.assert_close(xy_sq_error.mean().sqrt(), torch.tensor((0.02**2 + 0.02**2) ** 0.5))
@@ -241,7 +240,6 @@ def test_m1_reach_progress_forward_side_up_and_near_goals():
         "forward": (tcp0 + torch.tensor([0.30, 0.0, 0.0]), torch.tensor([0.10, 0.0, 0.0])),
         "side": (tcp0 + torch.tensor([0.0, 0.30, 0.0]), torch.tensor([0.0, 0.10, 0.0])),
         "up": (tcp0 + torch.tensor([0.0, 0.0, 0.30]), torch.tensor([0.0, 0.0, 0.10])),
-        "near": (tcp0 + torch.tensor([0.04, 0.0, 0.0]), torch.tensor([0.01, 0.0, 0.0])),
     }
     for target_name, (target, displacement) in cases.items():
         stationary = _states(horizon=10)

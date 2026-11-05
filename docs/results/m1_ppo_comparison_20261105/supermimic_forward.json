@@ -1,0 +1,2560 @@
+{
+  "checkpoint": "/home/yifeiy/ws_supermimic/logs/m1_reward/lm50_2048_2p5h_seed2026/ckpt_latest.pt",
+  "seed": 123,
+  "task_type": "L",
+  "metrics": {
+    "L_velocity_xy_mse": 0.3359791386201978,
+    "L_yaw_rate_mse": 2.0188036631308495,
+    "L_actual_vx": 0.3437455787123181,
+    "L_command_vx": 0.11999999731779099,
+    "L_positive_command_negative_vx_fraction": 0.20932291666666666,
+    "L_positive_command_reverse_vx_below_minus_0p02_fraction": 0.20192708333333334,
+    "L_positive_command_idle_vx_within_0p02_fraction": 0.021072916666666667,
+    "M_distance_m": null,
+    "M_within_threshold_fraction": null,
+    "L_velocity_xy_rmse": 0.5796370749186062,
+    "L_yaw_rate_rmse": 1.4208461081802102,
+    "L_completed_episodes": 422,
+    "L_fall_rate": 0.9786729857819905,
+    "M_completed_episodes": 0,
+    "M_fall_rate": null,
+    "M_terminal_distance_m": null,
+    "M_hold_success_rate": null
+  },
+  "episodes": [
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": true,
+      "terminal_distance_m": null,
+      "hold_success": null
+    }
+  ],
+  "duration_s": 30.0,
+  "unfinished_episodes_excluded_from_episode_metrics": true
+}

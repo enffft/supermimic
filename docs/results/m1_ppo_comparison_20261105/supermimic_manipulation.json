@@ -1,0 +1,3088 @@
+{
+  "checkpoint": "/home/yifeiy/ws_supermimic/logs/m1_reward/lm50_2048_2p5h_seed2026/ckpt_latest.pt",
+  "seed": 123,
+  "task_type": "M",
+  "metrics": {
+    "L_velocity_xy_mse": null,
+    "L_yaw_rate_mse": null,
+    "L_actual_vx": null,
+    "L_command_vx": null,
+    "L_positive_command_negative_vx_fraction": null,
+    "L_positive_command_reverse_vx_below_minus_0p02_fraction": null,
+    "L_positive_command_idle_vx_within_0p02_fraction": null,
+    "M_distance_m": 1.0972762375970682,
+    "M_within_threshold_fraction": 0.0019479166666666666,
+    "L_velocity_xy_rmse": null,
+    "L_yaw_rate_rmse": null,
+    "L_completed_episodes": 0,
+    "L_fall_rate": null,
+    "M_completed_episodes": 510,
+    "M_fall_rate": 0.9901960784313726,
+    "M_terminal_distance_m": 1.8113172139607223,
+    "M_hold_success_rate": 0.0
+  },
+  "episodes": [
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 0.9898048639297485,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.1464327573776245,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.1106024980545044,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.445873737335205,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.3139276504516602,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.6185330152511597,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.686442255973816,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.4611506462097168,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.758818507194519,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.1897753477096558,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.9812469482421875,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.3596669435501099,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.1470693349838257,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.7270283699035645,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.9505128860473633,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.6844793558120728,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.0062758922576904,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.3677778244018555,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.29931902885437,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.7743864059448242,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.6342852115631104,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.8814523220062256,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.677673578262329,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.3836443424224854,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.07734751701355,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.5112013816833496,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.5654237270355225,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.4328765869140625,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.924575686454773,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.2092928886413574,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.8163124322891235,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.027265787124634,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.2087392807006836,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.3572983741760254,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.7301863431930542,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.3950307369232178,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.7300682067871094,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.2392005920410156,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.644705057144165,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.0380029678344727,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.022226333618164,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.9318351745605469,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.439622640609741,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.2109746932983398,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 3.1418519020080566,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.2910544872283936,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.8042839765548706,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.514086961746216,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.6615123748779297,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.1308703422546387,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 0.9585017561912537,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 0.8431093692779541,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.697697162628174,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 0.5437848567962646,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.8907337188720703,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.4548852443695068,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.3774915933609009,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.5440032482147217,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.1430797576904297,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 0.9421220421791077,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.271957516670227,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.1767327785491943,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.2528823614120483,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.1483732461929321,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.1132973432540894,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.3497791290283203,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.6469718217849731,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.256619930267334,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.3528590202331543,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.202033519744873,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.1281489133834839,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.9088478088378906,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.2579400539398193,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.1637356281280518,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.217644691467285,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.0695199966430664,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.152348518371582,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.9874616861343384,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.8429656028747559,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.1054935455322266,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.034560441970825,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.8987085819244385,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.0763580799102783,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 0.9422263503074646,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.312804937362671,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.1683614253997803,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.544278621673584,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.3396962881088257,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 3.358043670654297,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.4336540699005127,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.7820521593093872,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.3092060089111328,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.7674672603607178,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.7093780040740967,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.387523889541626,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.304378628730774,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.6953297853469849,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.0800429582595825,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.232422351837158,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.5749355554580688,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.3182710409164429,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.422191619873047,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 0.9138835668563843,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.0111210346221924,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 0.9539575576782227,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.6193907260894775,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.142488718032837,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.5460312366485596,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 0.7715295553207397,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.4446653127670288,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 0.6276599764823914,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.2546510696411133,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.2685072422027588,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.11440372467041,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.2752320766448975,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.279653787612915,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.9968290328979492,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.5594383478164673,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 3.0243608951568604,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.380446434020996,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.7012579441070557,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.1474227905273438,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 0.9550844430923462,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.3547903299331665,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.8922903537750244,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.971291422843933,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.2536497116088867,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.8581172227859497,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.6986531019210815,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.4128597974777222,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.2732560634613037,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.4491724967956543,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.3785309791564941,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.4864771366119385,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.9212020635604858,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.101128339767456,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.9814128875732422,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.5491225719451904,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.9676433801651,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.7764813899993896,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.4537580013275146,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.571792483329773,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.7191178798675537,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.6969009637832642,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 0.9325965046882629,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.1820098161697388,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 2.279644012451172,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.410497784614563,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.7130244970321655,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.433701515197754,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.6822246313095093,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.8458887338638306,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.2131893634796143,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.1879100799560547,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.2563974857330322,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.9198390245437622,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.89748477935791,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.123589277267456,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.165853500366211,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.5505708456039429,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.396084189414978,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.093569278717041,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.4816190004348755,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.2668750286102295,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.7078843116760254,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.2957165241241455,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.1538925170898438,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.1867358684539795,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.179198980331421,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.387269377708435,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.0478992462158203,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.0411083698272705,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.6206963062286377,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.7059165239334106,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.3731423616409302,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.182700753211975,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.2590603828430176,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.3982183933258057,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.2007129192352295,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.9874486923217773,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.420536756515503,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.7675485610961914,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 0.8982326984405518,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.2141246795654297,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.6625322103500366,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.4112939834594727,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.876808524131775,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.780257225036621,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.2132620811462402,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.263924241065979,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.374789834022522,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.683366060256958,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.9368022680282593,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.7033026218414307,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.8667840957641602,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.513249158859253,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.2278029918670654,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.666247844696045,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.6284199953079224,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.9547536373138428,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.6384586095809937,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.0838066339492798,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.4011732339859009,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.607625961303711,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.6410927772521973,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.5521728992462158,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.284102439880371,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.2780932188034058,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 0.9028396606445312,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.501806616783142,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.5613666772842407,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.6789408922195435,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.9652436971664429,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.1607272624969482,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.9784367084503174,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.5597989559173584,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 0.8430286645889282,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.0626434087753296,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.6131539344787598,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.2896941900253296,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.231983184814453,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.1638641357421875,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.795818328857422,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.5093472003936768,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.3881030082702637,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.1303458213806152,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.5767282247543335,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.1465790271759033,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 0.9299383163452148,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.1268887519836426,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.875068187713623,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 0.8299118280410767,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.050317406654358,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.403930902481079,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.107008695602417,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.3286283016204834,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.3690593242645264,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.078495502471924,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.0870938301086426,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.8080782890319824,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.4420948028564453,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.617357611656189,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 0.8347389101982117,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.7294293642044067,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.930121660232544,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.8328652381896973,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.113036870956421,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.633383870124817,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.9188296794891357,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 3.099510431289673,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.1138954162597656,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.060828924179077,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.1946423053741455,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.0237293243408203,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.0255825519561768,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.1874966621398926,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.0707886219024658,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.348714828491211,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.7028530836105347,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.2265115976333618,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.3729305267333984,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.7763638496398926,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.5750242471694946,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.7173006534576416,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.5955219268798828,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.3546595573425293,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.1331331729888916,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.2748005390167236,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.6975880861282349,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.5862648487091064,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.4916648864746094,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 0.8166501522064209,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.3842532634735107,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.863126039505005,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.8803330659866333,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.6668413877487183,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.6173619031906128,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.4178707599639893,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.241224765777588,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.601608395576477,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 0.8039980530738831,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.484053134918213,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.219820499420166,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.39181387424469,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.857570171356201,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 0.9223910570144653,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.0052084922790527,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 2.3665246963500977,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.0368752479553223,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 0.8461942672729492,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.1063153743743896,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.7145649194717407,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.5773290395736694,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.3944339752197266,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.2280962467193604,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.6816130876541138,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.1870183944702148,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.223938226699829,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.0948432683944702,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.0261486768722534,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.294431447982788,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.1503721475601196,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.0743837356567383,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.0957504510879517,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.5645828247070312,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.0003693103790283,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.9126064777374268,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.4288861751556396,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.8385285139083862,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.335658073425293,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.1194839477539062,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.1793996095657349,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.3938918113708496,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.2654213905334473,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.7577762603759766,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 0.9134297370910645,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.254873514175415,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.6534196138381958,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.9251960515975952,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.1632447242736816,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.005523443222046,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.9813071489334106,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.8727151155471802,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.072230100631714,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.826135277748108,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.217316746711731,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.170330286026001,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.6480647325515747,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.6215686798095703,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.0478291511535645,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.3301758766174316,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.8127588033676147,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.826899528503418,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.7261626720428467,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.1199010610580444,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.4311227798461914,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.4715807437896729,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.5821075439453125,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.9203650951385498,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 0.9423109889030457,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.5773322582244873,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.3581939935684204,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.1589441299438477,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.5563132762908936,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.578165292739868,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.3610869646072388,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.2761831283569336,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.1184470653533936,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.9171886444091797,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.979596734046936,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 0.7413865327835083,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.2666901350021362,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.4888871908187866,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.062559127807617,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 3.0604732036590576,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.4456236362457275,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.4587912559509277,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.2305141687393188,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.2891154289245605,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.6033339500427246,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.9777804613113403,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.4223990440368652,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.184687376022339,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 0.7415993809700012,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.2787775993347168,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.096083164215088,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.4943146705627441,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.6469037532806396,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.101888656616211,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.262082576751709,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.04520583152771,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.357838749885559,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.648374319076538,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.5569580793380737,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.5085222721099854,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.5038975477218628,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.352384567260742,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.4905521869659424,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.011653423309326,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.2041304111480713,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.2785063982009888,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.1868183612823486,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.890000581741333,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.1061886548995972,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.4627842903137207,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.5738887786865234,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.6524293422698975,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 0.3558359146118164,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.8131557703018188,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.1291658878326416,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.5967860221862793,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.8420674800872803,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.7535462379455566,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.208258867263794,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.0803122520446777,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.5278054475784302,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.8880728483200073,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.9621728658676147,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.1271034479141235,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.2053526639938354,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.140101671218872,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.03886342048645,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.5385884046554565,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.8080965280532837,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.2369650602340698,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.348663330078125,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.09267520904541,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.438051700592041,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.8647658824920654,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.064889430999756,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.1650140285491943,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.251695156097412,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.2150425910949707,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.317110300064087,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.2840890884399414,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.077759027481079,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.220292329788208,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 0.966609001159668,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.4171559810638428,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.2046735286712646,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.2943081855773926,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.3862173557281494,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.42824125289917,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.3127154111862183,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.0915508270263672,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.051022529602051,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.527967929840088,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.1430869102478027,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.992720127105713,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.2995773553848267,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.8303909301757812,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.9868080615997314,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.110666275024414,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.4163646697998047,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.1684666872024536,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.7312986850738525,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 3.2354421615600586,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.9689157009124756,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.070127487182617,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.5976879596710205,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.0392711162567139,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.0776740312576294,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.361865520477295,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.7543467283248901,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.295621871948242,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 2.1414945125579834,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.9889966249465942,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.521871328353882,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.7658333778381348,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.1188061237335205,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.730726718902588,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.150726556777954,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.217421054840088,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.2796285152435303,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.4887946844100952,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 0.8123385906219482,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.280626654624939,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.2600499391555786,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.2026610374450684,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.3395309448242188,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.9330617189407349,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 3.5319736003875732,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.3848581314086914,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.5752888917922974,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.011397123336792,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.8736387491226196,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.8012235164642334,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.3982887268066406,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.3155826330184937,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.8991122245788574,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.0816714763641357,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.585698366165161,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.3706953525543213,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.3248119354248047,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.1477417945861816,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.7269692420959473,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.9311953783035278,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.2090580463409424,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.3307138681411743,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.860121965408325,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.3711154460906982,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.940519332885742,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.085421085357666,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.9249091148376465,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.4505836963653564,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.4828957319259644,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.8716659545898438,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.2792160511016846,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.3996046781539917,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.488019585609436,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.2248282432556152,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.4452648162841797,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.3658794164657593,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.0604878664016724,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.15208101272583,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.293689012527466,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 0.9464643597602844,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 0.801089346408844,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.1987884044647217,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.6000969409942627,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.103674292564392,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 0.7772572040557861,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.9255692958831787,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.0662884712219238,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.2641546726226807,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 2.472600221633911,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 0.9504107236862183,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.2439004182815552,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.9698026180267334,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": true,
+      "terminal_distance_m": 1.3503170013427734,
+      "hold_success": false
+    }
+  ],
+  "duration_s": 30.0,
+  "unfinished_episodes_excluded_from_episode_metrics": true
+}

@@ -1,0 +1,30 @@
+{
+  "date": "2026-11-06",
+  "run_tag": "v2_lm50_2048_3p5h_seed2026",
+  "comparison": "same 3.5h budget and real environment; additional SM H32 terminal objective; one training seed",
+  "checkpoints": {
+    "m1_ppo": {
+      "path": "/home/yifeiy/ws_supermimic/logs/m1_ppo/v2_lm50_2048_3p5h_seed2026/policy_inference.pt",
+      "sha256": "227e43edd1d4e9352fed1a910d01c585c4f1b9ee7b41763bc3d8e7fc91c9cec9"
+    },
+    "m1_supermimic": {
+      "path": "/home/yifeiy/ws_supermimic/logs/m1_reward/v2_lm50_2048_3p5h_seed2026/ckpt_latest.pt",
+      "sha256": "d49bcd84e3c85a377e9524ab5cfbf9de17de9192bcd937d308cc4684450b5eef"
+    },
+    "go2_ppo": {
+      "path": "/home/yifeiy/rl_sar/policy/go2/ppo_velocity/policy_inference.pt",
+      "sha256": "5b103bca280e0a1cece3bb9715291e73eebfcc8efb6ae4ee6270c6438dd80b10"
+    },
+    "go2_supermimic": {
+      "path": "/home/yifeiy/rl_sar/policy/go2/supermimic_velocity/policy_inference.pt",
+      "sha256": "3bcae044d39d61553374d21caf7df39d7bd96d9ada6cfa237d7d05dd188bff0c"
+    }
+  },
+  "probe_limits": [
+    "No optimizer steps or new training",
+    "WM response: one nominal pose, six +/- action directions, eps .03 and .01, H up to32",
+    "Posture:4 nominal envs,5s; report t=1..5s; exploratory diagnostic, not full robustness test"
+  ],
+  "train_sample_ratio_ppo_over_sm": 5.736153071500503,
+  "goal_success_rate_denominator": "closed goals only; report right-censored goals separately; falling rates are per completed episode"
+}

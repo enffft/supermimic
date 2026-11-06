@@ -1,0 +1,62 @@
+{
+  "method": "4 envs 5s; balanced L/M, L vx=.12; no DR/noise; posture/action statistics from t=1..5s; no updates",
+  "limitations": "Small nominal probe, not a full robustness evaluation; goal sensitivity changes goal while holding same observed state/history",
+  "results": {
+    "PPO": {
+      "summary": {
+        "L": {
+          "height_mean_m": 0.48679912343621257,
+          "height_min_m": 0.4855324327945709,
+          "height_max_m": 0.4920598864555359,
+          "tilt_mean_deg": 8.23996854841709,
+          "action_abs_mean": 0.6995805114507675,
+          "action_over_0p95_fraction": 0.2693181898444891,
+          "tanh_local_slope_mean": 0.4270412302017212,
+          "falls": 0
+        },
+        "M": {
+          "height_mean_m": 0.3191305531561375,
+          "height_min_m": 0.2790365219116211,
+          "height_max_m": 0.4611908197402954,
+          "tilt_mean_deg": 16.143629651665687,
+          "action_abs_mean": 0.4844579215347767,
+          "action_over_0p95_fraction": 0.14738636687397957,
+          "tanh_local_slope_mean": 0.6582750311493873,
+          "falls": 0
+        }
+      },
+      "goal_counterfactual_mean_abs_action_difference": {
+        "L": 0.11926290392875671,
+        "M": 0.5218420028686523
+      }
+    },
+    "SuperMimic": {
+      "summary": {
+        "L": {
+          "height_mean_m": 0.21933826070278883,
+          "height_min_m": 0.21765214204788208,
+          "height_max_m": 0.23596695065498352,
+          "tilt_mean_deg": 18.08719109535217,
+          "action_abs_mean": 0.9998762819170952,
+          "action_over_0p95_fraction": 1.0,
+          "tanh_local_slope_mean": 0.00024727745505515486,
+          "falls": 0
+        },
+        "M": {
+          "height_mean_m": 0.2194408794492483,
+          "height_min_m": 0.21765749156475067,
+          "height_max_m": 0.23623716831207275,
+          "tilt_mean_deg": 18.106219000816345,
+          "action_abs_mean": 0.9998991185426712,
+          "action_over_0p95_fraction": 1.0,
+          "tanh_local_slope_mean": 0.00020168025221209974,
+          "falls": 0
+        }
+      },
+      "goal_counterfactual_mean_abs_action_difference": {
+        "L": 1.7637556766203488e-06,
+        "M": 7.762150744383689e-07
+      }
+    }
+  }
+}

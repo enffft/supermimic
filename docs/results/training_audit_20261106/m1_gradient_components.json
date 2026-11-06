@@ -1,0 +1,750 @@
+{
+  "method": "4 nominal starts after 1s zero-action settling; L vx+/-0.12, M goals +/-1.5m,z0.8; identical starts across frozen snapshots; H32; no optimization",
+  "limitations": "Not historical Replay; one nominal posture/context; local gradient attribution cannot establish training causality; physical response checked separately",
+  "start_state": [
+    [
+      -0.00017720460891723633,
+      0.0007441043853759766,
+      0.4509739875793457,
+      0.9999964833259583,
+      -0.0019395026611164212,
+      0.0018094729166477919,
+      7.101351911842357e-06,
+      -0.011589261703193188,
+      0.865374743938446,
+      -1.7047151327133179,
+      0.3146710991859436,
+      0.01564377173781395,
+      0.8646694421768188,
+      -1.7095783948898315,
+      0.33203208446502686,
+      -0.010151608847081661,
+      -0.8655987977981567,
+      1.6940993070602417,
+      -0.31947165727615356,
+      0.014339233748614788,
+      -0.8649644255638123,
+      1.6988822221755981,
+      -0.33646804094314575,
+      0.00016963110829237849,
+      0.5158262252807617,
+      -0.1843804121017456,
+      0.3450181782245636,
+      -5.168158168089576e-05,
+      -9.88642295851605e-06,
+      0.001589385443367064,
+      -1.757094833010342e-05,
+      -0.0018794451607391238,
+      -0.00015280864317901433,
+      -0.0005459824460558593,
+      -5.455678910948336e-05,
+      -0.011679783463478088,
+      0.0015107523649930954,
+      -1.667846299824305e-05,
+      0.010280399583280087,
+      0.011300839483737946,
+      0.0016556484624743462,
+      -0.0004380998434498906,
+      0.01098559983074665,
+      -0.009914623573422432,
+      0.002179840812459588,
+      0.0029449262656271458,
+      -0.001536511117592454,
+      0.00978949572890997,
+      0.0021029184572398663,
+      0.0031659093219786882,
+      -0.0014966281596571207,
+      0.000993517809547484,
+      -0.06199740990996361,
+      0.014429084956645966,
+      0.0032528149895370007,
+      -1.7353115254081786e-05,
+      -1.291464968744549e-06
+    ],
+    [
+      -0.00017696619033813477,
+      0.0007432699203491211,
+      0.4509739875793457,
+      0.9999964833259583,
+      -0.0019394841510802507,
+      0.0018094819970428944,
+      7.1138038038043305e-06,
+      -0.011589235626161098,
+      0.865374743938446,
+      -1.7047151327133179,
+      0.3146694600582123,
+      0.01564374379813671,
+      0.8646694421768188,
+      -1.709578514099121,
+      0.3320348262786865,
+      -0.010151577182114124,
+      -0.8655988574028015,
+      1.6940991878509521,
+      -0.3194698691368103,
+      0.014339220710098743,
+      -0.8649643659591675,
+      1.6988823413848877,
+      -0.33647170662879944,
+      0.00016963390226010233,
+      0.5158262252807617,
+      -0.18438051640987396,
+      0.3450181186199188,
+      -5.1679235184565187e-05,
+      -9.885654435493052e-06,
+      0.0015894934767857194,
+      -1.785332824510988e-05,
+      -0.0018790181493386626,
+      -0.00015303435793612152,
+      -0.000545655726455152,
+      -5.4731248383177444e-05,
+      -0.01167873665690422,
+      0.0015119332820177078,
+      -1.9859809981426224e-05,
+      0.010283136740326881,
+      0.011301783844828606,
+      0.001652736566029489,
+      -0.00043139411718584597,
+      0.010982041247189045,
+      -0.009913486428558826,
+      0.0021805071737617254,
+      0.002942977473139763,
+      -0.0015365014551207423,
+      0.009790228679776192,
+      0.0021057568956166506,
+      0.0031613102182745934,
+      -0.0014984518056735396,
+      0.0009937075665220618,
+      -0.06200191006064415,
+      0.014432152733206749,
+      0.0032541723921895027,
+      -1.7209682482643984e-05,
+      -1.5828229606995592e-06
+    ],
+    [
+      -0.00017702579498291016,
+      0.0007440447807312012,
+      0.4509740173816681,
+      0.9999964833259583,
+      -0.0019394855480641127,
+      0.0018094702390953898,
+      7.103874395397725e-06,
+      -0.01158924214541912,
+      0.865374743938446,
+      -1.7047148942947388,
+      0.314671128988266,
+      0.01564372517168522,
+      0.8646696209907532,
+      -1.7095783948898315,
+      0.33203211426734924,
+      -0.010151570662856102,
+      -0.8655989170074463,
+      1.6940990686416626,
+      -0.31947171688079834,
+      0.01433919370174408,
+      -0.864964485168457,
+      1.6988821029663086,
+      -0.33647122979164124,
+      0.00016959832282736897,
+      0.5158262848854065,
+      -0.18438062071800232,
+      0.3450181484222412,
+      -5.168312418390997e-05,
+      -9.88615647656843e-06,
+      0.0015891912626102567,
+      -1.794843228708487e-05,
+      -0.0018798692617565393,
+      -0.00015231399447657168,
+      -0.000545331509783864,
+      -5.493287244462408e-05,
+      -0.011679357849061489,
+      0.001509863417595625,
+      -2.2386322598322295e-05,
+      0.010294151492416859,
+      0.011301555670797825,
+      0.0016541586956009269,
+      -0.0004367312940303236,
+      0.010984319262206554,
+      -0.009914310649037361,
+      0.002180413343012333,
+      0.0029443667735904455,
+      -0.0015437662368640304,
+      0.009789765812456608,
+      0.0021026525646448135,
+      0.003167652292177081,
+      -0.0015044823521748185,
+      0.0009938855655491352,
+      -0.062000781297683716,
+      0.014429423958063126,
+      0.0032525709830224514,
+      -1.7450798623031005e-05,
+      -1.2730066600852297e-06
+    ],
+    [
+      -0.0001767873764038086,
+      0.0007432699203491211,
+      0.4509739875793457,
+      0.9999964833259583,
+      -0.0019394851988181472,
+      0.0018094624392688274,
+      7.0973378569760825e-06,
+      -0.011589223518967628,
+      0.8653746843338013,
+      -1.7047148942947388,
+      0.3146689832210541,
+      0.01564371958374977,
+      0.8646696209907532,
+      -1.7095783948898315,
+      0.33203455805778503,
+      -0.010151570662856102,
+      -0.8655989766120911,
+      1.6940993070602417,
+      -0.31947264075279236,
+      0.014339213259518147,
+      -0.864964485168457,
+      1.6988822221755981,
+      -0.33646947145462036,
+      0.00016964312817435712,
+      0.5158262252807617,
+      -0.18438059091567993,
+      0.3450181484222412,
+      -5.168084317119792e-05,
+      -9.88615647656843e-06,
+      0.0015892436495050788,
+      -1.78005520865554e-05,
+      -0.0018793722847476602,
+      -0.0001527003914816305,
+      -0.0005451972247101367,
+      -5.475993384607136e-05,
+      -0.011679362505674362,
+      0.0015112421242520213,
+      -2.518892324587796e-05,
+      0.010296504013240337,
+      0.011301294900476933,
+      0.0016545882681384683,
+      -0.0004392162954900414,
+      0.010988976806402206,
+      -0.009913979098200798,
+      0.0021807155571877956,
+      0.002947096945717931,
+      -0.0015525096096098423,
+      0.009789746254682541,
+      0.0021023317240178585,
+      0.0031704669818282127,
+      -0.0015104955527931452,
+      0.0009935095440596342,
+      -0.06200147047638893,
+      0.014432186260819435,
+      0.00325309531763196,
+      -1.7552150893607177e-05,
+      -1.5858427104831208e-06
+    ]
+  ],
+  "context": [
+    [
+      0.0,
+      0.11999999731779099,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      -0.11999999731779099,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      1.499822974205017,
+      0.0007440447807312012,
+      0.800000011920929
+    ],
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      -1.5001767873764038,
+      0.0007432699203491211,
+      0.800000011920929
+    ]
+  ],
+  "snapshots": [
+    {
+      "checkpoint": "ckpt_wall_015m.pt",
+      "iteration": 824,
+      "actor_updates": 14,
+      "hours": 0.2520604159434636,
+      "imag_action_abs_mean": 0.00013338740973267704,
+      "imag_abs_action_over_0p95_fraction": 0.0,
+      "imag_survival_H": [
+        0.9999675750732422,
+        0.9999675750732422,
+        0.9999675750732422,
+        0.9999675750732422
+      ],
+      "critic_H": [
+        5.465001583099365,
+        5.500202655792236,
+        2.8115954399108887,
+        2.4736762046813965
+      ],
+      "terminal_reward": [
+        -0.0,
+        -0.0,
+        -1.0978598594665527,
+        -1.913454294204712
+      ],
+      "components": {
+        "dense": {
+          "objective_div_H": 0.04251512140035629,
+          "parameter_gradient_norm": 0.007318911608308554,
+          "logit_gradient_abs_sum": 0.2720915675163269,
+          "outward_logit_gradient_mass_fraction": 0.0,
+          "cosine_with_total": -0.8945354223251343,
+          "projection_on_total_ratio": -0.07407916337251663
+        },
+        "dense_survival_detached": {
+          "objective_div_H": 0.04251512140035629,
+          "parameter_gradient_norm": 0.007319201249629259,
+          "logit_gradient_abs_sum": 0.2720922827720642,
+          "outward_logit_gradient_mass_fraction": 0.0,
+          "cosine_with_total": -0.8945380449295044,
+          "projection_on_total_ratio": -0.07408231496810913
+        },
+        "critic": {
+          "objective_div_H": 0.09203824400901794,
+          "parameter_gradient_norm": 0.09547816962003708,
+          "logit_gradient_abs_sum": 0.44758176803588867,
+          "outward_logit_gradient_mass_fraction": 0.0,
+          "cosine_with_total": 0.9992906451225281,
+          "projection_on_total_ratio": 1.0795629024505615
+        },
+        "critic_survival_detached": {
+          "objective_div_H": 0.09203824400901794,
+          "parameter_gradient_norm": 0.09547816962003708,
+          "logit_gradient_abs_sum": 0.44758176803588867,
+          "outward_logit_gradient_mass_fraction": 0.0,
+          "cosine_with_total": 0.9992906451225281,
+          "projection_on_total_ratio": 1.0795629024505615
+        },
+        "terminal": {
+          "objective_div_H": -0.017055809497833252,
+          "parameter_gradient_norm": 0.0007749763317406178,
+          "logit_gradient_abs_sum": 0.023821357637643814,
+          "outward_logit_gradient_mass_fraction": 0.0,
+          "cosine_with_total": -0.629787027835846,
+          "projection_on_total_ratio": -0.005522480700165033
+        },
+        "total": {
+          "objective_div_H": 0.11749756336212158,
+          "parameter_gradient_norm": 0.08837876468896866,
+          "logit_gradient_abs_sum": 0.5950537919998169,
+          "outward_logit_gradient_mass_fraction": 0.0,
+          "cosine_with_total": 1.0,
+          "projection_on_total_ratio": 0.9999999403953552
+        }
+      },
+      "survival_gradient_norm": 4.1842662312774337e-07,
+      "survival_gradient_projection_on_total_ratio": 3.1361494166048942e-06
+    },
+    {
+      "checkpoint": "ckpt_wall_060m.pt",
+      "iteration": 1322,
+      "actor_updates": 213,
+      "hours": 1.001081308060222,
+      "imag_action_abs_mean": 0.13440880179405212,
+      "imag_abs_action_over_0p95_fraction": 0.0,
+      "imag_survival_H": [
+        0.9999675750732422,
+        0.9999675750732422,
+        0.9999675750732422,
+        0.9999675750732422
+      ],
+      "critic_H": [
+        7.758824348449707,
+        10.427116394042969,
+        4.081017971038818,
+        2.8648648262023926
+      ],
+      "terminal_reward": [
+        -0.0,
+        -0.0,
+        -1.109944462776184,
+        -1.9080649614334106
+      ],
+      "components": {
+        "dense": {
+          "objective_div_H": 0.04151109978556633,
+          "parameter_gradient_norm": 0.31044426560401917,
+          "logit_gradient_abs_sum": 0.3019566237926483,
+          "outward_logit_gradient_mass_fraction": 0.44077783823013306,
+          "cosine_with_total": -0.24306616187095642,
+          "projection_on_total_ratio": -0.410053014755249
+        },
+        "dense_survival_detached": {
+          "objective_div_H": 0.04151109978556633,
+          "parameter_gradient_norm": 0.31044426560401917,
+          "logit_gradient_abs_sum": 0.3019566237926483,
+          "outward_logit_gradient_mass_fraction": 0.44077783823013306,
+          "cosine_with_total": -0.24306616187095642,
+          "projection_on_total_ratio": -0.410053014755249
+        },
+        "critic": {
+          "objective_div_H": 0.14233975112438202,
+          "parameter_gradient_norm": 0.403245747089386,
+          "logit_gradient_abs_sum": 0.23197408020496368,
+          "outward_logit_gradient_mass_fraction": 0.5343209505081177,
+          "cosine_with_total": 0.6465954780578613,
+          "projection_on_total_ratio": 1.4168840646743774
+        },
+        "critic_survival_detached": {
+          "objective_div_H": 0.14233975112438202,
+          "parameter_gradient_norm": 0.403245747089386,
+          "logit_gradient_abs_sum": 0.23197408020496368,
+          "outward_logit_gradient_mass_fraction": 0.5343209505081177,
+          "cosine_with_total": 0.6465954780578613,
+          "projection_on_total_ratio": 1.4168840646743774
+        },
+        "terminal": {
+          "objective_div_H": -0.017093731090426445,
+          "parameter_gradient_norm": 0.009196669794619083,
+          "logit_gradient_abs_sum": 0.020737629383802414,
+          "outward_logit_gradient_mass_fraction": 0.49207356572151184,
+          "cosine_with_total": -0.13735759258270264,
+          "projection_on_total_ratio": -0.006864598486572504
+        },
+        "total": {
+          "objective_div_H": 0.16675712168216705,
+          "parameter_gradient_norm": 0.18402135372161865,
+          "logit_gradient_abs_sum": 0.4281628131866455,
+          "outward_logit_gradient_mass_fraction": 0.47889572381973267,
+          "cosine_with_total": 0.9999998807907104,
+          "projection_on_total_ratio": 1.0
+        }
+      },
+      "survival_gradient_norm": 0.0,
+      "survival_gradient_projection_on_total_ratio": 0.0
+    },
+    {
+      "checkpoint": "ckpt_wall_090m.pt",
+      "iteration": 1654,
+      "actor_updates": 346,
+      "hours": 1.5023254596524769,
+      "imag_action_abs_mean": 0.032402265816926956,
+      "imag_abs_action_over_0p95_fraction": 0.0,
+      "imag_survival_H": [
+        0.9999675750732422,
+        0.9999675750732422,
+        0.9999675750732422,
+        0.9999675750732422
+      ],
+      "critic_H": [
+        5.299890995025635,
+        7.087286949157715,
+        3.7618660926818848,
+        2.2456469535827637
+      ],
+      "terminal_reward": [
+        -0.0,
+        -0.0,
+        -1.1002761125564575,
+        -1.9111613035202026
+      ],
+      "components": {
+        "dense": {
+          "objective_div_H": 0.040353767573833466,
+          "parameter_gradient_norm": 0.03970075398683548,
+          "logit_gradient_abs_sum": 0.34700262546539307,
+          "outward_logit_gradient_mass_fraction": 0.6219611763954163,
+          "cosine_with_total": 0.38312143087387085,
+          "projection_on_total_ratio": 0.12091438472270966
+        },
+        "dense_survival_detached": {
+          "objective_div_H": 0.040353767573833466,
+          "parameter_gradient_norm": 0.03970075398683548,
+          "logit_gradient_abs_sum": 0.34700262546539307,
+          "outward_logit_gradient_mass_fraction": 0.6219611763954163,
+          "cosine_with_total": 0.38312143087387085,
+          "projection_on_total_ratio": 0.12091438472270966
+        },
+        "critic": {
+          "objective_div_H": 0.10418247431516647,
+          "parameter_gradient_norm": 0.11518824100494385,
+          "logit_gradient_abs_sum": 0.5901365280151367,
+          "outward_logit_gradient_mass_fraction": 0.6786428093910217,
+          "cosine_with_total": 0.9477288126945496,
+          "projection_on_total_ratio": 0.8678306341171265
+        },
+        "critic_survival_detached": {
+          "objective_div_H": 0.10418247431516647,
+          "parameter_gradient_norm": 0.11518824100494385,
+          "logit_gradient_abs_sum": 0.5901365280151367,
+          "outward_logit_gradient_mass_fraction": 0.6786428093910217,
+          "cosine_with_total": 0.9477288126945496,
+          "projection_on_total_ratio": 0.8678306341171265
+        },
+        "terminal": {
+          "objective_div_H": -0.017056507989764214,
+          "parameter_gradient_norm": 0.0025340435095131397,
+          "logit_gradient_abs_sum": 0.022674888372421265,
+          "outward_logit_gradient_mass_fraction": 0.516106903553009,
+          "cosine_with_total": 0.558994710445404,
+          "projection_on_total_ratio": 0.011260677129030228
+        },
+        "total": {
+          "objective_div_H": 0.12747973203659058,
+          "parameter_gradient_norm": 0.1257932186126709,
+          "logit_gradient_abs_sum": 0.7647701501846313,
+          "outward_logit_gradient_mass_fraction": 0.682548999786377,
+          "cosine_with_total": 1.0000001192092896,
+          "projection_on_total_ratio": 1.0000001192092896
+        }
+      },
+      "survival_gradient_norm": 0.0,
+      "survival_gradient_projection_on_total_ratio": 0.0
+    },
+    {
+      "checkpoint": "ckpt_wall_105m.pt",
+      "iteration": 1819,
+      "actor_updates": 412,
+      "hours": 1.7511166801055273,
+      "imag_action_abs_mean": 0.9503159523010254,
+      "imag_abs_action_over_0p95_fraction": 0.8892045617103577,
+      "imag_survival_H": [
+        0.998840868473053,
+        0.9988348484039307,
+        0.9989821314811707,
+        0.9989365935325623
+      ],
+      "critic_H": [
+        0.3989395201206207,
+        0.6022049188613892,
+        0.48495689034461975,
+        0.2911912798881531
+      ],
+      "terminal_reward": [
+        -0.0,
+        -0.0,
+        -1.4816645383834839,
+        -1.6570137739181519
+      ],
+      "components": {
+        "dense": {
+          "objective_div_H": 0.015132731758058071,
+          "parameter_gradient_norm": 0.5860344171524048,
+          "logit_gradient_abs_sum": 0.01904790848493576,
+          "outward_logit_gradient_mass_fraction": 0.4014802575111389,
+          "cosine_with_total": 0.9694065451622009,
+          "projection_on_total_ratio": 1.4709802865982056
+        },
+        "dense_survival_detached": {
+          "objective_div_H": 0.015132731758058071,
+          "parameter_gradient_norm": 0.5879184007644653,
+          "logit_gradient_abs_sum": 0.01904214918613434,
+          "outward_logit_gradient_mass_fraction": 0.40116989612579346,
+          "cosine_with_total": 0.969339907169342,
+          "projection_on_total_ratio": 1.4756077527999878
+        },
+        "critic": {
+          "objective_div_H": 0.010055281221866608,
+          "parameter_gradient_norm": 0.195351704955101,
+          "logit_gradient_abs_sum": 0.003751894924789667,
+          "outward_logit_gradient_mass_fraction": 0.6346662640571594,
+          "cosine_with_total": -0.6886726021766663,
+          "projection_on_total_ratio": -0.3483435809612274
+        },
+        "critic_survival_detached": {
+          "objective_div_H": 0.010055281221866608,
+          "parameter_gradient_norm": 0.19370919466018677,
+          "logit_gradient_abs_sum": 0.003750557079911232,
+          "outward_logit_gradient_mass_fraction": 0.633539617061615,
+          "cosine_with_total": -0.6851261258125305,
+          "projection_on_total_ratio": -0.3436359465122223
+        },
+        "terminal": {
+          "objective_div_H": -0.01777718774974346,
+          "parameter_gradient_norm": 0.047287631779909134,
+          "logit_gradient_abs_sum": 0.0012954145204275846,
+          "outward_logit_gradient_mass_fraction": 0.5340980887413025,
+          "cosine_with_total": -0.9952253103256226,
+          "projection_on_total_ratio": -0.1218559592962265
+        },
+        "total": {
+          "objective_div_H": 0.007410826161503792,
+          "parameter_gradient_norm": 0.3862088620662689,
+          "logit_gradient_abs_sum": 0.020777856931090355,
+          "outward_logit_gradient_mass_fraction": 0.43609705567359924,
+          "cosine_with_total": 0.9999997019767761,
+          "projection_on_total_ratio": 0.9999998211860657
+        }
+      },
+      "survival_gradient_norm": 0.003834844334051013,
+      "survival_gradient_projection_on_total_ratio": -0.009335165843367577
+    },
+    {
+      "checkpoint": "ckpt_wall_120m.pt",
+      "iteration": 1984,
+      "actor_updates": 478,
+      "hours": 2.000314847363366,
+      "imag_action_abs_mean": 0.973029613494873,
+      "imag_abs_action_over_0p95_fraction": 0.8973721861839294,
+      "imag_survival_H": [
+        0.7831372618675232,
+        0.798061192035675,
+        0.030449410900473595,
+        0.28117886185646057
+      ],
+      "critic_H": [
+        0.22097636759281158,
+        0.403209388256073,
+        -0.042074330151081085,
+        0.1476280242204666
+      ],
+      "terminal_reward": [
+        -0.0,
+        -0.0,
+        -1.7422208786010742,
+        -1.798611044883728
+      ],
+      "components": {
+        "dense": {
+          "objective_div_H": 0.011633004993200302,
+          "parameter_gradient_norm": 0.5192925930023193,
+          "logit_gradient_abs_sum": 0.02714279294013977,
+          "outward_logit_gradient_mass_fraction": 0.27341267466545105,
+          "cosine_with_total": 0.9555113315582275,
+          "projection_on_total_ratio": 0.6025285124778748
+        },
+        "dense_survival_detached": {
+          "objective_div_H": 0.011633004993200302,
+          "parameter_gradient_norm": 0.5428630709648132,
+          "logit_gradient_abs_sum": 0.028071552515029907,
+          "outward_logit_gradient_mass_fraction": 0.2802163064479828,
+          "cosine_with_total": 0.95915287733078,
+          "projection_on_total_ratio": 0.6322776079177856
+        },
+        "critic": {
+          "objective_div_H": 0.003030584193766117,
+          "parameter_gradient_norm": 0.3124407231807709,
+          "logit_gradient_abs_sum": 0.026767857372760773,
+          "outward_logit_gradient_mass_fraction": 0.22258687019348145,
+          "cosine_with_total": 0.8940821290016174,
+          "projection_on_total_ratio": 0.3392147123813629
+        },
+        "critic_survival_detached": {
+          "objective_div_H": 0.003030584193766117,
+          "parameter_gradient_norm": 0.0854649469256401,
+          "logit_gradient_abs_sum": 0.006707129068672657,
+          "outward_logit_gradient_mass_fraction": 0.2725083529949188,
+          "cosine_with_total": 0.5736290812492371,
+          "projection_on_total_ratio": 0.05953177809715271
+        },
+        "terminal": {
+          "objective_div_H": -0.020054951310157776,
+          "parameter_gradient_norm": 0.051164623349905014,
+          "logit_gradient_abs_sum": 0.0024810456670820713,
+          "outward_logit_gradient_mass_fraction": 0.2543465495109558,
+          "cosine_with_total": 0.9375198483467102,
+          "projection_on_total_ratio": 0.058247849345207214
+        },
+        "total": {
+          "objective_div_H": -0.005391362123191357,
+          "parameter_gradient_norm": 0.823512852191925,
+          "logit_gradient_abs_sum": 0.050506480038166046,
+          "outward_logit_gradient_mass_fraction": 0.21904496848583221,
+          "cosine_with_total": 0.9999998211860657,
+          "projection_on_total_ratio": 0.9999999403953552
+        }
+      },
+      "survival_gradient_norm": 0.21968498826026917,
+      "survival_gradient_projection_on_total_ratio": 0.24993391335010529
+    },
+    {
+      "checkpoint": "ckpt_latest.pt",
+      "iteration": 2979,
+      "actor_updates": 876,
+      "hours": 3.5005691450172,
+      "imag_action_abs_mean": 0.9899325370788574,
+      "imag_abs_action_over_0p95_fraction": 0.9630681872367859,
+      "imag_survival_H": [
+        0.9988674521446228,
+        0.9988656640052795,
+        0.9988623261451721,
+        0.9988442659378052
+      ],
+      "critic_H": [
+        28.450456619262695,
+        30.06675910949707,
+        29.027889251708984,
+        27.630413055419922
+      ],
+      "terminal_reward": [
+        -0.0,
+        -0.0,
+        -1.3441351652145386,
+        -1.71890127658844
+      ],
+      "components": {
+        "dense": {
+          "objective_div_H": 0.01755421981215477,
+          "parameter_gradient_norm": 0.057494547218084335,
+          "logit_gradient_abs_sum": 0.0044877370819449425,
+          "outward_logit_gradient_mass_fraction": 0.4864702522754669,
+          "cosine_with_total": 0.7802090048789978,
+          "projection_on_total_ratio": 0.01488056592643261
+        },
+        "dense_survival_detached": {
+          "objective_div_H": 0.01755421981215477,
+          "parameter_gradient_norm": 0.056982386857271194,
+          "logit_gradient_abs_sum": 0.004464886616915464,
+          "outward_logit_gradient_mass_fraction": 0.48635372519493103,
+          "cosine_with_total": 0.7792088389396667,
+          "projection_on_total_ratio": 0.014729103073477745
+        },
+        "critic": {
+          "objective_div_H": 0.6516000628471375,
+          "parameter_gradient_norm": 2.966087818145752,
+          "logit_gradient_abs_sum": 0.2334926724433899,
+          "outward_logit_gradient_mass_fraction": 0.43519100546836853,
+          "cosine_with_total": 0.9999209642410278,
+          "projection_on_total_ratio": 0.9838559031486511
+        },
+        "critic_survival_detached": {
+          "objective_div_H": 0.6516000628471375,
+          "parameter_gradient_norm": 2.9270594120025635,
+          "logit_gradient_abs_sum": 0.23104551434516907,
+          "outward_logit_gradient_mass_fraction": 0.43441322445869446,
+          "cosine_with_total": 0.999754786491394,
+          "projection_on_total_ratio": 0.970748782157898
+        },
+        "terminal": {
+          "objective_div_H": -0.0173487588763237,
+          "parameter_gradient_norm": 0.004158791620284319,
+          "logit_gradient_abs_sum": 0.00035324657801538706,
+          "outward_logit_gradient_mass_fraction": 0.4854799509048462,
+          "cosine_with_total": 0.8503579497337341,
+          "projection_on_total_ratio": 0.0011731424601748586
+        },
+        "total": {
+          "objective_div_H": 0.6518055200576782,
+          "parameter_gradient_norm": 3.0145199298858643,
+          "logit_gradient_abs_sum": 0.23594574630260468,
+          "outward_logit_gradient_mass_fraction": 0.43564313650131226,
+          "cosine_with_total": 0.9999998807907104,
+          "projection_on_total_ratio": 0.9999998807907104
+        }
+      },
+      "survival_gradient_norm": 0.05176980793476105,
+      "survival_gradient_projection_on_total_ratio": 0.013258637860417366
+    }
+  ]
+}

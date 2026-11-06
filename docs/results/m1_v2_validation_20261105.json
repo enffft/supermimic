@@ -1,0 +1,129 @@
+{
+  "date": "2026-11-05",
+  "purpose": "Implementation and bounded validation only; not a trained v2 policy result",
+  "formal_training_started": false,
+  "python": "/home/yifeiy/miniconda3/envs/supermimic/bin/python",
+  "git_head": "d0f32b1173ac6ef3f77a596e5dcaceaff2fb762c",
+  "working_tree_changes_uncommitted": true,
+  "target_contract": {
+    "sampling": "base_disk",
+    "radius_m": 3.0,
+    "z_m": [
+      0.03,
+      1.1
+    ],
+    "resample_on_stable_arrival": true,
+    "success_distance_m": 0.08
+  },
+  "next_training_budget": {
+    "order": [
+      "PPO",
+      "SuperMimic"
+    ],
+    "hours_each": 3.5,
+    "num_envs": 2048,
+    "L_envs": 1024,
+    "M_envs": 1024
+  },
+  "cpu_tests": {
+    "passed": 27,
+    "failures": 0,
+    "command": "PYTHONPATH=src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 /home/yifeiy/miniconda3/envs/supermimic/bin/python -m pytest -q tests/test_m1_reward_only.py tests/test_m1_v2.py tests/test_training_sequence.py tests/test_m1_ppo.py tests/test_go2_comparison.py"
+  },
+  "m1_h32_smoke": {
+    "reward_real_imag_max_error": 0.0,
+    "goal8_max_error": 0.0,
+    "tcp_fk_mujoco_max_error_m": 2.682209014892578e-07,
+    "L_envs": 2,
+    "M_envs": 2,
+    "prior_absent": true,
+    "actor_updates": 3
+  },
+  "m1_production_shape_short_probe": {
+    "num_envs": 2048,
+    "horizon": 32,
+    "logical_batch": 128,
+    "actor_microbatch": 32,
+    "wm_fits_per_event": 4,
+    "iterations": 14,
+    "actor_updates": 1,
+    "wm_update_events": 1,
+    "L_envs": 1024,
+    "M_envs": 1024,
+    "cuda_peak_allocated_mib": 617.99658203125,
+    "max_rss_mib": 4864.15625,
+    "gradient_finite": true
+  },
+  "success_resampling": {
+    "old_target_reward_and_replay": true,
+    "new_target_next_observation_and_snapshot": true,
+    "success_bonus_once": 12.0,
+    "robot_not_reset": true,
+    "target_fixed_between_arrivals": true,
+    "env_origins_nonzero": true,
+    "success_env": 1,
+    "next_goal": [
+      -1.1948786973953247,
+      1.154699683189392,
+      0.9860115647315979
+    ]
+  },
+  "native_resume": {
+    "go2_ppo": {
+      "updates": 2,
+      "env_steps": 64,
+      "elapsed_cumulative": 2.532990941996104
+    },
+    "go2_sm": {
+      "iterations": 22,
+      "actor_updates": 0,
+      "elapsed_cumulative": 53.59301161766052
+    },
+    "m1_ppo": {
+      "updates": 2,
+      "env_steps": 64,
+      "elapsed_cumulative": 4.80393883799843
+    },
+    "m1_sm": {
+      "iterations": 26,
+      "actor_updates": 3,
+      "elapsed_cumulative": 13.18824028968811
+    }
+  },
+  "evaluation": {
+    "six_matched_evaluations": true,
+    "closed_goals": 12,
+    "censored_goals": 4,
+    "legacy_hold_not_reported_for_v2": true
+  },
+  "go2_sequence": {
+    "tag": "validation_v4_20261105",
+    "all_stages_completed": true,
+    "sm_actor_updates": 1,
+    "sm_wm_update_events": 2,
+    "sm_horizon": 32,
+    "export_destination": "/tmp/go2_sequence_rl_sar_v4_20261105",
+    "formal_deployment_artifacts_overwritten": false,
+    "detach_resume_all_four_stages_skipped": true
+  },
+  "source_sha256": {
+    "src/supermimic/tasks/m1_reward.py": "138e178bfa01278560e0e8a86c3aa0b01b850321163dd93282d475dedcdec93d",
+    "src/supermimic/training/m1_reward.py": "481fdcbdc3d6316560978ebeb51b674137e3362c6895823120a8b80b03981309",
+    "src/supermimic/imagination/tasks.py": "c015c56fe1c46c1afe18f25a0f9a3f05910f990507ada1635c460e372cfcdd30",
+    "src/supermimic/imagination/rollout.py": "f02805b7aecfe5b8b3120308de149a1b4dfaac670a4987f7826053f5fffe9dbd",
+    "src/supermimic/imagination/policy_trainer.py": "ba8f47d96f9a53afdb1ff4c566766df2a839277fe21f440cf86347d21286f8fd",
+    "src/supermimic/baselines/sequence.py": "07f21a4d179367300db739a49be10ba392e245d846a8099ffd9938f16f235f4b",
+    "src/supermimic/baselines/go2_supermimic.py": "83d8da79f90455908cd9029b9ae00f9d0fde28d2ada6b57e752ec17b2213429b",
+    "src/supermimic/baselines/go2_ppo.py": "f2982010be9b5aa116826067df69dd769e89e4719721507e13f9764a0b670500",
+    "src/supermimic/baselines/m1_ppo.py": "d67d0f434777c6c6066725d8a0a4efdcc53d5a3b230174074ac3dd588c77e389",
+    "scripts/run_go2_comparison.py": "670f8b721e87a7e808ced8631007b543808f0dd440e519a779fd70d943b51d51",
+    "scripts/run_m1_comparison.py": "ed57d20f94b28f867d2e34e83a1ce26ab151e68f89950e8f4aa8a62c6b91ac28",
+    "scripts/evaluate_m1_reward.py": "1693a8efe6465cc5942473963c3698618802b86950cc3c626655d420c8b041c6",
+    "scripts/report_m1_v2_comparison.py": "2f0fcfbb4159f4c45628b7a265ec58c46cb5ca3241eb73b337793ac8d1e60add",
+    "src/supermimic/training/loop.py": "8e94839d6015f52753afc862d51fb6608fbe199077cc1c53ea3cae0a3b6109a8",
+    "src/supermimic/envs/mdp/commands.py": "19b02c00e0185a98596e1fab62b5ff5cbf9f5e0fac58c1ecfe07c4e0d7597d74",
+    "src/supermimic/envs/multirobot_env_cfg.py": "020f4ce89225288179a33ed6fe9927d0ae83e5e47b517b70d56c97a39499ff82",
+    "src/supermimic/config.py": "f832ca32249e1991e8f24ab3b9f4e881521629e4260c336e9b856e595e42740e",
+    "src/supermimic/envs/tracking_env_cfg.py": "0186bf538bae50474bd048f324812f6c3b9faf598d9e906352fc4356fb2aa902"
+  }
+}

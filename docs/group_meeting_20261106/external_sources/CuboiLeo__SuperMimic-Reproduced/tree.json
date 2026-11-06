@@ -1,0 +1,725 @@
+{
+  "sha": "ba6105349069bf040f1fdad60873d13138d505a2",
+  "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/trees/ba6105349069bf040f1fdad60873d13138d505a2",
+  "tree": [
+    {
+      "path": ".gitignore",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c7bc603098d25e653b06da397d39a35b943e6f35",
+      "size": 142,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/c7bc603098d25e653b06da397d39a35b943e6f35"
+    },
+    {
+      "path": ".python-version",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e4fba2183587225f216eeada4c78dfab6b2e65f5",
+      "size": 5,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/e4fba2183587225f216eeada4c78dfab6b2e65f5"
+    },
+    {
+      "path": "LICENSE",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "18712360d5fd9b770a49a582a995df061015fa02",
+      "size": 1065,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/18712360d5fd9b770a49a582a995df061015fa02"
+    },
+    {
+      "path": "README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e89d5b2a6248707c268c3c7c523e5d537c7954fb",
+      "size": 22276,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/e89d5b2a6248707c268c3c7c523e5d537c7954fb"
+    },
+    {
+      "path": "docs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "4774481b1ae375c04e62f70e13a28b6ddf91a0f7",
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/trees/4774481b1ae375c04e62f70e13a28b6ddf91a0f7"
+    },
+    {
+      "path": "docs/EXPERIMENTS.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bdb151df35d41d1283b9aec8ef528327bf22c19a",
+      "size": 21051,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/bdb151df35d41d1283b9aec8ef528327bf22c19a"
+    },
+    {
+      "path": "docs/PAPER_SPEC.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0bf0a86bd41a1d5af1ccbd046dcf3859aa8708ef",
+      "size": 23086,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/0bf0a86bd41a1d5af1ccbd046dcf3859aa8708ef"
+    },
+    {
+      "path": "docs/REPRODUCTION_PLAN.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f1cfd98cfd5f699acabad6e7dbe0ee40a0cfaa6e",
+      "size": 61864,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/f1cfd98cfd5f699acabad6e7dbe0ee40a0cfaa6e"
+    },
+    {
+      "path": "docs/REVIEW_LOG.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8bf7b873ad0033de93dc17bf8102a0d3a586a5f8",
+      "size": 12415,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/8bf7b873ad0033de93dc17bf8102a0d3a586a5f8"
+    },
+    {
+      "path": "media",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "2e709c84d580c8394de81155f229252133b5a351",
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/trees/2e709c84d580c8394de81155f229252133b5a351"
+    },
+    {
+      "path": "media/g1_boneseed_highlights.gif",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f2503e8090128c06a40da444f04dfc0421daf193",
+      "size": 8460477,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/f2503e8090128c06a40da444f04dfc0421daf193"
+    },
+    {
+      "path": "media/g1_boneseed_showcase.mp4",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c44bed2f683df4252599b3ddb5d6b9431af6f019",
+      "size": 4678847,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/c44bed2f683df4252599b3ddb5d6b9431af6f019"
+    },
+    {
+      "path": "pyproject.toml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3f453a67af46b951f7bcb093ac7a5c8a46ada6b8",
+      "size": 1646,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/3f453a67af46b951f7bcb093ac7a5c8a46ada6b8"
+    },
+    {
+      "path": "scripts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "2efb58ea55a436bf9ac308c0a90e721a53c9ff9d",
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/trees/2efb58ea55a436bf9ac308c0a90e721a53c9ff9d"
+    },
+    {
+      "path": "scripts/bench_imagination.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c2d8c3edccc594a645f4b6e6db87d7ebe527ef51",
+      "size": 3092,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/c2d8c3edccc594a645f4b6e6db87d7ebe527ef51"
+    },
+    {
+      "path": "scripts/bench_sim_speed.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0af7ffa0cd9f4ab75371675612e417e9dc9a0048",
+      "size": 1332,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/0af7ffa0cd9f4ab75371675612e417e9dc9a0048"
+    },
+    {
+      "path": "scripts/data",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "f40a8e394a32e8a3867752df1cb5e800e8fc3ca8",
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/trees/f40a8e394a32e8a3867752df1cb5e800e8fc3ca8"
+    },
+    {
+      "path": "scripts/data/build_library.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "249dbfb2b81e6d94d00179e80d8d1d35b969e148",
+      "size": 1664,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/249dbfb2b81e6d94d00179e80d8d1d35b969e148"
+    },
+    {
+      "path": "scripts/data/csv_to_npz_batch.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "523f0f6e3d992edb92c2e3631cfd1cd007e5cce9",
+      "size": 3862,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/523f0f6e3d992edb92c2e3631cfd1cd007e5cce9"
+    },
+    {
+      "path": "scripts/data/filter_bones_seed.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fe40490eb4b1d5fdaafea1f18d12f37ffbb5af59",
+      "size": 6681,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/fe40490eb4b1d5fdaafea1f18d12f37ffbb5af59"
+    },
+    {
+      "path": "scripts/diag_drift.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c3a8a72fed156015b954d259a7f77a681fee6168",
+      "size": 7143,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/c3a8a72fed156015b954d259a7f77a681fee6168"
+    },
+    {
+      "path": "scripts/eval_benchmark.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "182e105a47d4a99275208ec2cb22a11fe76a7310",
+      "size": 1839,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/182e105a47d4a99275208ec2cb22a11fe76a7310"
+    },
+    {
+      "path": "scripts/eval_push.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bf566ffe8664505c42169a5e0de25e2eb5a33aed",
+      "size": 4674,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/bf566ffe8664505c42169a5e0de25e2eb5a33aed"
+    },
+    {
+      "path": "scripts/media",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "8343c5181298f549a2f14392e5ab1f431e912d6d",
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/trees/8343c5181298f549a2f14392e5ab1f431e912d6d"
+    },
+    {
+      "path": "scripts/media/record_rollout.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0da5f124facdbd49a7f3ca81c83a185207adea9b",
+      "size": 4011,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/0da5f124facdbd49a7f3ca81c83a185207adea9b"
+    },
+    {
+      "path": "scripts/media/render_rollout.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "325af9ddf73081f4d345b02778e4a2f500183cc8",
+      "size": 7755,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/325af9ddf73081f4d345b02778e4a2f500183cc8"
+    },
+    {
+      "path": "scripts/merge_benchmark_shards.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f0a8d60ada5d3d09f4caa0dc70b642bcc2da9600",
+      "size": 1249,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/f0a8d60ada5d3d09f4caa0dc70b642bcc2da9600"
+    },
+    {
+      "path": "scripts/play.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "85ad2e4e43d674db5d39a86ed9a0556d1096c476",
+      "size": 2771,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/85ad2e4e43d674db5d39a86ed9a0556d1096c476"
+    },
+    {
+      "path": "scripts/pull_and_eval.sh",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "3bdcefc48aa0a1e0bed117112a790edd5f9d41ec",
+      "size": 955,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/3bdcefc48aa0a1e0bed117112a790edd5f9d41ec"
+    },
+    {
+      "path": "scripts/tb_tail.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0d5a714494a6c7d7fdeaaaeed66751c5c101a72b",
+      "size": 806,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/0d5a714494a6c7d7fdeaaaeed66751c5c101a72b"
+    },
+    {
+      "path": "src",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "3227855561691c861f44346fe74f06b35298ca7e",
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/trees/3227855561691c861f44346fe74f06b35298ca7e"
+    },
+    {
+      "path": "src/supermimic",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "bc05dcc0b14c8623d33fd23b83d7b4a4623a5019",
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/trees/bc05dcc0b14c8623d33fd23b83d7b4a4623a5019"
+    },
+    {
+      "path": "src/supermimic/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "95b7b5b7b44c96bfcc2608a497d99e0868971d89",
+      "size": 115,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/95b7b5b7b44c96bfcc2608a497d99e0868971d89"
+    },
+    {
+      "path": "src/supermimic/config.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "199741ee53a0f9fc376ef6f7c16db5647591b3d2",
+      "size": 2297,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/199741ee53a0f9fc376ef6f7c16db5647591b3d2"
+    },
+    {
+      "path": "src/supermimic/data",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "ad52b60e412f6b0a97ad4a3e8702284fe0ec6b5f",
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/trees/ad52b60e412f6b0a97ad4a3e8702284fe0ec6b5f"
+    },
+    {
+      "path": "src/supermimic/data/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "src/supermimic/data/motion_convert.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "59c78b99401c76ca2272321a9a5db0ba73347aea",
+      "size": 12888,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/59c78b99401c76ca2272321a9a5db0ba73347aea"
+    },
+    {
+      "path": "src/supermimic/data/recorder.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "36313d3ef086caa8574685902f41f756609a3d94",
+      "size": 5073,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/36313d3ef086caa8574685902f41f756609a3d94"
+    },
+    {
+      "path": "src/supermimic/data/replay_buffer.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "30a614d1d1cebda2e2248edde39f510e21d45a1f",
+      "size": 7719,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/30a614d1d1cebda2e2248edde39f510e21d45a1f"
+    },
+    {
+      "path": "src/supermimic/envs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "55f31639cfc70dad14a65ecb77e74d96f8722aab",
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/trees/55f31639cfc70dad14a65ecb77e74d96f8722aab"
+    },
+    {
+      "path": "src/supermimic/envs/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ce3a975200ac9a66af946b02c70d8251de6eaeca",
+      "size": 181,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/ce3a975200ac9a66af946b02c70d8251de6eaeca"
+    },
+    {
+      "path": "src/supermimic/envs/actions.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "38979aa30883cde9af1c0184e9189cd9c167aaa3",
+      "size": 2011,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/38979aa30883cde9af1c0184e9189cd9c167aaa3"
+    },
+    {
+      "path": "src/supermimic/envs/mdp",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "11e41a306302788a0d975dea309453f37ffbbdc6",
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/trees/11e41a306302788a0d975dea309453f37ffbbdc6"
+    },
+    {
+      "path": "src/supermimic/envs/mdp/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "src/supermimic/envs/mdp/commands.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3f4822e494eaf96906ca8aefd0638a044e3c20e1",
+      "size": 19867,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/3f4822e494eaf96906ca8aefd0638a044e3c20e1"
+    },
+    {
+      "path": "src/supermimic/envs/mdp/motion_library.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "48cbfdd48140e4c4f95faeb97772a6cf19c503dc",
+      "size": 12019,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/48cbfdd48140e4c4f95faeb97772a6cf19c503dc"
+    },
+    {
+      "path": "src/supermimic/envs/mdp/observations.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "69513556753938a17c7658f1c1560c92b72b1bd8",
+      "size": 477,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/69513556753938a17c7658f1c1560c92b72b1bd8"
+    },
+    {
+      "path": "src/supermimic/envs/mdp/rewards.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "780234c8c7853c8603bc283d20bf5f42f97f02c3",
+      "size": 5380,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/780234c8c7853c8603bc283d20bf5f42f97f02c3"
+    },
+    {
+      "path": "src/supermimic/envs/mdp/terminations.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8005ba4a13b373ca56a4ee00cc5df7d3997bd059",
+      "size": 1198,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/8005ba4a13b373ca56a4ee00cc5df7d3997bd059"
+    },
+    {
+      "path": "src/supermimic/envs/sim_context.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "00b28ee916ba7790a800d733d158dabcfd8bf3f0",
+      "size": 1640,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/00b28ee916ba7790a800d733d158dabcfd8bf3f0"
+    },
+    {
+      "path": "src/supermimic/envs/state_io.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "968ceab0c78ae7382a2b0f954a25f6e77bafb5e0",
+      "size": 1630,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/968ceab0c78ae7382a2b0f954a25f6e77bafb5e0"
+    },
+    {
+      "path": "src/supermimic/envs/tracking_env_cfg.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "47f818f73471bb3a0be078a80aea49534fd1e681",
+      "size": 11584,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/47f818f73471bb3a0be078a80aea49534fd1e681"
+    },
+    {
+      "path": "src/supermimic/eval",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "0b8250f3fd0ce50bcb93961ea50f7fac03d75730",
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/trees/0b8250f3fd0ce50bcb93961ea50f7fac03d75730"
+    },
+    {
+      "path": "src/supermimic/eval/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "src/supermimic/eval/benchmark.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7d6f3a9afc24cd94811d1bda95743d4e06823a97",
+      "size": 5658,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/7d6f3a9afc24cd94811d1bda95743d4e06823a97"
+    },
+    {
+      "path": "src/supermimic/imagination",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "b90bb9518bd46f09e793588176e86d0460d78141",
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/trees/b90bb9518bd46f09e793588176e86d0460d78141"
+    },
+    {
+      "path": "src/supermimic/imagination/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "src/supermimic/imagination/compiled.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0e18fbd1c64b8dcce6f5d0ffa03d32d2334a4a0f",
+      "size": 2302,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/0e18fbd1c64b8dcce6f5d0ffa03d32d2334a4a0f"
+    },
+    {
+      "path": "src/supermimic/imagination/objective.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e1e37b3ebed12dc603a4d8594cf57acbe4ac9d03",
+      "size": 1384,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/e1e37b3ebed12dc603a4d8594cf57acbe4ac9d03"
+    },
+    {
+      "path": "src/supermimic/imagination/policy_trainer.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b4bdb04c82056c75239adc2c82314f45a2ff3de4",
+      "size": 5937,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/b4bdb04c82056c75239adc2c82314f45a2ff3de4"
+    },
+    {
+      "path": "src/supermimic/imagination/rollout.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6316fa372f1859ee186308a7b1cb157e87ed35ce",
+      "size": 5108,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/6316fa372f1859ee186308a7b1cb157e87ed35ce"
+    },
+    {
+      "path": "src/supermimic/kinematics",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "3f804be34ea2605f060f1f2e4b2748635f72491e",
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/trees/3f804be34ea2605f060f1f2e4b2748635f72491e"
+    },
+    {
+      "path": "src/supermimic/kinematics/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "src/supermimic/kinematics/g1_fk.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "380422355e1ab8e2aedf88aa2b029b346af308c4",
+      "size": 7265,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/380422355e1ab8e2aedf88aa2b029b346af308c4"
+    },
+    {
+      "path": "src/supermimic/kinematics/rotations.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bae255579fd9887deaf2d0994238d0fdd0e2aaad",
+      "size": 3676,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/bae255579fd9887deaf2d0994238d0fdd0e2aaad"
+    },
+    {
+      "path": "src/supermimic/policy",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "f24586c4ac2e394497c8aa20e1121df85d854ca5",
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/trees/f24586c4ac2e394497c8aa20e1121df85d854ca5"
+    },
+    {
+      "path": "src/supermimic/policy/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "src/supermimic/policy/nets.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0b605334498b0ee4cf2c8330373e58f0da20669d",
+      "size": 3769,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/0b605334498b0ee4cf2c8330373e58f0da20669d"
+    },
+    {
+      "path": "src/supermimic/scripts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "c838f3c5a673b146c6628307bfe0b782fc753aba",
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/trees/c838f3c5a673b146c6628307bfe0b782fc753aba"
+    },
+    {
+      "path": "src/supermimic/scripts/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "src/supermimic/scripts/train.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f00aa4f18a7d86b85abbc1639cec90bbf6b1d4a4",
+      "size": 1819,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/f00aa4f18a7d86b85abbc1639cec90bbf6b1d4a4"
+    },
+    {
+      "path": "src/supermimic/training",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "9124543162841f037563d6c54eabcca890a2a6b6",
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/trees/9124543162841f037563d6c54eabcca890a2a6b6"
+    },
+    {
+      "path": "src/supermimic/training/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "src/supermimic/training/distributed.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "eaf3838e5309f4bf75318eae4c2c3bf84c1aeb71",
+      "size": 3011,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/eaf3838e5309f4bf75318eae4c2c3bf84c1aeb71"
+    },
+    {
+      "path": "src/supermimic/training/loop.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b75a0d1996b9feba07204d62ac0e6d80cd77971e",
+      "size": 13881,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/b75a0d1996b9feba07204d62ac0e6d80cd77971e"
+    },
+    {
+      "path": "src/supermimic/training/schedule.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2822257c32cea640b663a241d56d149e8aa22dee",
+      "size": 569,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/2822257c32cea640b663a241d56d149e8aa22dee"
+    },
+    {
+      "path": "src/supermimic/world_model",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "5985a62c1115a43f70d6a69684c1aa0222169e47",
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/trees/5985a62c1115a43f70d6a69684c1aa0222169e47"
+    },
+    {
+      "path": "src/supermimic/world_model/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "src/supermimic/world_model/dynamics.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e93d4547bd09ec3c3f1515bba51fd4f7c8a21686",
+      "size": 1480,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/e93d4547bd09ec3c3f1515bba51fd4f7c8a21686"
+    },
+    {
+      "path": "src/supermimic/world_model/heads.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2a20d27addf7f514051dee6f507e2b6392ea01ed",
+      "size": 6921,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/2a20d27addf7f514051dee6f507e2b6392ea01ed"
+    },
+    {
+      "path": "src/supermimic/world_model/state_spec.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "82a40a4afa5a0407ac53ea65a04398e91af19057",
+      "size": 6030,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/82a40a4afa5a0407ac53ea65a04398e91af19057"
+    },
+    {
+      "path": "src/supermimic/world_model/wm_trainer.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d4bad7634a4031ae0e36939cb45eb09060ec2d51",
+      "size": 2892,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/d4bad7634a4031ae0e36939cb45eb09060ec2d51"
+    },
+    {
+      "path": "src/supermimic/world_model/world_model.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a04c26c97dcdb2e4f44de6a36998a25f05b9f756",
+      "size": 5727,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/a04c26c97dcdb2e4f44de6a36998a25f05b9f756"
+    },
+    {
+      "path": "tests",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "cc34c9571348dc4c99f0996d33c549354a5e3b0a",
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/trees/cc34c9571348dc4c99f0996d33c549354a5e3b0a"
+    },
+    {
+      "path": "tests/test_analytic_heads.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9b29b44a90c758088d4e70a6e21a188cf80fb56a",
+      "size": 8364,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/9b29b44a90c758088d4e70a6e21a188cf80fb56a"
+    },
+    {
+      "path": "tests/test_env_smoke.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "efa1478383fba1b23807132ef39bf969401c1c6b",
+      "size": 4915,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/efa1478383fba1b23807132ef39bf969401c1c6b"
+    },
+    {
+      "path": "tests/test_g1_fk.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fe7d2d67c875385e3ade89d100b2264983e42305",
+      "size": 4721,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/fe7d2d67c875385e3ade89d100b2264983e42305"
+    },
+    {
+      "path": "tests/test_imagination.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "81dba7ecc614e7139e2b4d2336a1a21c88cc3fa8",
+      "size": 2263,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/81dba7ecc614e7139e2b4d2336a1a21c88cc3fa8"
+    },
+    {
+      "path": "tests/test_motion_convert.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "48bd7ea57350becf5762ccaca5e90cdcf2e9a116",
+      "size": 5179,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/48bd7ea57350becf5762ccaca5e90cdcf2e9a116"
+    },
+    {
+      "path": "tests/test_motion_library_compact.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6a3ff75483028714e67b3819c0d98e5dfaebd0ba",
+      "size": 2107,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/6a3ff75483028714e67b3819c0d98e5dfaebd0ba"
+    },
+    {
+      "path": "tests/test_world_model.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6b6a1e9d5335036e9d74152cdee2b47523720677",
+      "size": 4476,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/6b6a1e9d5335036e9d74152cdee2b47523720677"
+    },
+    {
+      "path": "uv.lock",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "04b215c190fe32f8e93a8691694e52f9a503f663",
+      "size": 265628,
+      "url": "https://api.github.com/repos/CuboiLeo/SuperMimic-Reproduced/git/blobs/04b215c190fe32f8e93a8691694e52f9a503f663"
+    }
+  ],
+  "truncated": false
+}

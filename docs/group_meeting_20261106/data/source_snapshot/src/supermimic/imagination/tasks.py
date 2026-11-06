@@ -1,0 +1,330 @@
+"""Narrow task interfaces consumed by the shared imagination / BPTT code."""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+import math
+
+import torch
+
+from supermimic.envs.mdp.motion_library import MotionLibrary
+from supermimic.tasks.velocity_reward import (
+    VELOCITY_REWARD_NAMES,
+    VelocityRewardCfg,
+    VelocityRobotParams,
+    velocity_reward_terms,
+    velocity_reward_total,
+)
+from supermimic.tasks.world_point_reward import (
+    WORLD_POINT_REWARD_NAMES,
+    WorldPointRobotParams,
+    world_point_reward_terms,
+)
+from supermimic.tasks.chase_reward import (
+    CHASE_REWARD_NAMES,
+    ChaseBallRewardCfg,
+    chase_ball_reward_terms,
+    chase_fall_probability,
+    chase_goal_yaw_frame,
+    chase_tag_probability,
+)
+from supermimic.kinematics.rotations import quat_apply_inverse
+from supermimic.tasks.m1_reward import M1_REWARD_NAMES, M1RewardCfg
+
+
+@dataclass
+class MotionTrackingTask:
+    library: MotionLibrary
+    future_frames: int = 10
+    anchor_obs: bool = False
+    anchor_orientation_obs: bool = False
+    goal_schema: str = "root_joint"
+    goal_interface: str = "motion"
+    debug_objective: bool = False
+
+    @property
+    def goal_dim(self) -> int:
+        if self.anchor_obs and self.anchor_orientation_obs:
+            raise ValueError("choose position+orientation Anchor or orientation-only Anchor")
+        return self.library.goal_feat_dim * self.future_frames + (9 if self.anchor_obs else 6 if self.anchor_orientation_obs else 0)
+
+
+@dataclass
+class VelocityCommandTask:
+    """Go2 body-frame velocity task with a shared analytic reward core."""
+
+    params: VelocityRobotParams | None = None
+    dt: float = 0.02
+    reward_cfg: VelocityRewardCfg = field(default_factory=VelocityRewardCfg)
+    fall_height: float = 0.17
+    tilt_feature_threshold: float = 1.0 - math.cos(math.radians(70.0))
+    soft_term_temperature: float = 0.015
+    goal_interface: str = "velocity"
+    reward_term_names: tuple[str, ...] = VELOCITY_REWARD_NAMES
+
+    @property
+    def default_joint_pos(self) -> torch.Tensor | None:
+        return None if self.params is None else self.params.default_joint_pos
+
+    def reward_terms(
+        self,
+        s_prev: torch.Tensor,
+        s_next: torch.Tensor,
+        goal: torch.Tensor,
+        action: torch.Tensor,
+        previous_action: torch.Tensor,
+        *,
+        executed_action: torch.Tensor | None = None,
+        measured_torque: torch.Tensor | None = None,
+        measured_joint_acceleration: torch.Tensor | None = None,
+    ) -> dict[str, torch.Tensor]:
+        if self.params is None:
+            raise RuntimeError("VelocityCommandTask requires Go2 reward parameters")
+        terms = velocity_reward_terms(
+            s_prev, s_next, goal, action, previous_action, self.params,
+            executed_action=executed_action,
+            measured_torque=measured_torque,
+            measured_joint_acceleration=measured_joint_acceleration,
+        )
+        return {name: value * float(self.dt) for name, value in terms.items()}
+
+    def reward(
+        self,
+        s_prev: torch.Tensor,
+        s_next: torch.Tensor,
+        goal: torch.Tensor,
+        action: torch.Tensor,
+        previous_action: torch.Tensor,
+    ) -> torch.Tensor:
+        return velocity_reward_total(self.reward_terms(s_prev, s_next, goal, action, previous_action))
+
+    def termination_features(self, state: torch.Tensor) -> torch.Tensor:
+        """Margins to the same absolute-height and gravity-axis hard-failure limits."""
+        from supermimic.kinematics.rotations import quat_apply_inverse
+
+        gravity = state.new_zeros(state.shape[:-1] + (3,))
+        gravity[..., 2] = -1.0
+        gravity_local = quat_apply_inverse(state[..., 3:7], gravity)
+        tilt_feature = (1.0 + gravity_local[..., 2]).abs()
+        return torch.stack([self.fall_height - state[..., 2], tilt_feature - self.tilt_feature_threshold], dim=-1)
+
+    def termination_probability(self, state: torch.Tensor) -> torch.Tensor:
+        margins = self.termination_features(state)
+        p_height = torch.sigmoid(margins[..., 0] / self.soft_term_temperature)
+        p_tilt = torch.sigmoid(margins[..., 1] / self.soft_term_temperature)
+        return 1.0 - (1.0 - p_height) * (1.0 - p_tilt)
+
+    def termination_logits(self, state: torch.Tensor) -> torch.Tensor:
+        p = self.termination_probability(state).clamp(1e-6, 1.0 - 1e-6)
+        return torch.logit(p)
+
+    @property
+    def goal_dim(self) -> int:
+        return 3
+
+
+@dataclass
+class ChaseBallTask:
+    """Go2 chase task; task Goal is a fixed-step snapshot of an external ball state."""
+
+    default_joint_pos: torch.Tensor
+    params: object | None = None
+    dt: float = 0.02
+    reward_cfg: ChaseBallRewardCfg = field(default_factory=ChaseBallRewardCfg)
+    fall_height: float = 0.17
+    fall_tilt_deg: float = 70.0
+    goal_interface: str = "chase_ball"
+    reward_term_names: tuple[str, ...] = CHASE_REWARD_NAMES
+
+    def __post_init__(self) -> None:
+        if self.params is None:
+            # Keep the standalone task API differentiable too; Trainer supplies the
+            # exact simulator limits, while this fallback preserves Go2's contract.
+            from supermimic.tasks.velocity_reward import VelocityRobotParams
+            n = int(self.default_joint_pos.shape[-1])
+            limits = self.default_joint_pos.new_tensor([[-float("inf"), float("inf")]] * n)
+            effort = self.default_joint_pos.new_tensor([23.7, 23.7, 35.55] * 4)
+            self.params = VelocityRobotParams(
+                default_joint_pos=self.default_joint_pos,
+                soft_joint_limits=limits,
+                action_scales=self.default_joint_pos.new_full((n,), 0.25),
+                kp=self.default_joint_pos.new_full((n,), 40.0),
+                kd=self.default_joint_pos.new_full((n,), 1.0),
+                effort_limits=effort, dt=self.dt,
+            )
+
+    @property
+    def goal_dim(self) -> int:
+        return 6
+
+    def actor_goal(self, state: torch.Tensor, ball_state: torch.Tensor) -> torch.Tensor:
+        return chase_goal_yaw_frame(state, ball_state)
+
+    def advance_goal(self, ball_state: torch.Tensor) -> torch.Tensor:
+        return torch.cat((ball_state[..., :3] + ball_state[..., 3:6] * float(self.dt), ball_state[..., 3:6]), -1)
+
+    def reward_terms(
+        self,
+        s_prev: torch.Tensor,
+        s_next: torch.Tensor,
+        ball_state: torch.Tensor,
+        action: torch.Tensor,
+        previous_action: torch.Tensor,
+        *,
+        executed_action: torch.Tensor | None = None,
+        ball_state_next: torch.Tensor | None = None,
+    ) -> dict[str, torch.Tensor]:
+        ball_next = self.advance_goal(ball_state) if ball_state_next is None else ball_state_next
+        terms = chase_ball_reward_terms(
+            s_next, ball_next, action, previous_action,
+            self.default_joint_pos, self.reward_cfg, state_prev=s_prev,
+            executed_action=executed_action, robot_params=self.params,
+        )
+        return {name: value * float(self.dt) for name, value in terms.items()}
+
+    def termination_features(self, state: torch.Tensor) -> torch.Tensor:
+        gravity = state.new_zeros(state.shape[:-1] + (3,))
+        gravity[..., 2] = -1.0
+        from supermimic.kinematics.rotations import quat_apply_inverse
+
+        gravity_local = quat_apply_inverse(state[..., 3:7], gravity)
+        tilt = (1.0 + gravity_local[..., 2]).abs()
+        tilt_threshold = 1.0 - math.cos(math.radians(self.fall_tilt_deg))
+        return torch.stack((self.fall_height - state[..., 2], tilt - tilt_threshold), -1)
+
+    def termination_probability(self, state: torch.Tensor, ball_state: torch.Tensor | None = None) -> torch.Tensor:
+        p_fall = chase_fall_probability(state, self.fall_height, self.fall_tilt_deg)
+        if ball_state is None:
+            return p_fall
+        p_tag = chase_tag_probability(state, ball_state, self.reward_cfg)
+        return 1.0 - (1.0 - p_fall) * (1.0 - p_tag)
+
+    def termination_logits(self, state: torch.Tensor, ball_state: torch.Tensor | None = None) -> torch.Tensor:
+        probability = self.termination_probability(state, ball_state)
+        return torch.logit(probability.clamp(1.0e-6, 1.0 - 1.0e-6))
+
+
+@dataclass
+class WorldPointReachTask:
+    """M1 goal-conditioned task with an episode-fixed env-local world target."""
+
+    params: WorldPointRobotParams
+    fk: object
+    tcp_body_indices: tuple[int, int]
+    dt: float = 0.02
+    goal_interface: str = "world_point_reach"
+    reward_term_names: tuple[str, ...] = WORLD_POINT_REWARD_NAMES
+
+    @property
+    def default_joint_pos(self) -> torch.Tensor:
+        return self.params.default_joint_pos
+
+    @property
+    def goal_dim(self) -> int:
+        return 3
+
+    def actor_goal(self, state: torch.Tensor, target_position_world: torch.Tensor) -> torch.Tensor:
+        """Re-express the fixed local-world target in the predicted/current base frame."""
+        target_body_world = target_position_world - state[..., 0:3]
+        return quat_apply_inverse(state[..., 3:7], target_body_world)
+
+    def reward_terms(
+        self,
+        s_prev: torch.Tensor,
+        s_next: torch.Tensor,
+        target_position_world: torch.Tensor,
+        action: torch.Tensor,
+        previous_action: torch.Tensor,
+        *,
+        executed_action: torch.Tensor | None = None,
+    ) -> dict[str, torch.Tensor]:
+        # The shared imagination stepper supplies the physical action mapping.
+        # Point-task action-rate regularization intentionally follows policy
+        # action history, matching the real actuator/history contract.
+        del executed_action
+        terms = world_point_reward_terms(
+            s_prev, s_next, target_position_world, action, previous_action,
+            self.params, self.fk, self.tcp_body_indices,
+        )
+        return {name: value * float(self.dt) for name, value in terms.items()}
+
+    def termination_features(self, state: torch.Tensor) -> torch.Tensor:
+        from supermimic.kinematics.rotations import quat_apply_inverse
+
+        gravity = state.new_zeros(state.shape[:-1] + (3,))
+        gravity[..., 2] = -1.0
+        gravity_local = quat_apply_inverse(state[..., 3:7], gravity)
+        tilt_feature = (1.0 + gravity_local[..., 2]).abs()
+        return torch.stack([
+            self.params.fall_height - state[..., 2],
+            tilt_feature - self.params.tilt_feature_threshold,
+        ], dim=-1)
+
+    def termination_probability(self, state: torch.Tensor) -> torch.Tensor:
+        features = self.termination_features(state)
+        p_height = torch.sigmoid(features[..., 0] / self.params.soft_term_temperature)
+        p_tilt = torch.sigmoid(features[..., 1] / self.params.soft_term_temperature)
+        return 1.0 - (1.0 - p_height) * (1.0 - p_tilt)
+
+    def termination_logits(self, state: torch.Tensor) -> torch.Tensor:
+        return torch.logit(self.termination_probability(state).clamp(1e-6, 1.0 - 1e-6))
+
+
+@dataclass
+class M1RewardTask(WorldPointReachTask):
+    """Direct Goal8 Actor/Critic; no prior, reference Actor or motion library.
+
+    Reuses point-task goal refresh and analytic fall termination in imagination.
+    Replay stores the seven physical command fields, never a stale relative goal.
+    """
+    terminal_distance_weight: float = 0.0
+    resample_on_success: bool = False
+    reward_cfg: M1RewardCfg = field(default_factory=M1RewardCfg)
+    base_height: float = 0.42
+    goal_interface: str = "m1_reward"
+    task_balanced: bool = True
+    reward_term_names: tuple[str, ...] = M1_REWARD_NAMES
+
+    @property
+    def goal_dim(self):
+        return 8
+
+    def actor_goal(self, state, context):
+        from supermimic.tasks.m1_reward import m1_actor_goal
+        return m1_actor_goal(state, context)
+
+    def reward_terms(self, s_prev, s_next, context, action, previous_action, *, executed_action=None):
+        from supermimic.tasks.m1_reward import m1_reward_terms
+        terms = m1_reward_terms(
+            s_prev, s_next, context, action, previous_action,
+            default_joint_pos=self.params.default_joint_pos, soft_limits=self.params.soft_joint_limits,
+            base_height=self.base_height, fk=self.fk, tcp_body_indices=self.tcp_body_indices,
+            cfg=self.reward_cfg, dt=self.dt,
+            fall_height=self.params.fall_height, tilt_feature_threshold=self.params.tilt_feature_threshold,
+        )
+        return {name: value * self.dt for name, value in terms.items()}
+
+    def goal_reached(self, state, context):
+        from supermimic.tasks.m1_reward import m1_goal_reached
+        return m1_goal_reached(state, context, self.fk, self.tcp_body_indices,
+                               self.reward_cfg.success_distance_m,
+                               self.params.fall_height, self.params.tilt_feature_threshold)
+
+    def terminal_reward(self, states, context):
+        """Horizon endpoint, in reward units once (no dt), active only for M.
+
+        A completed current goal has no residual endpoint cost. The detached
+        arrival mask truncates this goal without imagining random new targets.
+        Physical survival does not erase a negative distance cost.
+        """
+        from supermimic.tasks.world_point_reward import tcp_position_world
+        delta = tcp_position_world(states[-1], self.fk, self.tcp_body_indices) - context[..., 4:7]
+        distance = torch.sqrt(delta.square().sum(-1) + 1.e-8) - 1.e-4
+        active = context[..., 0] >= .5
+        if self.resample_on_success:
+            with torch.no_grad():
+                predicted = states[1:].detach()
+                alive = (self.termination_features(predicted) <= 0).all(-1).to(torch.int64).cumprod(0).bool()
+                completed = (self.goal_reached(predicted, context) & alive).any(0)
+                active = active & ~completed
+        return -self.terminal_distance_weight * active.to(distance.dtype) * distance

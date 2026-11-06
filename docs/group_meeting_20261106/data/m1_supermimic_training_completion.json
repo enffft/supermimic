@@ -1,0 +1,16 @@
+{
+  "algorithm": "SuperMimic",
+  "task": "m1_reward",
+  "motion_prior_used": false,
+  "resume_from": null,
+  "iterations": 2979,
+  "real_transitions": 6100992,
+  "segment_real_transitions": 6100992,
+  "actor_updates": 876,
+  "wm_update_events": 1176,
+  "segment_actor_updates": 876,
+  "worker_wall_seconds_including_init": 12605.418660046009,
+  "cuda_peak_allocated_mib": 652.05810546875,
+  "cuda_peak_reserved_mib": 738.0,
+  "checkpoint": "/home/yifeiy/ws_supermimic/logs/m1_reward/v2_lm50_2048_3p5h_seed2026/ckpt_latest.pt"
+}

@@ -1,0 +1,40 @@
+usage: scripts/play.py [-h] [OPTIONS]
+
+╭─ options ───────────────────────────────────────────╮
+│ -h, --help                                          │
+│       show this help message and exit               │
+│ --ckpt PATH                                         │
+│       (required)                                    │
+│ --npz-dir {None}|PATH                               │
+│       (default: None)                               │
+│ --clips {None}|{[STR [STR ...]]}                    │
+│       (default: None)                               │
+│ --num-envs {None}|INT                               │
+│       (default: None)                               │
+│ --device STR                                        │
+│       (default: cuda:0)                             │
+│ --viewer {auto,native,viser}                        │
+│       (default: auto)                               │
+│ --ghost {None,True,False}                           │
+│       (default: None)                               │
+│ --loop-mode {restart}                               │
+│       (default: restart)                            │
+│ --vx {None}|FLOAT                                   │
+│       (default: None)                               │
+│ --vy {None}|FLOAT                                   │
+│       (default: None)                               │
+│ --yaw-rate {None}|FLOAT                             │
+│       (default: None)                               │
+│ --velocity-arrow, --no-velocity-arrow               │
+│       (default: True)                               │
+│ --actual-velocity-arrow, --no-actual-velocity-arrow │
+│       (default: False)                              │
+│ --chase-debug-vis, --no-chase-debug-vis             │
+│       (default: True)                               │
+│ --m1-task {L,M,balanced}                            │
+│       (default: L)                                  │
+│ --m1-target-world {None}|{FLOAT FLOAT FLOAT}        │
+│       (default: None)                               │
+│ --m1-debug-vis, --no-m1-debug-vis                   │
+│       (default: True)                               │
+╰─────────────────────────────────────────────────────╯

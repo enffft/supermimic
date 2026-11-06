@@ -1,0 +1,1943 @@
+{
+  "checkpoint": "/home/yifeiy/ws_supermimic/logs/m1_reward/v2_lm50_2048_3p5h_seed2026/ckpt_latest.pt",
+  "seed": 123,
+  "task_type": "balanced",
+  "metrics": {
+    "L_velocity_xy_mse": 0.008786268337008853,
+    "L_yaw_rate_mse": 0.016566643570705007,
+    "L_actual_vx": -0.0007730264029451064,
+    "L_command_vx": 0.02068706462159753,
+    "L_positive_command_negative_vx_fraction": 0.9720701754385965,
+    "L_positive_command_reverse_vx_below_minus_0p02_fraction": 0.020385964912280702,
+    "L_positive_command_idle_vx_within_0p02_fraction": 0.9628070175438597,
+    "M_distance_m": 2.0594434202512106,
+    "M_within_threshold_fraction": 0.0,
+    "L_velocity_xy_rmse": 0.09373509661278881,
+    "L_yaw_rate_rmse": 0.12871147412218154,
+    "L_completed_episodes": 64,
+    "L_fall_rate": 0.0,
+    "M_completed_episodes": 64,
+    "M_fall_rate": 0.0,
+    "M_terminal_distance_m": 2.0470397425815463,
+    "M_hold_success_rate": null,
+    "M_completed_goals": 64,
+    "M_successful_goals": 0,
+    "M_goal_success_rate": 0.0,
+    "M_successful_goal_time_s": null,
+    "M_censored_goals": 0,
+    "M_successes_per_M_env_minute": 0.0
+  },
+  "episodes": [
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 1.3897879123687744,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 2.833153009414673,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 2.7025234699249268,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 2.3124401569366455,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 1.5080209970474243,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 2.697892427444458,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 1.5988402366638184,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 1.5352182388305664,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 2.194573163986206,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 0.5756571888923645,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 1.4095202684402466,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 2.569490671157837,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 2.2720797061920166,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 2.384622812271118,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 2.863851308822632,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 1.3130096197128296,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 2.1458373069763184,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 1.932765007019043,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 2.5467939376831055,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 0.7400604486465454,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 2.3320419788360596,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 2.3787131309509277,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 2.906981945037842,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 2.683027505874634,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 3.063556671142578,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 1.466402292251587,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 2.33844256401062,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 1.361875057220459,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 1.523503065109253,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 2.474998950958252,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 1.4535809755325317,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 2.140570640563965,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 1.4639439582824707,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 3.040140151977539,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 1.7159940004348755,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 2.494865655899048,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 3.0625715255737305,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 2.0841264724731445,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 3.0881879329681396,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 1.2405388355255127,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 2.6918392181396484,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 3.081746816635132,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 0.8532610535621643,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 1.8859260082244873,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 1.1973516941070557,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 1.7398185729980469,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 1.6307826042175293,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 0.6681005358695984,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 1.4974268674850464,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 2.8862063884735107,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 1.4057127237319946,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 0.9275208711624146,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 2.5601325035095215,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 2.341216564178467,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 2.7736194133758545,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 2.4999759197235107,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 2.1133430004119873,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 3.0163400173187256,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 1.5141584873199463,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 1.8605241775512695,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 1.9950153827667236,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 2.778076171875,
+      "hold_success": false
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 1.5148180723190308,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    },
+    {
+      "task": "M",
+      "fall": false,
+      "terminal_distance_m": 1.7374292612075806,
+      "hold_success": false
+    },
+    {
+      "task": "L",
+      "fall": false,
+      "terminal_distance_m": null,
+      "hold_success": null
+    }
+  ],
+  "goals": [
+    {
+      "env": 1,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 1.4953808784484863,
+      "terminal_distance_m": 1.3897879123687744,
+      "target_world": [
+        1.3003642559051514,
+        -0.9830511212348938,
+        0.08643986284732819
+      ]
+    },
+    {
+      "env": 5,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 2.923940896987915,
+      "terminal_distance_m": 2.833153009414673,
+      "target_world": [
+        -0.9769351482391357,
+        -2.5071961879730225,
+        0.2802785634994507
+      ]
+    },
+    {
+      "env": 7,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 2.73144268989563,
+      "terminal_distance_m": 2.7025234699249268,
+      "target_world": [
+        -1.0806961059570312,
+        -2.271517038345337,
+        0.704542875289917
+      ]
+    },
+    {
+      "env": 9,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 2.364476203918457,
+      "terminal_distance_m": 2.3124401569366455,
+      "target_world": [
+        -1.078751564025879,
+        -1.8022055625915527,
+        0.5649402737617493
+      ]
+    },
+    {
+      "env": 11,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 1.366829752922058,
+      "terminal_distance_m": 1.5080209970474243,
+      "target_world": [
+        1.3599187135696411,
+        -1.002838134765625,
+        0.8607836365699768
+      ]
+    },
+    {
+      "env": 13,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 2.7372872829437256,
+      "terminal_distance_m": 2.697892427444458,
+      "target_world": [
+        0.8293695449829102,
+        2.6294381618499756,
+        0.15629635751247406
+      ]
+    },
+    {
+      "env": 14,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 1.4794645309448242,
+      "terminal_distance_m": 1.5988402366638184,
+      "target_world": [
+        0.4261542558670044,
+        1.4731547832489014,
+        0.9419295191764832
+      ]
+    },
+    {
+      "env": 16,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 1.5155141353607178,
+      "terminal_distance_m": 1.5352182388305664,
+      "target_world": [
+        1.37429940700531,
+        -1.141100525856018,
+        0.476474791765213
+      ]
+    },
+    {
+      "env": 19,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 2.2702579498291016,
+      "terminal_distance_m": 2.194573163986206,
+      "target_world": [
+        0.463698148727417,
+        2.1615142822265625,
+        0.11204836517572403
+      ]
+    },
+    {
+      "env": 21,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 0.7098655700683594,
+      "terminal_distance_m": 0.5756571888923645,
+      "target_world": [
+        0.7343751192092896,
+        0.4135303497314453,
+        0.3136679232120514
+      ]
+    },
+    {
+      "env": 22,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 1.418497085571289,
+      "terminal_distance_m": 1.4095202684402466,
+      "target_world": [
+        -0.8669360876083374,
+        -0.5669796466827393,
+        0.7700048685073853
+      ]
+    },
+    {
+      "env": 25,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 2.7253947257995605,
+      "terminal_distance_m": 2.569490671157837,
+      "target_world": [
+        -2.1052114963531494,
+        0.7021197080612183,
+        0.10334224998950958
+      ]
+    },
+    {
+      "env": 27,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 2.115480661392212,
+      "terminal_distance_m": 2.2720797061920166,
+      "target_world": [
+        2.5280709266662598,
+        -0.2549785375595093,
+        0.947781503200531
+      ]
+    },
+    {
+      "env": 29,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 2.5353429317474365,
+      "terminal_distance_m": 2.384622812271118,
+      "target_world": [
+        -1.9188481569290161,
+        -0.7347573637962341,
+        0.2075088620185852
+      ]
+    },
+    {
+      "env": 31,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 2.8791451454162598,
+      "terminal_distance_m": 2.863851308822632,
+      "target_world": [
+        0.008724103681743145,
+        -2.834775924682617,
+        0.5342091917991638
+      ]
+    },
+    {
+      "env": 32,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 1.0688815116882324,
+      "terminal_distance_m": 1.3130096197128296,
+      "target_world": [
+        1.4452872276306152,
+        -0.25492238998413086,
+        1.0346159934997559
+      ]
+    },
+    {
+      "env": 33,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 2.1266984939575195,
+      "terminal_distance_m": 2.1458373069763184,
+      "target_world": [
+        1.3653347492218018,
+        -1.8871592283248901,
+        0.5024127960205078
+      ]
+    },
+    {
+      "env": 35,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 1.8801919221878052,
+      "terminal_distance_m": 1.932765007019043,
+      "target_world": [
+        1.6431059837341309,
+        -1.4239428043365479,
+        0.5988355278968811
+      ]
+    },
+    {
+      "env": 37,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 2.6893653869628906,
+      "terminal_distance_m": 2.5467939376831055,
+      "target_world": [
+        -1.3146356344223022,
+        -1.91615629196167,
+        0.09327550232410431
+      ]
+    },
+    {
+      "env": 40,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 0.7491343021392822,
+      "terminal_distance_m": 0.7400604486465454,
+      "target_world": [
+        -0.23304441571235657,
+        -0.32382652163505554,
+        0.691805899143219
+      ]
+    },
+    {
+      "env": 42,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 2.391707181930542,
+      "terminal_distance_m": 2.3320419788360596,
+      "target_world": [
+        -1.9509276151657104,
+        -0.1761707067489624,
+        0.7224499583244324
+      ]
+    },
+    {
+      "env": 44,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 2.41935658454895,
+      "terminal_distance_m": 2.3787131309509277,
+      "target_world": [
+        -1.434596300125122,
+        1.5297482013702393,
+        0.6447396874427795
+      ]
+    },
+    {
+      "env": 46,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 2.982774019241333,
+      "terminal_distance_m": 2.906981945037842,
+      "target_world": [
+        -2.5170156955718994,
+        -0.41395339369773865,
+        0.6507477760314941
+      ]
+    },
+    {
+      "env": 48,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 2.6928837299346924,
+      "terminal_distance_m": 2.683027505874634,
+      "target_world": [
+        -1.422332763671875,
+        1.9518102407455444,
+        0.7849135398864746
+      ]
+    },
+    {
+      "env": 50,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 3.049976110458374,
+      "terminal_distance_m": 3.063556671142578,
+      "target_world": [
+        -0.15241669118404388,
+        -2.993197441101074,
+        0.7812269330024719
+      ]
+    },
+    {
+      "env": 51,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 1.488576054573059,
+      "terminal_distance_m": 1.466402292251587,
+      "target_world": [
+        1.5795586109161377,
+        -0.8013635873794556,
+        0.29696008563041687
+      ]
+    },
+    {
+      "env": 52,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 2.1911590099334717,
+      "terminal_distance_m": 2.33844256401062,
+      "target_world": [
+        1.724005937576294,
+        1.7490267753601074,
+        1.0793733596801758
+      ]
+    },
+    {
+      "env": 53,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 1.4354703426361084,
+      "terminal_distance_m": 1.361875057220459,
+      "target_world": [
+        1.6815098524093628,
+        -0.1260915994644165,
+        0.10881317406892776
+      ]
+    },
+    {
+      "env": 56,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 1.3697865009307861,
+      "terminal_distance_m": 1.523503065109253,
+      "target_world": [
+        0.35266613960266113,
+        1.3451719284057617,
+        1.051355242729187
+      ]
+    },
+    {
+      "env": 57,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 2.565091848373413,
+      "terminal_distance_m": 2.474998950958252,
+      "target_world": [
+        -1.5464171171188354,
+        1.5748217105865479,
+        0.3787199854850769
+      ]
+    },
+    {
+      "env": 58,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 1.4846603870391846,
+      "terminal_distance_m": 1.4535809755325317,
+      "target_world": [
+        -0.7781033515930176,
+        -0.8542167544364929,
+        0.7152489423751831
+      ]
+    },
+    {
+      "env": 62,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 2.144289970397949,
+      "terminal_distance_m": 2.140570640563965,
+      "target_world": [
+        -1.2143367528915405,
+        -1.370715856552124,
+        0.8826683759689331
+      ]
+    },
+    {
+      "env": 1,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 1.6063770055770874,
+      "terminal_distance_m": 1.4639439582824707,
+      "target_world": [
+        0.41618895530700684,
+        -1.4481996297836304,
+        0.11068149656057358
+      ]
+    },
+    {
+      "env": 5,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 2.9745771884918213,
+      "terminal_distance_m": 3.040140151977539,
+      "target_world": [
+        -0.5028383135795593,
+        2.810117721557617,
+        1.081039547920227
+      ]
+    },
+    {
+      "env": 7,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 1.8022651672363281,
+      "terminal_distance_m": 1.7159940004348755,
+      "target_world": [
+        -1.1079380512237549,
+        0.8824630379676819,
+        0.4966340661048889
+      ]
+    },
+    {
+      "env": 9,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 2.6118576526641846,
+      "terminal_distance_m": 2.494865655899048,
+      "target_world": [
+        -0.8101317882537842,
+        -2.1938114166259766,
+        0.1243879646062851
+      ]
+    },
+    {
+      "env": 11,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 3.100898027420044,
+      "terminal_distance_m": 3.0625715255737305,
+      "target_world": [
+        -1.3702634572982788,
+        2.5113368034362793,
+        0.5655597448348999
+      ]
+    },
+    {
+      "env": 13,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 2.058015823364258,
+      "terminal_distance_m": 2.0841264724731445,
+      "target_world": [
+        -1.0734575986862183,
+        1.3969768285751343,
+        0.9279671907424927
+      ]
+    },
+    {
+      "env": 14,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 3.0382697582244873,
+      "terminal_distance_m": 3.0881879329681396,
+      "target_world": [
+        -0.9947676062583923,
+        2.6681501865386963,
+        1.077653169631958
+      ]
+    },
+    {
+      "env": 16,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 1.1919678449630737,
+      "terminal_distance_m": 1.2405388355255127,
+      "target_world": [
+        0.6837719678878784,
+        1.1516578197479248,
+        0.6280791759490967
+      ]
+    },
+    {
+      "env": 19,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 2.6929898262023926,
+      "terminal_distance_m": 2.6918392181396484,
+      "target_world": [
+        0.10735807567834854,
+        2.657982587814331,
+        0.5202707648277283
+      ]
+    },
+    {
+      "env": 21,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 3.170046091079712,
+      "terminal_distance_m": 3.081746816635132,
+      "target_world": [
+        -1.1700628995895386,
+        2.65092134475708,
+        0.1328645944595337
+      ]
+    },
+    {
+      "env": 22,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 1.0219793319702148,
+      "terminal_distance_m": 0.8532610535621643,
+      "target_world": [
+        0.03877941519021988,
+        -0.7936563491821289,
+        0.29639333486557007
+      ]
+    },
+    {
+      "env": 25,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 1.9170589447021484,
+      "terminal_distance_m": 1.8859260082244873,
+      "target_world": [
+        -0.6017959713935852,
+        -1.6068482398986816,
+        0.6549478769302368
+      ]
+    },
+    {
+      "env": 27,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 1.3488136529922485,
+      "terminal_distance_m": 1.1973516941070557,
+      "target_world": [
+        -0.8126674294471741,
+        0.2940731942653656,
+        0.3794934153556824
+      ]
+    },
+    {
+      "env": 29,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 1.5554583072662354,
+      "terminal_distance_m": 1.7398185729980469,
+      "target_world": [
+        1.815096139907837,
+        0.6936892867088318,
+        0.9717037677764893
+      ]
+    },
+    {
+      "env": 31,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 1.4774481058120728,
+      "terminal_distance_m": 1.6307826042175293,
+      "target_world": [
+        0.8831220269203186,
+        -1.389059066772461,
+        1.03052818775177
+      ]
+    },
+    {
+      "env": 32,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 0.49079152941703796,
+      "terminal_distance_m": 0.6681005358695984,
+      "target_world": [
+        0.8752409815788269,
+        0.1918577253818512,
+        0.7142379283905029
+      ]
+    },
+    {
+      "env": 33,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 1.5879117250442505,
+      "terminal_distance_m": 1.4974268674850464,
+      "target_world": [
+        1.819905161857605,
+        -0.04912031814455986,
+        0.03416288644075394
+      ]
+    },
+    {
+      "env": 35,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 2.950653553009033,
+      "terminal_distance_m": 2.8862063884735107,
+      "target_world": [
+        0.017321130260825157,
+        -2.8653881549835205,
+        0.2370332032442093
+      ]
+    },
+    {
+      "env": 37,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 1.3585493564605713,
+      "terminal_distance_m": 1.4057127237319946,
+      "target_world": [
+        -0.11422386020421982,
+        1.2433397769927979,
+        0.7833032011985779
+      ]
+    },
+    {
+      "env": 40,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 1.0583655834197998,
+      "terminal_distance_m": 0.9275208711624146,
+      "target_world": [
+        1.1837475299835205,
+        -0.3534277081489563,
+        0.14880390465259552
+      ]
+    },
+    {
+      "env": 42,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 2.6201534271240234,
+      "terminal_distance_m": 2.5601325035095215,
+      "target_world": [
+        -2.1050612926483154,
+        -0.6466076374053955,
+        0.7268913984298706
+      ]
+    },
+    {
+      "env": 44,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 2.3610565662384033,
+      "terminal_distance_m": 2.341216564178467,
+      "target_world": [
+        2.438929796218872,
+        -1.027470350265503,
+        0.10239606350660324
+      ]
+    },
+    {
+      "env": 46,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 2.8886845111846924,
+      "terminal_distance_m": 2.7736194133758545,
+      "target_world": [
+        -1.4393996000289917,
+        -2.1069884300231934,
+        0.1732546091079712
+      ]
+    },
+    {
+      "env": 48,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 2.5920400619506836,
+      "terminal_distance_m": 2.4999759197235107,
+      "target_world": [
+        -2.0111398696899414,
+        0.8013500571250916,
+        0.4838498532772064
+      ]
+    },
+    {
+      "env": 50,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 2.159702777862549,
+      "terminal_distance_m": 2.1133430004119873,
+      "target_world": [
+        -1.364638090133667,
+        1.1867443323135376,
+        0.6472887396812439
+      ]
+    },
+    {
+      "env": 51,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 3.0977084636688232,
+      "terminal_distance_m": 3.0163400173187256,
+      "target_world": [
+        -1.218022346496582,
+        -2.580442190170288,
+        0.3453817367553711
+      ]
+    },
+    {
+      "env": 52,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 1.4779490232467651,
+      "terminal_distance_m": 1.5141584873199463,
+      "target_world": [
+        -1.0331486463546753,
+        -0.08093446493148804,
+        0.974929928779602
+      ]
+    },
+    {
+      "env": 53,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 1.905515193939209,
+      "terminal_distance_m": 1.8605241775512695,
+      "target_world": [
+        -1.2698235511779785,
+        0.8478130102157593,
+        0.6908400654792786
+      ]
+    },
+    {
+      "env": 56,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 2.120685338973999,
+      "terminal_distance_m": 1.9950153827667236,
+      "target_world": [
+        -0.08027003705501556,
+        -1.9303057193756104,
+        0.09287731349468231
+      ]
+    },
+    {
+      "env": 57,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 2.812396764755249,
+      "terminal_distance_m": 2.778076171875,
+      "target_world": [
+        1.5883690118789673,
+        -2.4813060760498047,
+        0.15949681401252747
+      ]
+    },
+    {
+      "env": 58,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 1.6736094951629639,
+      "terminal_distance_m": 1.5148180723190308,
+      "target_world": [
+        -1.0993266105651855,
+        0.44122543931007385,
+        0.2968772053718567
+      ]
+    },
+    {
+      "env": 62,
+      "success": false,
+      "fall": false,
+      "timeout": true,
+      "duration_s": 30.00049591064453,
+      "initial_distance_m": 1.7239691019058228,
+      "terminal_distance_m": 1.7374292612075806,
+      "target_world": [
+        -0.8705154061317444,
+        1.1280338764190674,
+        0.8355070948600769
+      ]
+    }
+  ],
+  "continuous_goals": true,
+  "task_contract": {
+    "target": {
+      "sampling": "base_disk",
+      "radius_m": 3.0,
+      "minimum_height_m": 0.03,
+      "maximum_height_m": 1.1,
+      "resample_on_success": true
+    },
+    "reward": {
+      "linear_tracking": 3.0,
+      "yaw_tracking": 1.0,
+      "linear_sigma": 0.15,
+      "yaw_sigma": 0.25,
+      "reach_coarse": 2.0,
+      "reach_fine": 1.0,
+      "reach_progress": 0.25,
+      "reach_hold": 1.0,
+      "reach_coarse_sigma": 1.5,
+      "reach_fine_sigma": 0.08,
+      "hold_speed_sigma": 0.1,
+      "upright": 0.5,
+      "height": 0.5,
+      "vertical_velocity": -0.2,
+      "roll_pitch_rate": -0.05,
+      "leg_pose": -0.02,
+      "arm_carry": -0.01,
+      "action_rate": -0.01,
+      "joint_limit": -1.0,
+      "joint_velocity": -1e-05,
+      "joint_acceleration": -1e-07,
+      "control_effort": -0.005,
+      "mani_base_speed": -0.1,
+      "distance_time_weight": 0.5,
+      "distance_time_scale_m": 0.5,
+      "success_bonus": 12.0,
+      "success_distance_m": 0.08
+    },
+    "episode_length_s": 30.0,
+    "robot_model_sha256": "25bebd86d7595da81f0718f8f0185c8b5f0fd70efca0c8d05b24a3d14b624c1f",
+    "action_mapping": {
+      "contract_version": "m1_mixed_action_v3",
+      "default_pose_profile": "m1_pose_dataset_v3_3_l_high_carry_v1",
+      "default_joint_pos": [
+        0.0,
+        0.8812830158963126,
+        -1.6184887638693073,
+        0.0,
+        0.0,
+        0.8812830158963126,
+        -1.6184887638693073,
+        0.0,
+        0.0,
+        -0.8812830158963126,
+        1.6184887638693073,
+        0.0,
+        0.0,
+        -0.8812830158963126,
+        1.6184887638693073,
+        0.0,
+        0.0,
+        0.5,
+        -0.4,
+        0.3,
+        0.0,
+        0.0
+      ],
+      "joint_names": [
+        "FAR_ABAD_JOINT",
+        "FAR_HIP_JOINT",
+        "FAR_KNEE_JOINT",
+        "FAR_FOOT_JOINT",
+        "FBL_ABAD_JOINT",
+        "FBL_HIP_JOINT",
+        "FBL_KNEE_JOINT",
+        "FBL_FOOT_JOINT",
+        "RAR_ABAD_JOINT",
+        "RAR_HIP_JOINT",
+        "RAR_KNEE_JOINT",
+        "RAR_FOOT_JOINT",
+        "RBL_ABAD_JOINT",
+        "RBL_HIP_JOINT",
+        "RBL_KNEE_JOINT",
+        "RBL_FOOT_JOINT",
+        "piper_x_joint1",
+        "piper_x_joint2",
+        "piper_x_joint3",
+        "piper_x_joint4",
+        "piper_x_joint5",
+        "piper_x_joint6"
+      ],
+      "wheel_joint_names": [
+        "FAR_FOOT_JOINT",
+        "FBL_FOOT_JOINT",
+        "RAR_FOOT_JOINT",
+        "RBL_FOOT_JOINT"
+      ],
+      "position_control_count": 18,
+      "wheel_velocity_control_count": 4,
+      "action_modes": [
+        "position",
+        "position",
+        "position",
+        "velocity",
+        "position",
+        "position",
+        "position",
+        "velocity",
+        "position",
+        "position",
+        "position",
+        "velocity",
+        "position",
+        "position",
+        "position",
+        "velocity",
+        "position",
+        "position",
+        "position",
+        "position",
+        "position",
+        "position"
+      ],
+      "action_scales": [
+        0.0,
+        0.0,
+        0.0,
+        5.0,
+        0.0,
+        0.0,
+        0.0,
+        5.0,
+        0.0,
+        0.0,
+        0.0,
+        5.0,
+        0.0,
+        0.0,
+        0.0,
+        5.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "position_target_bounds": [
+        [
+          -0.36324,
+          0.43849
+        ],
+        [
+          0.61401,
+          1.46816
+        ],
+        [
+          -2.5209,
+          -1.19558
+        ],
+        [
+          0.0,
+          0.0
+        ],
+        [
+          -0.40312,
+          0.39113
+        ],
+        [
+          0.60863,
+          1.47425
+        ],
+        [
+          -2.5209,
+          -1.14031
+        ],
+        [
+          0.0,
+          0.0
+        ],
+        [
+          -0.38559,
+          0.41193
+        ],
+        [
+          -1.52413,
+          -0.64906
+        ],
+        [
+          1.14922,
+          2.5209
+        ],
+        [
+          0.0,
+          0.0
+        ],
+        [
+          -0.43197,
+          0.37001
+        ],
+        [
+          -1.53056,
+          -0.6586
+        ],
+        [
+          1.17965,
+          2.5209
+        ],
+        [
+          0.0,
+          0.0
+        ],
+        [
+          -0.46264,
+          0.51819
+        ],
+        [
+          0.29709,
+          2.78807
+        ],
+        [
+          -1.72607,
+          -0.32987
+        ],
+        [
+          -0.3986,
+          0.41906
+        ],
+        [
+          -0.28104,
+          0.21721
+        ],
+        [
+          -1.05,
+          0.05
+        ]
+      ],
+      "position_mapping": "asymmetric_default_to_absolute_bounds_v3;clamp_soft_limits",
+      "wheel_mapping": "clip(action,-1,1)*wheel_scale_rad_s"
+    },
+    "manual_target_world": null,
+    "fixed_velocity": null
+  },
+  "duration_s": 60.0,
+  "unfinished_episodes_excluded_from_episode_metrics": true
+}

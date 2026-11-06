@@ -1,0 +1,268 @@
+{
+  "A01_algorithm_architecture": {
+    "inputs": [
+      "data/go2_ppo_config.json",
+      "data/m1_ppo_config.json",
+      "data/go2_supermimic_config.json",
+      "data/m1_supermimic_config.json"
+    ],
+    "script": "scripts/plot_architecture.py",
+    "formats": [
+      "png",
+      "svg"
+    ],
+    "size_px": [
+      3840,
+      2160
+    ]
+  },
+  "A02_m1_failure_mechanism": {
+    "inputs": [
+      "data/m1_policy_posture_probe.json",
+      "data/m1_gradient_components.json",
+      "data/m1_action_history_feedback.json",
+      "data/m1_supermimic_config.json"
+    ],
+    "script": "scripts/plot_architecture.py",
+    "formats": [
+      "png",
+      "svg"
+    ],
+    "size_px": [
+      3840,
+      2160
+    ]
+  },
+  "A03_training_curves": {
+    "inputs": [
+      "data/training_curves.json"
+    ],
+    "script": "scripts/plot_training_curves.py",
+    "formats": [
+      "png",
+      "svg"
+    ],
+    "size_px": [
+      3840,
+      2160
+    ]
+  },
+  "A04_network_dimensions": {
+    "inputs": [
+      "data/go2_supermimic_config.json",
+      "data/m1_supermimic_config.json",
+      "data/experiment_manifest.json"
+    ],
+    "script": "scripts/plot_architecture.py",
+    "formats": [
+      "png",
+      "svg"
+    ],
+    "size_px": [
+      3840,
+      2160
+    ]
+  },
+  "G01_go2_training_config": {
+    "inputs": [
+      "data/go2_ppo_config.json",
+      "data/go2_supermimic_config.json",
+      "data/go2_ppo_training_completion.json",
+      "data/go2_ppo_training_progress.json",
+      "data/go2_supermimic_training_progress.json"
+    ],
+    "script": "scripts/plot_tables.py",
+    "formats": [
+      "png",
+      "svg"
+    ],
+    "size_px": [
+      3840,
+      2160
+    ]
+  },
+  "G02_go2_velocity_results": {
+    "inputs": [
+      "data/go2_results.json"
+    ],
+    "script": "scripts/plot_tables.py",
+    "formats": [
+      "png",
+      "svg"
+    ],
+    "size_px": [
+      3840,
+      2160
+    ]
+  },
+  "G03_go2_velocity_comparison": {
+    "inputs": [
+      "data/go2_results.json"
+    ],
+    "script": "scripts/plot_training_curves.py",
+    "formats": [
+      "png",
+      "svg"
+    ],
+    "size_px": [
+      3840,
+      2160
+    ]
+  },
+  "G04_go2_gait_history": {
+    "inputs": [
+      "data/go2_new_cold_2p5h.json",
+      "data/go2_old_chain_2p95h.json",
+      "data/go2_old_actor_2p96h.json",
+      "data/go2_old_final_chain_4p55h.json",
+      "data/go2_lineage_clocks.json"
+    ],
+    "script": "scripts/plot_tables.py",
+    "formats": [
+      "png",
+      "svg"
+    ],
+    "size_px": [
+      3840,
+      2160
+    ]
+  },
+  "G05_go2_reward_summary": {
+    "inputs": [
+      "data/go2_supermimic_config.json"
+    ],
+    "script": "scripts/plot_tables.py",
+    "formats": [
+      "png",
+      "svg"
+    ],
+    "size_px": [
+      3840,
+      2160
+    ]
+  },
+  "G06_go2_fair_gait": {
+    "inputs": [
+      "data/go2_results.json"
+    ],
+    "script": "scripts/plot_training_curves.py",
+    "formats": [
+      "png",
+      "svg"
+    ],
+    "size_px": [
+      3840,
+      2160
+    ]
+  },
+  "M01_m1_training_config": {
+    "inputs": [
+      "data/m1_ppo_config.json",
+      "data/m1_supermimic_config.json",
+      "data/m1_ppo_completion.json",
+      "data/m1_supermimic_completion.json",
+      "data/experiment_manifest.json"
+    ],
+    "script": "scripts/plot_tables.py",
+    "formats": [
+      "png",
+      "svg"
+    ],
+    "size_px": [
+      3840,
+      2160
+    ]
+  },
+  "M02_m1_final_results": {
+    "inputs": [
+      "data/m1_ppo_forward.json",
+      "data/m1_supermimic_forward.json",
+      "data/m1_ppo_manipulation.json",
+      "data/m1_supermimic_manipulation.json"
+    ],
+    "script": "scripts/plot_tables.py",
+    "formats": [
+      "png",
+      "svg"
+    ],
+    "size_px": [
+      3840,
+      2160
+    ]
+  },
+  "M03_m1_reach_success": {
+    "inputs": [
+      "data/m1_ppo_manipulation.json",
+      "data/m1_supermimic_manipulation.json"
+    ],
+    "script": "scripts/plot_training_curves.py",
+    "formats": [
+      "png",
+      "svg"
+    ],
+    "size_px": [
+      3840,
+      2160
+    ]
+  },
+  "M04_m1_training_failure": {
+    "inputs": [
+      "data/training_curves.json",
+      "data/m1_fixed_input_snapshots.json",
+      "data/m1_policy_posture_probe.json",
+      "data/m1_wm_response_probe.json"
+    ],
+    "script": "scripts/plot_training_curves.py",
+    "formats": [
+      "png",
+      "svg"
+    ],
+    "size_px": [
+      3840,
+      2160
+    ]
+  },
+  "M05_m1_wm_gradient_audit": {
+    "inputs": [
+      "data/m1_wm_response_probe_eps0.01.json"
+    ],
+    "script": "scripts/plot_tables.py",
+    "formats": [
+      "png",
+      "svg"
+    ],
+    "size_px": [
+      3840,
+      2160
+    ]
+  },
+  "M06_m1_task_rewards": {
+    "inputs": [
+      "data/m1_supermimic_config.json"
+    ],
+    "script": "scripts/plot_tables.py",
+    "formats": [
+      "png",
+      "svg"
+    ],
+    "size_px": [
+      3840,
+      2160
+    ]
+  },
+  "M07_m1_gradient_and_feedback": {
+    "inputs": [
+      "data/m1_gradient_components.json",
+      "data/m1_action_history_feedback.json"
+    ],
+    "script": "scripts/plot_training_curves.py",
+    "formats": [
+      "png",
+      "svg"
+    ],
+    "size_px": [
+      3840,
+      2160
+    ]
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "date": "2026-11-06",
+  "base_commit": "d0f32b1173ac6ef3f77a596e5dcaceaff2fb762c",
+  "working_tree_training_code_modified": true,
+  "scope": "Analysis and frozen-policy evaluation only. No training or optimizer updates. Current dirty workspace dependencies are identified by SHA256; this docs commit is not a complete training-code release.",
+  "python_environment": "/home/yifeiy/miniconda3/envs/supermimic",
+  "versions": {
+    "torch": "2.11.0+cu126",
+    "mjlab": "1.6.0",
+    "mujoco": "3.16.0",
+    "mujoco-warp": "3.16.0"
+  },
+  "source_sha256": {
+    "src/supermimic/imagination/objective.py": "3c93ec24c0f26db7bd4d60c5da50bc4a4d711a70a72ba0c9dfc7b078f082f774",
+    "src/supermimic/imagination/policy_trainer.py": "ba8f47d96f9a53afdb1ff4c566766df2a839277fe21f440cf86347d21286f8fd",
+    "src/supermimic/imagination/rollout.py": "f02805b7aecfe5b8b3120308de149a1b4dfaac670a4987f7826053f5fffe9dbd",
+    "src/supermimic/imagination/tasks.py": "c015c56fe1c46c1afe18f25a0f9a3f05910f990507ada1635c460e372cfcdd30",
+    "src/supermimic/policy/nets.py": "c62d007c2f41826c17340227278d2b04b27059534700b8ed3ac04dbb01349fca",
+    "src/supermimic/tasks/m1_reward.py": "138e178bfa01278560e0e8a86c3aa0b01b850321163dd93282d475dedcdec93d",
+    "src/supermimic/tasks/go2_gait.py": "e8d9b9b51e492f32b2c5ff0631bf94538c91486c206601d7e8570e4142d91755",
+    "src/supermimic/training/loop.py": "8e94839d6015f52753afc862d51fb6608fbe199077cc1c53ea3cae0a3b6109a8",
+    "scripts/evaluate_go2_velocity.py": "65c725cc776f0529a28f10da5949090b34fff04f2466ceb0adde37258c48e7c3",
+    "src/supermimic/training/m1_reward.py": "481fdcbdc3d6316560978ebeb51b674137e3362c6895823120a8b80b03981309"
+  },
+  "go2_time_definitions": {
+    "actor_lineage": "base_actor/time_hours + gait_checkpoint/time_hours; imported WM source excluded",
+    "complete_lineage": "actor_lineage + imported WM source/time_hours",
+    "not_included": "failed unrelated runs, evaluation, idle time, initialization before trainer clock; source WM came from a prior actor run, but only WM parameters were imported"
+  }
+}

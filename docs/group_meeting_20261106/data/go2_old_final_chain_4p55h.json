@@ -1,0 +1,140 @@
+{
+  "checkpoint": "logs/phase3_training/go2_velocity_diagonal_slip_3072_2p5h_20261103/ckpt_0034000.pt",
+  "sha256": "0b3d8e4bb26173d13a6ce0b99d5eecf43005927a8ab2e01947c4d0311009487a",
+  "metadata": {
+    "iteration": 34000,
+    "actor_updates": 13584,
+    "num_updates": 13584,
+    "init_wm_from": "/home/yifeiy/ws_supermimic/logs/go2_velocity_phase1_3072_b1024_20261027/ckpt_latest.pt",
+    "init_wm_source_iteration": 1800,
+    "pretrained_wm": true,
+    "robot_model_sha256": "4f306754e9b3d73930ac8362aa456eb8912f2e886665618e7eced9627c1704a4",
+    "actuator_model_version": "go2_urdf_builtin_pd_kp40_kd1_effort_23p7_35p55_v2",
+    "seed": 0,
+    "resume": "/home/yifeiy/ws_supermimic/logs/phase3_training/go2_velocity_deployable_v2_20261102/ckpt_latest.pt",
+    "gait": {
+      "feet_clearance": 0.0,
+      "diagonal_gait": -0.15,
+      "feet_slip": -0.2,
+      "clearance_target": 0.05,
+      "clearance_sigma": 0.025
+    },
+    "imagination_obs_noise": true
+  },
+  "method": "existing evaluate_command; seed2026; 16 nominal envs, 16 ended episodes per command, 10s; sequential; no noise/DR; no updates",
+  "limitations": "Nominal deterministic initial states, not independent perturbation robustness trials; gait uses FK height proxies; one training seed per lineage",
+  "real_mujoco": [
+    {
+      "command_body_xy_yaw": [
+        0.3,
+        0.0,
+        0.0
+      ],
+      "episodes": 16,
+      "mean_vx": 0.28949976712465286,
+      "mean_vy": -0.003980683541158214,
+      "mean_yaw_rate": 0.018370736157521605,
+      "velocity_rmse": 0.03676401008851826,
+      "yaw_rate_rmse": 0.02582375716883689,
+      "mean_displacement_xy": 2.8853751122951508,
+      "mean_displacement_x": 2.8763661235570908,
+      "mean_base_height": 0.3333114758133888,
+      "mean_abs_executed_action": 0.5944303646683693,
+      "action_saturation_fraction": 0.0,
+      "fall_rate": 0.0,
+      "timeout_rate": 1.0,
+      "mean_episode_peak_foot_clearance_m": [
+        0.05141642689704895,
+        0.03442344814538956,
+        0.03467677906155586,
+        0.050405560061335564
+      ],
+      "stance_slip_rms_m_s": 0.16740358714014292,
+      "diagonal_support_fraction": 0.48569444566965103
+    },
+    {
+      "command_body_xy_yaw": [
+        0.5,
+        0.0,
+        0.0
+      ],
+      "episodes": 16,
+      "mean_vx": 0.48341318406164646,
+      "mean_vy": 4.213763440930052e-05,
+      "mean_yaw_rate": 0.022385736228898168,
+      "velocity_rmse": 0.059799435548484325,
+      "yaw_rate_rmse": 0.03161335387267172,
+      "mean_displacement_xy": 4.814298003911972,
+      "mean_displacement_x": 4.781563013792038,
+      "mean_base_height": 0.3320827018469572,
+      "mean_abs_executed_action": 0.5976356081664562,
+      "action_saturation_fraction": 0.00033333332976326346,
+      "fall_rate": 0.0,
+      "timeout_rate": 1.0,
+      "mean_episode_peak_foot_clearance_m": [
+        0.050288792699575424,
+        0.047534454613924026,
+        0.041325146332383156,
+        0.048953702673316
+      ],
+      "stance_slip_rms_m_s": 0.21829443890601397,
+      "diagonal_support_fraction": 0.5088889002799988
+    },
+    {
+      "command_body_xy_yaw": [
+        0.0,
+        0.3,
+        0.0
+      ],
+      "episodes": 16,
+      "mean_vx": -0.0059741993027273566,
+      "mean_vy": 0.30049199238419533,
+      "mean_yaw_rate": 0.02983046241570264,
+      "velocity_rmse": 0.0383179634809494,
+      "yaw_rate_rmse": 0.049809267511591315,
+      "mean_displacement_xy": 2.98991559445858,
+      "mean_displacement_x": -0.5854613110423088,
+      "mean_base_height": 0.3296510837972164,
+      "mean_abs_executed_action": 0.6289776228368282,
+      "action_saturation_fraction": 0.0,
+      "fall_rate": 0.0,
+      "timeout_rate": 1.0,
+      "mean_episode_peak_foot_clearance_m": [
+        0.046021657064557076,
+        0.03128543868660927,
+        0.03499016910791397,
+        0.03818058967590332
+      ],
+      "stance_slip_rms_m_s": 0.24862615764141083,
+      "diagonal_support_fraction": 0.41111111640930176
+    },
+    {
+      "command_body_xy_yaw": [
+        0.0,
+        0.0,
+        0.4
+      ],
+      "episodes": 16,
+      "mean_vx": -0.005167044670088217,
+      "mean_vy": -0.0015732241736259311,
+      "mean_yaw_rate": 0.4071686901152134,
+      "velocity_rmse": 0.014796380419284105,
+      "yaw_rate_rmse": 0.05313470005057752,
+      "mean_displacement_xy": 0.004354340824647807,
+      "mean_displacement_x": -0.0035743415355682373,
+      "mean_base_height": 0.33001781441271305,
+      "mean_abs_executed_action": 0.5292770192027092,
+      "action_saturation_fraction": 0.0,
+      "fall_rate": 0.0,
+      "timeout_rate": 1.0,
+      "mean_episode_peak_foot_clearance_m": [
+        0.0053818728774785995,
+        0.0026514697819948196,
+        0.02975952811539173,
+        0.005173049867153168
+      ],
+      "stance_slip_rms_m_s": 0.2556405123323202,
+      "diagonal_support_fraction": 0.0
+    }
+  ]
+}

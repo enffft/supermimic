@@ -1,0 +1,47 @@
+"""Data-validated dimensions; architecture labels reference inspected implementation."""
+from style import *
+from matplotlib.patches import FancyBboxPatch, FancyArrowPatch
+
+def box(ax,x,y,w,h,title,detail='',color=BLUE):
+ ax.add_patch(FancyBboxPatch((x,y),w,h,boxstyle='round,pad=0.012,rounding_size=0.014',facecolor='white',edgecolor=color,linewidth=1.6))
+ ax.text(x+w/2,y+h*.66 if detail else y+h/2,title,ha='center',va='center',fontsize=16,weight='bold',color=color)
+ if detail:ax.text(x+w/2,y+h*.27,detail,ha='center',va='center',fontsize=12,color=INK,linespacing=1.5)
+def arrow(ax,x1,y1,x2,y2,color=GRAY,style='-'):
+ ax.add_patch(FancyArrowPatch((x1,y1),(x2,y2),arrowstyle='-|>',mutation_scale=16,linewidth=1.7,color=color,linestyle=style))
+f=canvas('PPO vs SuperMimic｜同一控制接口，两种学习信号','部署时都只运行 Actor；World Model 与 Critic 用于训练，机器人不执行在线MPC求解')
+a=f.add_axes([.045,.12,.91,.72]);a.axis('off');a.set(xlim=(0,1),ylim=(0,1));a.axvline(.49,color='#D8E2EC',lw=2)
+a.text(.23,.98,'PPO：真实回报 → 概率比更新',ha='center',fontsize=19,color=BLUE,weight='bold');a.text(.75,.98,'SuperMimic：预测回报 → 路径梯度',ha='center',fontsize=19,color=TEAL,weight='bold')
+box(a,.04,.76,.38,.12,'共享 Actor + Gaussian 探索','输入历史本体观测与当前目标；输出动作',BLUE)
+box(a,.04,.55,.38,.12,'真实 MuJoCo Rollout','每轮32步；环境解析reward + 真实done',BLUE)
+box(a,.04,.34,.38,.12,'真实 GAE / Value Target','Critic：privileged state + Goal + ξ',BLUE)
+box(a,.04,.11,.38,.14,'PPO Clipped Objective','固定旧策略概率；5 epochs；Adam',BLUE)
+for yy in [.76,.55,.34]:arrow(a,.23,yy,.23,yy-.08,BLUE)
+arrow(a,.43,.18,.46,.18,BLUE);arrow(a,.46,.18,.46,.82,BLUE);arrow(a,.46,.82,.425,.82,BLUE)
+box(a,.54,.76,.40,.12,'真实 MuJoCo → Replay','真实执行动作、状态、物理context',TEAL)
+box(a,.54,.55,.40,.12,'WM：8步自回归拟合','学习动力学增量；解析观测/奖励/终止',TEAL)
+box(a,.54,.34,.40,.12,'Actor → 想象 H32 (0.64s)','冻结WM参数，保留状态与动作导数',TEAL)
+box(a,.54,.11,.40,.14,'Actor BPTT + 想象 Critic','过程reward + 终值；M1另加终点距离',TEAL)
+for yy in [.76,.55,.34]:arrow(a,.74,yy,.74,yy-.08,TEAL)
+arrow(a,.955,.18,.98,.18,TEAL);arrow(a,.98,.18,.98,.40,TEAL);arrow(a,.98,.40,.945,.40,TEAL)
+finish(f,'A01_algorithm_architecture','实现：baselines/{go2,m1}_ppo.py → RSL-RL；world_model/wm_trainer.py；imagination/{rollout,objective,policy_trainer}.py。')
+f=canvas('M1-Piper｜退化闭环：事实支持的机制假设','虚线箭头表示尚未完成因果消融；不能将局部WM反号外推到所有状态，也不能认定Critic是唯一根因')
+a=f.add_axes([.045,.14,.91,.69]);a.axis('off');a.set(xlim=(0,1),ylim=(0,1))
+box(a,.02,.64,.28,.22,'① 探索与数据覆盖','SM环境噪声0.03；Replay 5.12s\n3m面积均匀目标，大多数在远处',BLUE)
+box(a,.36,.64,.28,.22,'② 模型 / 价值导数风险','局部WM动作响应实测反号\n冻结诊断中Critic梯度可主导',TEAL)
+box(a,.70,.64,.28,.22,'③ Actor 累计漂移','最终层权重范数增长\n梯度裁剪不限制累计策略变化',BLUE)
+box(a,.70,.15,.28,.24,'④ 饱和与指令失敏','真实动作100%超过0.95\nroot≈0.219m；几乎不响应Goal',RED)
+box(a,.25,.15,.33,.24,'⑤ 数据分布继续恶化？','低位停滞产生重复轨迹\n正常姿态、接近成功样本被挤出？',TEAL)
+for x1,y1,x2,y2 in [(.305,.75,.35,.75),(.645,.75,.69,.75),(.84,.63,.84,.40),(.69,.27,.59,.27),(.25,.27,.16,.62)]:arrow(a,x1,y1,x2,y2,GRAY,'--')
+a.text(.38,.02,'下一步：先校准导数和更新稳定性，再扩大训练时间',ha='center',fontsize=18,weight='bold',color=INK)
+finish(f,'A02_m1_failure_mechanism','证据：data/m1_*probe、m1_fixed_input_snapshots、m1_gradient_components；闭环机制为研究假设，因果贡献尚未量化。')
+g=load('go2_supermimic_config');m=load('m1_supermimic_config');manifest=load('experiment_manifest')
+f=canvas('真实网络｜Actor 共享结构，输入与动力学维度随机器人变化','所有隐藏层为 SiLU；两条任务均走 Direct Goal，不创建独立 Motion Encoder')
+a=f.add_axes([.045,.12,.91,.72]);a.axis('off');a.set(xlim=(0,1),ylim=(0,1))
+for y,key,cfg,c in [(.55,'Go2',g,BLUE),(.10,'M1-Piper',m,TEAL)]:
+ nj=cfg['policy']['num_joints'];h=cfg['policy']['history'];goal=cfg['policy']['goal_dim'];sd=13+nj*2;xi=nj+4
+ a.text(.01,y+.35,key,fontsize=21,weight='bold',color=c)
+ box(a,.01,y+.07,.22,.22,'Actor 输入',f'{h}×{3*nj+6}D + Goal{goal}\n共{h*(3*nj+6)+goal}维',c)
+ box(a,.29,y+.07,.35,.22,'2048 → 1024 → 512 → 256',f'tanh → Action{nj}\n'+('12关节位置偏置' if nj==12 else '12腿位置 + 4轮速度 + 6臂位置'),c)
+ arrow(a,.235,y+.18,.28,y+.18,c)
+ box(a,.70,y+.07,.28,.22,'训练辅助网络',f'Critic {sd+goal+xi+4}→256→128→1\nWM {sd+nj+xi}→2048³→{12+2*nj}',c)
+finish(f,'A04_network_dimensions','来源：checkpoint参数形状 + 保存配置；Go2 Actor 3,195,660参数，M1 Actor 4,252,950参数；Gaussian std为PPO额外参数。')

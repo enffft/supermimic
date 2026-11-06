@@ -1,0 +1,145 @@
+{
+  "checkpoint": "/home/yifeiy/rl_sar/policy/go2/ppo_velocity/policy_inference.pt",
+  "real_mujoco": [
+    {
+      "command_body_xy_yaw": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "episodes": 64,
+      "mean_vx": 0.03763373626861721,
+      "mean_vy": -0.006219175702426583,
+      "mean_yaw_rate": -0.022374835330992937,
+      "velocity_rmse": 0.07591436221264303,
+      "yaw_rate_rmse": 0.037331931525841355,
+      "mean_displacement_xy": 0.37565628765150905,
+      "mean_displacement_x": 0.3640724215656519,
+      "mean_base_height": 0.27570453379303217,
+      "mean_abs_executed_action": 0.6848060106858611,
+      "action_saturation_fraction": 0.0,
+      "fall_rate": 0.0,
+      "timeout_rate": 1.0,
+      "mean_episode_peak_foot_clearance_m": [
+        0.0522198979742825,
+        0.01330702006816864,
+        0.0009856079705059528,
+        0.026306111831218004
+      ],
+      "stance_slip_rms_m_s": 0.1943416059948504,
+      "diagonal_support_fraction": 0.011736111395293847
+    },
+    {
+      "command_body_xy_yaw": [
+        0.3,
+        0.0,
+        0.0
+      ],
+      "episodes": 64,
+      "mean_vx": 0.34339631954208016,
+      "mean_vy": -0.0037750773844891228,
+      "mean_yaw_rate": -0.013852759002475068,
+      "velocity_rmse": 0.0659006373025477,
+      "yaw_rate_rmse": 0.03653155476786196,
+      "mean_displacement_xy": 3.470991563051939,
+      "mean_displacement_x": 3.4610100276768208,
+      "mean_base_height": 0.28030900936573744,
+      "mean_abs_executed_action": 0.7264091251417994,
+      "action_saturation_fraction": 0.0,
+      "fall_rate": 0.0,
+      "timeout_rate": 1.0,
+      "mean_episode_peak_foot_clearance_m": [
+        0.0649128477089107,
+        0.047955715795978904,
+        0.01632165303453803,
+        0.03969638841226697
+      ],
+      "stance_slip_rms_m_s": 0.5360146490857005,
+      "diagonal_support_fraction": 0.010208333565969951
+    },
+    {
+      "command_body_xy_yaw": [
+        0.5,
+        0.0,
+        0.0
+      ],
+      "episodes": 64,
+      "mean_vx": 0.5449939146637917,
+      "mean_vy": -0.019965546409366652,
+      "mean_yaw_rate": -0.0009212418567585701,
+      "velocity_rmse": 0.08555404271464795,
+      "yaw_rate_rmse": 0.041357105539646,
+      "mean_displacement_xy": 5.5030956491827965,
+      "mean_displacement_x": 5.491979621350765,
+      "mean_base_height": 0.28750444343313575,
+      "mean_abs_executed_action": 0.7538588242605329,
+      "action_saturation_fraction": 0.0,
+      "fall_rate": 0.0,
+      "timeout_rate": 1.0,
+      "mean_episode_peak_foot_clearance_m": [
+        0.07205515634268522,
+        0.05240775435231626,
+        0.021674329414963722,
+        0.048231101827695966
+      ],
+      "stance_slip_rms_m_s": 0.6714726081117988,
+      "diagonal_support_fraction": 0.005590277913142927
+    },
+    {
+      "command_body_xy_yaw": [
+        0.0,
+        0.3,
+        0.0
+      ],
+      "episodes": 64,
+      "mean_vx": 0.1356649254448712,
+      "mean_vy": 0.3501005028374493,
+      "mean_yaw_rate": -0.028606913750991225,
+      "velocity_rmse": 0.27707756217569113,
+      "yaw_rate_rmse": 0.17157664499245584,
+      "mean_displacement_xy": 0.4139407412149012,
+      "mean_displacement_x": 0.13571180868893862,
+      "mean_base_height": 0.3019344895146787,
+      "mean_abs_executed_action": 0.711309858597815,
+      "action_saturation_fraction": 0.0,
+      "fall_rate": 1.0,
+      "timeout_rate": 0.0,
+      "mean_episode_peak_foot_clearance_m": [
+        0.0049337889067828655,
+        0.2873567808419466,
+        0.00656932732090354,
+        0.35838950984179974
+      ],
+      "stance_slip_rms_m_s": 1.6590243000537157,
+      "diagonal_support_fraction": 0.0
+    },
+    {
+      "command_body_xy_yaw": [
+        0.0,
+        0.0,
+        0.4
+      ],
+      "episodes": 64,
+      "mean_vx": 0.028689231839962304,
+      "mean_vy": -0.029608869197545573,
+      "mean_yaw_rate": 0.11821121198590845,
+      "velocity_rmse": 0.12131924938876182,
+      "yaw_rate_rmse": 0.3474518917500973,
+      "mean_displacement_xy": 0.358452211599797,
+      "mean_displacement_x": 0.3464165963232517,
+      "mean_base_height": 0.27276528300717473,
+      "mean_abs_executed_action": 0.8181732697412372,
+      "action_saturation_fraction": 0.0,
+      "fall_rate": 1.0,
+      "timeout_rate": 0.0,
+      "mean_episode_peak_foot_clearance_m": [
+        0.10152796283364296,
+        0.0016515478491783142,
+        0.3382100621238351,
+        0.0010390994139015675
+      ],
+      "stance_slip_rms_m_s": 0.13789270259439945,
+      "diagonal_support_fraction": 0.0
+    }
+  ]
+}

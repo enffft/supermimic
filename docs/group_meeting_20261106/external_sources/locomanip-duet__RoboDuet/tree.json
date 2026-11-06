@@ -1,0 +1,1759 @@
+{
+  "sha": "a7e1528215c048199f90cb69ceb7749a1d745f28",
+  "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/a7e1528215c048199f90cb69ceb7749a1d745f28",
+  "tree": [
+    {
+      "path": ".gitignore",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a3d903742c6ffa7e3c56dc68f5716a3d87369a06",
+      "size": 843,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/a3d903742c6ffa7e3c56dc68f5716a3d87369a06"
+    },
+    {
+      "path": "LICENSE",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "320e104fca97e9d2db8208d24298315d1e636e7a",
+      "size": 1068,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/320e104fca97e9d2db8208d24298315d1e636e7a"
+    },
+    {
+      "path": "LICENSES",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "c44a0124b7f6420bcc5b55f5d9c5951f7f87b01e",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/c44a0124b7f6420bcc5b55f5d9c5951f7f87b01e"
+    },
+    {
+      "path": "LICENSES/legged_gym",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "a2215bbe72401047f26b5439c7fe294946d89b77",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/a2215bbe72401047f26b5439c7fe294946d89b77"
+    },
+    {
+      "path": "LICENSES/legged_gym/LICENSE",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "92e75a2ed223e807665c24db85e49aa3a4111dff",
+      "size": 1730,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/92e75a2ed223e807665c24db85e49aa3a4111dff"
+    },
+    {
+      "path": "LICENSES/rsl_rl",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "5ac28005836e33c82c5065a930184a5bdb3dcc39",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/5ac28005836e33c82c5065a930184a5bdb3dcc39"
+    },
+    {
+      "path": "LICENSES/rsl_rl/LICENSE",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "01d9567012f12bf310ac10f1f7d6a188534b1c3c",
+      "size": 1645,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/01d9567012f12bf310ac10f1f7d6a188534b1c3c"
+    },
+    {
+      "path": "README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3de4e57b19ab869f79b7157d4e05156dc9ea40f3",
+      "size": 5752,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/3de4e57b19ab869f79b7157d4e05156dc9ea40f3"
+    },
+    {
+      "path": "go1_gym",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "f5b030c35a77e12db0bccaa6a7e8352d75bf8495",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/f5b030c35a77e12db0bccaa6a7e8352d75bf8495"
+    },
+    {
+      "path": "go1_gym/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4d885126f5534413c3da82065f3b0315425093ad",
+      "size": 165,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/4d885126f5534413c3da82065f3b0315425093ad"
+    },
+    {
+      "path": "go1_gym/envs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "103ac38a8d7da9be5382949715b18429f515cd96",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/103ac38a8d7da9be5382949715b18429f515cd96"
+    },
+    {
+      "path": "go1_gym/envs/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "go1_gym/envs/automatic",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "99eee3ed09c2c71bae1a3dc05670a3991f7aa02c",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/99eee3ed09c2c71bae1a3dc05670a3991f7aa02c"
+    },
+    {
+      "path": "go1_gym/envs/automatic/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4e1140d1c5dbeeca08e851667ec00d05e88e6a1b",
+      "size": 35176,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/4e1140d1c5dbeeca08e851667ec00d05e88e6a1b"
+    },
+    {
+      "path": "go1_gym/envs/automatic/base_task.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ba68575673bf31851648705b66e26ca0d67550b0",
+      "size": 5295,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/ba68575673bf31851648705b66e26ca0d67550b0"
+    },
+    {
+      "path": "go1_gym/envs/automatic/curriculum.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5ea70a8ffc9bd68b2c61fcc7cda7060455d00059",
+      "size": 7124,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/5ea70a8ffc9bd68b2c61fcc7cda7060455d00059"
+    },
+    {
+      "path": "go1_gym/envs/automatic/legged_robot.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "018c546fe9d6dae0bfd8b9b13f1bac759eb6860d",
+      "size": 114715,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/018c546fe9d6dae0bfd8b9b13f1bac759eb6860d"
+    },
+    {
+      "path": "go1_gym/envs/automatic/legged_robot_config.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5969f01673604a8254a9ceae1b9cf7d599e3af99",
+      "size": 18882,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/5969f01673604a8254a9ceae1b9cf7d599e3af99"
+    },
+    {
+      "path": "go1_gym/envs/base",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "a23bc9594a6074081a04b007d9e52e693329c79c",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/a23bc9594a6074081a04b007d9e52e693329c79c"
+    },
+    {
+      "path": "go1_gym/envs/base/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "go1_gym/envs/base/base_task.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7047a669595e400129fc1f6f03f1d8ba48905fee",
+      "size": 5270,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/7047a669595e400129fc1f6f03f1d8ba48905fee"
+    },
+    {
+      "path": "go1_gym/envs/base/curriculum.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5ea70a8ffc9bd68b2c61fcc7cda7060455d00059",
+      "size": 7124,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/5ea70a8ffc9bd68b2c61fcc7cda7060455d00059"
+    },
+    {
+      "path": "go1_gym/envs/go1",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "0be8e47287b7285eeb9f9bea7a7c656cac32c052",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/0be8e47287b7285eeb9f9bea7a7c656cac32c052"
+    },
+    {
+      "path": "go1_gym/envs/go1/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "go1_gym/envs/go1/asset_config.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3326f1e8d347f5f200f6bffe9c1c801027f4a4f9",
+      "size": 2507,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/3326f1e8d347f5f200f6bffe9c1c801027f4a4f9"
+    },
+    {
+      "path": "go1_gym/envs/go1/go1_config.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "66c363c9cf42294912f57b8366ef1e0b5e6479df",
+      "size": 3078,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/66c363c9cf42294912f57b8366ef1e0b5e6479df"
+    },
+    {
+      "path": "go1_gym/envs/go1/velocity_tracking",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "f45bf5e742493427e8645fd67b40d415d35e3339",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/f45bf5e742493427e8645fd67b40d415d35e3339"
+    },
+    {
+      "path": "go1_gym/envs/go1/velocity_tracking/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "efec600bea72535765c3287c234de7629599b87d",
+      "size": 2299,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/efec600bea72535765c3287c234de7629599b87d"
+    },
+    {
+      "path": "go1_gym/envs/go1/wtw_config.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "613dfe733943bd5afc1ae529d22cc9a0355b0a54",
+      "size": 8086,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/613dfe733943bd5afc1ae529d22cc9a0355b0a54"
+    },
+    {
+      "path": "go1_gym/envs/rewards",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "ac72ee94be328929ed1e4b821fa0a1fe6c9da9e9",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/ac72ee94be328929ed1e4b821fa0a1fe6c9da9e9"
+    },
+    {
+      "path": "go1_gym/envs/rewards/rewards.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "53b3ff83b79657261600a40fb8164789bfb0748a",
+      "size": 15909,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/53b3ff83b79657261600a40fb8164789bfb0748a"
+    },
+    {
+      "path": "go1_gym/envs/wrappers",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "ea85b0358aaf52b63958a44919df5faeae898a30",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/ea85b0358aaf52b63958a44919df5faeae898a30"
+    },
+    {
+      "path": "go1_gym/envs/wrappers/history_wrapper.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3d63a103081864bc755aa6d8dc133b7e7050d207",
+      "size": 2659,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/3d63a103081864bc755aa6d8dc133b7e7050d207"
+    },
+    {
+      "path": "go1_gym/lcm_types",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "80a006dcb1a4c216c0e9dddada7dea9de36bc468",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/80a006dcb1a4c216c0e9dddada7dea9de36bc468"
+    },
+    {
+      "path": "go1_gym/lcm_types/arm_actions_t.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "20f7ca5c1a355dbcf608465fb3b6b5af78b9db5a",
+      "size": 1785,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/20f7ca5c1a355dbcf608465fb3b6b5af78b9db5a"
+    },
+    {
+      "path": "go1_gym/utils",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "f36ea108b65a7bb5b97d81d4b64cdf0b2c15b9be",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/f36ea108b65a7bb5b97d81d4b64cdf0b2c15b9be"
+    },
+    {
+      "path": "go1_gym/utils/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5b8772be10e4ebb726068261eef82f014a53bf7c",
+      "size": 105,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/5b8772be10e4ebb726068261eef82f014a53bf7c"
+    },
+    {
+      "path": "go1_gym/utils/common.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cd4a849c46c3fd4b46139e51bd9b7b408d98ed1c",
+      "size": 2221,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/cd4a849c46c3fd4b46139e51bd9b7b408d98ed1c"
+    },
+    {
+      "path": "go1_gym/utils/global_switch.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ae0b9f4e57fccc534880fbd01e40814453f8242a",
+      "size": 3011,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/ae0b9f4e57fccc534880fbd01e40814453f8242a"
+    },
+    {
+      "path": "go1_gym/utils/math_utils.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bd0a053bcf9155d3df7316ea365912a35725f388",
+      "size": 957,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/bd0a053bcf9155d3df7316ea365912a35725f388"
+    },
+    {
+      "path": "go1_gym/utils/terrain.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "11a0464529f26ddfcec18daa7b7fd52f3c6f5071",
+      "size": 8972,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/11a0464529f26ddfcec18daa7b7fd52f3c6f5071"
+    },
+    {
+      "path": "go1_gym_learn",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "e7b7791913efb3efd1d450dfcb6b21498dc642ca",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/e7b7791913efb3efd1d450dfcb6b21498dc642ca"
+    },
+    {
+      "path": "go1_gym_learn/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "go1_gym_learn/env",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "b12d3aba87431dd3e3872e711b7d9353cfc95d2f",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/b12d3aba87431dd3e3872e711b7d9353cfc95d2f"
+    },
+    {
+      "path": "go1_gym_learn/env/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2fb51e3da2943f4259a2168d7a9a23e737f26989",
+      "size": 29,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/2fb51e3da2943f4259a2168d7a9a23e737f26989"
+    },
+    {
+      "path": "go1_gym_learn/env/vec_env.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "57fe38b8f7e8f0fa58434085f7e30b37a042286b",
+      "size": 978,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/57fe38b8f7e8f0fa58434085f7e30b37a042286b"
+    },
+    {
+      "path": "go1_gym_learn/eval_metrics",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "a53d05d685e3240b1093a7a8feb1b9acde6f1062",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/a53d05d685e3240b1093a7a8feb1b9acde6f1062"
+    },
+    {
+      "path": "go1_gym_learn/eval_metrics/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "go1_gym_learn/eval_metrics/domain_randomization.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "237c5716b3de2c4ce0e6aa9906a9427951c038cc",
+      "size": 5942,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/237c5716b3de2c4ce0e6aa9906a9427951c038cc"
+    },
+    {
+      "path": "go1_gym_learn/eval_metrics/metrics.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f5ce6f79ae4653835e54875b00eb43d41f305bba",
+      "size": 2693,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/f5ce6f79ae4653835e54875b00eb43d41f305bba"
+    },
+    {
+      "path": "go1_gym_learn/ppo_cse_automatic",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "1de305a19723214e59d679899860eb4c3bb8b036",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/1de305a19723214e59d679899860eb4c3bb8b036"
+    },
+    {
+      "path": "go1_gym_learn/ppo_cse_automatic/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "df3822d1547a6c1bfea123409013d99bb4544039",
+      "size": 22536,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/df3822d1547a6c1bfea123409013d99bb4544039"
+    },
+    {
+      "path": "go1_gym_learn/ppo_cse_automatic/arm_ac.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2fe7e3e44415cfc5c604c9e4771ec68f7c122dbb",
+      "size": 7924,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/2fe7e3e44415cfc5c604c9e4771ec68f7c122dbb"
+    },
+    {
+      "path": "go1_gym_learn/ppo_cse_automatic/dog_ac.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "52b908e490b89b63e651cf18696c680cdbb6ed75",
+      "size": 6462,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/52b908e490b89b63e651cf18696c680cdbb6ed75"
+    },
+    {
+      "path": "go1_gym_learn/ppo_cse_automatic/metrics_caches.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e5b10ed16c10493ff043f7756b6f9103b1ca7393",
+      "size": 2210,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/e5b10ed16c10493ff043f7756b6f9103b1ca7393"
+    },
+    {
+      "path": "go1_gym_learn/ppo_cse_automatic/ppo.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3c3b84e2a92aaa6258abe9ff12944621da4a1504",
+      "size": 10054,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/3c3b84e2a92aaa6258abe9ff12944621da4a1504"
+    },
+    {
+      "path": "go1_gym_learn/ppo_cse_automatic/rollout_storage.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ca9edf27ac33ea1eeeae7d0f6e4c41772769b19f",
+      "size": 9228,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/ca9edf27ac33ea1eeeae7d0f6e4c41772769b19f"
+    },
+    {
+      "path": "go1_gym_learn/ppo_cse_unified",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "7435029d24c8d50bf424bed5e9c850f3334fd78a",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/7435029d24c8d50bf424bed5e9c850f3334fd78a"
+    },
+    {
+      "path": "go1_gym_learn/ppo_cse_unified/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0dc57ab376481dadd5fb120b5ab26f6a0c534e73",
+      "size": 18341,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/0dc57ab376481dadd5fb120b5ab26f6a0c534e73"
+    },
+    {
+      "path": "go1_gym_learn/ppo_cse_unified/ppo.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f8523121140ecc5a2969e54b2a9f4301cee4bfbd",
+      "size": 12457,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/f8523121140ecc5a2969e54b2a9f4301cee4bfbd"
+    },
+    {
+      "path": "go1_gym_learn/ppo_cse_unified/rollout_storage.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f20e84caf522b66d8ab57343520e7fe6621b7521",
+      "size": 9260,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/f20e84caf522b66d8ab57343520e7fe6621b7521"
+    },
+    {
+      "path": "go1_gym_learn/ppo_cse_unified/unified2head_ac.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7464480a77cbc6df4667efba61c27ada05bc1f31",
+      "size": 9690,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/7464480a77cbc6df4667efba61c27ada05bc1f31"
+    },
+    {
+      "path": "go1_gym_learn/utils",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "df14d464f6679e59aed571d7c44ba88829880da0",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/df14d464f6679e59aed571d7c44ba88829880da0"
+    },
+    {
+      "path": "go1_gym_learn/utils/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "601eea0747a19540085a644a85574f5c5edf40c2",
+      "size": 116,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/601eea0747a19540085a644a85574f5c5edf40c2"
+    },
+    {
+      "path": "go1_gym_learn/utils/utils.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "742d8b2e6035cef80a5b862172c3e519b3d44126",
+      "size": 2164,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/742d8b2e6035cef80a5b862172c3e519b3d44126"
+    },
+    {
+      "path": "media",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "3579c8405d058bf1428d7432a1cc28bf39b10570",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/3579c8405d058bf1428d7432a1cc28bf39b10570"
+    },
+    {
+      "path": "media/VR.png",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5efbeaec9dcd01b488f5f2195cdc6eae03665f9d",
+      "size": 2755,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/5efbeaec9dcd01b488f5f2195cdc6eae03665f9d"
+    },
+    {
+      "path": "media/cross.png",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7264aa53993d0aaa2676d9c8e81ca890a5848510",
+      "size": 178868,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/7264aa53993d0aaa2676d9c8e81ca890a5848510"
+    },
+    {
+      "path": "media/handle.png",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "385fc6aa3510b03b63bc5398db8e7fc789213b5e",
+      "size": 542017,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/385fc6aa3510b03b63bc5398db8e7fc789213b5e"
+    },
+    {
+      "path": "requirements.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "aece2b4b29f5c9052924695ec87c3f9104a4110c",
+      "size": 190,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/aece2b4b29f5c9052924695ec87c3f9104a4110c"
+    },
+    {
+      "path": "resources",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "90a85f2aba930801f6b4255b79b4652dfce24160",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/90a85f2aba930801f6b4255b79b4652dfce24160"
+    },
+    {
+      "path": "resources/actuator_nets",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "65942428eb260bcf20b47900870cccf68f3f744e",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/65942428eb260bcf20b47900870cccf68f3f744e"
+    },
+    {
+      "path": "resources/actuator_nets/unitree_go1.pt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "31b05a9c66744ad44bf5a9c35a4be3340d16c93c",
+      "size": 16861,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/31b05a9c66744ad44bf5a9c35a4be3340d16c93c"
+    },
+    {
+      "path": "resources/objects",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "4976e7add03aec45042f5cb79f6e24d9084014a5",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/4976e7add03aec45042f5cb79f6e24d9084014a5"
+    },
+    {
+      "path": "resources/objects/cube.urdf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "64895ab8cff90f58b1f5352351eddea3996bce39",
+      "size": 604,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/64895ab8cff90f58b1f5352351eddea3996bce39"
+    },
+    {
+      "path": "resources/robots",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "5c63c0b8c1c82ba0a2b3561ebb1b1b271e452caf",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/5c63c0b8c1c82ba0a2b3561ebb1b1b271e452caf"
+    },
+    {
+      "path": "resources/robots/a1",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "bdfeb45364421977d3a61278613f03103867e9c9",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/bdfeb45364421977d3a61278613f03103867e9c9"
+    },
+    {
+      "path": "resources/robots/a1/meshes",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "f7b4315f0f46d0571d72ae2b11bb5ac4d2ef5b48",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/f7b4315f0f46d0571d72ae2b11bb5ac4d2ef5b48"
+    },
+    {
+      "path": "resources/robots/a1/meshes/calf.dae",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ac4b964bb3a0874319b272e843332c896139f328",
+      "size": 1759398,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/ac4b964bb3a0874319b272e843332c896139f328"
+    },
+    {
+      "path": "resources/robots/a1/meshes/hip.dae",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "134ecef81ac2c02585d5051bfe1d856efa7436b0",
+      "size": 668998,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/134ecef81ac2c02585d5051bfe1d856efa7436b0"
+    },
+    {
+      "path": "resources/robots/a1/meshes/thigh.dae",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a867d6a7d0a6977a466bdda7b83c3abd18f12efe",
+      "size": 1151660,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/a867d6a7d0a6977a466bdda7b83c3abd18f12efe"
+    },
+    {
+      "path": "resources/robots/a1/meshes/thigh_mirror.dae",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8ca98eecd51f6f5d94d4d37dda1f246b45c2f364",
+      "size": 1187646,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/8ca98eecd51f6f5d94d4d37dda1f246b45c2f364"
+    },
+    {
+      "path": "resources/robots/a1/meshes/trunk.dae",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "351f0c50f3692b3d64518fd1bc9fc8d425dda5b7",
+      "size": 4246287,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/351f0c50f3692b3d64518fd1bc9fc8d425dda5b7"
+    },
+    {
+      "path": "resources/robots/a1/meshes/trunk_A1.png",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3307d582645b0b691319ba8f85cbc22960454716",
+      "size": 71835,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/3307d582645b0b691319ba8f85cbc22960454716"
+    },
+    {
+      "path": "resources/robots/a1/urdf",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "bd32da46950d8bce2084d63d307909ed3a37a6aa",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/bd32da46950d8bce2084d63d307909ed3a37a6aa"
+    },
+    {
+      "path": "resources/robots/a1/urdf/a1.urdf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "006da5905193e24f708c7e865c4404d8e43653ba",
+      "size": 32417,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/006da5905193e24f708c7e865c4404d8e43653ba"
+    },
+    {
+      "path": "resources/robots/a1/urdf/arx5a1.urdf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "361d731b849168dfeef403514a3a4853590dd21a",
+      "size": 32937,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/361d731b849168dfeef403514a3a4853590dd21a"
+    },
+    {
+      "path": "resources/robots/a1/urdf/widowA1.urdf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "db1b28262b13c66765a857f70c08cf0de01a2ced",
+      "size": 36557,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/db1b28262b13c66765a857f70c08cf0de01a2ced"
+    },
+    {
+      "path": "resources/robots/arx5p2Go1",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "db69fb34ec72f79186d31fcaf173135a81ff90ed",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/db69fb34ec72f79186d31fcaf173135a81ff90ed"
+    },
+    {
+      "path": "resources/robots/arx5p2Go1/meshes",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "1b29aeb527f7d801907d6823e23520f2c57c1a10",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/1b29aeb527f7d801907d6823e23520f2c57c1a10"
+    },
+    {
+      "path": "resources/robots/arx5p2Go1/meshes/arx5p2_meshes",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "953f0b55b3a6fc5299b304da0332e2254265a50b",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/953f0b55b3a6fc5299b304da0332e2254265a50b"
+    },
+    {
+      "path": "resources/robots/arx5p2Go1/meshes/arx5p2_meshes/base_link.STL",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "142af9665504c72c4e8e42075f9200d024ad03b2",
+      "size": 1804484,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/142af9665504c72c4e8e42075f9200d024ad03b2"
+    },
+    {
+      "path": "resources/robots/arx5p2Go1/meshes/arx5p2_meshes/link1.STL",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "351cbdee6a94e277093c77ffddc60b1dfdab79c3",
+      "size": 200484,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/351cbdee6a94e277093c77ffddc60b1dfdab79c3"
+    },
+    {
+      "path": "resources/robots/arx5p2Go1/meshes/arx5p2_meshes/link2.STL",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9c1b3b271398fae9016559184e6989c34e55339c",
+      "size": 4558284,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/9c1b3b271398fae9016559184e6989c34e55339c"
+    },
+    {
+      "path": "resources/robots/arx5p2Go1/meshes/arx5p2_meshes/link3.STL",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4881b498cc1f8c4ae7b09486a248377c15de4232",
+      "size": 1982784,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/4881b498cc1f8c4ae7b09486a248377c15de4232"
+    },
+    {
+      "path": "resources/robots/arx5p2Go1/meshes/arx5p2_meshes/link4.STL",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4df335179af0a0aee38739cd83249d87b443b781",
+      "size": 151884,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/4df335179af0a0aee38739cd83249d87b443b781"
+    },
+    {
+      "path": "resources/robots/arx5p2Go1/meshes/arx5p2_meshes/link5.STL",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "26de5838fe780ae5394b5af3d64a6ab3d59a2404",
+      "size": 2146884,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/26de5838fe780ae5394b5af3d64a6ab3d59a2404"
+    },
+    {
+      "path": "resources/robots/arx5p2Go1/meshes/arx5p2_meshes/link6.STL",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "62b29b171d49badd5364c3a6c938e089de955acf",
+      "size": 2379584,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/62b29b171d49badd5364c3a6c938e089de955acf"
+    },
+    {
+      "path": "resources/robots/arx5p2Go1/meshes/arx5p2_meshes/link7.STL",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9b4dfa9dadf862e37d808724f31e98ab66694165",
+      "size": 69784,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/9b4dfa9dadf862e37d808724f31e98ab66694165"
+    },
+    {
+      "path": "resources/robots/arx5p2Go1/meshes/arx5p2_meshes/link8.STL",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7f520069b51f897e4812d1de667f40a9e60e672a",
+      "size": 69784,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/7f520069b51f897e4812d1de667f40a9e60e672a"
+    },
+    {
+      "path": "resources/robots/arx5p2Go1/meshes/calf.dae",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9133bb912a92eacd4b5bcdc173a52fb9593ca0eb",
+      "size": 2344345,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/9133bb912a92eacd4b5bcdc173a52fb9593ca0eb"
+    },
+    {
+      "path": "resources/robots/arx5p2Go1/meshes/depthCamera.dae",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e1e522c601bd483080f19aeae5d4ab21a4da80f1",
+      "size": 78670,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/e1e522c601bd483080f19aeae5d4ab21a4da80f1"
+    },
+    {
+      "path": "resources/robots/arx5p2Go1/meshes/hip.dae",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2a266ecee16bfa0517f831dab0de30600ef308f1",
+      "size": 2436525,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/2a266ecee16bfa0517f831dab0de30600ef308f1"
+    },
+    {
+      "path": "resources/robots/arx5p2Go1/meshes/thigh.dae",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "111b4f9d536db826d5e2e4ccebfcbd3bf66a4578",
+      "size": 1250695,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/111b4f9d536db826d5e2e4ccebfcbd3bf66a4578"
+    },
+    {
+      "path": "resources/robots/arx5p2Go1/meshes/thigh_mirror.dae",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b25e84438e1d141efa15218d3c311618caf31111",
+      "size": 1538494,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/b25e84438e1d141efa15218d3c311618caf31111"
+    },
+    {
+      "path": "resources/robots/arx5p2Go1/meshes/trunk.dae",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f87f9c83907b21e473a5858c208b76af45dbd167",
+      "size": 64274993,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/f87f9c83907b21e473a5858c208b76af45dbd167"
+    },
+    {
+      "path": "resources/robots/arx5p2Go1/meshes/ultraSound.dae",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f322d2773292d534eea05d026e4926be78693ea3",
+      "size": 281841,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/f322d2773292d534eea05d026e4926be78693ea3"
+    },
+    {
+      "path": "resources/robots/arx5p2Go1/meshes/wx250s_meshes",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "05de50cb7b30cf1e635f8ab7994723403e8613a4",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/05de50cb7b30cf1e635f8ab7994723403e8613a4"
+    },
+    {
+      "path": "resources/robots/arx5p2Go1/meshes/wx250s_meshes/wx250s_10_gripper_finger.stl",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a568b085f21ab9c2d489de8f1e037cefa8980110",
+      "size": 22284,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/a568b085f21ab9c2d489de8f1e037cefa8980110"
+    },
+    {
+      "path": "resources/robots/arx5p2Go1/meshes/wx250s_meshes/wx250s_11_ar_tag.stl",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "193014b60c1cc7547a828d8549304acb1729ac8d",
+      "size": 3884,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/193014b60c1cc7547a828d8549304acb1729ac8d"
+    },
+    {
+      "path": "resources/robots/arx5p2Go1/meshes/wx250s_meshes/wx250s_1_base.stl",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ff1b0bcde287a862a6ed269756fb741e190431ca",
+      "size": 75584,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/ff1b0bcde287a862a6ed269756fb741e190431ca"
+    },
+    {
+      "path": "resources/robots/arx5p2Go1/meshes/wx250s_meshes/wx250s_2_shoulder.stl",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "83df495fe18042296109c044efd15da6982e7a5d",
+      "size": 61884,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/83df495fe18042296109c044efd15da6982e7a5d"
+    },
+    {
+      "path": "resources/robots/arx5p2Go1/meshes/wx250s_meshes/wx250s_3_upper_arm.stl",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4d7c8fc4833e2e4b86de49ce7eb8edb3398bb161",
+      "size": 70484,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/4d7c8fc4833e2e4b86de49ce7eb8edb3398bb161"
+    },
+    {
+      "path": "resources/robots/arx5p2Go1/meshes/wx250s_meshes/wx250s_4_upper_forearm.stl",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "eaf1d045aec225e21d979a03688f3759b8c0f754",
+      "size": 30084,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/eaf1d045aec225e21d979a03688f3759b8c0f754"
+    },
+    {
+      "path": "resources/robots/arx5p2Go1/meshes/wx250s_meshes/wx250s_5_lower_forearm.stl",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "552f425bd683ef6fa8b59821e216e8a9383fda68",
+      "size": 149084,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/552f425bd683ef6fa8b59821e216e8a9383fda68"
+    },
+    {
+      "path": "resources/robots/arx5p2Go1/meshes/wx250s_meshes/wx250s_6_wrist.stl",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "32fdf2b47b7c5984d4b3d99367a6080b82029171",
+      "size": 57684,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/32fdf2b47b7c5984d4b3d99367a6080b82029171"
+    },
+    {
+      "path": "resources/robots/arx5p2Go1/meshes/wx250s_meshes/wx250s_7_gripper.stl",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ee2168717ad0b7666dbe0b491579ee1d28a9b813",
+      "size": 17684,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/ee2168717ad0b7666dbe0b491579ee1d28a9b813"
+    },
+    {
+      "path": "resources/robots/arx5p2Go1/meshes/wx250s_meshes/wx250s_8_gripper_prop.stl",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "212444301dadf35dc3a215c59c04904660405cf0",
+      "size": 22684,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/212444301dadf35dc3a215c59c04904660405cf0"
+    },
+    {
+      "path": "resources/robots/arx5p2Go1/meshes/wx250s_meshes/wx250s_9_gripper_bar.stl",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5b91cbf02ad1200c540c973de78b6e1f0805ff7b",
+      "size": 36684,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/5b91cbf02ad1200c540c973de78b6e1f0805ff7b"
+    },
+    {
+      "path": "resources/robots/arx5p2Go1/urdf",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "b07a016afb134cb05f30592768e8241a9cedd63f",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/b07a016afb134cb05f30592768e8241a9cedd63f"
+    },
+    {
+      "path": "resources/robots/arx5p2Go1/urdf/arx5p2.urdf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "def73a4c476a4056ebc0fa8c92c5364cd557c571",
+      "size": 11971,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/def73a4c476a4056ebc0fa8c92c5364cd557c571"
+    },
+    {
+      "path": "resources/robots/arx5p2Go1/urdf/arx5p2Go1.urdf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "51b1849ae57bfd477c836e3019bcdb2cd3a05016",
+      "size": 41547,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/51b1849ae57bfd477c836e3019bcdb2cd3a05016"
+    },
+    {
+      "path": "resources/robots/go2",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "e4568d6a89cd3bf7e99aeb3fee47a8ea1915de85",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/e4568d6a89cd3bf7e99aeb3fee47a8ea1915de85"
+    },
+    {
+      "path": "resources/robots/go2/dae",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "688e7bf770f347ae34c1c7fde8076cf6ebdb4398",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/688e7bf770f347ae34c1c7fde8076cf6ebdb4398"
+    },
+    {
+      "path": "resources/robots/go2/dae/base.dae",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "84cf659dd91485233aab055ffe32d2a7b4796563",
+      "size": 10727399,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/84cf659dd91485233aab055ffe32d2a7b4796563"
+    },
+    {
+      "path": "resources/robots/go2/dae/calf.dae",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4d34d15c3a6efab225266bd0b0cfeaa89ee219e4",
+      "size": 1125517,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/4d34d15c3a6efab225266bd0b0cfeaa89ee219e4"
+    },
+    {
+      "path": "resources/robots/go2/dae/calf_mirror.dae",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8f351bebcae31e3ad346e825bf004f981f62aec6",
+      "size": 1125457,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/8f351bebcae31e3ad346e825bf004f981f62aec6"
+    },
+    {
+      "path": "resources/robots/go2/dae/foot.dae",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0a5ff6ed51f4bd3e5bf68413a530aaaaaade600c",
+      "size": 506988,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/0a5ff6ed51f4bd3e5bf68413a530aaaaaade600c"
+    },
+    {
+      "path": "resources/robots/go2/dae/hip.dae",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "efc00bb035e99949b31d56724846f6ec3ecd3872",
+      "size": 4666421,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/efc00bb035e99949b31d56724846f6ec3ecd3872"
+    },
+    {
+      "path": "resources/robots/go2/dae/thigh.dae",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a7993db802ca5f86a556968e9e29060d7f94bb84",
+      "size": 3884136,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/a7993db802ca5f86a556968e9e29060d7f94bb84"
+    },
+    {
+      "path": "resources/robots/go2/dae/thigh_mirror.dae",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5ba17afbd92feac9a0063e2be5e7f5730ba36154",
+      "size": 3896575,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/5ba17afbd92feac9a0063e2be5e7f5730ba36154"
+    },
+    {
+      "path": "resources/robots/go2/meshes",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "b6327c3be843f08e6f166ad6fdff0e07d934ea7f",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/b6327c3be843f08e6f166ad6fdff0e07d934ea7f"
+    },
+    {
+      "path": "resources/robots/go2/meshes/calf.dae",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "83221779392a5d19af59561d0ea4eea48ef6102a",
+      "size": 1125517,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/83221779392a5d19af59561d0ea4eea48ef6102a"
+    },
+    {
+      "path": "resources/robots/go2/meshes/calf_mirror.dae",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "413fd75d8b173b4597a35cc71e618a7d025069bd",
+      "size": 1125457,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/413fd75d8b173b4597a35cc71e618a7d025069bd"
+    },
+    {
+      "path": "resources/robots/go2/meshes/foot.dae",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "22bfcf49d7b6d07015c88f55e4ca153463bd5d0e",
+      "size": 506988,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/22bfcf49d7b6d07015c88f55e4ca153463bd5d0e"
+    },
+    {
+      "path": "resources/robots/go2/meshes/hip.dae",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1bec1a72feb8a5d941ad6767341bc1d79d7eff0d",
+      "size": 4666421,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/1bec1a72feb8a5d941ad6767341bc1d79d7eff0d"
+    },
+    {
+      "path": "resources/robots/go2/meshes/thigh.dae",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a17c0482f296f2e19849f2544bf309866adfb801",
+      "size": 3884136,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/a17c0482f296f2e19849f2544bf309866adfb801"
+    },
+    {
+      "path": "resources/robots/go2/meshes/thigh_mirror.dae",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fb424112d623ad912f75248bedb1f62c6c28d3b6",
+      "size": 3896575,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/fb424112d623ad912f75248bedb1f62c6c28d3b6"
+    },
+    {
+      "path": "resources/robots/go2/meshes/trunk.dae",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4e47b5bec4a3c91ae4a1d49d73080d697a917cf1",
+      "size": 10727399,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/4e47b5bec4a3c91ae4a1d49d73080d697a917cf1"
+    },
+    {
+      "path": "resources/robots/go2/urdf",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "5c07baadfaed9e034edf762fe9542f24db0d3137",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/5c07baadfaed9e034edf762fe9542f24db0d3137"
+    },
+    {
+      "path": "resources/robots/go2/urdf/Amended_collision_model.png",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f6def24eb1f3287caabddd5c6606723a5b637549",
+      "size": 218383,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/f6def24eb1f3287caabddd5c6606723a5b637549"
+    },
+    {
+      "path": "resources/robots/go2/urdf/Normal_collision_model.png",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5d7e1279df2a2968ee3e85e1d2dc03b586fc6050",
+      "size": 205117,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/5d7e1279df2a2968ee3e85e1d2dc03b586fc6050"
+    },
+    {
+      "path": "resources/robots/go2/urdf/arx5go2.urdf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d8aa57aadf0599da9a90a0f157b7938f2f56683c",
+      "size": 41640,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/d8aa57aadf0599da9a90a0f157b7938f2f56683c"
+    },
+    {
+      "path": "resources/robots/go2/urdf/arx5go2_old.urdf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8fc5cde4af32865985ce5bdb0ee6af3815b2a4cc",
+      "size": 46502,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/8fc5cde4af32865985ce5bdb0ee6af3815b2a4cc"
+    },
+    {
+      "path": "resources/robots/go2/urdf/go2_description.urdf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "50764648d459af24bcbefcd1bef6a6479ee1f3c1",
+      "size": 24565,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/50764648d459af24bcbefcd1bef6a6479ee1f3c1"
+    },
+    {
+      "path": "resources/robots/go2/urdf/widowGo2.urdf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fb3ec22df556adeb91e13648b421ba9cdd21d54a",
+      "size": 48581,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/fb3ec22df556adeb91e13648b421ba9cdd21d54a"
+    },
+    {
+      "path": "resources/robots/mini_cheetah",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "8f596a3eaa46f152fc859f9be70facf797d02b2d",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/8f596a3eaa46f152fc859f9be70facf797d02b2d"
+    },
+    {
+      "path": "resources/robots/mini_cheetah/meshes",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "12d354709dc145e11efd61e2fdc16f49026bf1dd",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/12d354709dc145e11efd61e2fdc16f49026bf1dd"
+    },
+    {
+      "path": "resources/robots/mini_cheetah/meshes/lower_leg.dae",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "32988a2babcce78ce330a7275e051ac62acff93b",
+      "size": 2162964,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/32988a2babcce78ce330a7275e051ac62acff93b"
+    },
+    {
+      "path": "resources/robots/mini_cheetah/meshes/lower_leg.dae.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "423b545d5460da75de8ccfc7dc4a4a2c7978a4a9",
+      "size": 2558,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/423b545d5460da75de8ccfc7dc4a4a2c7978a4a9"
+    },
+    {
+      "path": "resources/robots/mini_cheetah/meshes/mini_abad.obj",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "483d9d56720213c632c34beaf9e824c13ba719ec",
+      "size": 321864,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/483d9d56720213c632c34beaf9e824c13ba719ec"
+    },
+    {
+      "path": "resources/robots/mini_cheetah/meshes/mini_abad.obj.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "61d14864972edbd9eb9f4100de9e63a12e807395",
+      "size": 2427,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/61d14864972edbd9eb9f4100de9e63a12e807395"
+    },
+    {
+      "path": "resources/robots/mini_cheetah/meshes/mini_body.obj",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3d1a365dc954a85be87d55b06e9d7c231a0fefce",
+      "size": 1139816,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/3d1a365dc954a85be87d55b06e9d7c231a0fefce"
+    },
+    {
+      "path": "resources/robots/mini_cheetah/meshes/mini_body.obj.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4778513171ffd0ff6a7a3ef2e069d4a9697ec406",
+      "size": 2427,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/4778513171ffd0ff6a7a3ef2e069d4a9697ec406"
+    },
+    {
+      "path": "resources/robots/mini_cheetah/meshes/mini_lower_link.obj",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "749a62d6f62ff0f4de69ab9bb5f30f9b4e129f84",
+      "size": 1033173,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/749a62d6f62ff0f4de69ab9bb5f30f9b4e129f84"
+    },
+    {
+      "path": "resources/robots/mini_cheetah/meshes/mini_lower_link.obj.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cbc15a5e5a77b613e33e4ca273b727046dfcc312",
+      "size": 2427,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/cbc15a5e5a77b613e33e4ca273b727046dfcc312"
+    },
+    {
+      "path": "resources/robots/mini_cheetah/meshes/mini_upper_link.obj",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7ab4d62bf9d95adbbc8b5448dc0535fe8e73b447",
+      "size": 1417009,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/7ab4d62bf9d95adbbc8b5448dc0535fe8e73b447"
+    },
+    {
+      "path": "resources/robots/mini_cheetah/meshes/mini_upper_link.obj.meta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "600ff5771c65910c5757e2f162444a6d1cee1165",
+      "size": 2427,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/600ff5771c65910c5757e2f162444a6d1cee1165"
+    },
+    {
+      "path": "resources/robots/mini_cheetah/urdf",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "023b8ff5a73656062e535f52b4d1d57e64e6bbc8",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/023b8ff5a73656062e535f52b4d1d57e64e6bbc8"
+    },
+    {
+      "path": "resources/robots/mini_cheetah/urdf/meshes",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "131afd69236bd50577a683d94620fa9944a2776d",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/131afd69236bd50577a683d94620fa9944a2776d"
+    },
+    {
+      "path": "resources/robots/mini_cheetah/urdf/meshes/mini_abad.obj",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "483d9d56720213c632c34beaf9e824c13ba719ec",
+      "size": 321864,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/483d9d56720213c632c34beaf9e824c13ba719ec"
+    },
+    {
+      "path": "resources/robots/mini_cheetah/urdf/meshes/mini_body.obj",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3d1a365dc954a85be87d55b06e9d7c231a0fefce",
+      "size": 1139816,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/3d1a365dc954a85be87d55b06e9d7c231a0fefce"
+    },
+    {
+      "path": "resources/robots/mini_cheetah/urdf/meshes/mini_lower_link.obj",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "749a62d6f62ff0f4de69ab9bb5f30f9b4e129f84",
+      "size": 1033173,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/749a62d6f62ff0f4de69ab9bb5f30f9b4e129f84"
+    },
+    {
+      "path": "resources/robots/mini_cheetah/urdf/meshes/mini_upper_link.obj",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7ab4d62bf9d95adbbc8b5448dc0535fe8e73b447",
+      "size": 1417009,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/7ab4d62bf9d95adbbc8b5448dc0535fe8e73b447"
+    },
+    {
+      "path": "resources/robots/mini_cheetah/urdf/mini_cheetah.urdf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "86ed62e7862f0cde1e6bcffef82d02b157916dc7",
+      "size": 15601,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/86ed62e7862f0cde1e6bcffef82d02b157916dc7"
+    },
+    {
+      "path": "resources/robots/mini_cheetah/urdf/mini_cheetah_simple.urdf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5f21f749de025739af116790f404620d22455eed",
+      "size": 24315,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/5f21f749de025739af116790f404620d22455eed"
+    },
+    {
+      "path": "resources/robots/widowGo1",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "31f4bdb02f8edcf804c5482257e130ab028e3992",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/31f4bdb02f8edcf804c5482257e130ab028e3992"
+    },
+    {
+      "path": "resources/robots/widowGo1/meshes",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "de5e9942bf747b18015271962d1c1033eb1453b7",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/de5e9942bf747b18015271962d1c1033eb1453b7"
+    },
+    {
+      "path": "resources/robots/widowGo1/meshes/calf.dae",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9133bb912a92eacd4b5bcdc173a52fb9593ca0eb",
+      "size": 2344345,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/9133bb912a92eacd4b5bcdc173a52fb9593ca0eb"
+    },
+    {
+      "path": "resources/robots/widowGo1/meshes/depthCamera.dae",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e1e522c601bd483080f19aeae5d4ab21a4da80f1",
+      "size": 78670,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/e1e522c601bd483080f19aeae5d4ab21a4da80f1"
+    },
+    {
+      "path": "resources/robots/widowGo1/meshes/hip.dae",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2a266ecee16bfa0517f831dab0de30600ef308f1",
+      "size": 2436525,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/2a266ecee16bfa0517f831dab0de30600ef308f1"
+    },
+    {
+      "path": "resources/robots/widowGo1/meshes/thigh.dae",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "111b4f9d536db826d5e2e4ccebfcbd3bf66a4578",
+      "size": 1250695,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/111b4f9d536db826d5e2e4ccebfcbd3bf66a4578"
+    },
+    {
+      "path": "resources/robots/widowGo1/meshes/thigh_mirror.dae",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b25e84438e1d141efa15218d3c311618caf31111",
+      "size": 1538494,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/b25e84438e1d141efa15218d3c311618caf31111"
+    },
+    {
+      "path": "resources/robots/widowGo1/meshes/trunk.dae",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f87f9c83907b21e473a5858c208b76af45dbd167",
+      "size": 64274993,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/f87f9c83907b21e473a5858c208b76af45dbd167"
+    },
+    {
+      "path": "resources/robots/widowGo1/meshes/ultraSound.dae",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f322d2773292d534eea05d026e4926be78693ea3",
+      "size": 281841,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/f322d2773292d534eea05d026e4926be78693ea3"
+    },
+    {
+      "path": "resources/robots/widowGo1/meshes/wx250s_meshes",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "05de50cb7b30cf1e635f8ab7994723403e8613a4",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/05de50cb7b30cf1e635f8ab7994723403e8613a4"
+    },
+    {
+      "path": "resources/robots/widowGo1/meshes/wx250s_meshes/wx250s_10_gripper_finger.stl",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a568b085f21ab9c2d489de8f1e037cefa8980110",
+      "size": 22284,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/a568b085f21ab9c2d489de8f1e037cefa8980110"
+    },
+    {
+      "path": "resources/robots/widowGo1/meshes/wx250s_meshes/wx250s_11_ar_tag.stl",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "193014b60c1cc7547a828d8549304acb1729ac8d",
+      "size": 3884,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/193014b60c1cc7547a828d8549304acb1729ac8d"
+    },
+    {
+      "path": "resources/robots/widowGo1/meshes/wx250s_meshes/wx250s_1_base.stl",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ff1b0bcde287a862a6ed269756fb741e190431ca",
+      "size": 75584,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/ff1b0bcde287a862a6ed269756fb741e190431ca"
+    },
+    {
+      "path": "resources/robots/widowGo1/meshes/wx250s_meshes/wx250s_2_shoulder.stl",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "83df495fe18042296109c044efd15da6982e7a5d",
+      "size": 61884,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/83df495fe18042296109c044efd15da6982e7a5d"
+    },
+    {
+      "path": "resources/robots/widowGo1/meshes/wx250s_meshes/wx250s_3_upper_arm.stl",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4d7c8fc4833e2e4b86de49ce7eb8edb3398bb161",
+      "size": 70484,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/4d7c8fc4833e2e4b86de49ce7eb8edb3398bb161"
+    },
+    {
+      "path": "resources/robots/widowGo1/meshes/wx250s_meshes/wx250s_4_upper_forearm.stl",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "eaf1d045aec225e21d979a03688f3759b8c0f754",
+      "size": 30084,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/eaf1d045aec225e21d979a03688f3759b8c0f754"
+    },
+    {
+      "path": "resources/robots/widowGo1/meshes/wx250s_meshes/wx250s_5_lower_forearm.stl",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "552f425bd683ef6fa8b59821e216e8a9383fda68",
+      "size": 149084,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/552f425bd683ef6fa8b59821e216e8a9383fda68"
+    },
+    {
+      "path": "resources/robots/widowGo1/meshes/wx250s_meshes/wx250s_6_wrist.stl",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "32fdf2b47b7c5984d4b3d99367a6080b82029171",
+      "size": 57684,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/32fdf2b47b7c5984d4b3d99367a6080b82029171"
+    },
+    {
+      "path": "resources/robots/widowGo1/meshes/wx250s_meshes/wx250s_7_gripper.stl",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ee2168717ad0b7666dbe0b491579ee1d28a9b813",
+      "size": 17684,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/ee2168717ad0b7666dbe0b491579ee1d28a9b813"
+    },
+    {
+      "path": "resources/robots/widowGo1/meshes/wx250s_meshes/wx250s_8_gripper_prop.stl",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "212444301dadf35dc3a215c59c04904660405cf0",
+      "size": 22684,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/212444301dadf35dc3a215c59c04904660405cf0"
+    },
+    {
+      "path": "resources/robots/widowGo1/meshes/wx250s_meshes/wx250s_9_gripper_bar.stl",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5b91cbf02ad1200c540c973de78b6e1f0805ff7b",
+      "size": 36684,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/5b91cbf02ad1200c540c973de78b6e1f0805ff7b"
+    },
+    {
+      "path": "resources/robots/widowGo1/urdf",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "f6e8e6edf5e5e320ad456bdc14ce7e831bfd65b3",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/f6e8e6edf5e5e320ad456bdc14ce7e831bfd65b3"
+    },
+    {
+      "path": "resources/robots/widowGo1/urdf/widowGo1.gv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "85ecc40343575b60f05fdba595c248ff878bb668",
+      "size": 8016,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/85ecc40343575b60f05fdba595c248ff878bb668"
+    },
+    {
+      "path": "resources/robots/widowGo1/urdf/widowGo1.pdf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "70eb64920bdbb4c75fae8490f067c3d07f209db9",
+      "size": 23066,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/70eb64920bdbb4c75fae8490f067c3d07f209db9"
+    },
+    {
+      "path": "resources/robots/widowGo1/urdf/widowGo1.urdf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3d37ac0a4a04feb1f48d82b6509c2decc2bb7fd6",
+      "size": 61417,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/3d37ac0a4a04feb1f48d82b6509c2decc2bb7fd6"
+    },
+    {
+      "path": "resources/robots/widowGo1/urdf/widowGo1_old.urdf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "501b06c8a28f0d11c670ce8c8f451e8e88c14d49",
+      "size": 53003,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/501b06c8a28f0d11c670ce8c8f451e8e88c14d49"
+    },
+    {
+      "path": "resources/robots/widowGo1/urdf/widowGo1_with_sensors.urdf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "501b06c8a28f0d11c670ce8c8f451e8e88c14d49",
+      "size": 53003,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/501b06c8a28f0d11c670ce8c8f451e8e88c14d49"
+    },
+    {
+      "path": "resources/robots/widowGo1/urdf/wx250s.urdf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "dab8c129b1a78078407e065e6e786a8999928239",
+      "size": 17724,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/dab8c129b1a78078407e065e6e786a8999928239"
+    },
+    {
+      "path": "resources/textures",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "4dff1dde42a14a1b0ef9413b6c21bff6f2d8aac2",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/4dff1dde42a14a1b0ef9413b6c21bff6f2d8aac2"
+    },
+    {
+      "path": "resources/textures/background_texture_metal_rust.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "381f48646ba9179f5221e144ed01a8e6b7ed55c5",
+      "size": 558738,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/381f48646ba9179f5221e144ed01a8e6b7ed55c5"
+    },
+    {
+      "path": "resources/textures/brick_texture.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cc44903538b2f0a5d30c16716dacda92ae5312e4",
+      "size": 423346,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/cc44903538b2f0a5d30c16716dacda92ae5312e4"
+    },
+    {
+      "path": "resources/textures/ice_texture.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b8b52738c50779d893097d130120e88b4762d8b5",
+      "size": 8432168,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/b8b52738c50779d893097d130120e88b4762d8b5"
+    },
+    {
+      "path": "resources/textures/icy_pond.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f3361951f87feb63b791af5c4b5e7ea3ea3c0996",
+      "size": 139271,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/f3361951f87feb63b791af5c4b5e7ea3ea3c0996"
+    },
+    {
+      "path": "resources/textures/metal_wall_iron_fence.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f9fa2df9872978c4be37c1b0e826ba24edc33915",
+      "size": 1633264,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/f9fa2df9872978c4be37c1b0e826ba24edc33915"
+    },
+    {
+      "path": "resources/textures/particle_board_paint_aged.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b1031b3f608333e7af1ab401e232733aabef5bc3",
+      "size": 1300848,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/b1031b3f608333e7af1ab401e232733aabef5bc3"
+    },
+    {
+      "path": "resources/textures/pebble_stone_texture_nature.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4d3345dd13b27292c5f3589345092745e81a3433",
+      "size": 3810189,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/4d3345dd13b27292c5f3589345092745e81a3433"
+    },
+    {
+      "path": "resources/textures/texture_background_wall_paint_2.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d9ebfb37995b5f1514d73d06c34dd3da2dfd8a13",
+      "size": 555079,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/d9ebfb37995b5f1514d73d06c34dd3da2dfd8a13"
+    },
+    {
+      "path": "resources/textures/texture_background_wall_paint_3.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1ba31f8556a98bed183dae32473e3826b81ecba1",
+      "size": 530233,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/1ba31f8556a98bed183dae32473e3826b81ecba1"
+    },
+    {
+      "path": "resources/textures/texture_stone_stone_texture_0.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "390d94b0ff10ce06360180a14c00da8271add668",
+      "size": 1277029,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/390d94b0ff10ce06360180a14c00da8271add668"
+    },
+    {
+      "path": "resources/textures/texture_wood_brown_1033760.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a9510926ad3640d401a893614e77592bd8c9750e",
+      "size": 415912,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/a9510926ad3640d401a893614e77592bd8c9750e"
+    },
+    {
+      "path": "scripts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "2ef37e212d47a21e1c9959b61b83fa304eee2433",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/2ef37e212d47a21e1c9959b61b83fa304eee2433"
+    },
+    {
+      "path": "scripts/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "scripts/actuator_net",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "96b40b83fffac89c4b86f4c94b34191aa58bfbad",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/96b40b83fffac89c4b86f4c94b34191aa58bfbad"
+    },
+    {
+      "path": "scripts/actuator_net/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "scripts/actuator_net/eval.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "01e3154d1d724e98476e3a44f2df25985099a5a7",
+      "size": 841,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/01e3154d1d724e98476e3a44f2df25985099a5a7"
+    },
+    {
+      "path": "scripts/actuator_net/train.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ff6a9a0b30c0d61c7c7ce15f24d9fc868033739f",
+      "size": 1007,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/ff6a9a0b30c0d61c7c7ce15f24d9fc868033739f"
+    },
+    {
+      "path": "scripts/actuator_net/utils.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bae15f4e64890e2359532bf4c1feb094dca0d979",
+      "size": 7222,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/bae15f4e64890e2359532bf4c1feb094dca0d979"
+    },
+    {
+      "path": "scripts/april_utils.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a9a64856a2c41b66308cc69e5ea37da8376202b3",
+      "size": 9032,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/a9a64856a2c41b66308cc69e5ea37da8376202b3"
+    },
+    {
+      "path": "scripts/auto_train.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2e52a6d9acd530e72d3d524059f012f333242946",
+      "size": 10011,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/2e52a6d9acd530e72d3d524059f012f333242946"
+    },
+    {
+      "path": "scripts/load_policy.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "72ef4ff3cc0bfa895c8d4caea249691d694f61f3",
+      "size": 5375,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/72ef4ff3cc0bfa895c8d4caea249691d694f61f3"
+    },
+    {
+      "path": "scripts/play_apriltag.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4b6ed6b722073c88faab7ba4e91692a098118df5",
+      "size": 4157,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/4b6ed6b722073c88faab7ba4e91692a098118df5"
+    },
+    {
+      "path": "scripts/play_by_key.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2954ffa95b8043553dffa20d233ebb53b4d5b691",
+      "size": 2548,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/2954ffa95b8043553dffa20d233ebb53b4d5b691"
+    },
+    {
+      "path": "scripts/test_sample_method.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "10fee513920a344945524df9df17e30f0b4fb413",
+      "size": 3360,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/10fee513920a344945524df9df17e30f0b4fb413"
+    },
+    {
+      "path": "scripts/unified_train.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "76f1f24117a2acfaf7eff1b3cfd71c6b2ce00ca5",
+      "size": 9583,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/76f1f24117a2acfaf7eff1b3cfd71c6b2ce00ca5"
+    },
+    {
+      "path": "scripts/vr_play",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "b423cc6693bf6bc47b9b9f0847aa97e8b276c9d1",
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/trees/b423cc6693bf6bc47b9b9f0847aa97e8b276c9d1"
+    },
+    {
+      "path": "scripts/vr_play/play_by_remote.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d6b1bb150d715fb4422ee66e8e5befe05a2eb03e",
+      "size": 8727,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/d6b1bb150d715fb4422ee66e8e5befe05a2eb03e"
+    },
+    {
+      "path": "scripts/vr_play/remote_pub.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f067e068fcf90aed7730ceff2b2a354196071a76",
+      "size": 4191,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/f067e068fcf90aed7730ceff2b2a354196071a76"
+    },
+    {
+      "path": "scripts/vr_play/vr_streaming.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f387607770d13dd139e9cf4edb927824bc489e6e",
+      "size": 877,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/f387607770d13dd139e9cf4edb927824bc489e6e"
+    },
+    {
+      "path": "setup.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c632d07c1fa42328e00b25c63752b9460c1ff240",
+      "size": 608,
+      "url": "https://api.github.com/repos/locomanip-duet/RoboDuet/git/blobs/c632d07c1fa42328e00b25c63752b9460c1ff240"
+    }
+  ],
+  "truncated": false
+}

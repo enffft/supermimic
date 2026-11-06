@@ -1,0 +1,3389 @@
+{
+  "passed": true,
+  "check_count": 675,
+  "json_count": 47,
+  "figure_pairs": 17,
+  "numeric_pointers": 60811,
+  "markdown_local_links": 145,
+  "play_cases": 17,
+  "method": "CPU file checks, saved evidence and command printing; no new simulator/viewer/training",
+  "visual_review": "17-figure contact sheet and G02/M04/M05/A01 individual review; CJK visible, no obvious clipping",
+  "limits": "Checks consistency with saved evidence, not historical source completeness, causal mechanisms or new runtime behavior.",
+  "checks": [
+    {
+      "name": "Git branch preserved",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Git HEAD preserved",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original worktree status preserved",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/go2_ppo_training_completion.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/m1_supermimic_config.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/m1_reward_scalar_audit.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/m1_action_history_feedback.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/m1_fixed_input_snapshots.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/m1_ppo_completion.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/m1_supermimic_forward.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/m1_ppo_config.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/go2_ppo_config.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/m1_ppo_training_completion.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/m1_wm_response_probe.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/go2_ppo_extra.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/m1_supermimic_checkpoint_config.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/m1_supermimic_training_completion.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/go2_supermimic_config.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/m1_selected_training_scalars.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/m1_policy_posture_probe.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/experiment_manifest.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/m1_ppo_balanced.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/m1_ppo_training_progress.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/go2_supermimic_training_progress.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/go2_supermimic_extra.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/go2_lineage_clocks.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/figure_registry.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/go2_results.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/evidence_verification.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/m1_supermimic_completion.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/go2_supermimic_evaluation.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/go2_old_24000_checkpoint_config.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/m1_wm_response_probe_eps0.01.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/go2_old_final_chain_4p55h.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/m1_gradient_components.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/go2_old_22000_checkpoint_config.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/training_curves.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/go2_supermimic_checkpoint_config.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/go2_old_chain_2p95h.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/m1_ppo_manipulation.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/m1_ppo_forward.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/go2_ppo_evaluation.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/go2_old_34000_checkpoint_config.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/go2_old_actor_2p96h.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/go2_new_cold_2p5h.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/go2_ppo_training_progress.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/m1_supermimic_manipulation.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/m1_supermimic_balanced.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/m1_provenance.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finite JSON: data/provenance.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: /home/yifeiy/ws_supermimic/logs/final_evaluation_20261104/ppo_velocity_evaluation.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/go2_ppo_evaluation.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: /home/yifeiy/ws_supermimic/logs/final_evaluation_20261104/ppo_velocity_extra.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/go2_ppo_extra.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: /home/yifeiy/ws_supermimic/docs/results/m1_v2_20261106/ppo_forward.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/m1_ppo_forward.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: /home/yifeiy/ws_supermimic/docs/results/m1_v2_20261106/ppo_manipulation.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/m1_ppo_manipulation.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: /home/yifeiy/ws_supermimic/docs/results/m1_v2_20261106/ppo_balanced.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/m1_ppo_balanced.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: /home/yifeiy/ws_supermimic/docs/results/m1_v2_20261106/ppo_completion.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/m1_ppo_completion.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: /home/yifeiy/ws_supermimic/logs/go2_comparison/ppo_2p5h_seed2026/comparison_config.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/go2_ppo_config.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: /home/yifeiy/ws_supermimic/logs/go2_comparison/ppo_2p5h_seed2026/progress.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/go2_ppo_training_progress.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: /home/yifeiy/ws_supermimic/logs/go2_comparison/ppo_2p5h_seed2026/completion.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/go2_ppo_training_completion.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: /home/yifeiy/ws_supermimic/logs/m1_ppo/v2_lm50_2048_3p5h_seed2026/comparison_config.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/m1_ppo_config.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: /home/yifeiy/ws_supermimic/logs/m1_ppo/v2_lm50_2048_3p5h_seed2026/progress.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/m1_ppo_training_progress.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: /home/yifeiy/ws_supermimic/logs/m1_ppo/v2_lm50_2048_3p5h_seed2026/completion.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/m1_ppo_training_completion.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: /home/yifeiy/ws_supermimic/logs/final_evaluation_20261104/supermimic_velocity_evaluation.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/go2_supermimic_evaluation.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: /home/yifeiy/ws_supermimic/logs/final_evaluation_20261104/supermimic_velocity_extra.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/go2_supermimic_extra.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: /home/yifeiy/ws_supermimic/docs/results/m1_v2_20261106/supermimic_forward.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/m1_supermimic_forward.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: /home/yifeiy/ws_supermimic/docs/results/m1_v2_20261106/supermimic_manipulation.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/m1_supermimic_manipulation.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: /home/yifeiy/ws_supermimic/docs/results/m1_v2_20261106/supermimic_balanced.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/m1_supermimic_balanced.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: /home/yifeiy/ws_supermimic/docs/results/m1_v2_20261106/supermimic_completion.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/m1_supermimic_completion.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: /home/yifeiy/ws_supermimic/logs/go2_comparison/supermimic_2p5h_seed2026/config.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/go2_supermimic_config.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: /home/yifeiy/ws_supermimic/logs/go2_comparison/supermimic_2p5h_seed2026/progress.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/go2_supermimic_training_progress.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: /home/yifeiy/ws_supermimic/logs/m1_reward/v2_lm50_2048_3p5h_seed2026/config.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/m1_supermimic_config.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: /home/yifeiy/ws_supermimic/logs/m1_reward/v2_lm50_2048_3p5h_seed2026/completion.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/m1_supermimic_training_completion.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: /home/yifeiy/ws_supermimic/docs/results/training_audit_20261106/go2_lineage_clocks.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/go2_lineage_clocks.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: /home/yifeiy/ws_supermimic/docs/results/training_audit_20261106/go2_new_cold_2p5h.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/go2_new_cold_2p5h.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: /home/yifeiy/ws_supermimic/docs/results/training_audit_20261106/go2_old_actor_2p96h.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/go2_old_actor_2p96h.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: /home/yifeiy/ws_supermimic/docs/results/training_audit_20261106/go2_old_chain_2p95h.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/go2_old_chain_2p95h.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: /home/yifeiy/ws_supermimic/docs/results/training_audit_20261106/go2_old_final_chain_4p55h.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/go2_old_final_chain_4p55h.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: /home/yifeiy/ws_supermimic/docs/results/training_audit_20261106/m1_action_history_feedback.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/m1_action_history_feedback.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: /home/yifeiy/ws_supermimic/docs/results/training_audit_20261106/m1_fixed_input_snapshots.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/m1_fixed_input_snapshots.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: /home/yifeiy/ws_supermimic/docs/results/training_audit_20261106/m1_gradient_components.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/m1_gradient_components.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: /home/yifeiy/ws_supermimic/docs/results/training_audit_20261106/m1_selected_training_scalars.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/m1_selected_training_scalars.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: /home/yifeiy/ws_supermimic/docs/results/training_audit_20261106/provenance.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/provenance.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: /home/yifeiy/ws_supermimic/docs/results/m1_v2_20261106/policy_posture_probe.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/m1_policy_posture_probe.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: /home/yifeiy/ws_supermimic/docs/results/m1_v2_20261106/wm_response_probe.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/m1_wm_response_probe.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: /home/yifeiy/ws_supermimic/docs/results/m1_v2_20261106/wm_response_probe_eps0.01.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/m1_wm_response_probe_eps0.01.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: /home/yifeiy/ws_supermimic/docs/results/m1_v2_20261106/reward_scalar_audit.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/m1_reward_scalar_audit.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: /home/yifeiy/ws_supermimic/docs/results/m1_v2_20261106/provenance.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/m1_provenance.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: src/supermimic/baselines/__init__.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/source_snapshot/src/supermimic/baselines/__init__.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: src/supermimic/baselines/go2_export.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/source_snapshot/src/supermimic/baselines/go2_export.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: src/supermimic/baselines/go2_ppo.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/source_snapshot/src/supermimic/baselines/go2_ppo.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: src/supermimic/baselines/go2_supermimic.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/source_snapshot/src/supermimic/baselines/go2_supermimic.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: src/supermimic/baselines/m1_ppo.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/source_snapshot/src/supermimic/baselines/m1_ppo.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: src/supermimic/baselines/resources.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/source_snapshot/src/supermimic/baselines/resources.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: src/supermimic/baselines/sequence.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/source_snapshot/src/supermimic/baselines/sequence.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: src/supermimic/envs/actions.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/source_snapshot/src/supermimic/envs/actions.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: src/supermimic/envs/mdp/commands.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/source_snapshot/src/supermimic/envs/mdp/commands.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: src/supermimic/envs/mdp/rewards.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/source_snapshot/src/supermimic/envs/mdp/rewards.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: src/supermimic/envs/mdp/terminations.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/source_snapshot/src/supermimic/envs/mdp/terminations.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: src/supermimic/envs/multirobot_env_cfg.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/source_snapshot/src/supermimic/envs/multirobot_env_cfg.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: src/supermimic/envs/state_io.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/source_snapshot/src/supermimic/envs/state_io.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: src/supermimic/imagination/__init__.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/source_snapshot/src/supermimic/imagination/__init__.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: src/supermimic/imagination/compiled.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/source_snapshot/src/supermimic/imagination/compiled.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: src/supermimic/imagination/objective.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/source_snapshot/src/supermimic/imagination/objective.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: src/supermimic/imagination/policy_trainer.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/source_snapshot/src/supermimic/imagination/policy_trainer.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: src/supermimic/imagination/rollout.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/source_snapshot/src/supermimic/imagination/rollout.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: src/supermimic/imagination/tasks.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/source_snapshot/src/supermimic/imagination/tasks.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: src/supermimic/policy/__init__.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/source_snapshot/src/supermimic/policy/__init__.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: src/supermimic/policy/nets.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/source_snapshot/src/supermimic/policy/nets.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: src/supermimic/robots/spec.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/source_snapshot/src/supermimic/robots/spec.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: src/supermimic/tasks/__init__.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/source_snapshot/src/supermimic/tasks/__init__.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: src/supermimic/tasks/action_contract.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/source_snapshot/src/supermimic/tasks/action_contract.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: src/supermimic/tasks/chase_reward.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/source_snapshot/src/supermimic/tasks/chase_reward.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: src/supermimic/tasks/go2_gait.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/source_snapshot/src/supermimic/tasks/go2_gait.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: src/supermimic/tasks/m1_reward.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/source_snapshot/src/supermimic/tasks/m1_reward.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: src/supermimic/tasks/velocity_reward.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/source_snapshot/src/supermimic/tasks/velocity_reward.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: src/supermimic/tasks/world_point_reward.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/source_snapshot/src/supermimic/tasks/world_point_reward.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: src/supermimic/training/loop.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/source_snapshot/src/supermimic/training/loop.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: src/supermimic/training/m1_reward.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/source_snapshot/src/supermimic/training/m1_reward.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: src/supermimic/world_model/__init__.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/source_snapshot/src/supermimic/world_model/__init__.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: src/supermimic/world_model/dynamics.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/source_snapshot/src/supermimic/world_model/dynamics.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: src/supermimic/world_model/heads.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/source_snapshot/src/supermimic/world_model/heads.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: src/supermimic/world_model/normalization.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/source_snapshot/src/supermimic/world_model/normalization.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: src/supermimic/world_model/state_spec.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/source_snapshot/src/supermimic/world_model/state_spec.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: src/supermimic/world_model/wm_trainer.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/source_snapshot/src/supermimic/world_model/wm_trainer.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: src/supermimic/world_model/world_model.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Snapshot SHA: data/source_snapshot/src/supermimic/world_model/world_model.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: logs/go2_comparison/ppo_2p5h_seed2026/events.out.tfevents.1793763285.yifeiy-MIX.114300.0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: logs/go2_comparison/supermimic_2p5h_seed2026/tb/events.out.tfevents.1793777477.yifeiy-MIX.416019.0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: logs/m1_ppo/v2_lm50_2048_3p5h_seed2026/events.out.tfevents.1793888362.yifeiy-MIX.3666283.0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Original SHA: logs/m1_reward/v2_lm50_2048_3p5h_seed2026/tb/events.out.tfevents.1793900968.yifeiy-MIX.3805260.0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Checkpoint unchanged: go2_ppo",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Checkpoint unchanged: go2_supermimic",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Checkpoint unchanged: m1_ppo",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Checkpoint unchanged: m1_supermimic",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Checkpoint unchanged: go2_old_22000",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Checkpoint unchanged: go2_old_24000",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Checkpoint unchanged: go2_old_34000",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Checkpoint unchanged: go2_ppo_inference",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Checkpoint unchanged: go2_sm_inference",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Checkpoint unchanged: m1_ppo_inference",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "17 figure entries",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: A01_algorithm_architecture/data/go2_ppo_config.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: A01_algorithm_architecture/data/m1_ppo_config.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: A01_algorithm_architecture/data/go2_supermimic_config.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: A01_algorithm_architecture/data/m1_supermimic_config.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: A01_algorithm_architecture/scripts/plot_architecture.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "PNG dimensions: A01_algorithm_architecture",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "SVG path font: A01_algorithm_architecture",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Nonempty figure: A01_algorithm_architecture",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: A02_m1_failure_mechanism/data/m1_policy_posture_probe.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: A02_m1_failure_mechanism/data/m1_gradient_components.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: A02_m1_failure_mechanism/data/m1_action_history_feedback.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: A02_m1_failure_mechanism/data/m1_supermimic_config.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: A02_m1_failure_mechanism/scripts/plot_architecture.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "PNG dimensions: A02_m1_failure_mechanism",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "SVG path font: A02_m1_failure_mechanism",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Nonempty figure: A02_m1_failure_mechanism",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: A03_training_curves/data/training_curves.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: A03_training_curves/scripts/plot_training_curves.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "PNG dimensions: A03_training_curves",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "SVG path font: A03_training_curves",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Nonempty figure: A03_training_curves",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: A04_network_dimensions/data/go2_supermimic_config.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: A04_network_dimensions/data/m1_supermimic_config.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: A04_network_dimensions/data/experiment_manifest.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: A04_network_dimensions/scripts/plot_architecture.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "PNG dimensions: A04_network_dimensions",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "SVG path font: A04_network_dimensions",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Nonempty figure: A04_network_dimensions",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: G01_go2_training_config/data/go2_ppo_config.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: G01_go2_training_config/data/go2_supermimic_config.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: G01_go2_training_config/data/go2_ppo_training_completion.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: G01_go2_training_config/data/go2_ppo_training_progress.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: G01_go2_training_config/data/go2_supermimic_training_progress.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: G01_go2_training_config/scripts/plot_tables.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "PNG dimensions: G01_go2_training_config",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "SVG path font: G01_go2_training_config",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Nonempty figure: G01_go2_training_config",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: G02_go2_velocity_results/data/go2_results.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: G02_go2_velocity_results/scripts/plot_tables.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "PNG dimensions: G02_go2_velocity_results",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "SVG path font: G02_go2_velocity_results",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Nonempty figure: G02_go2_velocity_results",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: G03_go2_velocity_comparison/data/go2_results.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: G03_go2_velocity_comparison/scripts/plot_training_curves.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "PNG dimensions: G03_go2_velocity_comparison",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "SVG path font: G03_go2_velocity_comparison",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Nonempty figure: G03_go2_velocity_comparison",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: G04_go2_gait_history/data/go2_new_cold_2p5h.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: G04_go2_gait_history/data/go2_old_chain_2p95h.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: G04_go2_gait_history/data/go2_old_actor_2p96h.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: G04_go2_gait_history/data/go2_old_final_chain_4p55h.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: G04_go2_gait_history/data/go2_lineage_clocks.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: G04_go2_gait_history/scripts/plot_tables.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "PNG dimensions: G04_go2_gait_history",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "SVG path font: G04_go2_gait_history",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Nonempty figure: G04_go2_gait_history",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: G05_go2_reward_summary/data/go2_supermimic_config.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: G05_go2_reward_summary/scripts/plot_tables.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "PNG dimensions: G05_go2_reward_summary",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "SVG path font: G05_go2_reward_summary",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Nonempty figure: G05_go2_reward_summary",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: G06_go2_fair_gait/data/go2_results.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: G06_go2_fair_gait/scripts/plot_training_curves.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "PNG dimensions: G06_go2_fair_gait",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "SVG path font: G06_go2_fair_gait",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Nonempty figure: G06_go2_fair_gait",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: M01_m1_training_config/data/m1_ppo_config.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: M01_m1_training_config/data/m1_supermimic_config.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: M01_m1_training_config/data/m1_ppo_completion.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: M01_m1_training_config/data/m1_supermimic_completion.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: M01_m1_training_config/data/experiment_manifest.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: M01_m1_training_config/scripts/plot_tables.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "PNG dimensions: M01_m1_training_config",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "SVG path font: M01_m1_training_config",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Nonempty figure: M01_m1_training_config",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: M02_m1_final_results/data/m1_ppo_forward.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: M02_m1_final_results/data/m1_supermimic_forward.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: M02_m1_final_results/data/m1_ppo_manipulation.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: M02_m1_final_results/data/m1_supermimic_manipulation.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: M02_m1_final_results/scripts/plot_tables.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "PNG dimensions: M02_m1_final_results",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "SVG path font: M02_m1_final_results",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Nonempty figure: M02_m1_final_results",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: M03_m1_reach_success/data/m1_ppo_manipulation.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: M03_m1_reach_success/data/m1_supermimic_manipulation.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: M03_m1_reach_success/scripts/plot_training_curves.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "PNG dimensions: M03_m1_reach_success",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "SVG path font: M03_m1_reach_success",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Nonempty figure: M03_m1_reach_success",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: M04_m1_training_failure/data/training_curves.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: M04_m1_training_failure/data/m1_fixed_input_snapshots.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: M04_m1_training_failure/data/m1_policy_posture_probe.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: M04_m1_training_failure/data/m1_wm_response_probe.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: M04_m1_training_failure/scripts/plot_training_curves.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "PNG dimensions: M04_m1_training_failure",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "SVG path font: M04_m1_training_failure",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Nonempty figure: M04_m1_training_failure",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: M05_m1_wm_gradient_audit/data/m1_wm_response_probe_eps0.01.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: M05_m1_wm_gradient_audit/scripts/plot_tables.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "PNG dimensions: M05_m1_wm_gradient_audit",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "SVG path font: M05_m1_wm_gradient_audit",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Nonempty figure: M05_m1_wm_gradient_audit",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: M06_m1_task_rewards/data/m1_supermimic_config.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: M06_m1_task_rewards/scripts/plot_tables.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "PNG dimensions: M06_m1_task_rewards",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "SVG path font: M06_m1_task_rewards",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Nonempty figure: M06_m1_task_rewards",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: M07_m1_gradient_and_feedback/data/m1_gradient_components.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: M07_m1_gradient_and_feedback/data/m1_action_history_feedback.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Figure dependency: M07_m1_gradient_and_feedback/scripts/plot_training_curves.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "PNG dimensions: M07_m1_gradient_and_feedback",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "SVG path font: M07_m1_gradient_and_feedback",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Nonempty figure: M07_m1_gradient_and_feedback",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "No template markers: QUICK_COMPARISON.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "No malformed math delimiters: QUICK_COMPARISON.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: QUICK_COMPARISON.md/figures/G02_go2_velocity_results.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: QUICK_COMPARISON.md/figures/M02_m1_final_results.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: QUICK_COMPARISON.md/PLAY_COMMANDS.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: QUICK_COMPARISON.md/EXPERIMENT_PROVENANCE.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "No template markers: M1_PIPER_PPO_SUPERMIMIC_ANALYSIS.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "No malformed math delimiters: M1_PIPER_PPO_SUPERMIMIC_ANALYSIS.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: M1_PIPER_PPO_SUPERMIMIC_ANALYSIS.md/figures/M01_m1_training_config.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: M1_PIPER_PPO_SUPERMIMIC_ANALYSIS.md/figures/M02_m1_final_results.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: M1_PIPER_PPO_SUPERMIMIC_ANALYSIS.md/figures/M03_m1_reach_success.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: M1_PIPER_PPO_SUPERMIMIC_ANALYSIS.md/figures/M04_m1_training_failure.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: M1_PIPER_PPO_SUPERMIMIC_ANALYSIS.md/figures/M05_m1_wm_gradient_audit.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: M1_PIPER_PPO_SUPERMIMIC_ANALYSIS.md/figures/M06_m1_task_rewards.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: M1_PIPER_PPO_SUPERMIMIC_ANALYSIS.md/figures/M07_m1_gradient_and_feedback.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: M1_PIPER_PPO_SUPERMIMIC_ANALYSIS.md/figures/A02_m1_failure_mechanism.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: M1_PIPER_PPO_SUPERMIMIC_ANALYSIS.md/data/experiment_manifest.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: M1_PIPER_PPO_SUPERMIMIC_ANALYSIS.md/../results/m1_v2_20261106/",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: M1_PIPER_PPO_SUPERMIMIC_ANALYSIS.md/EXPERIMENT_PROVENANCE.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: M1_PIPER_PPO_SUPERMIMIC_ANALYSIS.md/../../src/supermimic/tasks/m1_reward.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: M1_PIPER_PPO_SUPERMIMIC_ANALYSIS.md/../../src/supermimic/envs/mdp/commands.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: M1_PIPER_PPO_SUPERMIMIC_ANALYSIS.md/../../src/supermimic/tasks/world_point_reward.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: M1_PIPER_PPO_SUPERMIMIC_ANALYSIS.md/../../src/supermimic/envs/state_io.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: M1_PIPER_PPO_SUPERMIMIC_ANALYSIS.md/data/m1_ppo_manipulation.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: M1_PIPER_PPO_SUPERMIMIC_ANALYSIS.md/../../src/supermimic/imagination/tasks.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: M1_PIPER_PPO_SUPERMIMIC_ANALYSIS.md/../../src/supermimic/tasks/m1_reward.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: M1_PIPER_PPO_SUPERMIMIC_ANALYSIS.md/../../src/supermimic/imagination/objective.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: M1_PIPER_PPO_SUPERMIMIC_ANALYSIS.md/figures/M05_m1_wm_gradient_audit.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: M1_PIPER_PPO_SUPERMIMIC_ANALYSIS.md/PLAY_COMMANDS.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "No template markers: PLAY_COMMANDS.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "No malformed math delimiters: PLAY_COMMANDS.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "No template markers: README.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "No malformed math delimiters: README.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/QUICK_COMPARISON.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/MEETING_OUTLINE.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/PLAY_COMMANDS.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/MEETING_OUTLINE.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/GO2_PPO_SUPERMIMIC_ANALYSIS.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/M1_PIPER_PPO_SUPERMIMIC_ANALYSIS.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/ALGORITHM_COMPARISON_AND_REFLECTION.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/EXPERIMENT_PROVENANCE.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/PLAY_COMMANDS.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/data/figure_registry.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/figures/G01_go2_training_config.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/figures/G01_go2_training_config.svg",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/figures/G02_go2_velocity_results.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/figures/G02_go2_velocity_results.svg",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/figures/G03_go2_velocity_comparison.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/figures/G03_go2_velocity_comparison.svg",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/figures/G04_go2_gait_history.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/figures/G04_go2_gait_history.svg",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/figures/G05_go2_reward_summary.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/figures/G05_go2_reward_summary.svg",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/figures/G06_go2_fair_gait.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/figures/G06_go2_fair_gait.svg",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/figures/M01_m1_training_config.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/figures/M01_m1_training_config.svg",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/figures/M02_m1_final_results.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/figures/M02_m1_final_results.svg",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/figures/M03_m1_reach_success.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/figures/M03_m1_reach_success.svg",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/figures/M04_m1_training_failure.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/figures/M04_m1_training_failure.svg",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/figures/M05_m1_wm_gradient_audit.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/figures/M05_m1_wm_gradient_audit.svg",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/figures/M06_m1_task_rewards.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/figures/M06_m1_task_rewards.svg",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/figures/M07_m1_gradient_and_feedback.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/figures/M07_m1_gradient_and_feedback.svg",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/figures/A01_algorithm_architecture.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/figures/A01_algorithm_architecture.svg",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/figures/A02_m1_failure_mechanism.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/figures/A02_m1_failure_mechanism.svg",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/figures/A03_training_curves.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/figures/A03_training_curves.svg",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/figures/A04_network_dimensions.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/figures/A04_network_dimensions.svg",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: README.md/data/deliverable_validation.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "No template markers: ALGORITHM_COMPARISON_AND_REFLECTION.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "No malformed math delimiters: ALGORITHM_COMPARISON_AND_REFLECTION.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: ALGORITHM_COMPARISON_AND_REFLECTION.md/external_sources/index.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: ALGORITHM_COMPARISON_AND_REFLECTION.md/external_sources/index.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: ALGORITHM_COMPARISON_AND_REFLECTION.md/external_sources/Huy-Quang-Dao__instantTrack/",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: ALGORITHM_COMPARISON_AND_REFLECTION.md/external_sources/fuyichen0725__blinkmimic/",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: ALGORITHM_COMPARISON_AND_REFLECTION.md/external_sources/CuboiLeo__SuperMimic-Reproduced/",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: ALGORITHM_COMPARISON_AND_REFLECTION.md/external_sources/zita-ch__supermimic_vibed/",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: ALGORITHM_COMPARISON_AND_REFLECTION.md/external_sources/emoPointer__supermimic_manipulation/",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: ALGORITHM_COMPARISON_AND_REFLECTION.md/external_sources/locomanip-duet__RoboDuet/",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "No template markers: MEETING_OUTLINE.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "No malformed math delimiters: MEETING_OUTLINE.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: MEETING_OUTLINE.md/PLAY_COMMANDS.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: MEETING_OUTLINE.md/figures/G01_go2_training_config.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: MEETING_OUTLINE.md/figures/A04_network_dimensions.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: MEETING_OUTLINE.md/figures/G05_go2_reward_summary.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: MEETING_OUTLINE.md/figures/A01_algorithm_architecture.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: MEETING_OUTLINE.md/figures/G02_go2_velocity_results.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: MEETING_OUTLINE.md/figures/G03_go2_velocity_comparison.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: MEETING_OUTLINE.md/figures/G06_go2_fair_gait.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: MEETING_OUTLINE.md/figures/G04_go2_gait_history.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: MEETING_OUTLINE.md/figures/M01_m1_training_config.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: MEETING_OUTLINE.md/figures/M06_m1_task_rewards.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: MEETING_OUTLINE.md/figures/A04_network_dimensions.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: MEETING_OUTLINE.md/figures/M06_m1_task_rewards.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: MEETING_OUTLINE.md/figures/M02_m1_final_results.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: MEETING_OUTLINE.md/figures/M03_m1_reach_success.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: MEETING_OUTLINE.md/figures/M04_m1_training_failure.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: MEETING_OUTLINE.md/figures/M05_m1_wm_gradient_audit.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: MEETING_OUTLINE.md/figures/M07_m1_gradient_and_feedback.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: MEETING_OUTLINE.md/figures/A01_algorithm_architecture.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: MEETING_OUTLINE.md/figures/A02_m1_failure_mechanism.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: MEETING_OUTLINE.md/figures/A03_training_curves.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: MEETING_OUTLINE.md/figures/A02_m1_failure_mechanism.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "No template markers: GO2_PPO_SUPERMIMIC_ANALYSIS.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "No malformed math delimiters: GO2_PPO_SUPERMIMIC_ANALYSIS.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: GO2_PPO_SUPERMIMIC_ANALYSIS.md/figures/G01_go2_training_config.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: GO2_PPO_SUPERMIMIC_ANALYSIS.md/figures/G02_go2_velocity_results.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: GO2_PPO_SUPERMIMIC_ANALYSIS.md/figures/G03_go2_velocity_comparison.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: GO2_PPO_SUPERMIMIC_ANALYSIS.md/figures/G04_go2_gait_history.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: GO2_PPO_SUPERMIMIC_ANALYSIS.md/figures/G05_go2_reward_summary.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: GO2_PPO_SUPERMIMIC_ANALYSIS.md/figures/G06_go2_fair_gait.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: GO2_PPO_SUPERMIMIC_ANALYSIS.md/PLAY_COMMANDS.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: GO2_PPO_SUPERMIMIC_ANALYSIS.md/EXPERIMENT_PROVENANCE.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: GO2_PPO_SUPERMIMIC_ANALYSIS.md/data/experiment_manifest.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: GO2_PPO_SUPERMIMIC_ANALYSIS.md/../../src/supermimic/envs/mdp/commands.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: GO2_PPO_SUPERMIMIC_ANALYSIS.md/../../src/supermimic/tasks/velocity_reward.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: GO2_PPO_SUPERMIMIC_ANALYSIS.md/../../src/supermimic/tasks/go2_gait.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: GO2_PPO_SUPERMIMIC_ANALYSIS.md/../../src/supermimic/envs/multirobot_env_cfg.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: GO2_PPO_SUPERMIMIC_ANALYSIS.md/data/source_snapshot/src/supermimic/",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: GO2_PPO_SUPERMIMIC_ANALYSIS.md/../../src/supermimic/policy/nets.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: GO2_PPO_SUPERMIMIC_ANALYSIS.md/../../src/supermimic/world_model/",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: GO2_PPO_SUPERMIMIC_ANALYSIS.md/../../src/supermimic/imagination/",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: GO2_PPO_SUPERMIMIC_ANALYSIS.md/figures/A01_algorithm_architecture.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: GO2_PPO_SUPERMIMIC_ANALYSIS.md/figures/A04_network_dimensions.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "No template markers: EXPERIMENT_PROVENANCE.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "No malformed math delimiters: EXPERIMENT_PROVENANCE.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: EXPERIMENT_PROVENANCE.md/data/figure_registry.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: EXPERIMENT_PROVENANCE.md/data/numeric_evidence.csv",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: EXPERIMENT_PROVENANCE.md/data/experiment_manifest.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: EXPERIMENT_PROVENANCE.md/data/evidence_verification.json",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: EXPERIMENT_PROVENANCE.md/data/source_snapshot/",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: EXPERIMENT_PROVENANCE.md/data/upstream_runtime/",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: EXPERIMENT_PROVENANCE.md/../FINAL_POLICY_EVALUATION_20261104.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: EXPERIMENT_PROVENANCE.md/../GO2_POLICY_PROVENANCE_AND_GAIT_20261106.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: EXPERIMENT_PROVENANCE.md/../GO2_FINAL_EVALUATION_20261103.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: EXPERIMENT_PROVENANCE.md/../GO2_TRAINING_20261103.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: EXPERIMENT_PROVENANCE.md/../GO2_COMPARISON_STAGE1_PPO_20261104.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: EXPERIMENT_PROVENANCE.md/../GO2_COMPARISON_STAGE2_DEPLOY_20261104.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: EXPERIMENT_PROVENANCE.md/../GO2_COMPARISON_STAGE3_RUNBOOK_20261104.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: EXPERIMENT_PROVENANCE.md/../GO2_GAIT_REWARD.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: EXPERIMENT_PROVENANCE.md/../M1_PPO_BASELINE_20261105.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: EXPERIMENT_PROVENANCE.md/../M1_PPO_SUPERMIMIC_EVALUATION_20261105.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: EXPERIMENT_PROVENANCE.md/../M1_V2_AND_SEQUENTIAL_TRAINING_20261105.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: EXPERIMENT_PROVENANCE.md/../M1_V2_RESULTS_AND_FAILURE_ANALYSIS_20261106.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: EXPERIMENT_PROVENANCE.md/../M1_SATURATION_AND_GO2_TRAINING_HISTORY_20261106.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: EXPERIMENT_PROVENANCE.md/../M1_PIPER_TRAINING_DESIGN_AUDIT_20261105.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: EXPERIMENT_PROVENANCE.md/../M1_REWARD_ONLY_BASELINE_20261104.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: EXPERIMENT_PROVENANCE.md/../M1_ACTION22_P0_P1_REMEDIATION_20261104.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: EXPERIMENT_PROVENANCE.md/../TRAINING_AUDIT_INDEX_20261106.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: EXPERIMENT_PROVENANCE.md/../SUPERMIMIC_ALGORITHM_MAP.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: EXPERIMENT_PROVENANCE.md/../SUPERMIMIC_CODE_WALKTHROUGH.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Markdown link: EXPERIMENT_PROVENANCE.md/../PAPER_SPEC.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Numeric evidence pointers verified",
+      "passed": true,
+      "detail": "60811"
+    },
+    {
+      "name": "go2 PPO transition count",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "go2 SuperMimic transition count",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "go2 Actor input",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "go2 Direct goal path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "go2 H32",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "m1 PPO transition count",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "m1 SuperMimic transition count",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "m1 Actor input",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "m1 Direct goal path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "m1 H32",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "M1 ppo ended goal denominator",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "M1 ppo goal success numerator",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "M1 ppo success rate",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "M1 ppo fall denominator",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "M1 ppo fall rate",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "M1 ppo v2 target and seed",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "M1 supermimic ended goal denominator",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "M1 supermimic goal success numerator",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "M1 supermimic success rate",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "M1 supermimic fall denominator",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "M1 supermimic fall rate",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "M1 supermimic v2 target and seed",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Go2 nine paired commands",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Go2 all 64 ended episodes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Export CPU equality evidence",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Historical ten source hashes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play interface: go2_ppo_forward",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play Conda interpreter: go2_ppo_forward",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play checkpoint exists: go2_ppo_forward",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play interface: go2_ppo_yaw",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play Conda interpreter: go2_ppo_yaw",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play checkpoint exists: go2_ppo_yaw",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play interface: go2_ppo_side",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play Conda interpreter: go2_ppo_side",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play checkpoint exists: go2_ppo_side",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play interface: go2_sm_forward",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play Conda interpreter: go2_sm_forward",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play checkpoint exists: go2_sm_forward",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play interface: go2_sm_yaw",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play Conda interpreter: go2_sm_yaw",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play checkpoint exists: go2_sm_yaw",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play interface: go2_sm_side",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play Conda interpreter: go2_sm_side",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play checkpoint exists: go2_sm_side",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play interface: go2_old_trot",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play Conda interpreter: go2_old_trot",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play checkpoint exists: go2_old_trot",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play interface: m1_ppo_L",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play Conda interpreter: m1_ppo_L",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play checkpoint exists: m1_ppo_L",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play interface: m1_ppo_M",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play Conda interpreter: m1_ppo_M",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play checkpoint exists: m1_ppo_M",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play interface: m1_ppo_far",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play Conda interpreter: m1_ppo_far",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play checkpoint exists: m1_ppo_far",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play interface: m1_ppo_low",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play Conda interpreter: m1_ppo_low",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play checkpoint exists: m1_ppo_low",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play interface: m1_ppo_random",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play Conda interpreter: m1_ppo_random",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play checkpoint exists: m1_ppo_random",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play interface: m1_sm_L",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play Conda interpreter: m1_sm_L",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play checkpoint exists: m1_sm_L",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play interface: m1_sm_M",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play Conda interpreter: m1_sm_M",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play checkpoint exists: m1_sm_M",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play interface: m1_sm_far",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play Conda interpreter: m1_sm_far",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play checkpoint exists: m1_sm_far",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play interface: m1_sm_low",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play Conda interpreter: m1_sm_low",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play checkpoint exists: m1_sm_low",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play interface: m1_sm_random",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play Conda interpreter: m1_sm_random",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Play checkpoint exists: m1_sm_random",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Analysis script syntax",
+      "passed": true,
+      "detail": "ast.parse only; no imported copied sources"
+    },
+    {
+      "name": "Six public repositories",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: Huy-Quang-Dao/instantTrack/README.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: Huy-Quang-Dao/instantTrack/results/runs/README.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: Huy-Quang-Dao/instantTrack/src/instanttrack/train.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: Huy-Quang-Dao/instantTrack/tools/reset_check.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: Huy-Quang-Dao/instantTrack/tools/test_reset.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: Huy-Quang-Dao/instantTrack/src/instanttrack/__init__.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: Huy-Quang-Dao/instantTrack/src/instanttrack/buffer.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: Huy-Quang-Dao/instantTrack/src/instanttrack/dr.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: Huy-Quang-Dao/instantTrack/src/instanttrack/env.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: Huy-Quang-Dao/instantTrack/src/instanttrack/evaluate.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: Huy-Quang-Dao/instantTrack/src/instanttrack/g1/__init__.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: Huy-Quang-Dao/instantTrack/src/instanttrack/g1/g1_constants.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: Huy-Quang-Dao/instantTrack/src/instanttrack/kinematics.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: Huy-Quang-Dao/instantTrack/src/instanttrack/mdp.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: Huy-Quang-Dao/instantTrack/src/instanttrack/mirror.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: Huy-Quang-Dao/instantTrack/src/instanttrack/motion.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: Huy-Quang-Dao/instantTrack/src/instanttrack/networks.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: Huy-Quang-Dao/instantTrack/src/instanttrack/objective.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: fuyichen0725/blinkmimic/README.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: fuyichen0725/blinkmimic/src/blinkmimic/train.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: fuyichen0725/blinkmimic/tools/reset_check.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: fuyichen0725/blinkmimic/tools/test_reset.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: fuyichen0725/blinkmimic/src/blinkmimic/__init__.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: fuyichen0725/blinkmimic/src/blinkmimic/buffer.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: fuyichen0725/blinkmimic/src/blinkmimic/dr.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: fuyichen0725/blinkmimic/src/blinkmimic/env.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: fuyichen0725/blinkmimic/src/blinkmimic/evaluate.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: fuyichen0725/blinkmimic/src/blinkmimic/g1/__init__.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: fuyichen0725/blinkmimic/src/blinkmimic/g1/g1_constants.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: fuyichen0725/blinkmimic/src/blinkmimic/kinematics.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: fuyichen0725/blinkmimic/src/blinkmimic/mdp.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: fuyichen0725/blinkmimic/src/blinkmimic/mirror.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: fuyichen0725/blinkmimic/src/blinkmimic/motion.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: fuyichen0725/blinkmimic/src/blinkmimic/networks.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: fuyichen0725/blinkmimic/src/blinkmimic/objective.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: CuboiLeo/SuperMimic-Reproduced/README.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: CuboiLeo/SuperMimic-Reproduced/src/supermimic/imagination/policy_trainer.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: CuboiLeo/SuperMimic-Reproduced/src/supermimic/world_model/dynamics.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: CuboiLeo/SuperMimic-Reproduced/src/supermimic/world_model/wm_trainer.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: CuboiLeo/SuperMimic-Reproduced/scripts/media/record_rollout.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: CuboiLeo/SuperMimic-Reproduced/scripts/media/render_rollout.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: CuboiLeo/SuperMimic-Reproduced/src/supermimic/data/replay_buffer.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: CuboiLeo/SuperMimic-Reproduced/src/supermimic/imagination/rollout.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: CuboiLeo/SuperMimic-Reproduced/src/supermimic/policy/__init__.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: CuboiLeo/SuperMimic-Reproduced/src/supermimic/policy/nets.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: CuboiLeo/SuperMimic-Reproduced/src/supermimic/scripts/train.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: CuboiLeo/SuperMimic-Reproduced/src/supermimic/training/__init__.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: CuboiLeo/SuperMimic-Reproduced/src/supermimic/training/distributed.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: CuboiLeo/SuperMimic-Reproduced/src/supermimic/training/loop.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: CuboiLeo/SuperMimic-Reproduced/src/supermimic/training/schedule.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: CuboiLeo/SuperMimic-Reproduced/src/supermimic/world_model/__init__.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: CuboiLeo/SuperMimic-Reproduced/src/supermimic/world_model/heads.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: zita-ch/supermimic_vibed/README.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: zita-ch/supermimic_vibed/supermimic/reset_sampling.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: zita-ch/supermimic_vibed/supermimic/train.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: zita-ch/supermimic_vibed/tools/test_reset.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: zita-ch/supermimic_vibed/tools/test_reset_sampling.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: zita-ch/supermimic_vibed/supermimic/buffer.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: zita-ch/supermimic_vibed/supermimic/dimensions.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: zita-ch/supermimic_vibed/supermimic/env.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: zita-ch/supermimic_vibed/supermimic/evaluate.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: zita-ch/supermimic_vibed/supermimic/kinematics.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: zita-ch/supermimic_vibed/supermimic/mdp.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: zita-ch/supermimic_vibed/supermimic/motion.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: zita-ch/supermimic_vibed/supermimic/networks.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: zita-ch/supermimic_vibed/supermimic/robot.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: zita-ch/supermimic_vibed/supermimic/rotations.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: zita-ch/supermimic_vibed/tools/analyze_failure.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: zita-ch/supermimic_vibed/tools/bench.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: emoPointer/supermimic_manipulation/README.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: emoPointer/supermimic_manipulation/README.zh-CN.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: emoPointer/supermimic_manipulation/src/clab/tasks/lemon/assets/README.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: emoPointer/supermimic_manipulation/src/clab/algorithms/ppo/train.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: emoPointer/supermimic_manipulation/src/clab/algorithms/supermimic/train.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: emoPointer/supermimic_manipulation/src/clab/cli/resets.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: emoPointer/supermimic_manipulation/src/clab/cli/train.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: emoPointer/supermimic_manipulation/src/clab/evaluation/policy.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: emoPointer/supermimic_manipulation/src/clab/tasks/box_in_bin/reset_data.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: emoPointer/supermimic_manipulation/src/clab/tasks/box_in_bin/resets.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: emoPointer/supermimic_manipulation/src/clab/tasks/drawer/reset_data.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: emoPointer/supermimic_manipulation/src/clab/tasks/drawer/resets.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: emoPointer/supermimic_manipulation/src/clab/tasks/lemon/reset_data.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: emoPointer/supermimic_manipulation/src/clab/tasks/lemon/resets.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: emoPointer/supermimic_manipulation/src/clab/tasks/mug_hang/reset_data.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: emoPointer/supermimic_manipulation/src/clab/tasks/mug_hang/resets.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: emoPointer/supermimic_manipulation/src/clab/tasks/rigid_resets.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: emoPointer/supermimic_manipulation/src/clab/tasks/square/reset_data.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: emoPointer/supermimic_manipulation/src/clab/tasks/square/resets.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: emoPointer/supermimic_manipulation/docs/supermimic.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: locomanip-duet/RoboDuet/README.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: locomanip-duet/RoboDuet/go1_gym/envs/automatic/curriculum.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: locomanip-duet/RoboDuet/go1_gym/envs/base/curriculum.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: locomanip-duet/RoboDuet/go1_gym_learn/ppo_cse_automatic/rollout_storage.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: locomanip-duet/RoboDuet/go1_gym_learn/ppo_cse_unified/rollout_storage.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: locomanip-duet/RoboDuet/scripts/actuator_net/train.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: locomanip-duet/RoboDuet/scripts/auto_train.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: locomanip-duet/RoboDuet/scripts/load_policy.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: locomanip-duet/RoboDuet/scripts/unified_train.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: locomanip-duet/RoboDuet/go1_gym/__init__.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: locomanip-duet/RoboDuet/go1_gym/envs/__init__.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: locomanip-duet/RoboDuet/go1_gym/envs/automatic/__init__.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: locomanip-duet/RoboDuet/go1_gym/envs/automatic/base_task.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: locomanip-duet/RoboDuet/go1_gym/envs/automatic/legged_robot.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: locomanip-duet/RoboDuet/go1_gym/envs/automatic/legged_robot_config.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: locomanip-duet/RoboDuet/go1_gym/envs/base/__init__.py",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Public source SHA: locomanip-duet/RoboDuet/go1_gym/envs/base/base_task.py",
+      "passed": true,
+      "detail": ""
+    }
+  ]
+}

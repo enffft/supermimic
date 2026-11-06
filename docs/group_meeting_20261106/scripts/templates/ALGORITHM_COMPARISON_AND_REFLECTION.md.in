@@ -1,0 +1,186 @@
+# PPO 与 SuperMimic：优化机制、失败解释与下一步研究
+
+2026-11-06。本文把结论分为直接事实、机制证据和待验证假设。实验数据来自本机记录；外部项目于本次联网读取，固定各自commit与文件SHA，见 [外部来源索引](external_sources/index.json)。外部README的性能数值属于作者报告，本任务没有复现实验，不用它们与本机M1秒数直接排名。
+
+## 组会展示版
+
+- PPO从真实执行结果学习“哪些动作概率应增大”；SuperMimic通过可微代理学习“动作改变会怎样改变未来回报”。
+- SM的WM不仅要前向预测看起来合理，还要在Actor访问的区域给出正确动作响应方向；Critic还需给出可信终点state梯度。
+- Go2的稠密速度目标和课程训练已形成有效反馈；M1在局部动力学导数、探索覆盖和策略更新稳定性上出现实证问题。
+- 优先级应为：校准导数 → 约束/检查真实策略变化 → 改善Replay/Reset覆盖 → 再调reward、扩预算；H32保持不变。
+
+## 1. 同一个策略接口，两类不同梯度估计
+
+### 1.1 PPO的概率比与真实GAE
+
+PPO用旧策略 $\pi_{old}$ 在真实MuJoCo收集 $(s_t,a_t,r_{t+1},d_{t+1})$，拟合真实return或bootstrap的Critic。常用GAE：
+
+$$\delta_t=r_{t+1}+\gamma(1-d_{t+1})V(s_{t+1})-V(s_t),$$
+$$\hat A_t=\sum_{l\ge0}(\gamma\lambda)^l\left[\prod_{k=1}^{l}(1-d_{t+k})\right]\delta_{t+l}.$$
+
+超时截断与真实跌倒应分开处理；本地运行该逻辑由RSL-RL负责，本次没有重新实现。概率比 $r_t(\theta)=\pi_\theta(a_t|o_t,g_t)/\pi_{old}(a_t|o_t,g_t)$，最大化：
+
+$$L^{CLIP}=\mathbb E[\min(r_t\hat A_t,\operatorname{clip}(r_t,1-\epsilon,1+\epsilon)\hat A_t)].$$
+
+本地总loss还包括value MSE和entropy，系数分别1、.01，clip=.2，γ=.99、λ=.95，adaptive-KL LR。动作是Gaussian样本，环境执行是带噪和限幅映射，reward来自真实物理。
+
+梯度估计的核心是 $\nabla_\theta\log\pi_\theta(a_t|o_t)\hat A_t$，不需要 $\partial s_{t+1}/\partial a_t$，因此MuJoCo不可微、硬成功阈值、接触切换仍可以通过样本回报影响策略概率。但需要足够探索和真实样本，方差、超参、训练分布覆盖仍是限制，不能认为PPO天然不会饱和或失败。
+
+PPO Critic错误会改变advantage与方差，但原始reward来自真实环境。它通常不把 $\nabla_s V$ 沿动力学链直接传回Actor。这与SM的Critic终值路径是关键区别。
+
+### 1.2 SuperMimic的路径梯度
+
+收集真实transition拟合WM后，从Replay真实起点出发，执行：
+
+$$a_t=\pi_\theta(\hat o_{t-h:t},g_t),\quad\hat s_{t+1}=f_\omega(\hat s_t,a_t,\xi),\quad
+c_{t+1}=c_t(1-\hat d_{t+1}),$$
+$$J=\mathbb E\left[\sum_{t=0}^{H-1}\gamma^t c_t\hat r_{t+1}+\gamma^H c_HV_\psi(\hat s_H,g_H,\xi)\right].$$
+
+H=32、dt=.02、γ=.99，本地Actor最小化−J/H；M1另加额外终点负距离。Actor阶段冻结ω、ψ的参数，但对输入state/action保留图：
+
+$$\frac{\partial\hat s_{t+1}}{\partial\theta}
+=f_s\frac{\partial\hat s_t}{\partial\theta}
++f_a\frac{\partial a_t}{\partial\theta}.$$
+
+历史观测包含先前动作，Actor的 $\partial a_t/\partial\theta$ 还包含历史反馈路径。32步乘积可放大或抑制局部导数。解析FK/reward不需要额外学习头，但其梯度仍乘WM导数；终值还引入 $\nabla_sV$。高度/倾角软终止也产生生存导数。
+
+因此系统需要三个层次的可靠性：状态预测数值、动作/状态局部响应方向、闭环累计更新稳定性。前两者不等价，第三者也不能由单次finite gradient检查保证。可微只保证程序可求导，不能保证导数与真实物理相同。
+
+### 1.3 训练有World Model，部署没有在线MPC
+
+当前Go2/M1部署运行导出的Actor历史网络，不带WM、不做H32在线搜索。训练中想象回报可以像短时规划目标，但不是每50Hz都在真实机器人上求MPC最优控制序列。若未来接Motion Prior planner，需要明确其输出的参考、在线更新频率、Actor接口和责任边界；本轮reward-only结果不是planner性能结论。
+
+### 1.4 PPO clipping和SM gradient clipping不是一回事
+
+PPO限制某个样本概率比进入有利的过大变化时的surrogate收益，不是严格信任域保证；但它显式参考旧策略。SM norm1/value.1裁剪的是当前梯度，而非新旧策略输出差，也不限制多次Adam更新后的累计增益和历史反馈稳定性。参数全有限、梯度被裁剪并不能排除最终tanh全饱和。
+
+## 2. 为什么前向NSE很低，Actor仍可能失败
+
+设真实动力学为f、模型为$\hat f$。在有限Replay点上使 $\|\hat f(s,a)-f(s,a)\|$ 小，并不控制 $\|\partial_a\hat f-\partial_af\|$。一个小振幅高频误差可以前向很小而导数很大；真实接触还具有分段非光滑性。只拟合静止附近点也无法保证Actor改变动作后的反事实方向。
+
+本轮M1 Replay初期NSE8约.0045；最终局部常动作反事实H32 TCP误差约.307m，并存在两个epsilon都保留的物理响应反号。它们来自不同分布，不能简单拿数值作“训练指标造假”的判断；它们说明原训练验证没有覆盖Actor真正需要的反事实方向与长时域。
+
+应同时报告：独立held-out state error，multi-step task-space error，多个动作方向的局部finite difference/WM autograd一致性，真实闭环策略回报。全状态NSE容易掩盖某个关键root/TCP方向，而m/rad/速度不同量的错误也不能靠单个平均指标解释。
+
+## 3. 当前事实与机制的分级
+
+| 结论 | 证据 | 能说到哪里 |
+|---|---|---|
+| Go2主SM能跟踪九条固定命令 | 两份原始JSON，64结束episode/指令，无跌倒 | 本轮名义平地、单seed成立，非实机鲁棒性 |
+| 旧漂亮对角步态预算更长 | checkpoint来源 + TB时钟，完整链4.546h | 不应叫从零2.5h，不证明暂停本身有收益 |
+| M1 PPO能学会部分大范围point reach | 334/469结束goal，>2.5m107/155 | 不等于所有低点可达、可抓取或可部署 |
+| M1 SM实际低位饱和 | 真实4env姿态probe，|a|>.95达100%、root约.219m | 直接行为事实，不把机身接地当已测事实 |
+| WM局部动作导数错 | 名义姿态、两epsilon、三例稳定反号 | 局部物理证据，非所有状态/动作都反号 |
+| 动作历史可放大饱和 | 固定物理输入，64次纯反馈，final .852→.998 | 证明已有网络存在放大机制，不证明原始触发来源 |
+| Critic可主导Actor梯度 | 六快照相同起点分解，final2.966 vs过程.0575 | 大小已证实，方向错误与因果贡献未单独证实 |
+| 终点项太大是唯一根因 | 冻结分解终点项并非主导，且有时反向 | 现有数据不支持单因解释 |
+| Replay覆盖恶化反馈 | 容量5.12s与低位重复轨迹，探索与目标距离结构 | 有依据的机制，尚未完整回溯分布或量化贡献 |
+| L/M共享梯度冲突 | 同一网络处理两个任务 | 尚无单任务训练消融，不是已确认根因 |
+| 旧运动学数据库导致本轮失败 | 该轮未使用Prior/离线数据训练 | 不能作为本轮直接解释；动作契约仍需持续核验 |
+
+## 4. Go2可以工作而M1困难的结构性差异
+
+Go2只有12维位置控制，稠密速度误差在每个短控制段都提供连续信号，A先学前进再扩命令。WM只需在当前动作和接触分布上给出足够有用的速度响应，就可能改进Actor；也不等于每个足端细节都正确。步态更精细的足端目标可能需要更长预算与更准的接触运动导数。
+
+M1是12腿位置+4轮速度+6臂位置，接触、root高度、臂姿态和TCP目标耦合。远目标到达需要多秒，H32只有.64s，Critic承担更长时域信用。3m面积均匀采样使75%的水平半径>1.5m，半径≤.5m约2.78%；这不是绝对TCP距离概率，但足以说明近底盘水平点少。初期小幅探索不容易接近成功，硬事件对BPTT也缺直接导数。
+
+这是一组合理任务结构解释，但没有把动作维数、采样预算、探索和课程逐一控制，不能给出“多10维所以必失败”的因果结论。Go2也存在PPO失败、SM拖地，M1的PPO也有低位成功差和速度超调；本研究不能变成某算法普遍好坏的宣传。
+
+## 5. 奖励公平性与时间公平性需要分别定义
+
+等墙钟回答“在这台机器、相同可用时间内哪个系统更好”；等真实transition回答采样效率；等GPU-hour还应报告GPU型号、利用率和编译成本。等iteration对这里不成立：PPO一个iteration32真实步，SM一个iteration1真实向量步。等Actor optimizer次数也不能对齐不同目标、batch和critic计算。
+
+这轮Go2真实reward相同，Actor均值结构相同，但额外Gaussian、终止课程阶段B/C和实际样本不同。M1还多一个SM独有endpoint，且想象成功后不续采随机goal。因此可以展示等时长系统结果，不能把图标题写成“所有条件完全相同的算法因果实验”。
+
+建议将来分三张互不替代的图：等墙钟质量、质量-真实样本曲线、质量-GPU时间曲线；每种至少多个训练seed。固定课程与固定评测目标集，保留易/难分层；训练集、校准集和评测集分离。最好同时展示成功、跌倒、距离、时间效率和饱和，不用一个加权总分掩盖完全不会动。
+
+## 6. 开源项目核验与可迁移经验
+
+六个项目都成功读取公开README及相关源码，固定commit见下方与 [index.json](external_sources/index.json)。下载在独立输出目录，没有安装其uv/venv、没有导入或运行外部训练代码。以下既区分项目作者经验，也指出本仓库已经实现的部分。
+
+### 6.1 EMA Actor：平滑评测策略，不是物理可信度证明
+
+`instantTrack/src/instanttrack/train.py` 使用 `AveragedModel` 和 `get_ema_multi_avg_fn(args.pi_ema)`，图执行版本 `ema_update` 用 `torch._foreach_lerp_`；BlinkMimic同样存在。评测用平均策略，完整恢复要区分live参数、EMA参数和optimizer状态。原项目的收益是在G1参考跟踪上报告的。
+
+迁移Go2/M1可以低成本保留live与EMA两份评测Actor，比较真实任务稳定性、goal响应与饱和；但EMA不是限制live策略更新的信任域，也会混合不同训练阶段策略，可能滞后或平均出不好动作。应同一checkpoint起点、多seed比较live/EMA真实评测，不先承诺修好WM导数。
+
+### 6.2 失败前重点采样：必须先定义有用的失败
+
+InstantTrack `TrackingSim.sample_frames` 将return-based概率与`bin_prev/bin_fail`分布混合，把reset移到近期失败点前的参考时间bin；其evaluation probe还能把部署条件失败段反馈给reset。BlinkMimic README与train实现有周期evaluation-guided focus、window与share参数。
+
+Go2可保存真实跌倒前可恢复状态，M1可按低位停滞/远离目标/接近成功分层。这里没有参考动作时间bin，不能直接照搬“失败前10秒参考帧”；任意拼root、臂、接触会生成不物理初态。重点采失败若只收饱和低位，还可能强化坏分布，因此需保留正常姿态与均匀覆盖，并单独评测原始reset分布。
+
+### 6.3 结构化WM：本地已经有积分先验
+
+BlinkMimic `WM` 的`structured`开关预测速度增量并从速度积分位置，`networks.py`还保留drift correction；InstantTrack公开参数也有`--wm_structured`。本仓库 `StateSpec.integrate` 已经做半隐式速度积分并加位置残差，不能把“再加结构化预测”写成尚未实现的万能修复。
+
+可验证的增量是：约束/缩小位置修正、分离轮地/臂动态头、加入任务空间/动作响应损失或物理一致性检查；但这些会改变模型偏差和表达能力。需要同数据集、同参数预算比较H32 TCP/root误差及Jacobian，不以训练loss下降代替物理改进。
+
+### 6.4 Reset Bank与物理有效课程：操作任务最直接的借鉴
+
+`supermimic_manipulation` README明确使用OmniReset式多类物理验证起始状态（完整任务、桌面已抓、空中已抓、近目标等），训练类别均匀，另有不同seed的held-out bank。`src/clab/tasks/rigid_resets.py::validate_bank` 检查schema、contract、provenance.method/split、类别和模型/state；不是仅存几个qpos文件。收集器把过程/IK提议放进真实控制和物理里，验证后才保留。
+
+M1当前point reach没有物体与夹爪任务，可对应正常站立、可恢复姿态、TCP近目标、需要底盘移动等类别，并用真实MuJoCo settle/碰撞/速度检查。近目标reset把成功放进H32可见区间，有助Critic学到任务价值；但它改变训练分布，不能仅在近点测试就宣布3m任务解决。保持原始全分布和held-out reset评测，显式报告额外bank采集成本。
+
+### 6.5 硬成功事件的代理梯度与想象专属shaping
+
+同一操作项目说明：前向使用几何硬成功，反向用sigmoid straight-through近似，梯度乘.02；还加入只在imagination里存在的操作shaping。其操作horizon16、controller为每步重新锚定的OSC，不是我们的Action22轮腿PD；不能直接复制它的所有state与权重。
+
+M1可研究软到达概率/连续距离与硬事件并存，但straight-through是有偏梯度，可能优化几何代理而非真实成功；必须保留真实硬事件评测，验证假成功/姿态/终止边界，并明确它是SM额外目标。我们现有endpoint已属于这种额外目标思想，却仍失败，说明“加一个可微项”不是充分条件。
+
+### 6.6 Policy LR退火：预算、指标和恢复状态要一致
+
+InstantTrack `train.py` 有`lr_decay_ret/lr_decay_len/lr_decay_by`，达到return门槛或最晚迭代触发倍率回落；`pi_anneal_len/pi_anneal_min`再做cosine退火。BlinkMimic也有return触发降LR。当前M1基础LR恒定2e−4，只有500update ramp；Go2虽配置cosine，2.5h只走到18600/320000，尚未经历主要衰减。
+
+迁移时不能照抄G1 normalized return .75作为M1阈值；应使用真实分项性能/覆盖和实际优化步数。低LR可能减少饱和漂移，也可能让本来就很少的Actor更新学不动。验证固定Replay上的输出变化、真实任务改善和饱和率，保存触发器/调度状态用于续训。
+
+### 6.7 Torch Compile、CUDA Graph与有效吞吐
+
+CuboiLeo的 `WorldModel.enable_compile/PolicyTrainer` 使用torch.compile；zita-ch版本明确compiled update与解析heads；InstantTrack/BlinkMimic则进一步消除host同步、fused Adam、CUDA Graph捕获WM和policy/critic更新，还将采样/收集/探针图化。具体实现使用`torch.cuda.CUDAGraph`、设备端LR tensor和固定shape/静态buffer；不能只包一层compile就假定相同收益。
+
+本机M1出于16GiB内存限制关闭WM/Actor compile，micro32导致多个H32反传。可先profile真实step、WMfit、FK、ActorBPTT、Critic和数据搬运，固定32/128等shape逐段优化。12GiB显存、旧驱动、CUDA Graph内存池与编译峰值是实际资源边界，不能照5090/H100并发参数照搬。先小规模数值等价验证和资源watchdog，再谈吞吐；加速错误梯度只会更快退化。
+
+### 6.8 分阶段L/M与合作控制
+
+RoboDuet README明确cooperative policy和two-stage。`scripts/auto_train.py` 分别设置Dog/Arm Runner，`pretrained_to_hybrid_start`为from-scratch10000、resume2000，`--wo_two_stage`可置0，再进入hybrid。它不是简单把同一MLP的env一半标L一半标M。
+
+可借鉴先学可行移动/臂到点再联合，或以两个head/分层控制减少干扰；但这改变架构、初始化和预算，不能在当前对照中悄悄加入。先做L-only/M-only训练定位，再在同总预算比较joint-from-scratch与staged。合作策略的cross-body信息和任务定义要重新设计，不能声称直接搬两个runner就得到M1全身移动操作。
+
+### 6.9 WM动作梯度与真实物理校验：我们仍需自己验证
+
+核验的外部材料包含FK数值一致性、模型误差和工程验证；本次没有找到足以直接替代我们H1/8/16/32、多epsilon、轮地接触动作响应校准Gate的公开实现证据。因此将它作为本项目的验证要求，**不虚构某仓库已经提供同样的物理梯度Gate**。
+
+最直接做法是同真实state、同ξ、同执行动作，MuJoCo正负扰动有限差分，与WM autograd/自身有限差分三方比较；记录near-zero桶和接触不连续区，按任务相关响应分层，不只统计全状态平均cosine。当前已有局部脚本可扩展，但本次没有扩大评测或训练。
+
+### 外部引用的固定版本
+
+<!-- WEB_SOURCES -->
+
+`PAPER_SPEC.md`对原SuperMimic论文的结构/超参转录可提供H32、WM8步、Critic λ-return背景。本文关于本机架构的结论以checkpoint/config/源码为准；本次没有重新核对论文全文所有页码，也没有把README中的分钟收敛当作论文结果。
+
+## 7. 最有价值的验证实验，而不是直接再加时长
+
+所有下列项目均为建议，**本次未执行训练**。先建立可重复的真实校准集与checkpoint，再一次只改变一个核心机制。
+
+| 优先级 / 假设 | 最小实验 | 固定条件 | 主要判据 | 结果怎样改变判断 |
+|---|---|---|---|---|
+| P0 动作物理导数局部不可信 | 多姿态、接触段、动作组、2–3epsilon，H1/8/16/32三方响应 | 冻结WM/Actor、同state/ξ | TCP/root方向一致率、幅度误差、低信号桶 | 若关键方向仍错，先禁止风险性Actor更新，修数据/模型 |
+| P0 Critic终值放大偏差 | 完整/减权/stop-state-gradient/无终值短支路 | 同起点、H32、Replay与随机数 | 真实性能、饱和、输出变化、过程/终值梯度cos | 若去终值改善稳定，定位价值梯度；同时量化短视代价 |
+| P0 累计策略漂移失控 | 原LR vs退火/较小LR；live与EMA分开评测 | 同初始权重和数据预算 | logit、goal sensitivity、真实到达与低位率 | 若饱和降但不前进，稳定性修复并非任务已学会 |
+| P1 Replay覆盖不足 | 正常/恢复/近成功分层保留 vs原256FIFO | 同真实样本/WMfit次数 | held-out响应与真实Actor改善 | 若只降低NSE不改善动作方向，不能判成功 |
+| P1 探索幅度不足 | 轮/腿/臂分组有界相关探索 vs.03iid | 同总样本与任务分布 | 实际执行分布、接近goal事件、跌倒、Jacobian误差 | 量化覆盖收益与接触失稳成本 |
+| P1 成功信用在H32外 | 物理验证near-goal Reset Bank +原分布混合 | H32、同真实eval分布、额外数据单列 | 成功样本数、Critic排序、3m全分布成功 | 只近点成功不算原任务解决 |
+| P1 L/M共享冲突 | L-only、M-only、balanced各短支路 | 同算法/单任务样本量口径 | 单任务响应、分项grad cosine、真实表现 | 两类单独也失败则优先共同模型/更新问题 |
+| P2 奖励目标不一致 | endpoint开关；吸收失败语义；time/hold分项消融 | 一次只改一项、H32固定 | 每秒成功数、无条件距离、失败/删失 | 看是否改善真实效率而非想象目标 |
+| P2 Go2暂停本身有益 | 连续vs中断恢复，同完整预算 | 同seed、WM初始化、reward schedule、Replay恢复策略 | gait/速度同指令 | 区分预算、重建Replay、课程与暂停效应 |
+| P2 时间差来自工程吞吐 | profile后小规模compile/graph等价对照 | 同权重、batch、数据顺序 | transitions/s、更新/s、峰值内存、数值差 | 只证明工程速度，不证明算法采样效率 |
+
+Gate阈值不应为本任务随意编造一个“正确”数字。先用成功/失败策略和独立真实数据确定哪些误差与任务退化相关，再给出阈值与置信区间。所有候选都要保留未通过案例，不通过时不把训练loss替代真实验证。
+
+## 8. 如何把这些结论转化为研究问题
+
+有价值的问题不是简单比较谁最终reward高，而是：**在接触丰富、混合执行器和长时域目标下，什么样的模型校准与策略更新约束，能让可微代理梯度持续对应真实任务改进？**
+
+可以围绕三个互相可测的指标组织：WM的task-action response fidelity，Actor更新前后的真实策略改进，探索/Replay的物理状态覆盖。若能用模型可信度诊断预测策略何时会饱和或失去目标响应，再通过少量针对性采样和稳定更新避免退化，会比事后增加reward更有解释力。
+
+后续Motion Prior也应接受同一标准：运动学可行仅是起点，优化后的参考/Actor是否动力学可行，要通过真实跟随、模型动作响应和独立目标到达验证。不要把当前reward-only失败直接解释成Motion Prior必然必要，也不要把PPO成功理解成planner没有价值；它们回答的是不同模块与数据假设的问题。

@@ -1,0 +1,1857 @@
+{
+  "date": "2026-11-06",
+  "root": "/home/yifeiy/ws_supermimic",
+  "branch": "main",
+  "head": "f3f29e86073593277244b1d2d307c2b28b8411cc",
+  "status_at_extraction": "M scripts/evaluate_go2_velocity.py\n M scripts/play.py\n M src/supermimic/config.py\n M src/supermimic/envs/mdp/commands.py\n M src/supermimic/envs/multirobot_env_cfg.py\n M src/supermimic/envs/tracking_env_cfg.py\n M src/supermimic/imagination/policy_trainer.py\n M src/supermimic/imagination/rollout.py\n M src/supermimic/imagination/tasks.py\n M src/supermimic/tasks/velocity_reward.py\n M src/supermimic/training/loop.py\n?? .vscode/\n?? docs/group_meeting_20261106/\n?? scripts/evaluate_m1_reward.py\n?? scripts/report_m1_ppo_comparison.py\n?? scripts/report_m1_v2_comparison.py\n?? scripts/run_go2_comparison.py\n?? scripts/run_m1_comparison.py\n?? scripts/run_m1_ppo.py\n?? scripts/run_m1_reward.py\n?? scripts/validate_go2_rl_sar.py\n?? src/supermimic/baselines/\n?? src/supermimic/kinematics/go2_fk.py\n?? src/supermimic/tasks/go2_gait.py\n?? src/supermimic/tasks/m1_reward.py\n?? src/supermimic/training/m1_reward.py\n?? tests/test_go2_comparison.py\n?? tests/test_go2_gait.py\n?? tests/test_m1_ppo.py\n?? tests/test_m1_reward_only.py\n?? tests/test_m1_v2.py\n?? tests/test_training_sequence.py\n?? tools/",
+  "scope": "Only output directory changes; no training, recording, commit or push. User records videos; provide play commands.",
+  "versions": {
+    "torch": "2.11.0+cu126",
+    "mjlab": "1.6.0",
+    "rsl-rl-lib": "5.5.1",
+    "mujoco": "3.16.0",
+    "matplotlib": "3.11.2",
+    "numpy": "2.5.4",
+    "pandas": "3.0.6"
+  },
+  "sources": [
+    {
+      "id": "go2_ppo_evaluation",
+      "path": "/home/yifeiy/ws_supermimic/logs/final_evaluation_20261104/ppo_velocity_evaluation.json",
+      "snapshot": "data/go2_ppo_evaluation.json",
+      "sha256": "28acc99edbcfb39d9d1320b14ae4dc23bb5ad2347d719ae5ae960a7a5a0cabea"
+    },
+    {
+      "id": "go2_ppo_extra",
+      "path": "/home/yifeiy/ws_supermimic/logs/final_evaluation_20261104/ppo_velocity_extra.json",
+      "snapshot": "data/go2_ppo_extra.json",
+      "sha256": "2de24dcf83e4f1380999b7dfb3b30744d1c5ec55ec7967a62609dfc627e43ea8"
+    },
+    {
+      "id": "m1_ppo_forward",
+      "path": "/home/yifeiy/ws_supermimic/docs/results/m1_v2_20261106/ppo_forward.json",
+      "snapshot": "data/m1_ppo_forward.json",
+      "sha256": "c31101c761f8d162a3c9986a0bf106557733b6a3ecee3e9c95430996287e598d"
+    },
+    {
+      "id": "m1_ppo_manipulation",
+      "path": "/home/yifeiy/ws_supermimic/docs/results/m1_v2_20261106/ppo_manipulation.json",
+      "snapshot": "data/m1_ppo_manipulation.json",
+      "sha256": "a6ab6e83bacd487dbb2fbee759e9af2a34bbd1451914b5e8dc43db431988183f"
+    },
+    {
+      "id": "m1_ppo_balanced",
+      "path": "/home/yifeiy/ws_supermimic/docs/results/m1_v2_20261106/ppo_balanced.json",
+      "snapshot": "data/m1_ppo_balanced.json",
+      "sha256": "4cc5fd0b874f42d287bde93ac14efdcc9da7df06045319d35709deaa4deee742"
+    },
+    {
+      "id": "m1_ppo_completion",
+      "path": "/home/yifeiy/ws_supermimic/docs/results/m1_v2_20261106/ppo_completion.json",
+      "snapshot": "data/m1_ppo_completion.json",
+      "sha256": "e71ce0614a59f267d652330a351381b2a1a2b778aa38c56c550f4e541d3c483c"
+    },
+    {
+      "id": "go2_ppo_config",
+      "path": "/home/yifeiy/ws_supermimic/logs/go2_comparison/ppo_2p5h_seed2026/comparison_config.json",
+      "snapshot": "data/go2_ppo_config.json",
+      "sha256": "a80b9c698590bc5eb2d7076409c8886f882a12d3c774894d87b7139e5a8c380f"
+    },
+    {
+      "id": "go2_ppo_training_progress",
+      "path": "/home/yifeiy/ws_supermimic/logs/go2_comparison/ppo_2p5h_seed2026/progress.json",
+      "snapshot": "data/go2_ppo_training_progress.json",
+      "sha256": "0fca9f4e8702ff107766db013f37d7e07cc96fdd7ceb30ac7894298d16bb2afa"
+    },
+    {
+      "id": "go2_ppo_training_completion",
+      "path": "/home/yifeiy/ws_supermimic/logs/go2_comparison/ppo_2p5h_seed2026/completion.json",
+      "snapshot": "data/go2_ppo_training_completion.json",
+      "sha256": "85477180aa16cf81b92c8d3978b7531dbd411ccaf0a40b6f0da9555b68f76422"
+    },
+    {
+      "id": "m1_ppo_config",
+      "path": "/home/yifeiy/ws_supermimic/logs/m1_ppo/v2_lm50_2048_3p5h_seed2026/comparison_config.json",
+      "snapshot": "data/m1_ppo_config.json",
+      "sha256": "cc3bf73442ba491e8fc184113ca30d8dbb37cccb436e64094e0055219b235ad5"
+    },
+    {
+      "id": "m1_ppo_training_progress",
+      "path": "/home/yifeiy/ws_supermimic/logs/m1_ppo/v2_lm50_2048_3p5h_seed2026/progress.json",
+      "snapshot": "data/m1_ppo_training_progress.json",
+      "sha256": "a0f68d15e39bb8167b60b02b69f3cbe7ad7e990966e341903964cc9fa4fb389b"
+    },
+    {
+      "id": "m1_ppo_training_completion",
+      "path": "/home/yifeiy/ws_supermimic/logs/m1_ppo/v2_lm50_2048_3p5h_seed2026/completion.json",
+      "snapshot": "data/m1_ppo_training_completion.json",
+      "sha256": "e71ce0614a59f267d652330a351381b2a1a2b778aa38c56c550f4e541d3c483c"
+    },
+    {
+      "id": "go2_supermimic_evaluation",
+      "path": "/home/yifeiy/ws_supermimic/logs/final_evaluation_20261104/supermimic_velocity_evaluation.json",
+      "snapshot": "data/go2_supermimic_evaluation.json",
+      "sha256": "673597f6947d32e735ecd9c030b4ae7181da6f68b35ab875f0990731591e5270"
+    },
+    {
+      "id": "go2_supermimic_extra",
+      "path": "/home/yifeiy/ws_supermimic/logs/final_evaluation_20261104/supermimic_velocity_extra.json",
+      "snapshot": "data/go2_supermimic_extra.json",
+      "sha256": "459105777c1ea890b9bd7502cf3d0035299639291a615d7eb8ba2eb34ea16059"
+    },
+    {
+      "id": "m1_supermimic_forward",
+      "path": "/home/yifeiy/ws_supermimic/docs/results/m1_v2_20261106/supermimic_forward.json",
+      "snapshot": "data/m1_supermimic_forward.json",
+      "sha256": "d77a3e09898b5dc2f4f04d660716d21268bfffb95ea4e46cdcdba3c2771e6f76"
+    },
+    {
+      "id": "m1_supermimic_manipulation",
+      "path": "/home/yifeiy/ws_supermimic/docs/results/m1_v2_20261106/supermimic_manipulation.json",
+      "snapshot": "data/m1_supermimic_manipulation.json",
+      "sha256": "c7593ee3fd99ec6d4b610a42b89cfc47a9b6a662aad37e309a87a782ba1be54a"
+    },
+    {
+      "id": "m1_supermimic_balanced",
+      "path": "/home/yifeiy/ws_supermimic/docs/results/m1_v2_20261106/supermimic_balanced.json",
+      "snapshot": "data/m1_supermimic_balanced.json",
+      "sha256": "5946b502eafd98d6c98960f9e21f37e50088fc887caf37386f32389fbc5fa5bf"
+    },
+    {
+      "id": "m1_supermimic_completion",
+      "path": "/home/yifeiy/ws_supermimic/docs/results/m1_v2_20261106/supermimic_completion.json",
+      "snapshot": "data/m1_supermimic_completion.json",
+      "sha256": "efbeb6b3bdb85fcd9b6a9061b6747e26f384a4fe0ddb59c47cbf5e1d2ae93516"
+    },
+    {
+      "id": "go2_supermimic_config",
+      "path": "/home/yifeiy/ws_supermimic/logs/go2_comparison/supermimic_2p5h_seed2026/config.json",
+      "snapshot": "data/go2_supermimic_config.json",
+      "sha256": "54a796d83ced98fcc100ba2e373b226223173ce6971012519a4aace6dc82b90a"
+    },
+    {
+      "id": "go2_supermimic_training_progress",
+      "path": "/home/yifeiy/ws_supermimic/logs/go2_comparison/supermimic_2p5h_seed2026/progress.json",
+      "snapshot": "data/go2_supermimic_training_progress.json",
+      "sha256": "9d977f5ac01f205dc8b2762c02e1b8be4ee44ddf445c3cf0961ebe6c7dab2812"
+    },
+    {
+      "id": "m1_supermimic_config",
+      "path": "/home/yifeiy/ws_supermimic/logs/m1_reward/v2_lm50_2048_3p5h_seed2026/config.json",
+      "snapshot": "data/m1_supermimic_config.json",
+      "sha256": "c07abf47ec853c00a8f9d9bb88796eb45431910fb2dd51bc9eb825a3512622f9"
+    },
+    {
+      "id": "m1_supermimic_training_completion",
+      "path": "/home/yifeiy/ws_supermimic/logs/m1_reward/v2_lm50_2048_3p5h_seed2026/completion.json",
+      "snapshot": "data/m1_supermimic_training_completion.json",
+      "sha256": "efbeb6b3bdb85fcd9b6a9061b6747e26f384a4fe0ddb59c47cbf5e1d2ae93516"
+    },
+    {
+      "id": "go2_lineage_clocks",
+      "path": "/home/yifeiy/ws_supermimic/docs/results/training_audit_20261106/go2_lineage_clocks.json",
+      "snapshot": "data/go2_lineage_clocks.json",
+      "sha256": "d91516c3bbed0189464d24c5117cb2d9f98afdb884a537ab2c27e67f96c7f1b8"
+    },
+    {
+      "id": "go2_new_cold_2p5h",
+      "path": "/home/yifeiy/ws_supermimic/docs/results/training_audit_20261106/go2_new_cold_2p5h.json",
+      "snapshot": "data/go2_new_cold_2p5h.json",
+      "sha256": "9d0794cce083bc7535df79952e0569871625317203d0697471d5b03b3a111b52"
+    },
+    {
+      "id": "go2_old_actor_2p96h",
+      "path": "/home/yifeiy/ws_supermimic/docs/results/training_audit_20261106/go2_old_actor_2p96h.json",
+      "snapshot": "data/go2_old_actor_2p96h.json",
+      "sha256": "d9813a6e3a4a39d6463aea5f17ad1e2130b98e3b1b47fc2ccd98fd104217775f"
+    },
+    {
+      "id": "go2_old_chain_2p95h",
+      "path": "/home/yifeiy/ws_supermimic/docs/results/training_audit_20261106/go2_old_chain_2p95h.json",
+      "snapshot": "data/go2_old_chain_2p95h.json",
+      "sha256": "8f011eeaabbef8a33f671566455d730e54faea5f4c9337b9d792ab17faf7ab06"
+    },
+    {
+      "id": "go2_old_final_chain_4p55h",
+      "path": "/home/yifeiy/ws_supermimic/docs/results/training_audit_20261106/go2_old_final_chain_4p55h.json",
+      "snapshot": "data/go2_old_final_chain_4p55h.json",
+      "sha256": "0a4f54908db33e00a6644224b998dc3e056de5670d4e0554f8b30b7ada257239"
+    },
+    {
+      "id": "m1_action_history_feedback",
+      "path": "/home/yifeiy/ws_supermimic/docs/results/training_audit_20261106/m1_action_history_feedback.json",
+      "snapshot": "data/m1_action_history_feedback.json",
+      "sha256": "588347c8575d275818201d9afe6a9889c3679e8b2d457b250c809887c13be5fd"
+    },
+    {
+      "id": "m1_fixed_input_snapshots",
+      "path": "/home/yifeiy/ws_supermimic/docs/results/training_audit_20261106/m1_fixed_input_snapshots.json",
+      "snapshot": "data/m1_fixed_input_snapshots.json",
+      "sha256": "69d158c8c676d29e0cd9832da32f73b53dc83a56fcf433ca67d7c908c459ad56"
+    },
+    {
+      "id": "m1_gradient_components",
+      "path": "/home/yifeiy/ws_supermimic/docs/results/training_audit_20261106/m1_gradient_components.json",
+      "snapshot": "data/m1_gradient_components.json",
+      "sha256": "849c3c762a9784c604c754dc2fc5a66e0958bd2601d9f6492b922ae694c96aa5"
+    },
+    {
+      "id": "m1_selected_training_scalars",
+      "path": "/home/yifeiy/ws_supermimic/docs/results/training_audit_20261106/m1_selected_training_scalars.json",
+      "snapshot": "data/m1_selected_training_scalars.json",
+      "sha256": "be157fcbd188fd2357dd8d01ed671e9138fbe6f4fc3986e1271025ccc6433a96"
+    },
+    {
+      "id": "provenance",
+      "path": "/home/yifeiy/ws_supermimic/docs/results/training_audit_20261106/provenance.json",
+      "snapshot": "data/provenance.json",
+      "sha256": "4273bae211eb315caa2aed74b97cbd9ebbbd9d842dfcbc2cd2e0331e36e9d511"
+    },
+    {
+      "id": "m1_policy_posture_probe",
+      "path": "/home/yifeiy/ws_supermimic/docs/results/m1_v2_20261106/policy_posture_probe.json",
+      "snapshot": "data/m1_policy_posture_probe.json",
+      "sha256": "9d8502b0073bd0fb54319426a4e2795fee8dda7c2d09736742b2bff72f135ea7"
+    },
+    {
+      "id": "m1_wm_response_probe",
+      "path": "/home/yifeiy/ws_supermimic/docs/results/m1_v2_20261106/wm_response_probe.json",
+      "snapshot": "data/m1_wm_response_probe.json",
+      "sha256": "a1e277b92cc02f14b13ae3705f3b935d6f28e9307285cf10913ed6f78f9f90b3"
+    },
+    {
+      "id": "m1_wm_response_probe_eps0.01",
+      "path": "/home/yifeiy/ws_supermimic/docs/results/m1_v2_20261106/wm_response_probe_eps0.01.json",
+      "snapshot": "data/m1_wm_response_probe_eps0.01.json",
+      "sha256": "b834bbcbcd798f8c1aca0a02438eda89caa27c26524a5086f9f64f32d6fcb27d"
+    },
+    {
+      "id": "m1_reward_scalar_audit",
+      "path": "/home/yifeiy/ws_supermimic/docs/results/m1_v2_20261106/reward_scalar_audit.json",
+      "snapshot": "data/m1_reward_scalar_audit.json",
+      "sha256": "d945c9e69aa7eb7f4257331589e11921bc2c6faf0ec1a208b2f1e008ee6e2098"
+    },
+    {
+      "id": "m1_provenance",
+      "path": "/home/yifeiy/ws_supermimic/docs/results/m1_v2_20261106/provenance.json",
+      "snapshot": "data/m1_provenance.json",
+      "sha256": "63be6e548babe07b99d4f283048c90cc559e7da1040b44e7614fff6efa1f6c5c"
+    },
+    {
+      "id": "source",
+      "path": "src/supermimic/baselines/__init__.py",
+      "snapshot": "data/source_snapshot/src/supermimic/baselines/__init__.py",
+      "sha256": "c13f35e731820035b9d415f7a0167ead355f15f5d6a303f16d53512013c8f4b9"
+    },
+    {
+      "id": "source",
+      "path": "src/supermimic/baselines/go2_export.py",
+      "snapshot": "data/source_snapshot/src/supermimic/baselines/go2_export.py",
+      "sha256": "a45dfc03e6399bd51b919d8cb0c53bf324839a3638acd018956fb7499ef00dc2"
+    },
+    {
+      "id": "source",
+      "path": "src/supermimic/baselines/go2_ppo.py",
+      "snapshot": "data/source_snapshot/src/supermimic/baselines/go2_ppo.py",
+      "sha256": "f2982010be9b5aa116826067df69dd769e89e4719721507e13f9764a0b670500"
+    },
+    {
+      "id": "source",
+      "path": "src/supermimic/baselines/go2_supermimic.py",
+      "snapshot": "data/source_snapshot/src/supermimic/baselines/go2_supermimic.py",
+      "sha256": "83d8da79f90455908cd9029b9ae00f9d0fde28d2ada6b57e752ec17b2213429b"
+    },
+    {
+      "id": "source",
+      "path": "src/supermimic/baselines/m1_ppo.py",
+      "snapshot": "data/source_snapshot/src/supermimic/baselines/m1_ppo.py",
+      "sha256": "d67d0f434777c6c6066725d8a0a4efdcc53d5a3b230174074ac3dd588c77e389"
+    },
+    {
+      "id": "source",
+      "path": "src/supermimic/baselines/resources.py",
+      "snapshot": "data/source_snapshot/src/supermimic/baselines/resources.py",
+      "sha256": "c0d44aebe14c60c4bbd0a66a530a65dcc0664c80af5030fb7c78468d64b194bc"
+    },
+    {
+      "id": "source",
+      "path": "src/supermimic/baselines/sequence.py",
+      "snapshot": "data/source_snapshot/src/supermimic/baselines/sequence.py",
+      "sha256": "07f21a4d179367300db739a49be10ba392e245d846a8099ffd9938f16f235f4b"
+    },
+    {
+      "id": "source",
+      "path": "src/supermimic/envs/actions.py",
+      "snapshot": "data/source_snapshot/src/supermimic/envs/actions.py",
+      "sha256": "204f0e5e85d116e393ead64fcdc55995c6ecb5006fb1b48085ab2b142555675d"
+    },
+    {
+      "id": "source",
+      "path": "src/supermimic/envs/mdp/commands.py",
+      "snapshot": "data/source_snapshot/src/supermimic/envs/mdp/commands.py",
+      "sha256": "19b02c00e0185a98596e1fab62b5ff5cbf9f5e0fac58c1ecfe07c4e0d7597d74"
+    },
+    {
+      "id": "source",
+      "path": "src/supermimic/envs/mdp/rewards.py",
+      "snapshot": "data/source_snapshot/src/supermimic/envs/mdp/rewards.py",
+      "sha256": "84657efc8bbcd7bf2b2659632b98b4a22c4031d6d0b7fa0f8a9720e16171d886"
+    },
+    {
+      "id": "source",
+      "path": "src/supermimic/envs/mdp/terminations.py",
+      "snapshot": "data/source_snapshot/src/supermimic/envs/mdp/terminations.py",
+      "sha256": "fbc8b9bd48d39cedeb6e3ec823ff9773e468d40b962baf5ce0d5df38c2dcfe50"
+    },
+    {
+      "id": "source",
+      "path": "src/supermimic/envs/multirobot_env_cfg.py",
+      "snapshot": "data/source_snapshot/src/supermimic/envs/multirobot_env_cfg.py",
+      "sha256": "020f4ce89225288179a33ed6fe9927d0ae83e5e47b517b70d56c97a39499ff82"
+    },
+    {
+      "id": "source",
+      "path": "src/supermimic/envs/state_io.py",
+      "snapshot": "data/source_snapshot/src/supermimic/envs/state_io.py",
+      "sha256": "1e23e0b4cfece44b10dfa3927c6c8d57f6065a0e4aabedd3de82762c10c9f646"
+    },
+    {
+      "id": "source",
+      "path": "src/supermimic/imagination/__init__.py",
+      "snapshot": "data/source_snapshot/src/supermimic/imagination/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "source",
+      "path": "src/supermimic/imagination/compiled.py",
+      "snapshot": "data/source_snapshot/src/supermimic/imagination/compiled.py",
+      "sha256": "2de8106b21a8dadbbb5ccd60989e0df5da5668e12b565d9d7b4866bf0ccb8e26"
+    },
+    {
+      "id": "source",
+      "path": "src/supermimic/imagination/objective.py",
+      "snapshot": "data/source_snapshot/src/supermimic/imagination/objective.py",
+      "sha256": "3c93ec24c0f26db7bd4d60c5da50bc4a4d711a70a72ba0c9dfc7b078f082f774"
+    },
+    {
+      "id": "source",
+      "path": "src/supermimic/imagination/policy_trainer.py",
+      "snapshot": "data/source_snapshot/src/supermimic/imagination/policy_trainer.py",
+      "sha256": "ba8f47d96f9a53afdb1ff4c566766df2a839277fe21f440cf86347d21286f8fd"
+    },
+    {
+      "id": "source",
+      "path": "src/supermimic/imagination/rollout.py",
+      "snapshot": "data/source_snapshot/src/supermimic/imagination/rollout.py",
+      "sha256": "f02805b7aecfe5b8b3120308de149a1b4dfaac670a4987f7826053f5fffe9dbd"
+    },
+    {
+      "id": "source",
+      "path": "src/supermimic/imagination/tasks.py",
+      "snapshot": "data/source_snapshot/src/supermimic/imagination/tasks.py",
+      "sha256": "c015c56fe1c46c1afe18f25a0f9a3f05910f990507ada1635c460e372cfcdd30"
+    },
+    {
+      "id": "source",
+      "path": "src/supermimic/policy/__init__.py",
+      "snapshot": "data/source_snapshot/src/supermimic/policy/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "source",
+      "path": "src/supermimic/policy/nets.py",
+      "snapshot": "data/source_snapshot/src/supermimic/policy/nets.py",
+      "sha256": "c62d007c2f41826c17340227278d2b04b27059534700b8ed3ac04dbb01349fca"
+    },
+    {
+      "id": "source",
+      "path": "src/supermimic/robots/spec.py",
+      "snapshot": "data/source_snapshot/src/supermimic/robots/spec.py",
+      "sha256": "c538b98f62f2d61d8d1b6eaed8c75d0f3c301f37c4e64d75a5c3359781328987"
+    },
+    {
+      "id": "source",
+      "path": "src/supermimic/tasks/__init__.py",
+      "snapshot": "data/source_snapshot/src/supermimic/tasks/__init__.py",
+      "sha256": "e76d34cfdb1c74837d93ad6c58d447a31c6b0672ab5877895b0ebf2edf46824b"
+    },
+    {
+      "id": "source",
+      "path": "src/supermimic/tasks/action_contract.py",
+      "snapshot": "data/source_snapshot/src/supermimic/tasks/action_contract.py",
+      "sha256": "7dc1d6ad2f05ec96fcbe277837c4277b7a088d77bb84c8bbc67be36095b585db"
+    },
+    {
+      "id": "source",
+      "path": "src/supermimic/tasks/chase_reward.py",
+      "snapshot": "data/source_snapshot/src/supermimic/tasks/chase_reward.py",
+      "sha256": "eb727b641bddd7d84ff51885eecdacf29fbed1fc4fe6130c85dbed349a8ff7a7"
+    },
+    {
+      "id": "source",
+      "path": "src/supermimic/tasks/go2_gait.py",
+      "snapshot": "data/source_snapshot/src/supermimic/tasks/go2_gait.py",
+      "sha256": "e8d9b9b51e492f32b2c5ff0631bf94538c91486c206601d7e8570e4142d91755"
+    },
+    {
+      "id": "source",
+      "path": "src/supermimic/tasks/m1_reward.py",
+      "snapshot": "data/source_snapshot/src/supermimic/tasks/m1_reward.py",
+      "sha256": "138e178bfa01278560e0e8a86c3aa0b01b850321163dd93282d475dedcdec93d"
+    },
+    {
+      "id": "source",
+      "path": "src/supermimic/tasks/velocity_reward.py",
+      "snapshot": "data/source_snapshot/src/supermimic/tasks/velocity_reward.py",
+      "sha256": "56ee5486b09b048140e93998b91cdf3edc2b6818e9afaed172e642b38a0add94"
+    },
+    {
+      "id": "source",
+      "path": "src/supermimic/tasks/world_point_reward.py",
+      "snapshot": "data/source_snapshot/src/supermimic/tasks/world_point_reward.py",
+      "sha256": "0bd5035669a49c219edc168bb3636d2ca6f8686036cbb29d2fb288de80c5b9e5"
+    },
+    {
+      "id": "source",
+      "path": "src/supermimic/training/loop.py",
+      "snapshot": "data/source_snapshot/src/supermimic/training/loop.py",
+      "sha256": "8e94839d6015f52753afc862d51fb6608fbe199077cc1c53ea3cae0a3b6109a8"
+    },
+    {
+      "id": "source",
+      "path": "src/supermimic/training/m1_reward.py",
+      "snapshot": "data/source_snapshot/src/supermimic/training/m1_reward.py",
+      "sha256": "481fdcbdc3d6316560978ebeb51b674137e3362c6895823120a8b80b03981309"
+    },
+    {
+      "id": "source",
+      "path": "src/supermimic/world_model/__init__.py",
+      "snapshot": "data/source_snapshot/src/supermimic/world_model/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "source",
+      "path": "src/supermimic/world_model/dynamics.py",
+      "snapshot": "data/source_snapshot/src/supermimic/world_model/dynamics.py",
+      "sha256": "e80627b98c910c978e0d0c4aaaed25a33fc081ff54acfb9c7a175c15473a153d"
+    },
+    {
+      "id": "source",
+      "path": "src/supermimic/world_model/heads.py",
+      "snapshot": "data/source_snapshot/src/supermimic/world_model/heads.py",
+      "sha256": "54bcdcd15a576d9ce3140254f34e2c67bd759cc20031a108f103551ef39cb489"
+    },
+    {
+      "id": "source",
+      "path": "src/supermimic/world_model/normalization.py",
+      "snapshot": "data/source_snapshot/src/supermimic/world_model/normalization.py",
+      "sha256": "50b67dd2c3912b3ffb051e35561e83181e3d05f3d24b091169f9898caf86e68b"
+    },
+    {
+      "id": "source",
+      "path": "src/supermimic/world_model/state_spec.py",
+      "snapshot": "data/source_snapshot/src/supermimic/world_model/state_spec.py",
+      "sha256": "b13081232a9fc2dc357bf35ba3f02419b41237783026d33e80a08e5dc1136001"
+    },
+    {
+      "id": "source",
+      "path": "src/supermimic/world_model/wm_trainer.py",
+      "snapshot": "data/source_snapshot/src/supermimic/world_model/wm_trainer.py",
+      "sha256": "df7315f8f8e9755fac3c85202d2500564fbe8025da9830cae44e60a9d11d3edf"
+    },
+    {
+      "id": "source",
+      "path": "src/supermimic/world_model/world_model.py",
+      "snapshot": "data/source_snapshot/src/supermimic/world_model/world_model.py",
+      "sha256": "7a6479846a608d681b3a2308e67b2308cc50d0ebc195029dd1be2b651827e6f2"
+    },
+    {
+      "id": "tensorboard",
+      "path": "logs/go2_comparison/ppo_2p5h_seed2026/events.out.tfevents.1793763285.yifeiy-MIX.114300.0",
+      "sha256": "34e95845a22a94fb378c8ef54662941574354e487efdf68ba6b5e6a697c581a8"
+    },
+    {
+      "id": "tensorboard",
+      "path": "logs/go2_comparison/supermimic_2p5h_seed2026/tb/events.out.tfevents.1793777477.yifeiy-MIX.416019.0",
+      "sha256": "0cd59c1a24627cc7f25d543dd9a64ecd8a5da7fe70060c3047e99531d40a8e6e"
+    },
+    {
+      "id": "tensorboard",
+      "path": "logs/m1_ppo/v2_lm50_2048_3p5h_seed2026/events.out.tfevents.1793888362.yifeiy-MIX.3666283.0",
+      "sha256": "a4a4874973a39c6157deb59c99cefc581d7174f4c001e27de2ed2194b064773f"
+    },
+    {
+      "id": "tensorboard",
+      "path": "logs/m1_reward/v2_lm50_2048_3p5h_seed2026/tb/events.out.tfevents.1793900968.yifeiy-MIX.3805260.0",
+      "sha256": "118d5b1790c966eacdf2b1c1819ee3d198aa4961f53ebc71df32f8068e09f42b"
+    }
+  ],
+  "checkpoints": {
+    "go2_ppo": {
+      "path": "logs/go2_comparison/ppo_2p5h_seed2026/model_758.pt",
+      "exists": true,
+      "sha256": "1a1a0cde9e04d32c909b519088864ba984396b6c71fc548d440573736a1be0fb",
+      "keys": [
+        "actor_state_dict",
+        "critic_state_dict",
+        "optimizer_state_dict",
+        "iter",
+        "infos"
+      ],
+      "metadata": {
+        "iter": 758
+      },
+      "networks": {
+        "actor_state_dict": {
+          "linear_parameter_count": 3195660,
+          "shapes": {
+            "distribution.log_std_param": [
+              12
+            ],
+            "mlp.0.scale": [
+              213
+            ],
+            "mlp.1.0.weight": [
+              2048,
+              213
+            ],
+            "mlp.1.0.bias": [
+              2048
+            ],
+            "mlp.1.2.weight": [
+              1024,
+              2048
+            ],
+            "mlp.1.2.bias": [
+              1024
+            ],
+            "mlp.1.4.weight": [
+              512,
+              1024
+            ],
+            "mlp.1.4.bias": [
+              512
+            ],
+            "mlp.1.6.weight": [
+              256,
+              512
+            ],
+            "mlp.1.6.bias": [
+              256
+            ],
+            "mlp.1.8.weight": [
+              12,
+              256
+            ],
+            "mlp.1.8.bias": [
+              12
+            ]
+          }
+        },
+        "critic_state_dict": {
+          "linear_parameter_count": 48641,
+          "shapes": {
+            "mlp.0.weight": [
+              256,
+              60
+            ],
+            "mlp.0.bias": [
+              256
+            ],
+            "mlp.2.weight": [
+              128,
+              256
+            ],
+            "mlp.2.bias": [
+              128
+            ],
+            "mlp.4.weight": [
+              1,
+              128
+            ],
+            "mlp.4.bias": [
+              1
+            ]
+          }
+        }
+      }
+    },
+    "go2_supermimic": {
+      "path": "logs/go2_comparison/supermimic_2p5h_seed2026/ckpt_latest.pt",
+      "exists": true,
+      "sha256": "816923703b1998cf1faf669ca43781798006b1339c8cbc5ac30f03a71f853565",
+      "keys": [
+        "iteration",
+        "num_updates",
+        "wm",
+        "policy",
+        "critic",
+        "wm_opt",
+        "policy_opt",
+        "critic_opt",
+        "config",
+        "wm_only_updates",
+        "actor_updates",
+        "actor_start_iteration",
+        "utd_acc",
+        "pretrained_wm",
+        "init_wm_from",
+        "init_wm_sha256",
+        "init_wm_source_iteration",
+        "effective_wm_only_updates",
+        "policy_mode",
+        "robot_joint_names",
+        "actuator_model_version",
+        "robot_model_sha256",
+        "robot_name",
+        "task_name",
+        "policy_encoding_mode",
+        "action_output_mode",
+        "goal_dim",
+        "action_dim",
+        "state_dim",
+        "termination_mode",
+        "torch_rng_state",
+        "cuda_rng_state",
+        "command_state",
+        "action_state"
+      ],
+      "metadata": {
+        "iteration": 18600,
+        "num_updates": 7424,
+        "wm_only_updates": 200,
+        "actor_updates": 7224,
+        "actor_start_iteration": 542,
+        "utd_acc": 0.40000000000000024,
+        "pretrained_wm": false,
+        "init_wm_from": null,
+        "init_wm_sha256": null,
+        "init_wm_source_iteration": null,
+        "effective_wm_only_updates": 200,
+        "policy_mode": "direct",
+        "actuator_model_version": "go2_urdf_builtin_pd_kp40_kd1_effort_23p7_35p55_v2",
+        "robot_model_sha256": "4f306754e9b3d73930ac8362aa456eb8912f2e886665618e7eced9627c1704a4",
+        "robot_name": "go2",
+        "task_name": "velocity_command",
+        "policy_encoding_mode": "direct",
+        "action_output_mode": "tanh",
+        "goal_dim": 3,
+        "action_dim": 12,
+        "state_dim": 37,
+        "termination_mode": "analytic_height_tilt"
+      },
+      "networks": {
+        "wm": {
+          "linear_parameter_count": 8606181,
+          "shapes": {
+            "dynamics.mlp.net.0.weight": [
+              2048,
+              65
+            ],
+            "dynamics.mlp.net.0.bias": [
+              2048
+            ],
+            "dynamics.mlp.net.2.weight": [
+              2048,
+              2048
+            ],
+            "dynamics.mlp.net.2.bias": [
+              2048
+            ],
+            "dynamics.mlp.net.4.weight": [
+              2048,
+              2048
+            ],
+            "dynamics.mlp.net.4.bias": [
+              2048
+            ],
+            "dynamics.mlp.net.6.weight": [
+              36,
+              2048
+            ],
+            "dynamics.mlp.net.6.bias": [
+              36
+            ],
+            "term_head.scale": [
+              2
+            ],
+            "term_head.mlp.net.0.weight": [
+              64,
+              4
+            ],
+            "term_head.mlp.net.0.bias": [
+              64
+            ],
+            "term_head.mlp.net.2.weight": [
+              64,
+              64
+            ],
+            "term_head.mlp.net.2.bias": [
+              64
+            ],
+            "term_head.mlp.net.4.weight": [
+              1,
+              64
+            ],
+            "term_head.mlp.net.4.bias": [
+              1
+            ]
+          }
+        },
+        "policy": {
+          "linear_parameter_count": 3195660,
+          "shapes": {
+            "decoder.goal_scale": [
+              3
+            ],
+            "decoder.scale": [
+              210
+            ],
+            "decoder.mlp.net.0.weight": [
+              2048,
+              213
+            ],
+            "decoder.mlp.net.0.bias": [
+              2048
+            ],
+            "decoder.mlp.net.2.weight": [
+              1024,
+              2048
+            ],
+            "decoder.mlp.net.2.bias": [
+              1024
+            ],
+            "decoder.mlp.net.4.weight": [
+              512,
+              1024
+            ],
+            "decoder.mlp.net.4.bias": [
+              512
+            ],
+            "decoder.mlp.net.6.weight": [
+              256,
+              512
+            ],
+            "decoder.mlp.net.6.bias": [
+              256
+            ],
+            "decoder.mlp.net.8.weight": [
+              12,
+              256
+            ],
+            "decoder.mlp.net.8.bias": [
+              12
+            ]
+          }
+        },
+        "critic": {
+          "linear_parameter_count": 48641,
+          "shapes": {
+            "goal_scale": [
+              3
+            ],
+            "mlp.net.0.weight": [
+              256,
+              60
+            ],
+            "mlp.net.0.bias": [
+              256
+            ],
+            "mlp.net.2.weight": [
+              128,
+              256
+            ],
+            "mlp.net.2.bias": [
+              128
+            ],
+            "mlp.net.4.weight": [
+              1,
+              128
+            ],
+            "mlp.net.4.bias": [
+              1
+            ]
+          }
+        },
+        "action_state": {
+          "linear_parameter_count": 0,
+          "shapes": {
+            "ou_state": [
+              3072,
+              12
+            ],
+            "ou_mask": [
+              3072
+            ]
+          }
+        }
+      }
+    },
+    "m1_ppo": {
+      "path": "logs/m1_ppo/v2_lm50_2048_3p5h_seed2026/model_533.pt",
+      "exists": true,
+      "sha256": "b66319817f8039360d6360634182fb9e729b11f2f4a4ecb7261ab1f6ab1039a5",
+      "keys": [
+        "actor_state_dict",
+        "critic_state_dict",
+        "optimizer_state_dict",
+        "iter",
+        "infos"
+      ],
+      "metadata": {
+        "iter": 533
+      },
+      "networks": {
+        "actor_state_dict": {
+          "linear_parameter_count": 4252950,
+          "shapes": {
+            "distribution.log_std_param": [
+              22
+            ],
+            "mlp.0.scale": [
+              728
+            ],
+            "mlp.1.0.weight": [
+              2048,
+              728
+            ],
+            "mlp.1.0.bias": [
+              2048
+            ],
+            "mlp.1.2.weight": [
+              1024,
+              2048
+            ],
+            "mlp.1.2.bias": [
+              1024
+            ],
+            "mlp.1.4.weight": [
+              512,
+              1024
+            ],
+            "mlp.1.4.bias": [
+              512
+            ],
+            "mlp.1.6.weight": [
+              256,
+              512
+            ],
+            "mlp.1.6.bias": [
+              256
+            ],
+            "mlp.1.8.weight": [
+              22,
+              256
+            ],
+            "mlp.1.8.bias": [
+              22
+            ]
+          }
+        },
+        "critic_state_dict": {
+          "linear_parameter_count": 57601,
+          "shapes": {
+            "mlp.0.weight": [
+              256,
+              95
+            ],
+            "mlp.0.bias": [
+              256
+            ],
+            "mlp.2.weight": [
+              128,
+              256
+            ],
+            "mlp.2.bias": [
+              128
+            ],
+            "mlp.4.weight": [
+              1,
+              128
+            ],
+            "mlp.4.bias": [
+              1
+            ]
+          }
+        }
+      }
+    },
+    "m1_supermimic": {
+      "path": "logs/m1_reward/v2_lm50_2048_3p5h_seed2026/ckpt_latest.pt",
+      "exists": true,
+      "sha256": "d49bcd84e3c85a377e9524ab5cfbf9de17de9192bcd937d308cc4684450b5eef",
+      "keys": [
+        "training_wall_seconds",
+        "iteration",
+        "num_updates",
+        "wm",
+        "policy",
+        "critic",
+        "wm_opt",
+        "policy_opt",
+        "critic_opt",
+        "config",
+        "wm_only_updates",
+        "actor_updates",
+        "actor_start_iteration",
+        "utd_acc",
+        "pretrained_wm",
+        "init_wm_from",
+        "init_wm_sha256",
+        "init_wm_source_iteration",
+        "effective_wm_only_updates",
+        "policy_mode",
+        "robot_joint_names",
+        "actuator_model_version",
+        "robot_model_sha256",
+        "robot_name",
+        "task_name",
+        "policy_encoding_mode",
+        "action_output_mode",
+        "goal_dim",
+        "action_dim",
+        "state_dim",
+        "termination_mode",
+        "torch_rng_state",
+        "cuda_rng_state",
+        "command_state"
+      ],
+      "metadata": {
+        "training_wall_seconds": 12602.04892206192,
+        "iteration": 2979,
+        "num_updates": 1176,
+        "wm_only_updates": 300,
+        "actor_updates": 876,
+        "actor_start_iteration": 792,
+        "utd_acc": 2.220446049250313e-16,
+        "pretrained_wm": false,
+        "init_wm_from": null,
+        "init_wm_sha256": null,
+        "init_wm_source_iteration": null,
+        "effective_wm_only_updates": 300,
+        "policy_mode": "direct",
+        "actuator_model_version": "m1_urdf_builtin_pd_action_contract_v3_dataset_v3_3_l_high_carry_v1",
+        "robot_model_sha256": "25bebd86d7595da81f0718f8f0185c8b5f0fd70efca0c8d05b24a3d14b624c1f",
+        "robot_name": "m1_piper",
+        "task_name": "m1_reward",
+        "policy_encoding_mode": "direct",
+        "action_output_mode": "tanh",
+        "goal_dim": 8,
+        "action_dim": 22,
+        "state_dim": 57,
+        "termination_mode": "analytic_height_tilt"
+      },
+      "networks": {
+        "wm": {
+          "linear_parameter_count": 8729081,
+          "shapes": {
+            "dynamics.mlp.net.0.weight": [
+              2048,
+              105
+            ],
+            "dynamics.mlp.net.0.bias": [
+              2048
+            ],
+            "dynamics.mlp.net.2.weight": [
+              2048,
+              2048
+            ],
+            "dynamics.mlp.net.2.bias": [
+              2048
+            ],
+            "dynamics.mlp.net.4.weight": [
+              2048,
+              2048
+            ],
+            "dynamics.mlp.net.4.bias": [
+              2048
+            ],
+            "dynamics.mlp.net.6.weight": [
+              56,
+              2048
+            ],
+            "dynamics.mlp.net.6.bias": [
+              56
+            ],
+            "term_head.scale": [
+              2
+            ],
+            "term_head.mlp.net.0.weight": [
+              64,
+              4
+            ],
+            "term_head.mlp.net.0.bias": [
+              64
+            ],
+            "term_head.mlp.net.2.weight": [
+              64,
+              64
+            ],
+            "term_head.mlp.net.2.bias": [
+              64
+            ],
+            "term_head.mlp.net.4.weight": [
+              1,
+              64
+            ],
+            "term_head.mlp.net.4.bias": [
+              1
+            ]
+          }
+        },
+        "policy": {
+          "linear_parameter_count": 4252950,
+          "shapes": {
+            "decoder.goal_scale": [
+              8
+            ],
+            "decoder.scale": [
+              720
+            ],
+            "decoder.mlp.net.0.weight": [
+              2048,
+              728
+            ],
+            "decoder.mlp.net.0.bias": [
+              2048
+            ],
+            "decoder.mlp.net.2.weight": [
+              1024,
+              2048
+            ],
+            "decoder.mlp.net.2.bias": [
+              1024
+            ],
+            "decoder.mlp.net.4.weight": [
+              512,
+              1024
+            ],
+            "decoder.mlp.net.4.bias": [
+              512
+            ],
+            "decoder.mlp.net.6.weight": [
+              256,
+              512
+            ],
+            "decoder.mlp.net.6.bias": [
+              256
+            ],
+            "decoder.mlp.net.8.weight": [
+              22,
+              256
+            ],
+            "decoder.mlp.net.8.bias": [
+              22
+            ]
+          }
+        },
+        "critic": {
+          "linear_parameter_count": 57601,
+          "shapes": {
+            "goal_scale": [
+              8
+            ],
+            "mlp.net.0.weight": [
+              256,
+              95
+            ],
+            "mlp.net.0.bias": [
+              256
+            ],
+            "mlp.net.2.weight": [
+              128,
+              256
+            ],
+            "mlp.net.2.bias": [
+              128
+            ],
+            "mlp.net.4.weight": [
+              1,
+              128
+            ],
+            "mlp.net.4.bias": [
+              1
+            ]
+          }
+        }
+      }
+    },
+    "go2_old_22000": {
+      "path": "logs/phase3_training/go2_velocity_diagonal_slip_3072_2p5h_20261103/ckpt_0022000.pt",
+      "exists": true,
+      "sha256": "8a2e766248fd78329810a855fece1e7d454d04429109fd48290c58734f803a04",
+      "keys": [
+        "iteration",
+        "num_updates",
+        "wm",
+        "policy",
+        "critic",
+        "wm_opt",
+        "policy_opt",
+        "critic_opt",
+        "config",
+        "wm_only_updates",
+        "actor_updates",
+        "actor_start_iteration",
+        "utd_acc",
+        "pretrained_wm",
+        "init_wm_from",
+        "init_wm_sha256",
+        "init_wm_source_iteration",
+        "effective_wm_only_updates",
+        "policy_mode",
+        "robot_joint_names",
+        "actuator_model_version",
+        "robot_model_sha256",
+        "robot_name",
+        "task_name",
+        "policy_encoding_mode",
+        "action_output_mode",
+        "goal_dim",
+        "action_dim",
+        "state_dim",
+        "termination_mode",
+        "torch_rng_state",
+        "cuda_rng_state",
+        "command_state",
+        "action_state"
+      ],
+      "metadata": {
+        "iteration": 22000,
+        "num_updates": 8784,
+        "wm_only_updates": 0,
+        "actor_updates": 8784,
+        "actor_start_iteration": 42,
+        "utd_acc": 0.39999999999999947,
+        "pretrained_wm": true,
+        "init_wm_from": "/home/yifeiy/ws_supermimic/logs/go2_velocity_phase1_3072_b1024_20261027/ckpt_latest.pt",
+        "init_wm_sha256": "7cff3e9f2e0da441bd194bec9df6208b715867fdae8750f8e336d998a0069e45",
+        "init_wm_source_iteration": 1800,
+        "effective_wm_only_updates": 0,
+        "policy_mode": "direct",
+        "actuator_model_version": "go2_urdf_builtin_pd_kp40_kd1_effort_23p7_35p55_v2",
+        "robot_model_sha256": "4f306754e9b3d73930ac8362aa456eb8912f2e886665618e7eced9627c1704a4",
+        "robot_name": "go2",
+        "task_name": "velocity_command",
+        "policy_encoding_mode": "direct",
+        "action_output_mode": "tanh",
+        "goal_dim": 3,
+        "action_dim": 12,
+        "state_dim": 37,
+        "termination_mode": "analytic_height_tilt"
+      },
+      "networks": {
+        "wm": {
+          "linear_parameter_count": 8606181,
+          "shapes": {
+            "dynamics.mlp.net.0.weight": [
+              2048,
+              65
+            ],
+            "dynamics.mlp.net.0.bias": [
+              2048
+            ],
+            "dynamics.mlp.net.2.weight": [
+              2048,
+              2048
+            ],
+            "dynamics.mlp.net.2.bias": [
+              2048
+            ],
+            "dynamics.mlp.net.4.weight": [
+              2048,
+              2048
+            ],
+            "dynamics.mlp.net.4.bias": [
+              2048
+            ],
+            "dynamics.mlp.net.6.weight": [
+              36,
+              2048
+            ],
+            "dynamics.mlp.net.6.bias": [
+              36
+            ],
+            "term_head.scale": [
+              2
+            ],
+            "term_head.mlp.net.0.weight": [
+              64,
+              4
+            ],
+            "term_head.mlp.net.0.bias": [
+              64
+            ],
+            "term_head.mlp.net.2.weight": [
+              64,
+              64
+            ],
+            "term_head.mlp.net.2.bias": [
+              64
+            ],
+            "term_head.mlp.net.4.weight": [
+              1,
+              64
+            ],
+            "term_head.mlp.net.4.bias": [
+              1
+            ]
+          }
+        },
+        "policy": {
+          "linear_parameter_count": 3195660,
+          "shapes": {
+            "decoder.goal_scale": [
+              3
+            ],
+            "decoder.scale": [
+              210
+            ],
+            "decoder.mlp.net.0.weight": [
+              2048,
+              213
+            ],
+            "decoder.mlp.net.0.bias": [
+              2048
+            ],
+            "decoder.mlp.net.2.weight": [
+              1024,
+              2048
+            ],
+            "decoder.mlp.net.2.bias": [
+              1024
+            ],
+            "decoder.mlp.net.4.weight": [
+              512,
+              1024
+            ],
+            "decoder.mlp.net.4.bias": [
+              512
+            ],
+            "decoder.mlp.net.6.weight": [
+              256,
+              512
+            ],
+            "decoder.mlp.net.6.bias": [
+              256
+            ],
+            "decoder.mlp.net.8.weight": [
+              12,
+              256
+            ],
+            "decoder.mlp.net.8.bias": [
+              12
+            ]
+          }
+        },
+        "critic": {
+          "linear_parameter_count": 48641,
+          "shapes": {
+            "goal_scale": [
+              3
+            ],
+            "mlp.net.0.weight": [
+              256,
+              60
+            ],
+            "mlp.net.0.bias": [
+              256
+            ],
+            "mlp.net.2.weight": [
+              128,
+              256
+            ],
+            "mlp.net.2.bias": [
+              128
+            ],
+            "mlp.net.4.weight": [
+              1,
+              128
+            ],
+            "mlp.net.4.bias": [
+              1
+            ]
+          }
+        },
+        "action_state": {
+          "linear_parameter_count": 0,
+          "shapes": {
+            "ou_state": [
+              3072,
+              12
+            ],
+            "ou_mask": [
+              3072
+            ]
+          }
+        }
+      }
+    },
+    "go2_old_24000": {
+      "path": "logs/phase3_training/go2_velocity_diagonal_slip_3072_2p5h_20261103/ckpt_0024000.pt",
+      "exists": true,
+      "sha256": "c58d90e82ed6e3f56510dd281e341c20a5b4c33aa62c5fc0d60f2f2cf03fe26b",
+      "keys": [
+        "iteration",
+        "num_updates",
+        "wm",
+        "policy",
+        "critic",
+        "wm_opt",
+        "policy_opt",
+        "critic_opt",
+        "config",
+        "wm_only_updates",
+        "actor_updates",
+        "actor_start_iteration",
+        "utd_acc",
+        "pretrained_wm",
+        "init_wm_from",
+        "init_wm_sha256",
+        "init_wm_source_iteration",
+        "effective_wm_only_updates",
+        "policy_mode",
+        "robot_joint_names",
+        "actuator_model_version",
+        "robot_model_sha256",
+        "robot_name",
+        "task_name",
+        "policy_encoding_mode",
+        "action_output_mode",
+        "goal_dim",
+        "action_dim",
+        "state_dim",
+        "termination_mode",
+        "torch_rng_state",
+        "cuda_rng_state",
+        "command_state",
+        "action_state"
+      ],
+      "metadata": {
+        "iteration": 24000,
+        "num_updates": 9584,
+        "wm_only_updates": 0,
+        "actor_updates": 9584,
+        "actor_start_iteration": 42,
+        "utd_acc": 0.39999999999999947,
+        "pretrained_wm": true,
+        "init_wm_from": "/home/yifeiy/ws_supermimic/logs/go2_velocity_phase1_3072_b1024_20261027/ckpt_latest.pt",
+        "init_wm_sha256": "7cff3e9f2e0da441bd194bec9df6208b715867fdae8750f8e336d998a0069e45",
+        "init_wm_source_iteration": 1800,
+        "effective_wm_only_updates": 0,
+        "policy_mode": "direct",
+        "actuator_model_version": "go2_urdf_builtin_pd_kp40_kd1_effort_23p7_35p55_v2",
+        "robot_model_sha256": "4f306754e9b3d73930ac8362aa456eb8912f2e886665618e7eced9627c1704a4",
+        "robot_name": "go2",
+        "task_name": "velocity_command",
+        "policy_encoding_mode": "direct",
+        "action_output_mode": "tanh",
+        "goal_dim": 3,
+        "action_dim": 12,
+        "state_dim": 37,
+        "termination_mode": "analytic_height_tilt"
+      },
+      "networks": {
+        "wm": {
+          "linear_parameter_count": 8606181,
+          "shapes": {
+            "dynamics.mlp.net.0.weight": [
+              2048,
+              65
+            ],
+            "dynamics.mlp.net.0.bias": [
+              2048
+            ],
+            "dynamics.mlp.net.2.weight": [
+              2048,
+              2048
+            ],
+            "dynamics.mlp.net.2.bias": [
+              2048
+            ],
+            "dynamics.mlp.net.4.weight": [
+              2048,
+              2048
+            ],
+            "dynamics.mlp.net.4.bias": [
+              2048
+            ],
+            "dynamics.mlp.net.6.weight": [
+              36,
+              2048
+            ],
+            "dynamics.mlp.net.6.bias": [
+              36
+            ],
+            "term_head.scale": [
+              2
+            ],
+            "term_head.mlp.net.0.weight": [
+              64,
+              4
+            ],
+            "term_head.mlp.net.0.bias": [
+              64
+            ],
+            "term_head.mlp.net.2.weight": [
+              64,
+              64
+            ],
+            "term_head.mlp.net.2.bias": [
+              64
+            ],
+            "term_head.mlp.net.4.weight": [
+              1,
+              64
+            ],
+            "term_head.mlp.net.4.bias": [
+              1
+            ]
+          }
+        },
+        "policy": {
+          "linear_parameter_count": 3195660,
+          "shapes": {
+            "decoder.goal_scale": [
+              3
+            ],
+            "decoder.scale": [
+              210
+            ],
+            "decoder.mlp.net.0.weight": [
+              2048,
+              213
+            ],
+            "decoder.mlp.net.0.bias": [
+              2048
+            ],
+            "decoder.mlp.net.2.weight": [
+              1024,
+              2048
+            ],
+            "decoder.mlp.net.2.bias": [
+              1024
+            ],
+            "decoder.mlp.net.4.weight": [
+              512,
+              1024
+            ],
+            "decoder.mlp.net.4.bias": [
+              512
+            ],
+            "decoder.mlp.net.6.weight": [
+              256,
+              512
+            ],
+            "decoder.mlp.net.6.bias": [
+              256
+            ],
+            "decoder.mlp.net.8.weight": [
+              12,
+              256
+            ],
+            "decoder.mlp.net.8.bias": [
+              12
+            ]
+          }
+        },
+        "critic": {
+          "linear_parameter_count": 48641,
+          "shapes": {
+            "goal_scale": [
+              3
+            ],
+            "mlp.net.0.weight": [
+              256,
+              60
+            ],
+            "mlp.net.0.bias": [
+              256
+            ],
+            "mlp.net.2.weight": [
+              128,
+              256
+            ],
+            "mlp.net.2.bias": [
+              128
+            ],
+            "mlp.net.4.weight": [
+              1,
+              128
+            ],
+            "mlp.net.4.bias": [
+              1
+            ]
+          }
+        },
+        "action_state": {
+          "linear_parameter_count": 0,
+          "shapes": {
+            "ou_state": [
+              3072,
+              12
+            ],
+            "ou_mask": [
+              3072
+            ]
+          }
+        }
+      }
+    },
+    "go2_old_34000": {
+      "path": "logs/phase3_training/go2_velocity_diagonal_slip_3072_2p5h_20261103/ckpt_0034000.pt",
+      "exists": true,
+      "sha256": "0b3d8e4bb26173d13a6ce0b99d5eecf43005927a8ab2e01947c4d0311009487a",
+      "keys": [
+        "iteration",
+        "num_updates",
+        "wm",
+        "policy",
+        "critic",
+        "wm_opt",
+        "policy_opt",
+        "critic_opt",
+        "config",
+        "wm_only_updates",
+        "actor_updates",
+        "actor_start_iteration",
+        "utd_acc",
+        "pretrained_wm",
+        "init_wm_from",
+        "init_wm_sha256",
+        "init_wm_source_iteration",
+        "effective_wm_only_updates",
+        "policy_mode",
+        "robot_joint_names",
+        "actuator_model_version",
+        "robot_model_sha256",
+        "robot_name",
+        "task_name",
+        "policy_encoding_mode",
+        "action_output_mode",
+        "goal_dim",
+        "action_dim",
+        "state_dim",
+        "termination_mode",
+        "torch_rng_state",
+        "cuda_rng_state",
+        "command_state",
+        "action_state"
+      ],
+      "metadata": {
+        "iteration": 34000,
+        "num_updates": 13584,
+        "wm_only_updates": 0,
+        "actor_updates": 13584,
+        "actor_start_iteration": 42,
+        "utd_acc": 0.39999999999999947,
+        "pretrained_wm": true,
+        "init_wm_from": "/home/yifeiy/ws_supermimic/logs/go2_velocity_phase1_3072_b1024_20261027/ckpt_latest.pt",
+        "init_wm_sha256": "7cff3e9f2e0da441bd194bec9df6208b715867fdae8750f8e336d998a0069e45",
+        "init_wm_source_iteration": 1800,
+        "effective_wm_only_updates": 0,
+        "policy_mode": "direct",
+        "actuator_model_version": "go2_urdf_builtin_pd_kp40_kd1_effort_23p7_35p55_v2",
+        "robot_model_sha256": "4f306754e9b3d73930ac8362aa456eb8912f2e886665618e7eced9627c1704a4",
+        "robot_name": "go2",
+        "task_name": "velocity_command",
+        "policy_encoding_mode": "direct",
+        "action_output_mode": "tanh",
+        "goal_dim": 3,
+        "action_dim": 12,
+        "state_dim": 37,
+        "termination_mode": "analytic_height_tilt"
+      },
+      "networks": {
+        "wm": {
+          "linear_parameter_count": 8606181,
+          "shapes": {
+            "dynamics.mlp.net.0.weight": [
+              2048,
+              65
+            ],
+            "dynamics.mlp.net.0.bias": [
+              2048
+            ],
+            "dynamics.mlp.net.2.weight": [
+              2048,
+              2048
+            ],
+            "dynamics.mlp.net.2.bias": [
+              2048
+            ],
+            "dynamics.mlp.net.4.weight": [
+              2048,
+              2048
+            ],
+            "dynamics.mlp.net.4.bias": [
+              2048
+            ],
+            "dynamics.mlp.net.6.weight": [
+              36,
+              2048
+            ],
+            "dynamics.mlp.net.6.bias": [
+              36
+            ],
+            "term_head.scale": [
+              2
+            ],
+            "term_head.mlp.net.0.weight": [
+              64,
+              4
+            ],
+            "term_head.mlp.net.0.bias": [
+              64
+            ],
+            "term_head.mlp.net.2.weight": [
+              64,
+              64
+            ],
+            "term_head.mlp.net.2.bias": [
+              64
+            ],
+            "term_head.mlp.net.4.weight": [
+              1,
+              64
+            ],
+            "term_head.mlp.net.4.bias": [
+              1
+            ]
+          }
+        },
+        "policy": {
+          "linear_parameter_count": 3195660,
+          "shapes": {
+            "decoder.goal_scale": [
+              3
+            ],
+            "decoder.scale": [
+              210
+            ],
+            "decoder.mlp.net.0.weight": [
+              2048,
+              213
+            ],
+            "decoder.mlp.net.0.bias": [
+              2048
+            ],
+            "decoder.mlp.net.2.weight": [
+              1024,
+              2048
+            ],
+            "decoder.mlp.net.2.bias": [
+              1024
+            ],
+            "decoder.mlp.net.4.weight": [
+              512,
+              1024
+            ],
+            "decoder.mlp.net.4.bias": [
+              512
+            ],
+            "decoder.mlp.net.6.weight": [
+              256,
+              512
+            ],
+            "decoder.mlp.net.6.bias": [
+              256
+            ],
+            "decoder.mlp.net.8.weight": [
+              12,
+              256
+            ],
+            "decoder.mlp.net.8.bias": [
+              12
+            ]
+          }
+        },
+        "critic": {
+          "linear_parameter_count": 48641,
+          "shapes": {
+            "goal_scale": [
+              3
+            ],
+            "mlp.net.0.weight": [
+              256,
+              60
+            ],
+            "mlp.net.0.bias": [
+              256
+            ],
+            "mlp.net.2.weight": [
+              128,
+              256
+            ],
+            "mlp.net.2.bias": [
+              128
+            ],
+            "mlp.net.4.weight": [
+              1,
+              128
+            ],
+            "mlp.net.4.bias": [
+              1
+            ]
+          }
+        },
+        "action_state": {
+          "linear_parameter_count": 0,
+          "shapes": {
+            "ou_state": [
+              3072,
+              12
+            ],
+            "ou_mask": [
+              3072
+            ]
+          }
+        }
+      }
+    },
+    "go2_ppo_inference": {
+      "path": "/home/yifeiy/rl_sar/policy/go2/ppo_velocity/policy_inference.pt",
+      "sha256": "5b103bca280e0a1cece3bb9715291e73eebfcc8efb6ae4ee6270c6438dd80b10",
+      "source_checkpoint": "/home/yifeiy/ws_supermimic/logs/go2_comparison/ppo_2p5h_seed2026/model_758.pt",
+      "policy_shapes": {
+        "decoder.goal_scale": [
+          3
+        ],
+        "decoder.scale": [
+          210
+        ],
+        "decoder.mlp.net.0.weight": [
+          2048,
+          213
+        ],
+        "decoder.mlp.net.0.bias": [
+          2048
+        ],
+        "decoder.mlp.net.2.weight": [
+          1024,
+          2048
+        ],
+        "decoder.mlp.net.2.bias": [
+          1024
+        ],
+        "decoder.mlp.net.4.weight": [
+          512,
+          1024
+        ],
+        "decoder.mlp.net.4.bias": [
+          512
+        ],
+        "decoder.mlp.net.6.weight": [
+          256,
+          512
+        ],
+        "decoder.mlp.net.6.bias": [
+          256
+        ],
+        "decoder.mlp.net.8.weight": [
+          12,
+          256
+        ],
+        "decoder.mlp.net.8.bias": [
+          12
+        ]
+      }
+    },
+    "go2_sm_inference": {
+      "path": "/home/yifeiy/rl_sar/policy/go2/supermimic_velocity/policy_inference.pt",
+      "sha256": "3bcae044d39d61553374d21caf7df39d7bd96d9ada6cfa237d7d05dd188bff0c",
+      "source_checkpoint": "/home/yifeiy/ws_supermimic/logs/go2_comparison/supermimic_2p5h_seed2026/ckpt_latest.pt",
+      "policy_shapes": {
+        "decoder.goal_scale": [
+          3
+        ],
+        "decoder.scale": [
+          210
+        ],
+        "decoder.mlp.net.0.weight": [
+          2048,
+          213
+        ],
+        "decoder.mlp.net.0.bias": [
+          2048
+        ],
+        "decoder.mlp.net.2.weight": [
+          1024,
+          2048
+        ],
+        "decoder.mlp.net.2.bias": [
+          1024
+        ],
+        "decoder.mlp.net.4.weight": [
+          512,
+          1024
+        ],
+        "decoder.mlp.net.4.bias": [
+          512
+        ],
+        "decoder.mlp.net.6.weight": [
+          256,
+          512
+        ],
+        "decoder.mlp.net.6.bias": [
+          256
+        ],
+        "decoder.mlp.net.8.weight": [
+          12,
+          256
+        ],
+        "decoder.mlp.net.8.bias": [
+          12
+        ]
+      }
+    },
+    "m1_ppo_inference": {
+      "path": "/home/yifeiy/ws_supermimic/logs/m1_ppo/v2_lm50_2048_3p5h_seed2026/policy_inference.pt",
+      "sha256": "227e43edd1d4e9352fed1a910d01c585c4f1b9ee7b41763bc3d8e7fc91c9cec9",
+      "source_checkpoint": "/home/yifeiy/ws_supermimic/logs/m1_ppo/v2_lm50_2048_3p5h_seed2026/model_533.pt",
+      "policy_shapes": {
+        "decoder.goal_scale": [
+          8
+        ],
+        "decoder.scale": [
+          720
+        ],
+        "decoder.mlp.net.0.weight": [
+          2048,
+          728
+        ],
+        "decoder.mlp.net.0.bias": [
+          2048
+        ],
+        "decoder.mlp.net.2.weight": [
+          1024,
+          2048
+        ],
+        "decoder.mlp.net.2.bias": [
+          1024
+        ],
+        "decoder.mlp.net.4.weight": [
+          512,
+          1024
+        ],
+        "decoder.mlp.net.4.bias": [
+          512
+        ],
+        "decoder.mlp.net.6.weight": [
+          256,
+          512
+        ],
+        "decoder.mlp.net.6.bias": [
+          256
+        ],
+        "decoder.mlp.net.8.weight": [
+          22,
+          256
+        ],
+        "decoder.mlp.net.8.bias": [
+          22
+        ]
+      }
+    }
+  }
+}

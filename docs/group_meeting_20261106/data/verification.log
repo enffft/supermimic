@@ -1,0 +1,91 @@
+{
+  "method": "CPU exact state tensors and random-input actions; no simulator, optimization or new training",
+  "exports": {
+    "go2_sm": {
+      "inference": "/home/yifeiy/rl_sar/policy/go2/supermimic_velocity/policy_inference.pt",
+      "source": "logs/go2_comparison/supermimic_2p5h_seed2026/ckpt_latest.pt",
+      "inference_sha256": "3bcae044d39d61553374d21caf7df39d7bd96d9ada6cfa237d7d05dd188bff0c",
+      "source_sha256": "816923703b1998cf1faf669ca43781798006b1339c8cbc5ac30f03a71f853565",
+      "policy_tensors_exact_equal": true,
+      "random_input_max_action_error": 0.0
+    },
+    "go2_ppo": {
+      "inference": "/home/yifeiy/rl_sar/policy/go2/ppo_velocity/policy_inference.pt",
+      "source": "logs/go2_comparison/ppo_2p5h_seed2026/model_758.pt",
+      "inference_sha256": "5b103bca280e0a1cece3bb9715291e73eebfcc8efb6ae4ee6270c6438dd80b10",
+      "source_sha256": "1a1a0cde9e04d32c909b519088864ba984396b6c71fc548d440573736a1be0fb",
+      "policy_tensors_exact_equal": true,
+      "random_input_max_action_error": 0.0
+    },
+    "m1_ppo": {
+      "inference": "logs/m1_ppo/v2_lm50_2048_3p5h_seed2026/policy_inference.pt",
+      "source": "logs/m1_ppo/v2_lm50_2048_3p5h_seed2026/model_533.pt",
+      "inference_sha256": "227e43edd1d4e9352fed1a910d01c585c4f1b9ee7b41763bc3d8e7fc91c9cec9",
+      "source_sha256": "b66319817f8039360d6360634182fb9e729b11f2f4a4ecb7261ab1f6ab1039a5",
+      "policy_tensors_exact_equal": true,
+      "random_input_max_action_error": 0.0
+    }
+  },
+  "old_clocks": {
+    "wm_source": {
+      "path": "logs/go2_velocity_phase1_3072_b1024_20261027/tb",
+      "values": [
+        {
+          "step": 1800,
+          "hours": 0.25181931257247925,
+          "wall_time": 1793088276.902196
+        }
+      ]
+    },
+    "base_actor": {
+      "path": "logs/phase3_training/go2_velocity_deployable_v2_20261102/tb",
+      "values": [
+        {
+          "step": 17000,
+          "hours": 2.0043723583221436,
+          "wall_time": 1793594954.2585342
+        }
+      ]
+    },
+    "gait": {
+      "path": "logs/phase3_training/go2_velocity_diagonal_slip_3072_2p5h_20261103/tb",
+      "values": [
+        {
+          "step": 22000,
+          "hours": 0.6953492760658264,
+          "wall_time": 1793670662.4970775
+        },
+        {
+          "step": 24000,
+          "hours": 0.9560173749923706,
+          "wall_time": 1793671600.9017189
+        },
+        {
+          "step": 34000,
+          "hours": 2.289728879928589,
+          "wall_time": 1793676402.2642603
+        },
+        {
+          "step": 34600,
+          "hours": 2.372166156768799,
+          "wall_time": 1793676699.0385134
+        }
+      ]
+    }
+  },
+  "config_differences": {
+    "go2": {},
+    "m1": {
+      "replay_capacity": {
+        "PPO": 2,
+        "SM": 256
+      }
+    }
+  },
+  "go2_sm_final_stage": 2,
+  "go2_ppo_final_stage": 1,
+  "go2_ppo_infos_keys": [
+    "velocity_command",
+    "env_state"
+  ]
+}

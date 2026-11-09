@@ -1,0 +1,167 @@
+{
+  "actor": {
+    "loaded": "actor_only",
+    "tensor_count": 10,
+    "optimizer": "fresh",
+    "world_model": "fresh",
+    "critic": "fresh"
+  },
+  "backend": "mujoco",
+  "cases": [
+    {
+      "command": [
+        0.5,
+        0,
+        0
+      ],
+      "steps": 250,
+      "envs": 16,
+      "wall_s": 3.002664358005859,
+      "mean_velocity_xy": [
+        0.4888356029987335,
+        -0.010385432280600071
+      ],
+      "mean_yaw_rate": 0.01917363703250885,
+      "velocity_rmse": 0.05806620046496391,
+      "yaw_rmse": 0.034861788153648376,
+      "done_count": 0,
+      "minimum_root_height": 0.3123435974121094,
+      "action_abs_max": 0.9999985694885254,
+      "saturation_fraction": 0.10566666722297668,
+      "reward_proxy_max_abs_gap": 3.2063573598861694e-05
+    },
+    {
+      "command": [
+        -0.3,
+        0,
+        0
+      ],
+      "steps": 250,
+      "envs": 16,
+      "wall_s": 2.7564346750150435,
+      "mean_velocity_xy": [
+        -0.26201003789901733,
+        -0.00017039856174960732
+      ],
+      "mean_yaw_rate": 0.013410051353275776,
+      "velocity_rmse": 0.043303508311510086,
+      "yaw_rmse": 0.032041795551776886,
+      "done_count": 0,
+      "minimum_root_height": 0.3231751024723053,
+      "action_abs_max": 0.9995692372322083,
+      "saturation_fraction": 0.05233333259820938,
+      "reward_proxy_max_abs_gap": 2.2299587726593018e-05
+    },
+    {
+      "command": [
+        0,
+        0.25,
+        0
+      ],
+      "steps": 250,
+      "envs": 16,
+      "wall_s": 2.832659223990049,
+      "mean_velocity_xy": [
+        0.0130018824711442,
+        0.2485504299402237
+      ],
+      "mean_yaw_rate": 0.006664954591542482,
+      "velocity_rmse": 0.030939582735300064,
+      "yaw_rmse": 0.030841050669550896,
+      "done_count": 0,
+      "minimum_root_height": 0.3178674280643463,
+      "action_abs_max": 0.9998344779014587,
+      "saturation_fraction": 0.07833333313465118,
+      "reward_proxy_max_abs_gap": 3.424100577831268e-05
+    },
+    {
+      "command": [
+        0,
+        -0.25,
+        0
+      ],
+      "steps": 250,
+      "envs": 16,
+      "wall_s": 2.8143005869933404,
+      "mean_velocity_xy": [
+        0.007294644135981798,
+        -0.24900339543819427
+      ],
+      "mean_yaw_rate": 0.021036621183156967,
+      "velocity_rmse": 0.03394206985831261,
+      "yaw_rmse": 0.035486169159412384,
+      "done_count": 0,
+      "minimum_root_height": 0.3213363289833069,
+      "action_abs_max": 0.9998582601547241,
+      "saturation_fraction": 0.09200000017881393,
+      "reward_proxy_max_abs_gap": 3.651715815067291e-05
+    },
+    {
+      "command": [
+        0,
+        0,
+        0.5
+      ],
+      "steps": 250,
+      "envs": 16,
+      "wall_s": 2.607983732013963,
+      "mean_velocity_xy": [
+        0.0015701500233262777,
+        -0.002188954269513488
+      ],
+      "mean_yaw_rate": 0.4976382553577423,
+      "velocity_rmse": 0.01306089572608471,
+      "yaw_rmse": 0.07625608146190643,
+      "done_count": 0,
+      "minimum_root_height": 0.3262944519519806,
+      "action_abs_max": 0.9999344348907471,
+      "saturation_fraction": 0.06133333221077919,
+      "reward_proxy_max_abs_gap": 1.263245940208435e-05
+    },
+    {
+      "command": [
+        0,
+        0,
+        -0.5
+      ],
+      "steps": 250,
+      "envs": 16,
+      "wall_s": 2.763413099979516,
+      "mean_velocity_xy": [
+        -0.010741565376520157,
+        0.002065422246232629
+      ],
+      "mean_yaw_rate": -0.466712087392807,
+      "velocity_rmse": 0.01502766739577055,
+      "yaw_rmse": 0.08220517635345459,
+      "done_count": 0,
+      "minimum_root_height": 0.32251355051994324,
+      "action_abs_max": 0.9998138546943665,
+      "saturation_fraction": 0.0273333340883255,
+      "reward_proxy_max_abs_gap": 2.0303763449192047e-05
+    },
+    {
+      "command": [
+        0,
+        0,
+        0
+      ],
+      "steps": 250,
+      "envs": 16,
+      "wall_s": 2.440775839961134,
+      "mean_velocity_xy": [
+        -0.011282999999821186,
+        -0.00045596130075864494
+      ],
+      "mean_yaw_rate": -0.01814958080649376,
+      "velocity_rmse": 0.013940691947937012,
+      "yaw_rmse": 0.02999676577746868,
+      "done_count": 0,
+      "minimum_root_height": 0.3174959421157837,
+      "action_abs_max": 0.9994261264801025,
+      "saturation_fraction": 0.008333333767950535,
+      "reward_proxy_max_abs_gap": 1.7793849110603333e-05
+    }
+  ],
+  "note": "Short physical/command protocol check; command tracking acceptance requires longer matched evaluation."
+}

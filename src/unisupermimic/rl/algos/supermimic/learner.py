@@ -6,6 +6,7 @@ import json
 import math
 import os
 import time
+from contextlib import contextmanager
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, cast
@@ -13,11 +14,12 @@ from typing import Any, cast
 import torch
 import torch.nn as nn
 from torch.optim.swa_utils import AveragedModel, get_ema_multi_avg_fn
-from unilab.rl.contracts.env import EnvProtocol
+from unilab.base.contracts.env import EnvProtocol
 
 from unisupermimic.rl.contracts.supermimic import (
     SUPERMIMIC_STATE_KEY,
     SUPERMIMIC_TRANSITION_KEY,
+    DirectGoalMdpProtocol,
     State,
     get_supermimic_mdp,
 )
@@ -37,6 +39,7 @@ class SuperMimicConfig:
     utd: float = 0.4
     horizon: int = 32
     goal_frames: int = 10
+    goal_mode: str = "encoded"
     hist: int = 10
     z_dim: int = 32
     wm_hidden: tuple[int, ...] = (2048, 2048, 2048)
@@ -68,6 +71,7 @@ class SuperMimicConfig:
     amp: str = "bf16"
     compile: bool = True
     test_hidden_dims: tuple[int, ...] | None = None
+    profile: bool = False
 
 
 _LOG_FIELDS = (
@@ -126,6 +130,12 @@ class SuperMimicLearner:
 
         self.env = env
         self.cfg = cfg
+        if cfg.goal_mode not in ("encoded", "direct"):
+            raise ValueError("goal_mode must be encoded or direct")
+        if cfg.goal_mode == "direct" and (cfg.goal_frames != 1 or cfg.test_hidden_dims is not None):
+            raise ValueError(
+                "direct mode requires goal_frames=1 and explicit production network widths"
+            )
         self.backend = backend
         self.log_dir = Path(log_dir)
         self.log_dir.mkdir(parents=True, exist_ok=True)
@@ -138,6 +148,14 @@ class SuperMimicLearner:
         self._bridged = self.device != self.env_device
         mdp = get_supermimic_mdp(env)
         self.mdp = mdp.to(self.device) if self._bridged else mdp
+        if cfg.goal_mode == "direct" and not isinstance(self.mdp, DirectGoalMdpProtocol):
+            raise TypeError("direct goals require DirectGoalMdpProtocol")
+        if (
+            cfg.goal_mode == "direct"
+            and getattr(getattr(env.cfg, "scene", None), "terrain", None) is not None
+        ):
+            raise ValueError("Go2 terrain training is gated pending flat baseline acceptance")
+        self.profile_ms: dict[str, list[float]] = {}
 
         # TF32 only pays off for fp32 (amp="none") training: under bf16 autocast
         # the heavy GEMMs already run in bf16, while on ROCm a TF32 bmm over the
@@ -179,7 +197,7 @@ class SuperMimicLearner:
         if cfg.pi_opt == "muon":
             self.opt_pi = MuonAdam(
                 self.pi,
-                [self.pi.enc, self.pi.dec],
+                ([self.pi.dec] if cfg.goal_mode == "direct" else [self.pi.enc, self.pi.dec]),
                 lr=cfg.lr,
                 betas=(0.9, 0.95),
                 fused=fused_adam,
@@ -200,6 +218,7 @@ class SuperMimicLearner:
             self.device,
             num_joints=self.mdp.num_joints,
             context_dim=self.mdp.context_dim,
+            goal_dim=self.mdp.goal_frame_dim if cfg.goal_mode == "direct" else 0,
         )
         self.obs_hist = torch.zeros(env.num_envs, cfg.hist, self.mdp.obs_dim, device=self.device)
         self.err_floor = torch.cat(
@@ -235,6 +254,21 @@ class SuperMimicLearner:
             return torch.compile(function, backend="aot_eager")
         return torch.compile(function)
 
+    @contextmanager
+    def profile_section(self, name):
+        """Opt-in synchronized timings, with operator ranges for torch.profiler."""
+        if not self.cfg.profile:
+            yield
+            return
+        if self.device.type == "cuda":
+            torch.cuda.synchronize(self.device)
+        started = time.perf_counter()
+        with torch.profiler.record_function(name):
+            yield
+            if self.device.type == "cuda":
+                torch.cuda.synchronize(self.device)
+        self.profile_ms.setdefault(name, []).append(1000 * (time.perf_counter() - started))
+
     def _make_world_model(self) -> WorldModel:
         if self.cfg.test_hidden_dims is not None:
             return WorldModel(
@@ -259,6 +293,7 @@ class SuperMimicLearner:
             z_dim=self.cfg.z_dim,
             num_joints=self.mdp.num_joints,
             hidden=self.cfg.policy_hidden,
+            goal_mode=self.cfg.goal_mode,
         )
         if self.cfg.test_hidden_dims is not None:
             enc_output = policy.enc[-1]
@@ -340,7 +375,11 @@ class SuperMimicLearner:
         next_frames = frames + 1
         obs = self.mdp.add_noise(self.mdp.obs(next_state, action, context, next_frames))
         next_hist = torch.cat((obs_hist[:, 1:], obs.unsqueeze(1)), 1)
-        next_goal = self.mdp.goal(next_frames, self.cfg.goal_frames)
+        next_goal = (
+            goal
+            if self.cfg.goal_mode == "direct"
+            else self.mdp.goal(next_frames, self.cfg.goal_frames)
+        )
         return next_state, action, next_hist, next_frames, next_goal
 
     def _reward_term(
@@ -419,15 +458,27 @@ class SuperMimicLearner:
             self.obs_hist = torch.where(
                 fresh[:, None, None], obs.unsqueeze(1).expand_as(self.obs_hist), shifted
             )
-            goal = self.mdp.goal(info["f"], self.cfg.goal_frames)
+            goal = (
+                info["g"]
+                if self.cfg.goal_mode == "direct"
+                else self.mdp.goal(info["f"], self.cfg.goal_frames)
+            )
             self.pi.obs_norm.update(obs)
             self.pi.goal_norm.update(goal)
             action = self.pi(self.obs_hist, goal)
-            action = torch.clamp(action + self.cfg.action_noise * torch.randn_like(action), -20, 20)
-            if self._bridged:
-                step_state = self.env.step(action.to(self.env_device))
+            bound = 1 if self.cfg.goal_mode == "direct" else 20
+            if self.cfg.goal_mode == "direct" and hasattr(self.env, "set_collection_exploration"):
+                self.env.set_collection_exploration(self.cfg.action_noise)
+                action = action.clamp(-bound, bound)
             else:
-                step_state = self.env.step(action)
+                action = torch.clamp(
+                    action + self.cfg.action_noise * torch.randn_like(action), -bound, bound
+                )
+            with self.profile_section("simulation"):
+                if self._bridged:
+                    step_state = self.env.step(action.to(self.env_device))
+                else:
+                    step_state = self.env.step(action)
             transition = step_state.info[SUPERMIMIC_TRANSITION_KEY]
             if self._bridged:
                 transition = {key: value.to(self.device) for key, value in transition.items()}
@@ -449,13 +500,15 @@ class SuperMimicLearner:
                 self.wm.inc_norm.update(target)
             self.sim_steps += self.env.num_envs
             self.stats["r"].append(transition["r"].mean() / self.mdp.max_step_reward)
+            self.stats["term"].append(transition["term"].float().sum())
+            self.stats["done"].append(transition["done"].float().sum())
             if "ep_len" in transition:
                 self.stats["ep_len"].append(transition["ep_len"].mean())
                 self.stats["ep_ret"].append(transition["ep_ret_norm"].mean())
-                self.stats["term"].append(transition["term"].float().sum())
-                self.stats["done"].append(transition["done"].float().sum())
 
     def wm_update(self) -> tuple[torch.Tensor, torch.Tensor]:
+        timing = self.profile_section("wm_fit")
+        timing.__enter__()
         window = self.buffer.sample_windows(self.cfg.wm_batch, self.cfg.wm_window)
         predicted = self._wm_rollout_fn(window["s"], window["a"], window["xi"])
         loss, last_error = self._wm_err_fn(predicted, window["s1"], window["mask"])
@@ -465,6 +518,7 @@ class SuperMimicLearner:
         self.opt_wm.step()
         mask = window["mask"][:, -1]
         mean_last_error = (last_error.detach() * mask).sum() / mask.sum().clamp(min=1)
+        timing.__exit__(None, None, None)
         return loss.detach() / self.cfg.wm_window, mean_last_error
 
     def _sample_valid_starts(
@@ -517,10 +571,16 @@ class SuperMimicLearner:
         _set_requires_grad(self.critic, False)
 
         batch_size = self.cfg.pi_batch
-        initial_goal = self.mdp.goal(frames, self.cfg.goal_frames)
+        initial_goal = (
+            start["g"]
+            if self.cfg.goal_mode == "direct"
+            else self.mdp.goal(frames, self.cfg.goal_frames)
+        )
         goal = initial_goal
         initial_state = state
         states, actions, previous_actions, all_frames, goals = [], [], [], [], []
+        actor_timing = self.profile_section("actor_bptt")
+        actor_timing.__enter__()
         try:
             for _ in range(self.cfg.horizon):
                 previous_actions.append(previous_action)
@@ -545,9 +605,25 @@ class SuperMimicLearner:
                 State, tuple(flatten([item[index] for item in states]) for index in range(6))
             )
             flat_frames = flatten(all_frames)
-            rewards, dones = self._batched_reward_term(
-                all_states, flat_frames, flatten(actions), flatten(previous_actions)
-            )
+            if self.cfg.goal_mode == "direct":
+                # Commands are sampled from immutable replay values and held over the
+                # entire imagined rollout. Acceleration uses the preceding state.
+                predecessors = [initial_state, *states[:-1]]
+                previous_states = cast(
+                    State, tuple(flatten([item[i] for item in predecessors]) for i in range(6))
+                )
+                rewards = self.mdp.reward_transition(
+                    previous_states,
+                    all_states,
+                    flatten(goals),
+                    flatten(actions),
+                    flatten(previous_actions),
+                )
+                dones = self.mdp.soft_termination(all_states, flat_frames)
+            else:
+                rewards, dones = self._batched_reward_term(
+                    all_states, flat_frames, flatten(actions), flatten(previous_actions)
+                )
             rewards = rewards.view(self.cfg.horizon, batch_size)
             dones = dones.view(self.cfg.horizon, batch_size)
             alive = torch.cumprod(1 - dones, 0)
@@ -586,7 +662,10 @@ class SuperMimicLearner:
         finally:
             _set_requires_grad(self.wm, True)
             _set_requires_grad(self.critic, True)
+            actor_timing.__exit__(None, None, None)
 
+        critic_timing = self.profile_section("critic_update")
+        critic_timing.__enter__()
         value_loss = torch.zeros((), device=self.device)
         if not self.cfg.no_critic:
             with torch.no_grad():
@@ -661,6 +740,7 @@ class SuperMimicLearner:
                     self.opt_v.step()
 
         imagined_reward = (reward_sum / self.cfg.horizon / self.mdp.max_step_reward).mean()
+        critic_timing.__exit__(None, None, None)
         return (
             loss.detach(),
             value_loss.detach(),
@@ -689,6 +769,8 @@ class SuperMimicLearner:
             "args": asdict(self.cfg),
             "saved_at": time.strftime("%Y-%m-%d %H:%M:%S"),
         }
+        if self.cfg.goal_mode == "direct":
+            checkpoint["task_contract"] = self.env.supermimic_contract
         if self.pi_avg is not None:
             checkpoint["pi_live"] = self.pi.state_dict()
         if include_optimizers:
@@ -719,6 +801,23 @@ class SuperMimicLearner:
                 f"SuperMimic resume requires a full last.pt checkpoint; missing {missing} in {path}"
             )
         checkpoint_args = checkpoint.get("args", {})
+        if checkpoint_args.get("goal_mode", "encoded") != self.cfg.goal_mode:
+            raise ValueError("Cannot resume with a different goal_mode")
+        if self.cfg.goal_mode == "direct":
+            if checkpoint.get("task_contract") != getattr(self.env, "supermimic_contract", None):
+                raise ValueError(
+                    "Cannot resume Go2 with changed state/action/reward/model/terrain semantics"
+                )
+            for key in (
+                "hist",
+                "goal_frames",
+                "policy_hidden",
+                "wm_hidden",
+                "wm_structured",
+                "action_noise",
+            ):
+                if checkpoint_args.get(key) != asdict(self.cfg)[key]:
+                    raise ValueError(f"Cannot resume with changed {key}")
         checkpoint_structured = bool(checkpoint_args.get("wm_structured", False))
         if checkpoint_structured != self.cfg.wm_structured:
             raise ValueError(
@@ -879,10 +978,6 @@ class SuperMimicLearner:
                     if self.iteration % self.cfg.log_every == 0:
                         iterations_per_second = self.cfg.log_every / (time.time() - log_start)
                         log_start = time.time()
-                        term_frac = float(
-                            sum(float(value) for value in self.stats["term"])
-                            / max(sum(float(value) for value in self.stats["done"]), 1)
-                        )
                         row = [
                             self.iteration,
                             self.wall_time / 3600,
@@ -895,8 +990,8 @@ class SuperMimicLearner:
                             self._mean(aggregate["gn"]),
                             self._mean(aggregate["surv"]),
                             self._mean(self.stats["r"]),
-                            self._mean(self.stats["ep_len"]),
-                            self._mean(self.stats["ep_ret"]),
+                            ep_len,
+                            ep_ret_norm,
                             term_frac,
                             iterations_per_second,
                             learning_rate,

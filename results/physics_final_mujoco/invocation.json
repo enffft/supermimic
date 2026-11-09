@@ -1,0 +1,15 @@
+{
+  "mode": "physics",
+  "backend": "mujoco",
+  "envs": 16,
+  "steps": 250,
+  "iterations": 8,
+  "batch": 64,
+  "device": "cpu",
+  "reference_actor": true,
+  "domain_randomization": false,
+  "terrain": "flat",
+  "heading": 0.0,
+  "quarter_turns": 0,
+  "output": "results/physics_final_mujoco"
+}

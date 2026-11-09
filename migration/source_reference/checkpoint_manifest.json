@@ -1,0 +1,175 @@
+{
+  "path": "/home/yifeiy/ws_supermimic/logs/phase3_training/go2_velocity_diagonal_slip_3072_2p5h_20261103/ckpt_0034000.pt",
+  "sha256": "0b3d8e4bb26173d13a6ce0b99d5eecf43005927a8ab2e01947c4d0311009487a",
+  "keys": [
+    "iteration",
+    "num_updates",
+    "wm",
+    "policy",
+    "critic",
+    "wm_opt",
+    "policy_opt",
+    "critic_opt",
+    "config",
+    "wm_only_updates",
+    "actor_updates",
+    "actor_start_iteration",
+    "utd_acc",
+    "pretrained_wm",
+    "init_wm_from",
+    "init_wm_sha256",
+    "init_wm_source_iteration",
+    "effective_wm_only_updates",
+    "policy_mode",
+    "robot_joint_names",
+    "actuator_model_version",
+    "robot_model_sha256",
+    "robot_name",
+    "task_name",
+    "policy_encoding_mode",
+    "action_output_mode",
+    "goal_dim",
+    "action_dim",
+    "state_dim",
+    "termination_mode",
+    "torch_rng_state",
+    "cuda_rng_state",
+    "command_state",
+    "action_state"
+  ],
+  "model_fingerprint": "4f306754e9b3d73930ac8362aa456eb8912f2e886665618e7eced9627c1704a4",
+  "tensor_shapes": {
+    "wm": {
+      "dynamics.mlp.net.0.weight": [
+        2048,
+        65
+      ],
+      "dynamics.mlp.net.0.bias": [
+        2048
+      ],
+      "dynamics.mlp.net.2.weight": [
+        2048,
+        2048
+      ],
+      "dynamics.mlp.net.2.bias": [
+        2048
+      ],
+      "dynamics.mlp.net.4.weight": [
+        2048,
+        2048
+      ],
+      "dynamics.mlp.net.4.bias": [
+        2048
+      ],
+      "dynamics.mlp.net.6.weight": [
+        36,
+        2048
+      ],
+      "dynamics.mlp.net.6.bias": [
+        36
+      ],
+      "term_head.scale": [
+        2
+      ],
+      "term_head.mlp.net.0.weight": [
+        64,
+        4
+      ],
+      "term_head.mlp.net.0.bias": [
+        64
+      ],
+      "term_head.mlp.net.2.weight": [
+        64,
+        64
+      ],
+      "term_head.mlp.net.2.bias": [
+        64
+      ],
+      "term_head.mlp.net.4.weight": [
+        1,
+        64
+      ],
+      "term_head.mlp.net.4.bias": [
+        1
+      ]
+    },
+    "policy": {
+      "decoder.goal_scale": [
+        3
+      ],
+      "decoder.scale": [
+        210
+      ],
+      "decoder.mlp.net.0.weight": [
+        2048,
+        213
+      ],
+      "decoder.mlp.net.0.bias": [
+        2048
+      ],
+      "decoder.mlp.net.2.weight": [
+        1024,
+        2048
+      ],
+      "decoder.mlp.net.2.bias": [
+        1024
+      ],
+      "decoder.mlp.net.4.weight": [
+        512,
+        1024
+      ],
+      "decoder.mlp.net.4.bias": [
+        512
+      ],
+      "decoder.mlp.net.6.weight": [
+        256,
+        512
+      ],
+      "decoder.mlp.net.6.bias": [
+        256
+      ],
+      "decoder.mlp.net.8.weight": [
+        12,
+        256
+      ],
+      "decoder.mlp.net.8.bias": [
+        12
+      ]
+    },
+    "critic": {
+      "goal_scale": [
+        3
+      ],
+      "mlp.net.0.weight": [
+        256,
+        60
+      ],
+      "mlp.net.0.bias": [
+        256
+      ],
+      "mlp.net.2.weight": [
+        128,
+        256
+      ],
+      "mlp.net.2.bias": [
+        128
+      ],
+      "mlp.net.4.weight": [
+        1,
+        128
+      ],
+      "mlp.net.4.bias": [
+        1
+      ]
+    },
+    "action_state": {
+      "ou_state": [
+        3072,
+        12
+      ],
+      "ou_mask": [
+        3072
+      ]
+    }
+  }
+}

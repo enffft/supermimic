@@ -1,0 +1,15 @@
+{
+  "mode": "terrain",
+  "backend": "mujoco",
+  "envs": 16,
+  "steps": 100,
+  "iterations": 8,
+  "batch": 64,
+  "device": "cpu",
+  "reference_actor": false,
+  "domain_randomization": false,
+  "terrain": "slope",
+  "heading": 0.2,
+  "quarter_turns": 1,
+  "output": "results/terrain_slope_force"
+}

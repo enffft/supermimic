@@ -1,0 +1,33 @@
+ M docs/group_meeting_20261106/PLAY_COMMANDS.md
+ M scripts/evaluate_go2_velocity.py
+ M scripts/play.py
+ M src/supermimic/config.py
+ M src/supermimic/envs/mdp/commands.py
+ M src/supermimic/envs/multirobot_env_cfg.py
+ M src/supermimic/envs/tracking_env_cfg.py
+ M src/supermimic/imagination/policy_trainer.py
+ M src/supermimic/imagination/rollout.py
+ M src/supermimic/imagination/tasks.py
+ M src/supermimic/tasks/velocity_reward.py
+ M src/supermimic/training/loop.py
+?? .vscode/
+?? scripts/evaluate_m1_reward.py
+?? scripts/report_m1_ppo_comparison.py
+?? scripts/report_m1_v2_comparison.py
+?? scripts/run_go2_comparison.py
+?? scripts/run_m1_comparison.py
+?? scripts/run_m1_ppo.py
+?? scripts/run_m1_reward.py
+?? scripts/validate_go2_rl_sar.py
+?? src/supermimic/baselines/
+?? src/supermimic/kinematics/go2_fk.py
+?? src/supermimic/tasks/go2_gait.py
+?? src/supermimic/tasks/m1_reward.py
+?? src/supermimic/training/m1_reward.py
+?? tests/test_go2_comparison.py
+?? tests/test_go2_gait.py
+?? tests/test_m1_ppo.py
+?? tests/test_m1_reward_only.py
+?? tests/test_m1_v2.py
+?? tests/test_training_sequence.py
+?? tools/

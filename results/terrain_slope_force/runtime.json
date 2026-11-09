@@ -1,0 +1,162 @@
+{
+  "env_device": "cpu",
+  "learner_device": "cpu",
+  "backend_class": "MuJoCoBackend",
+  "backend_capabilities": "TensorLifecycleCapabilities(execution=<TensorExecution.HOST_BRIDGE: 'host_bridge'>, state_views=True, state_fields=frozenset({'qpos', 'qvel', 'ctrl'}), sensor_views=True, stepping=True, generalized_force_injection=False, actuator_gain_scaling=False, selected_reset=True, reset_randomization=True, device_reset_randomization=True, packed_reset=True, packed_reset_fields=frozenset({'body_inertia', 'body_mass', 'base_com_offset', 'base_mass_delta', 'dof_armature', 'body_ipos', 'dof_damping', 'kd', 'dof_frictionloss', 'body_iquat', 'kp', 'gravity', 'geom_friction', 'geom_solimp', 'geom_solref', 'geom_size'}), packed_reset_mocap=True, fixed_variants=True, host_pre_step_control=False, packed_host_bridge=True, process_topology=<TensorProcessTopology.IN_PROCESS: 'in_process'>, data_plane=<TensorDataPlane.HOST_BRIDGE: 'host_bridge'>, stream_event_ownership='caller-stream-per-packed-boundary; stream synchronized at CPU bridge', torch_devices=('cpu', 'cuda'), selected_reset_publication=<SelectedResetPublication.AUTHORITATIVE_VIEWS: 'authoritative_views'>, requires_post_construction_publication_barrier=False, tracked_body_views=False, batched_body_pair_contacts=False, mask_selected_reset=True, mask_selected_reset_full_refresh=True)",
+  "contract": {
+    "schema": "go2_velocity_direct_v2",
+    "state": "p,quat_wxyz,v_world,w_world,q,qd",
+    "actor": "term_major_5x42_fixed_scale_silu_tanh_goal3",
+    "joints": [
+      "robot/FL_hip_joint",
+      "robot/FL_thigh_joint",
+      "robot/FL_calf_joint",
+      "robot/FR_hip_joint",
+      "robot/FR_thigh_joint",
+      "robot/FR_calf_joint",
+      "robot/RL_hip_joint",
+      "robot/RL_thigh_joint",
+      "robot/RL_calf_joint",
+      "robot/RR_hip_joint",
+      "robot/RR_thigh_joint",
+      "robot/RR_calf_joint"
+    ],
+    "context": "friction,bias12,com3",
+    "model_sha256": "6b54201755997d40d5c256769efe2d8f75476c68994991de40e2fbae4503185a",
+    "action": "clip[-1,1]; q_default+0.25*a; clamp_soft_limits",
+    "reward": {
+      "linear_tracking": 3.0,
+      "command_direction": 0.5,
+      "yaw_tracking": 1.2,
+      "upright": 0.5,
+      "base_lin_vel_z": -1.0,
+      "base_ang_vel_xy": -0.05,
+      "action_rate": -0.03,
+      "joint_torque": -1e-05,
+      "joint_acceleration": -2.5e-07,
+      "joint_deviation": -0.02,
+      "joint_limit": -1.0,
+      "base_height_low": -5.0,
+      "tracking_sigma_sq": 0.09,
+      "zero_speed_baseline": true,
+      "upright_sigma_sq": 0.16,
+      "min_safe_height": 0.22,
+      "action_clip": 1.0,
+      "gait": {
+        "feet_clearance": 0.0,
+        "diagonal_gait": -0.15,
+        "feet_slip": -0.2,
+        "clearance_target": 0.05,
+        "clearance_sigma": 0.025
+      }
+    },
+    "reward_manager": {
+      "velocity": {
+        "func": "unisupermimic.tasks.velocity.go2.manager_terms.reward",
+        "params": {},
+        "weight": 1.0,
+        "reward_pack_names": []
+      }
+    },
+    "terminations": {
+      "fallen": {
+        "func": "unisupermimic.tasks.velocity.go2.manager_terms.fallen",
+        "params": {},
+        "time_out": false
+      },
+      "time_out": {
+        "func": "unilab.envs.mdp.terminations.time_out",
+        "params": {},
+        "time_out": true
+      }
+    },
+    "acceleration": "control_period_finite_difference",
+    "real_torque": "jointactuatorfrc_sensor",
+    "imagined_torque": "pd_proxy",
+    "terrain": {
+      "generator": {
+        "seed": 2026,
+        "curriculum": true,
+        "size": [
+          8.0,
+          8.0
+        ],
+        "horizontal_scale": 0.05,
+        "vertical_scale": 0.005,
+        "border_width": 2.0,
+        "num_rows": 1,
+        "num_cols": 1,
+        "sub_terrains": {
+          "slope": {
+            "proportion": 1.0,
+            "size": [
+              8.0,
+              8.0
+            ],
+            "flat_patch_sampling": null,
+            "delegate": {
+              "proportion": 0.1,
+              "size": [
+                10.0,
+                10.0
+              ],
+              "flat_patch_sampling": null,
+              "slope_range": [
+                0.05,
+                0.2
+              ],
+              "platform_width": 2.0,
+              "inverted": false,
+              "border_width": 1.2,
+              "horizontal_scale": 0.1,
+              "vertical_scale": 0.005,
+              "base_thickness_ratio": 1.0
+            },
+            "quarter_turns": 1,
+            "horizontal_scale": 0.05,
+            "vertical_scale": 0.005
+          }
+        },
+        "difficulty_range": [
+          0.0,
+          0.3
+        ],
+        "add_lights": false
+      },
+      "hfield_name": "go2_heightfield",
+      "geom_name": "go2_terrain"
+    },
+    "commands": {
+      "resampling_time_range": [
+        5.0,
+        5.0
+      ],
+      "debug_vis": false,
+      "entity_name": "robot",
+      "stage": 0,
+      "standing_fraction": 0.05,
+      "fixed_command": null,
+      "spawn_heading": 0.2,
+      "spawn_offset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "domain_randomization": false
+    },
+    "actions": {
+      "joint_pos": {
+        "entity_name": "robot",
+        "clip": null,
+        "ou_env_fraction": 0.25,
+        "ou_noise_std": 0.3,
+        "ou_theta": 2.0
+      }
+    },
+    "max_episode_seconds": 10.0,
+    "auto_reset": true,
+    "events": {},
+    "sim_dt": 0.005,
+    "ctrl_dt": 0.02
+  }
+}

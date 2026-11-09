@@ -1,0 +1,1179 @@
+diff --git a/docs/group_meeting_20261106/PLAY_COMMANDS.md b/docs/group_meeting_20261106/PLAY_COMMANDS.md
+index c25dc28..06a2e7a 100644
+--- a/docs/group_meeting_20261106/PLAY_COMMANDS.md
++++ b/docs/group_meeting_20261106/PLAY_COMMANDS.md
+@@ -96,7 +96,7 @@ bash docs/group_meeting_20261106/scripts/play_demo.sh m1_sm_random
+ 
+ ## 录制口径与界面限制
+ 
+-Go2现有play固定seed=0；M1使用`evaluation_args`默认seed123。各机器人内两算法配对名义初态、关闭DR和噪声；不是说Go2 play录像和seed2026正式评测逐帧相同。现有play没有`--seed`参数，本任务不擅自新增参数。M随机目标即使同seed，成功换点/episode结束不同后也不保证每个后续目标配对；严谨对照优先使用同一个固定世界点。
++按后续要求，M1 reward-only play已改为每次启动生成新随机种子，终端打印`play seed=...`；上面的`m1_ppo_random`和`m1_sm_random`命令会自动生效。Go2默认仍为seed=0。需要复现时，在原始Python命令末尾加`--seed 123`，或填终端打印的种子。正式历史评测仍为seed123，结果没有重算。关闭DR和噪声，使用名义初态；M随机目标即使同seed，成功换点/episode结束不同后也不保证后续目标始终配对。固定世界点对照仍使用`--m1-target-world`。
+ 
+ 建议录1920×1080/30fps，左右片段按相同仿真时间和倍速剪辑，统一机位和尺度，角标写“算法 / 训练预算 / 命令或目标”。Go2旧4.55h单独出镜，不混入等时长主比较。M标注“TCP到点，无抓取”；固定目标仅演示行为，不作为随机goal成功率证据。
+ 
+diff --git a/scripts/evaluate_go2_velocity.py b/scripts/evaluate_go2_velocity.py
+index 7a328fc..4be9408 100644
+--- a/scripts/evaluate_go2_velocity.py
++++ b/scripts/evaluate_go2_velocity.py
+@@ -10,9 +10,11 @@ import tyro
+ 
+ from supermimic.envs import SuperMimicEnvCfgArgs, make_env
+ from supermimic.envs.state_io import StateIO
++from supermimic.kinematics.go2_fk import GO2_FOOT_RADIUS, go2_feet_world
+ from supermimic.kinematics.rotations import quat_apply_inverse
+ from supermimic.policy.nets import Policy, PolicyCfg
+ from supermimic.robots.spec import get_robot_spec
++from supermimic.tasks.go2_gait import Go2GaitCfg
+ 
+ 
+ # Cover the deployment command interface, including the standing, lateral and
+@@ -66,6 +68,9 @@ def evaluate_command(
+             velocity_fixed_command=command_value,
+             velocity_fall_height=float(env_cfg.get("velocity_fall_height", 0.17)),
+             velocity_fall_tilt_deg=float(env_cfg.get("velocity_fall_tilt_deg", 70.0)),
++            go2_gait=Go2GaitCfg(**env_cfg.get("go2_gait", {
++                "feet_clearance": 0.0, "diagonal_gait": 0.0, "feet_slip": 0.0,
++            })),
+             seed=2026,
+         ),
+         device=device,
+@@ -90,6 +95,11 @@ def evaluate_command(
+         sum_height = torch.zeros(num_envs, device=device)
+         sum_action_abs = torch.zeros(num_envs, device=device)
+         sum_action_saturated = torch.zeros(num_envs, device=device)
++        foot_peak = torch.zeros(num_envs, 4, device=device)
++        sum_stance_slip_sq = torch.zeros(num_envs, device=device)
++        stance_count = torch.zeros(num_envs, device=device)
++        sum_diagonal_support = torch.zeros(num_envs, device=device)
++        gait_count = torch.zeros(num_envs, device=device)
+         episode_start = state_io.read()[:, :3].clone()
+         rows: list[dict[str, float]] = []
+ 
+@@ -124,6 +134,20 @@ def evaluate_command(
+             sum_action_abs += executed.abs().mean(-1)
+             sum_action_saturated += (executed.abs() >= 1.0 - 1e-6).float().mean(-1)
+             count += 1
++            foot_pos, foot_vel = go2_feet_world(state)
++            foot_height = (foot_pos[..., 2] - GO2_FOOT_RADIUS).clamp_min(0.0)
++            # Exclude the initial settling drop from the configured reset pose.
++            gait_valid = count > round(1.0 / dt)
++            foot_peak = torch.maximum(foot_peak, foot_height * gait_valid[:, None])
++            stance = foot_height < 0.015
++            sum_stance_slip_sq += (stance * foot_vel[..., :2].square().sum(-1)).sum(-1) * gait_valid
++            stance_count += stance.sum(-1) * gait_valid
++            diagonal = (
++                (stance[:, 0] & stance[:, 3] & ~stance[:, 1] & ~stance[:, 2])
++                | (stance[:, 1] & stance[:, 2] & ~stance[:, 0] & ~stance[:, 3])
++            )
++            sum_diagonal_support += diagonal.float() * gait_valid
++            gait_count += gait_valid
+ 
+             if ids.numel() == 0:
+                 continue
+@@ -144,6 +168,14 @@ def evaluate_command(
+                     "action_saturation_fraction": float(sum_action_saturated[env_id] / n),
+                     "fall": float(terminated[env_id]),
+                     "timeout": float(truncated[env_id]),
++                    **{f"peak_clearance_{leg}": float(foot_peak[env_id, i])
++                       for i, leg in enumerate(("FL", "FR", "RL", "RR"))},
++                    "stance_slip_rms": float((
++                        sum_stance_slip_sq[env_id] / stance_count[env_id].clamp_min(1)
++                    ).sqrt()),
++                    "diagonal_support_fraction": float(
++                        sum_diagonal_support[env_id] / gait_count[env_id].clamp_min(1)
++                    ),
+                 })
+                 count[env_id] = 0
+                 sum_vel[env_id] = 0
+@@ -153,6 +185,11 @@ def evaluate_command(
+                 sum_height[env_id] = 0
+                 sum_action_abs[env_id] = 0
+                 sum_action_saturated[env_id] = 0
++                foot_peak[env_id] = 0
++                sum_stance_slip_sq[env_id] = 0
++                stance_count[env_id] = 0
++                sum_diagonal_support[env_id] = 0
++                gait_count[env_id] = 0
+             reset_state = state_io.read()
+             episode_start[ids] = reset_state[ids, :3]
+ 
+@@ -174,6 +211,12 @@ def evaluate_command(
+             "action_saturation_fraction": mean("action_saturation_fraction"),
+             "fall_rate": mean("fall"),
+             "timeout_rate": mean("timeout"),
++            # Episode peak clearance averaged over episodes, ordered FL/FR/RL/RR.
++            "mean_episode_peak_foot_clearance_m": [
++                mean(f"peak_clearance_{leg}") for leg in ("FL", "FR", "RL", "RR")
++            ],
++            "stance_slip_rms_m_s": mean("stance_slip_rms"),
++            "diagonal_support_fraction": mean("diagonal_support_fraction"),
+         }
+     finally:
+         env.close()
+diff --git a/scripts/play.py b/scripts/play.py
+index 1aa888c..38d88db 100644
+--- a/scripts/play.py
++++ b/scripts/play.py
+@@ -13,6 +13,7 @@ physics state and policy history to the same selected clip's first frame.
+ from __future__ import annotations
+ 
+ import os
++import secrets
+ from pathlib import Path
+ from typing import Literal
+ 
+@@ -25,6 +26,8 @@ from supermimic.envs import SuperMimicEnvCfgArgs, make_env
+ from supermimic.envs.mdp.motion_library import discover_npz
+ from supermimic.policy.nets import Policy, PolicyCfg
+ from supermimic.robots.spec import get_robot_spec
++from supermimic.tasks.go2_gait import Go2GaitCfg
++from supermimic.tasks.m1_reward import M1RewardCfg, M1TargetCfg
+ 
+ 
+ M1_PLAY_CLIPS = (
+@@ -57,6 +60,63 @@ class _AllEnvViserViewer(ViserPlayViewer):
+         self._scene.request_update()
+ 
+ 
++class _M1RewardDictPolicy(_DictPolicy):
++    """Reuse the viewer with commands installed again after every episode reset."""
++
++    def __init__(self, policy, env, velocity=None, target_world=None, *, show_target_status=False):
++        super().__init__(policy)
++        self.env, self.velocity, self.target_world = env, velocity, target_world
++        self.show_target_status = show_target_status
++        self._target_status_step = -1
++        self._target_status_episode = -1
++        if target_world is not None:
++            env.command_manager.get_term("m1_prior_joint").cfg.target_cfg.resample_on_success = False
++        from supermimic.envs.state_io import StateIO
++        self.state_io = StateIO(env)
++
++    @torch.no_grad()
++    def __call__(self, obs):
++        from supermimic.tasks.m1_reward import m1_actor_goal
++        command = self.env.command_manager.get_term("m1_prior_joint")
++        if self.velocity is not None:
++            command.velocity_command_body[:] = command.velocity_command_body.new_tensor(self.velocity)
++            command.velocity_command_body[command.task_type == 1] = 0.
++        if self.target_world is not None:
++            command.target_position_world[:] = command.target_position_world.new_tensor(self.target_world)
++        if "replay" in self.env.recorder_manager.active_terms:
++            # External evaluation commands are installed after reset. Synchronize
++            # just command snapshots, retaining the recorder's physical state.
++            recorder = self.env.recorder_manager.get_term("replay")
++            recorder.prev_goal.copy_(command.goal)
++            recorder.prev_task_type.copy_(command.task_type)
++            recorder.prev_velocity_command.copy_(command.velocity_command_body)
++            recorder.prev_fixed_world_target.copy_(command.target_position_world)
++        # The external command may have changed since the observation manager ran.
++        goal = m1_actor_goal(self.state_io.read(), command.goal)
++        if self.show_target_status:
++            self._print_target_status(command)
++        return self.policy(obs["policy"], goal)
++
++    def _print_target_status(self, command):
++        ids = (command.task_type == 1).nonzero().flatten()
++        if not len(ids):
++            return
++        e = int(ids[0])
++        step = int(self.env.common_step_counter)
++        episode = (int(command.command_counter[e]), int(command.goal_sequence[e]))
++        if (episode == self._target_status_episode and self._target_status_step >= 0
++                and step - self._target_status_step < round(1.0 / self.env.step_dt)):
++            return
++        self._target_status_step, self._target_status_episode = step, episode
++        robot = self.env.scene["robot"]
++        tcp_ids = [robot.body_names.index(name) for name in ("piper_x_link7", "piper_x_link8")]
++        tcp = robot.data.body_link_pos_w[e, tcp_ids].mean(dim=0) - self.env.scene.env_origins[e]
++        target = command.target_position_world[e]
++        xyz = lambda x: "(" + ", ".join(f"{v:.3f}" for v in x.tolist()) + ")"
++        print(f"[M1 target] env={e} episode={episode} world_xyz={xyz(target)} m "
++              f"TCP_xyz={xyz(tcp)} m error={float((target - tcp).norm()):.3f} m", flush=True)
++
++
+ def _as_path(value) -> Path:
+     return value if isinstance(value, Path) else Path(str(value))
+ 
+@@ -140,13 +200,25 @@ def main(
+     velocity_arrow: bool = True,
+     actual_velocity_arrow: bool = False,
+     chase_debug_vis: bool = True,
++    m1_task: Literal["L", "M", "balanced"] = "L",
++    m1_target_world: tuple[float, float, float] | None = None,
++    m1_debug_vis: bool = True,
++    seed: int | None = None,
+ ) -> None:
++    """Run inference; M1 reward play defaults to a fresh seed, others to seed 0.
++
++    Supply --seed to reproduce a particular target sampling sequence.
++    """
++    if seed is not None and not 0 <= seed < 2**32:
++        raise ValueError("seed must be in [0, 2**32)")
+     policy, config, checkpoint_data = _load_checkpoint(ckpt, device)
+     env_cfg = config.get("env", {})
+     # Robot and task come only from the saved checkpoint. There are intentionally
+     # no robot/task CLI overrides that could load weights into the wrong model.
+     robot_name = get_robot_spec(str(env_cfg.get("robot_name", "g1"))).name
+     task_name = str(env_cfg.get("task_name", "motion_tracking"))
++    play_seed = seed if seed is not None else (secrets.randbits(31) if task_name == "m1_reward" else 0)
++    print(f"[INFO] play seed={play_seed}; reproduce with --seed {play_seed}")
+     if robot_name == "go2":
+         saved_actuator = checkpoint_data.get("actuator_model_version", config.get("actuator_model_version"))
+         current_actuator = get_robot_spec(robot_name).actuator_model_version
+@@ -156,13 +228,13 @@ def main(
+                 f"(checkpoint={saved_actuator!r}, current={current_actuator!r}); "
+                 "this Play run is an evaluation on changed physics, not a compatible full resume."
+             )
+-    if task_name not in ("motion_tracking", "velocity_command", "chase_ball", "world_point_reach"):
++    if task_name not in ("motion_tracking", "velocity_command", "chase_ball", "world_point_reach", "m1_reward"):
+         raise ValueError(f"unsupported checkpoint task {task_name!r}")
+     if task_name in ("velocity_command", "chase_ball") and robot_name != "go2":
+         raise ValueError(f"checkpoint mismatch: {robot_name} cannot use {task_name}")
+     if robot_name == "go2" and task_name not in ("velocity_command", "chase_ball"):
+         raise ValueError("Go2 checkpoint must use velocity_command or chase_ball")
+-    if task_name == "world_point_reach" and robot_name != "m1_piper":
++    if task_name in ("world_point_reach", "m1_reward") and robot_name != "m1_piper":
+         raise ValueError("world_point_reach checkpoint must use M1-Piper")
+ 
+     data_files: list[str] = []
+@@ -214,7 +286,7 @@ def main(
+         domain_randomization=False,
+         sampling_mode="start",
+         record_transitions=False,
+-        seed=0,
++        seed=play_seed,
+         anchor_obs=anchor_obs,
+         anchor_orientation_obs=anchor_orientation_obs,
+         compact_library=compact_library,
+@@ -239,6 +311,9 @@ def main(
+         velocity_fixed_command=fixed_command if task_name == "velocity_command" else None,
+         velocity_debug_vis=bool(velocity_arrow) if task_name == "velocity_command" else False,
+         velocity_show_actual_velocity=actual_velocity_arrow,
++        go2_gait=Go2GaitCfg(**env_cfg.get("go2_gait", {
++            "feet_clearance": 0.0, "diagonal_gait": 0.0, "feet_slip": 0.0,
++        })),
+         velocity_fall_height=float(env_cfg.get("velocity_fall_height", 0.17)),
+         velocity_fall_tilt_deg=float(env_cfg.get("velocity_fall_tilt_deg", 70.0)),
+         chase_auto_curriculum=False,
+@@ -252,6 +327,8 @@ def main(
+         chase_facing_weight=float(env_cfg.get("chase_facing_weight", 0.5)),
+         m1_fall_height=float(env_cfg.get("m1_fall_height", 0.20)),
+         m1_success_distance=float(env_cfg.get("m1_success_distance", 0.08)),
++        m1_target=M1TargetCfg(**env_cfg.get("m1_target", {})),
++        m1_reward=M1RewardCfg(**env_cfg.get("m1_reward", {})),
+         m1_target_curriculum=False,
+         m1_initial_target_stage=int(env_cfg.get("m1_initial_target_stage", 0)),
+         m1_fixed_target_stage=int(checkpoint_data.get("command_state", {}).get("stage", env_cfg.get("m1_initial_target_stage", 0))) if task_name == "world_point_reach" else None,
+@@ -268,6 +345,11 @@ def main(
+         debug_vis=bool(ghost) if task_name in ("motion_tracking", "world_point_reach") else bool(chase_debug_vis) if task_name == "chase_ball" else False,
+     )
+ 
++    if task_name == "m1_reward":
++        from supermimic.training.m1_reward import evaluation_args
++        play_env_args = evaluation_args(config, num_envs=num_envs, task_type=m1_task, seed=play_seed)
++        play_env_args.record_transitions = False
++        play_env_args.debug_vis = m1_debug_vis
+     raw_env = make_env(play_env_args, device=device)
+     env = RslRlVecEnvWrapper(raw_env)
+     try:
+@@ -322,6 +404,13 @@ def main(
+             print(f"[INFO] chase_ball stage={command.stage} initial_distance={float(command.metrics['ball_distance'][0]):.3f}m; ball marker, velocity arrow, robot velocity and base path enabled")
+ 
+         pol = _DictPolicy(policy)
++        if task_name == "m1_reward":
++            pol = _M1RewardDictPolicy(policy, raw_env, fixed_command, m1_target_world,
++                                     show_target_status=m1_debug_vis)
++            print(f"[INFO] M1 reward-only task={m1_task}; velocity={fixed_command}; target_world={m1_target_world or 'sampled per episode'}")
++            if m1_debug_vis:
++                print("[INFO] M markers: red=target, cyan=TCP midpoint(link7,link8), yellow=TCP error; "
++                      "coordinates below are env-local world XYZ in metres (first M env).")
+         if viewer == "auto":
+             viewer = "native" if (os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY")) else "viser"
+         print(f"[INFO] viewer={viewer}; action/observation/reset noise, DR and replay recording are disabled")
+diff --git a/src/supermimic/config.py b/src/supermimic/config.py
+index 681c97f..23f5b73 100644
+--- a/src/supermimic/config.py
++++ b/src/supermimic/config.py
+@@ -9,6 +9,8 @@ from typing import Literal
+ from supermimic.imagination.policy_trainer import PolicyTrainerCfg
+ from supermimic.policy.nets import CriticCfg, PolicyCfg
+ from supermimic.motion_prior.losses import M1JointLossCfg
++from supermimic.tasks.go2_gait import Go2GaitCfg
++from supermimic.tasks.m1_reward import M1RewardCfg, M1TargetCfg
+ from supermimic.world_model.wm_trainer import WMTrainerCfg
+ from supermimic.world_model.world_model import WorldModelCfg
+ 
+@@ -26,7 +28,7 @@ class DataCfg:
+ @dataclass
+ class EnvCfg:
+     robot_name: str = "g1"  # g1 | go2 | m1_piper
+-    task_name: str = "motion_tracking"  # motion_tracking | velocity_command | chase_ball | world_point_reach
++    task_name: str = "motion_tracking"  # motion_tracking | velocity_command | chase_ball | world_point_reach | m1_prior_joint | m1_reward
+     m1_pose_profile: Literal[
+         "legacy_manipulation", "dataset_carry", "dataset_v3_3_l_high_carry",
+     ] | None = None
+@@ -67,6 +69,7 @@ class EnvCfg:
+     # policy from receiving most of the reward for a nonzero command.
+     velocity_reward_tracking_sigma_sq: float = 0.09
+     velocity_reward_zero_speed_baseline: bool = True
++    go2_gait: Go2GaitCfg = field(default_factory=Go2GaitCfg)
+     velocity_curriculum: bool = True
+     velocity_curriculum_initial_stage: int = 0
+     velocity_curriculum_fixed_stage: int | None = None  # A=0, B=1, C=2; None means automatic
+@@ -113,6 +116,8 @@ class EnvCfg:
+     chase_joint_torque_weight: float = -2.0e-5
+     chase_joint_acceleration_weight: float = -2.5e-7
+     m1_fall_height: float = 0.20
++    m1_reward: M1RewardCfg = field(default_factory=M1RewardCfg)  # used only by m1_reward task
++    m1_target: M1TargetCfg = field(default_factory=M1TargetCfg)
+     m1_success_distance: float = 0.08
+     m1_target_curriculum: bool = True
+     m1_initial_target_stage: int = 0
+diff --git a/src/supermimic/envs/mdp/commands.py b/src/supermimic/envs/mdp/commands.py
+index 78103af..75f6ad9 100644
+--- a/src/supermimic/envs/mdp/commands.py
++++ b/src/supermimic/envs/mdp/commands.py
+@@ -30,6 +30,7 @@ from mjlab.utils.lab_api.math import (
+ 
+ from supermimic.envs.mdp.motion_library import MotionLibrary
+ from supermimic.kinematics.rotations import heading_yaw, wrap_to_pi
++from supermimic.tasks.m1_reward import M1TargetCfg, sample_m1_disk_targets
+ 
+ if TYPE_CHECKING:
+     from mjlab.entity import Entity
+@@ -1299,11 +1300,10 @@ def fixed_balanced_task_labels(num_envs: int, l_task_fraction: float, device) ->
+ 
+ 
+ class M1PriorJointCommand(CommandTerm):
+-    """Episode-fixed L/M context for the optional CVAE joint-training task.
++    """L/M context shared by prior and reward-only tasks.
+ 
+-    L velocity commands and M world targets are sampled once per episode. This
+-    avoids a hidden command-resampling event inside a 10-step imagined window.
+-    ``task_type`` is 0=L, 1=M; LM is intentionally not sampled by v1.
++    Legacy goals stay fixed per episode. Reward-only v2 can resample a world
++    target immediately after scoring a stable arrival. task_type: 0=L, 1=M.
+     """
+ 
+     cfg: M1PriorJointCommandCfg
+@@ -1341,6 +1341,9 @@ class M1PriorJointCommand(CommandTerm):
+         self.metrics["base_stable"] = torch.ones(self.num_envs, device=self.device)
+         self.metrics["ee_success"] = torch.zeros(self.num_envs, device=self.device)
+         self._last_ee_distance = torch.zeros(self.num_envs, device=self.device)
++        self.goal_sequence = torch.zeros(self.num_envs, dtype=torch.long, device=self.device)
++        self.last_goal_success = torch.zeros(self.num_envs, dtype=torch.bool, device=self.device)
++        self._last_goal_success_step = -1
+ 
+     @property
+     def goal(self) -> torch.Tensor:
+@@ -1393,6 +1396,26 @@ class M1PriorJointCommand(CommandTerm):
+         root_pos = self.robot.data.root_link_pos_w[env_ids]
+         root_quat = self.robot.data.root_link_quat_w[env_ids]
+         env_origins = self._env.scene.env_origins[env_ids]
++        if self.cfg.target_cfg.sampling == "base_disk":
++            root_local = root_pos - env_origins
++            target = sample_m1_disk_targets(root_local, self.cfg.target_cfg)
++            # Do not award a free success for targets sampled inside the TCP's
++            # success ball. All other heights/directions remain unfiltered.
++            tcp_ids = [self.robot.body_names.index(n) for n in ("piper_x_link7", "piper_x_link8")]
++            tcp_local = self.robot.data.body_link_pos_w[env_ids][:, tcp_ids].mean(1) - env_origins
++            for _ in range(16):
++                near = (target - tcp_local).norm(dim=-1) < self.cfg.success_distance
++                if not bool(near.any()):
++                    break
++                target[near] = sample_m1_disk_targets(root_local[near], self.cfg.target_cfg)
++            else:
++                raise RuntimeError("Could not sample M1 target outside success ball")
++            self.target_position_world[env_ids] = target
++            self.initial_base_position_world[env_ids] = root_local
++            self.goal_sequence[env_ids] += 1
++            self._update_metrics()
++            self._last_ee_distance[env_ids] = self.metrics["ee_distance"][env_ids]
++            return
+         tcp = self.robot.data.body_link_pos_w[env_ids][:, self._tcp_body_ids].mean(dim=1)
+         offsets = torch.zeros(env_ids.numel(), 3, device=self.device)
+         for axis, bounds in enumerate((self.cfg.target_x_range, self.cfg.target_y_range, self.cfg.target_z_range)):
+@@ -1415,6 +1438,19 @@ class M1PriorJointCommand(CommandTerm):
+             reset_ids = torch.empty(0, dtype=torch.long, device=self.device)
+         if reset_ids.numel():
+             self._set_reach_targets(reset_ids)
++        if self.cfg.target_cfg.resample_on_success:
++            self.last_goal_success.zero_()
++            cache = getattr(self._env, "_supermimic_m1_reward_cache", None)
++            # Reward was computed against the old target before this command
++            # update. Switch only after scoring it, before next obs/Replay.
++            if (cache is not None and cache["step"] == int(self._env.common_step_counter)
++                    and env_ids is None and self._last_goal_success_step != cache["step"]):
++                self._last_goal_success_step = cache["step"]
++                reached = cache["terms"]["m_success"] > 0
++                reached &= ~(self._env.reset_terminated | self._env.reset_time_outs)
++                self.last_goal_success.copy_(reached)
++                reached_ids = reached.nonzero().flatten()
++                self._set_reach_targets(reached_ids)
+         self._update_metrics()
+ 
+     def _update_metrics(self) -> None:
+@@ -1476,6 +1512,30 @@ class M1PriorJointCommand(CommandTerm):
+         self._hold_seconds = torch.where(within, self._hold_seconds + float(self._env.step_dt), torch.zeros_like(self._hold_seconds))
+         self._episode_success |= self._hold_seconds >= 0.5
+ 
++    def _debug_vis_impl(self, visualizer: DebugVisualizer) -> None:
++        """Draw the actual fixed M target and the reward/evaluation TCP proxy.
++
++        Sampling uses link7 as its reset anchor. Reward/evaluation measure the
++        midpoint of link7/link8; show that midpoint rather than the anchor.
++        Stored targets are env-local world points, whereas viewer geoms use
++        global scene coordinates. Never rotate them with the current robot.
++        """
++        import numpy as np
++
++        tcp_ids = [self.robot.body_names.index(name) for name in ("piper_x_link7", "piper_x_link8")]
++        tcp = self.robot.data.body_link_pos_w[:, tcp_ids].mean(dim=1)
++        target = self.target_position_world + self._env.scene.env_origins
++        for env_id in visualizer.get_env_indices(self.num_envs):
++            e = int(env_id)
++            if int(self.task_type[e]) != 1:
++                continue
++            p_target = target[e].detach().cpu().numpy()
++            p_tcp = tcp[e].detach().cpu().numpy()
++            visualizer.add_sphere(p_target, radius=0.035, color=(1.0, 0.15, 0.1, 1.0), label=f"m1_target_{e}")
++            visualizer.add_sphere(p_tcp, radius=0.018, color=(0.1, 0.8, 1.0, 1.0), label=f"m1_tcp_{e}")
++            if np.linalg.norm(p_target - p_tcp) > 1.0e-6:
++                visualizer.add_arrow(p_tcp, p_target, (1.0, 0.8, 0.1, 1.0), width=0.008, label=f"m1_tcp_error_{e}")
++
+     def state_dict(self) -> dict:
+         return {
+             "task_type": self.cfg.task_type,
+@@ -1492,6 +1552,7 @@ class M1PriorJointCommand(CommandTerm):
+             "target_z_range": tuple(self.cfg.target_z_range),
+             "minimum_target_height": float(self.cfg.minimum_target_height),
+             "maximum_target_height": float(self.cfg.maximum_target_height),
++            "target_cfg": {k: getattr(self.cfg.target_cfg, k) for k in self.cfg.target_cfg.__dataclass_fields__},
+             "success_distance": float(self.cfg.success_distance),
+             "success_minimum_base_height_m": float(self.cfg.success_minimum_base_height_m),
+             "success_maximum_tilt_rad": float(self.cfg.success_maximum_tilt_rad),
+@@ -1500,6 +1561,7 @@ class M1PriorJointCommand(CommandTerm):
+ 
+ @dataclass(kw_only=True)
+ class M1PriorJointCommandCfg(CommandTermCfg):
++    target_cfg: M1TargetCfg = field(default_factory=M1TargetCfg)
+     entity_name: str = "robot"
+     task_type: str = "balanced"  # balanced | L | M
+     l_task_fraction: float = 0.5
+diff --git a/src/supermimic/envs/multirobot_env_cfg.py b/src/supermimic/envs/multirobot_env_cfg.py
+index b2f28cc..0a64e7f 100644
+--- a/src/supermimic/envs/multirobot_env_cfg.py
++++ b/src/supermimic/envs/multirobot_env_cfg.py
+@@ -28,20 +28,22 @@ from supermimic.envs.mdp.commands import (ChaseBallCommandCfg, M1PriorJointComma
+ from supermimic.envs.tracking_env_cfg import QuietSimulationCfg, SuperMimicEnvCfgArgs
+ from supermimic.robots.mjlab_assets import get_robot_entity_cfg
+ from supermimic.robots.spec import get_robot_spec
++from supermimic.tasks.m1_reward import M1_REWARD_NAMES, m1_reward_term
+ from supermimic.tasks.velocity_reward import VELOCITY_REWARD_NAMES, go2_velocity_reward_term
+ from supermimic.tasks.chase_reward import CHASE_REWARD_NAMES, go2_chase_reward_term
+ from supermimic.tasks.world_point_reward import WORLD_POINT_REWARD_NAMES, m1_prior_data_collection_reward, m1_world_point_reward_term
+ 
+ 
+ def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
++    reward_task = a.task_name == "m1_reward"
+     prior_joint_task = a.task_name == "m1_prior_joint"
+     pose_profile = a.m1_pose_profile or (
+-        "dataset_v3_3_l_high_carry" if prior_joint_task and (
++        "dataset_v3_3_l_high_carry" if reward_task or (prior_joint_task and (
+             a.m1_joint_task_type == "L" or a.m1_joint_balanced_fixed_quota
+-        ) else
++        )) else
+         "dataset_carry" if prior_joint_task else "legacy_manipulation"
+     )
+-    action_contract = a.m1_action_contract or ("v3" if prior_joint_task else "v2")
++    action_contract = a.m1_action_contract or ("v3" if prior_joint_task or reward_task else "v2")
+     robot = get_robot_spec(
+         a.robot_name, m1_pose_profile=pose_profile,
+         m1_action_contract=action_contract,
+@@ -51,11 +53,11 @@ def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
+     chase_task = a.task_name == "chase_ball"
+     world_point_task = a.task_name == "world_point_reach"
+     prior_joint_task = a.task_name == "m1_prior_joint"
+-    if not (motion_task or velocity_task or chase_task or world_point_task or prior_joint_task):
+-        raise ValueError(f"unknown task {a.task_name!r}; use motion_tracking, velocity_command, chase_ball, world_point_reach, or m1_prior_joint")
++    if not (motion_task or velocity_task or chase_task or world_point_task or prior_joint_task or reward_task):
++        raise ValueError(f"unknown task {a.task_name!r}; use motion_tracking, velocity_command, chase_ball, world_point_reach, m1_prior_joint, or m1_reward")
+     if (velocity_task or chase_task) and robot.name != "go2":
+         raise ValueError(f"{a.task_name} is currently defined only for Go2")
+-    if (world_point_task or prior_joint_task) and robot.name != "m1_piper":
++    if (world_point_task or prior_joint_task or reward_task) and robot.name != "m1_piper":
+         raise ValueError(f"{a.task_name} is currently defined only for M1-Piper")
+     if motion_task and robot.name == "go2":
+         raise ValueError("Go2 has no motion bank; select velocity_command or chase_ball")
+@@ -101,7 +103,7 @@ def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
+         goal_terms = {"velocity_command": ObservationTermCfg(func=sm_obs.velocity_goal, params={"command_name": "velocity"})}
+     elif chase_task:
+         goal_terms = {"chase_ball": ObservationTermCfg(func=sm_obs.chase_ball_goal, params={"command_name": "chase_ball"})}
+-    elif prior_joint_task:
++    elif prior_joint_task or reward_task:
+         goal_terms = {"prior_goal8": ObservationTermCfg(func=sm_obs.m1_prior_goal8, params={"command_name": "m1_prior_joint"})}
+     else:
+         goal_terms = {"world_point_body": ObservationTermCfg(func=sm_obs.world_point_goal_body, params={"command_name": "world_point"})}
+@@ -221,6 +223,7 @@ def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
+                     "tracking_sigma_sq": a.velocity_reward_tracking_sigma_sq,
+                     "zero_speed_baseline": a.velocity_reward_zero_speed_baseline,
+                     "min_safe_height": a.velocity_min_safe_height,
++                    "gait_cfg": a.go2_gait,
+                 },
+             )
+             for name in VELOCITY_REWARD_NAMES
+@@ -288,12 +291,17 @@ def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
+         }
+         goal_dim = 6
+         command_name = "chase_ball"
+-    elif prior_joint_task:
++    elif prior_joint_task or reward_task:
++        if a.m1_target.resample_on_success and (not reward_task or a.m1_reward.success_bonus <= 0):
++            raise ValueError("Success-resampled M1 goals require m1_reward with a positive event bonus")
++        if reward_task and a.m1_target.resample_on_success and a.m1_reward.success_distance_m != a.m1_success_distance:
++            raise ValueError("M1 reward and command success distances must match")
+         commands = {
+             "m1_prior_joint": M1PriorJointCommandCfg(
+                 entity_name="robot", task_type=a.m1_joint_task_type,
++                target_cfg=a.m1_target,
+                 l_task_fraction=a.m1_joint_l_task_fraction,
+-                balanced_fixed_quota=a.m1_joint_balanced_fixed_quota,
++                balanced_fixed_quota=a.m1_joint_balanced_fixed_quota or (reward_task and a.m1_joint_task_type == "balanced"),
+                 reset_pose_profile=pose_profile,
+                 vx_range=a.m1_joint_vx_range, vy_range=a.m1_joint_vy_range,
+                 vx_stop_fraction=a.m1_joint_vx_stop_fraction,
+@@ -305,9 +313,15 @@ def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
+                 success_distance=a.m1_success_distance,
+                 success_minimum_base_height_m=a.m1_fall_height,
+                 success_maximum_tilt_rad=math.radians(a.velocity_fall_tilt_deg),
++                debug_vis=a.debug_vis,
+             )
+         }
+-        rewards = {"data_collection_zero": RewardTermCfg(func=m1_prior_data_collection_reward, weight=1.0)}
++        rewards = ({name: RewardTermCfg(
++            func=m1_reward_term, weight=1.0,
++            params={"term_name": name, "cfg": a.m1_reward, "base_height": robot.default_base_height},
++        ) for name in M1_REWARD_NAMES} if reward_task else {
++            "data_collection_zero": RewardTermCfg(func=m1_prior_data_collection_reward, weight=1.0)
++        })
+         tilt_feature_threshold = 1.0 - math.cos(math.radians(a.velocity_fall_tilt_deg))
+         terminations = {
+             "time_out": TerminationTermCfg(func=base_mdp.time_out, time_out=True),
+@@ -389,7 +403,7 @@ def make_multirobot_env_cfg(a: SuperMimicEnvCfgArgs) -> ManagerBasedRlEnvCfg:
+             "capacity": a.replay_capacity, "foot_geom_regex": robot.foot_geom_regex,
+             "com_body_name": robot.root_body_name, "command_name": command_name,
+             "action_name": action_name, "goal_dim": goal_dim,
+-            "m1_joint_context": prior_joint_task,
++            "m1_joint_context": prior_joint_task or reward_task,
+         })
+ 
+     # mjWarp's nconmax/njmax are PER WORLD, not totals across vectorized envs.
+diff --git a/src/supermimic/envs/tracking_env_cfg.py b/src/supermimic/envs/tracking_env_cfg.py
+index 6a88fd4..7c61246 100644
+--- a/src/supermimic/envs/tracking_env_cfg.py
++++ b/src/supermimic/envs/tracking_env_cfg.py
+@@ -37,6 +37,8 @@ from supermimic.envs.actions import NoisyJointPositionActionCfg
+ from supermimic.envs.mdp import observations as sm_obs
+ from supermimic.envs.mdp import terminations as sm_term
+ from supermimic.envs.mdp.commands import MultiClipMotionCommandCfg
++from supermimic.tasks.go2_gait import Go2GaitCfg
++from supermimic.tasks.m1_reward import M1RewardCfg, M1TargetCfg
+ 
+ class QuietSimulationCfg(SimulationCfg):
+     """SimulationCfg that disables MuJoCo Warp's per-step overflow printf (a kernel build-time constant,
+@@ -73,6 +75,8 @@ class SuperMimicEnvCfgArgs:
+     npz_files: list[str]
+     robot_name: str = "g1"
+     task_name: str = "motion_tracking"
++    m1_reward: M1RewardCfg = field(default_factory=M1RewardCfg)
++    m1_target: M1TargetCfg = field(default_factory=M1TargetCfg)
+     m1_pose_profile: Literal[
+         "legacy_manipulation", "dataset_carry", "dataset_v3_3_l_high_carry",
+     ] | None = None
+@@ -101,6 +105,7 @@ class SuperMimicEnvCfgArgs:
+     velocity_reward_direction: float = 0.5
+     velocity_reward_tracking_sigma_sq: float = 0.09
+     velocity_reward_zero_speed_baseline: bool = True
++    go2_gait: Go2GaitCfg = field(default_factory=Go2GaitCfg)
+     velocity_curriculum: bool = True
+     velocity_curriculum_initial_stage: int = 0
+     velocity_curriculum_fixed_stage: int | None = None
+diff --git a/src/supermimic/imagination/policy_trainer.py b/src/supermimic/imagination/policy_trainer.py
+index fd92e35..2004634 100644
+--- a/src/supermimic/imagination/policy_trainer.py
++++ b/src/supermimic/imagination/policy_trainer.py
+@@ -27,6 +27,7 @@ def _clip_bootstrap_values(values: torch.Tensor, value_clip: float | None) -> tu
+ 
+ @dataclass
+ class PolicyTrainerCfg:
++    m1_terminal_distance_weight: float = 0.0
+     horizon: int = 32
+     batch_size: int = 4096
+     # Optional GPU micro-batch. Several imagined rollouts are accumulated into one
+@@ -112,7 +113,7 @@ class PolicyTrainer:
+         value_clip_sum = 0.0
+         try:
+             for _ in range(n_micro):
+-                start = buffer.sample_starts(micro, cfg.history)
++                start = buffer.sample_starts(micro, cfg.history, task_balanced=getattr(self.task, "task_balanced", False))
+                 xi_norm = self.wm.spec.normalize_xi(start.xi)
+                 ro = imagine(
+                     self.wm, self.policy, self.task, start, cfg.horizon, cfg.future_frames,
+@@ -151,6 +152,10 @@ class PolicyTrainer:
+                 else:
+                     v_H = None
+                 J = policy_objective(ro, v_H, cfg.gamma)
++                if getattr(self.task, "terminal_distance_weight", 0.) > 0:
++                    terminal = self.task.terminal_reward(ro.states, start.goal)
++                    J = J + cfg.gamma ** cfg.horizon * terminal.mean()
++                    reward_metric_sum["terminal_distance"] = reward_metric_sum.get("terminal_distance", 0.) + float(terminal.mean().detach())
+                 # Average micro-batch objectives so the logical update has the same
+                 # scale as one full batch.
+                 (-J / cfg.horizon / n_micro).backward()
+diff --git a/src/supermimic/imagination/rollout.py b/src/supermimic/imagination/rollout.py
+index 5bdf545..5f731f1 100644
+--- a/src/supermimic/imagination/rollout.py
++++ b/src/supermimic/imagination/rollout.py
+@@ -90,6 +90,7 @@ def imagine(
+     frame = start.frame.clone()
+     a_prev = start.prev_action
+     c = torch.ones(n, device=device)
++    goal_active = torch.ones(n, device=device, dtype=torch.bool)
+     states = [s]
+     actions, rewards = [], []
+     dhats, survivals, frames = [torch.zeros(n, device=device)], [c], [frame]
+@@ -186,6 +187,14 @@ def imagine(
+             e_root = torch.zeros(n, 4, device=device, dtype=s.dtype)
+ 
+         d = torch.sigmoid(logits)
++        if getattr(task, "resample_on_success", False):
++            # The current world goal ends here; next real observation has a new
++            # goal. Do not repeat its event bonus or bootstrap the stale goal.
++            reached = task.goal_reached(s_next.detach(), task_goal).detach()
++            r = r * goal_active.to(r.dtype)
++            d = torch.where(reached | ~goal_active, torch.ones_like(d), d)
++            term_vec = term_vec * goal_active.to(term_vec.dtype)[None]
++            goal_active = goal_active & ~reached
+         c = c * (1.0 - d)
+         with torch.no_grad():
+             if is_motion:
+diff --git a/src/supermimic/imagination/tasks.py b/src/supermimic/imagination/tasks.py
+index 9f3c2ce..18d7fd3 100644
+--- a/src/supermimic/imagination/tasks.py
++++ b/src/supermimic/imagination/tasks.py
+@@ -29,6 +29,7 @@ from supermimic.tasks.chase_reward import (
+     chase_tag_probability,
+ )
+ from supermimic.kinematics.rotations import quat_apply_inverse
++from supermimic.tasks.m1_reward import M1_REWARD_NAMES, M1RewardCfg
+ 
+ 
+ @dataclass
+@@ -267,3 +268,63 @@ class WorldPointReachTask:
+ 
+     def termination_logits(self, state: torch.Tensor) -> torch.Tensor:
+         return torch.logit(self.termination_probability(state).clamp(1e-6, 1.0 - 1e-6))
++
++
++@dataclass
++class M1RewardTask(WorldPointReachTask):
++    """Direct Goal8 Actor/Critic; no prior, reference Actor or motion library.
++
++    Reuses point-task goal refresh and analytic fall termination in imagination.
++    Replay stores the seven physical command fields, never a stale relative goal.
++    """
++    terminal_distance_weight: float = 0.0
++    resample_on_success: bool = False
++    reward_cfg: M1RewardCfg = field(default_factory=M1RewardCfg)
++    base_height: float = 0.42
++    goal_interface: str = "m1_reward"
++    task_balanced: bool = True
++    reward_term_names: tuple[str, ...] = M1_REWARD_NAMES
++
++    @property
++    def goal_dim(self):
++        return 8
++
++    def actor_goal(self, state, context):
++        from supermimic.tasks.m1_reward import m1_actor_goal
++        return m1_actor_goal(state, context)
++
++    def reward_terms(self, s_prev, s_next, context, action, previous_action, *, executed_action=None):
++        from supermimic.tasks.m1_reward import m1_reward_terms
++        terms = m1_reward_terms(
++            s_prev, s_next, context, action, previous_action,
++            default_joint_pos=self.params.default_joint_pos, soft_limits=self.params.soft_joint_limits,
++            base_height=self.base_height, fk=self.fk, tcp_body_indices=self.tcp_body_indices,
++            cfg=self.reward_cfg, dt=self.dt,
++            fall_height=self.params.fall_height, tilt_feature_threshold=self.params.tilt_feature_threshold,
++        )
++        return {name: value * self.dt for name, value in terms.items()}
++
++    def goal_reached(self, state, context):
++        from supermimic.tasks.m1_reward import m1_goal_reached
++        return m1_goal_reached(state, context, self.fk, self.tcp_body_indices,
++                               self.reward_cfg.success_distance_m,
++                               self.params.fall_height, self.params.tilt_feature_threshold)
++
++    def terminal_reward(self, states, context):
++        """Horizon endpoint, in reward units once (no dt), active only for M.
++
++        A completed current goal has no residual endpoint cost. The detached
++        arrival mask truncates this goal without imagining random new targets.
++        Physical survival does not erase a negative distance cost.
++        """
++        from supermimic.tasks.world_point_reward import tcp_position_world
++        delta = tcp_position_world(states[-1], self.fk, self.tcp_body_indices) - context[..., 4:7]
++        distance = torch.sqrt(delta.square().sum(-1) + 1.e-8) - 1.e-4
++        active = context[..., 0] >= .5
++        if self.resample_on_success:
++            with torch.no_grad():
++                predicted = states[1:].detach()
++                alive = (self.termination_features(predicted) <= 0).all(-1).to(torch.int64).cumprod(0).bool()
++                completed = (self.goal_reached(predicted, context) & alive).any(0)
++                active = active & ~completed
++        return -self.terminal_distance_weight * active.to(distance.dtype) * distance
+diff --git a/src/supermimic/tasks/velocity_reward.py b/src/supermimic/tasks/velocity_reward.py
+index 9d89ac0..1110c92 100644
+--- a/src/supermimic/tasks/velocity_reward.py
++++ b/src/supermimic/tasks/velocity_reward.py
+@@ -9,11 +9,12 @@ import torch.nn.functional as F
+ 
+ from supermimic.kinematics.rotations import quat_apply_inverse
+ from supermimic.tasks.action_contract import position_setpoint
++from supermimic.tasks.go2_gait import GO2_GAIT_REWARD_NAMES, Go2GaitCfg, go2_gait_reward_terms
+ 
+ 
+ @dataclass
+ class VelocityRewardCfg:
+-    """First-pass reward coefficients; values are reward rates before the env dt."""
++    """Reward coefficients; values are reward rates before the env dt."""
+ 
+     linear_tracking: float = 3.0
+     command_direction: float = 0.5
+@@ -32,6 +33,7 @@ class VelocityRewardCfg:
+     upright_sigma_sq: float = 0.16
+     min_safe_height: float = 0.22
+     action_clip: float = 1.0
++    gait: Go2GaitCfg = field(default_factory=Go2GaitCfg)
+ 
+ 
+ @dataclass
+@@ -59,7 +61,7 @@ VELOCITY_REWARD_NAMES = (
+     "joint_deviation",
+     "joint_limit",
+     "base_height_low",
+-)
++) + GO2_GAIT_REWARD_NAMES
+ 
+ 
+ def _joint_torque_proxy(s_next: torch.Tensor, executed_action: torch.Tensor, params: VelocityRobotParams) -> torch.Tensor:
+@@ -181,6 +183,7 @@ def velocity_reward_terms(
+         "joint_limit": params.cfg.joint_limit * (below.square() + above.square()).sum(-1),
+         "base_height_low": params.cfg.base_height_low * F.relu(params.cfg.min_safe_height - s_next[..., 2]).square(),
+     }
++    terms.update(go2_gait_reward_terms(s_next, goal, params.cfg.gait))
+     return terms
+ 
+ 
+@@ -197,6 +200,7 @@ def go2_velocity_reward_term(
+     tracking_sigma_sq: float = 0.25,
+     zero_speed_baseline: bool = False,
+     min_safe_height: float = 0.22,
++    gait_cfg: Go2GaitCfg | None = None,
+ ) -> torch.Tensor:
+     """RewardManager adapter; caches the shared core and records real command metrics."""
+     step = int(env.common_step_counter)
+@@ -230,6 +234,7 @@ def go2_velocity_reward_term(
+                 tracking_sigma_sq=float(tracking_sigma_sq),
+                 zero_speed_baseline=bool(zero_speed_baseline),
+                 min_safe_height=float(min_safe_height),
++                gait=gait_cfg if gait_cfg is not None else Go2GaitCfg(),
+             ),
+         )
+         command = env.command_manager.get_term("velocity")
+diff --git a/src/supermimic/training/loop.py b/src/supermimic/training/loop.py
+index 787038f..ec1b196 100644
+--- a/src/supermimic/training/loop.py
++++ b/src/supermimic/training/loop.py
+@@ -16,7 +16,7 @@ from torch.utils.tensorboard import SummaryWriter
+ from supermimic.config import TrainConfig, validate_g1_actor_contract
+ from supermimic.envs import SuperMimicEnvCfgArgs, make_env
+ from supermimic.envs.mdp.motion_library import discover_npz
+-from supermimic.imagination.tasks import ChaseBallTask, MotionTrackingTask, VelocityCommandTask, WorldPointReachTask
++from supermimic.imagination.tasks import ChaseBallTask, MotionTrackingTask, VelocityCommandTask, WorldPointReachTask, M1RewardTask
+ from supermimic.imagination.policy_trainer import PolicyTrainer
+ from supermimic.kinematics.g1_fk import G1Kinematics
+ from supermimic.policy.nets import Critic, Policy, M1ActionReferenceActorCfg, M1ActionReferenceActor
+@@ -25,15 +25,15 @@ from supermimic.motion_prior.exploration import M1BoundedGaussianExplorer
+ from supermimic.motion_prior.trainer import M1AlternatingTrainer
+ from supermimic.robots.mjlab_assets import load_robot_spec_model
+ from supermimic.robots.spec import get_robot_spec
+-from supermimic.training.distributed import allreduce_mean, broadcast_params, finalize, init_distributed, world_size
++from supermimic.training.distributed import allreduce_mean, broadcast_params, finalize, init_distributed
+ from supermimic.training.schedule import actor_ramp_scale, scheduled_lr
+ from supermimic.world_model.heads import AnalyticHeads
+ from supermimic.world_model.wm_trainer import WorldModelTrainer
+ from supermimic.world_model.world_model import WorldModel
+ from supermimic.tasks.action_contract import add_bounded_action_exploration
++from supermimic.tasks.chase_reward import ChaseBallRewardCfg
+ from supermimic.tasks.velocity_reward import VelocityRewardCfg, VelocityRobotParams
+ from supermimic.tasks.world_point_reward import WorldPointRobotParams, m1_tcp_proxy_indices
+-from supermimic.tasks.chase_reward import ChaseBallRewardCfg
+ 
+ 
+ M1_FIRST_PHASE_CLIPS = (
+@@ -96,8 +96,17 @@ class Trainer:
+             raise ValueError("M1 Action22 runs use --m1-joint-training.resume, not legacy --resume")
+         if cfg.m1_joint_training.resume is not None and cfg.init_wm_from is not None:
+             raise ValueError("M1 Action22 resume includes the WM; do not also pass --init-wm-from")
++        is_m1_reward = cfg.env.task_name == "m1_reward"
+         is_m1_prior_joint = cfg.env.task_name == "m1_prior_joint"
+-        if is_m1_prior_joint:
++        if is_m1_reward:
++            if cfg.env.m1_pose_profile is None:
++                cfg.env.m1_pose_profile = "dataset_v3_3_l_high_carry"
++            if cfg.env.m1_action_contract not in (None, "v3"):
++                raise ValueError("m1_reward requires Action Contract v3")
++            cfg.env.m1_action_contract = "v3"
++            if cfg.env.m1_joint_task_type == "balanced":
++                cfg.env.m1_joint_balanced_fixed_quota = True
++        if is_m1_prior_joint or is_m1_reward:
+             if cfg.env.m1_pose_profile is None:
+                 cfg.env.m1_pose_profile = (
+                     "dataset_v3_3_l_high_carry" if (
+@@ -132,7 +141,7 @@ class Trainer:
+         is_m1_prior_joint = cfg.env.task_name == "m1_prior_joint"
+         if cfg.m1_joint_training.enabled != is_m1_prior_joint:
+             raise ValueError("m1_joint_training.enabled and env.task_name='m1_prior_joint' must be enabled together")
+-        if cfg.env.task_name not in ("motion_tracking", "velocity_command", "chase_ball", "world_point_reach", "m1_prior_joint"):
++        if cfg.env.task_name not in ("motion_tracking", "velocity_command", "chase_ball", "world_point_reach", "m1_prior_joint", "m1_reward"):
+             raise ValueError(f"unknown task {cfg.env.task_name!r}")
+         if is_m1_prior_joint and cfg.env.obs_noise:
+             raise ValueError(
+@@ -146,11 +155,11 @@ class Trainer:
+             )
+         if (is_velocity or is_chase) and robot_spec.name != "go2":
+             raise ValueError(f"{cfg.env.task_name} is currently supported only for Go2")
+-        if (is_world_point or is_m1_prior_joint) and robot_spec.name != "m1_piper":
++        if (is_world_point or is_m1_prior_joint or is_m1_reward) and robot_spec.name != "m1_piper":
+             raise ValueError(f"{cfg.env.task_name} is currently supported only for M1-Piper")
+         if robot_spec.name == "go2" and not (is_velocity or is_chase):
+             raise ValueError("Go2 has no Motion Library; select velocity_command or chase_ball")
+-        if robot_spec.name == "m1_piper" and not (is_motion or is_world_point or is_m1_prior_joint):
++        if robot_spec.name == "m1_piper" and not (is_motion or is_world_point or is_m1_prior_joint or is_m1_reward):
+             raise ValueError("M1-Piper supports motion_tracking, world_point_reach, and opt-in m1_prior_joint")
+         if cfg.env.anchor_obs is None:
+             cfg.env.anchor_obs = robot_spec.name == "m1_piper" and is_motion
+@@ -194,11 +203,11 @@ class Trainer:
+         # default G1 values and initialization path unchanged.
+         n_joints = robot_spec.num_joints
+         full_body_goal = is_motion and robot_spec.name == "g1" and cfg.env.motion_goal_schema == "full_body"
+-        goal_term_sizes = (268,) if full_body_goal else (robot_spec.amp_dim, robot_spec.amp_dim, 3, 3, 3, 1) if is_motion else (3, 3) if is_chase else (8,) if is_m1_prior_joint else (3,)
+-        goal_term_scale = (1.0,) if full_body_goal or is_m1_prior_joint else (1.0, 5.0, 1.0, 2.0, 1.0, 1.0) if is_motion else (1.0, 1.0) if is_chase else (1.0,)
++        goal_term_sizes = (268,) if full_body_goal else (robot_spec.amp_dim, robot_spec.amp_dim, 3, 3, 3, 1) if is_motion else (3, 3) if is_chase else (8,) if (is_m1_prior_joint or is_m1_reward) else (3,)
++        goal_term_scale = (1.0,) if full_body_goal or is_m1_prior_joint or is_m1_reward else (1.0, 5.0, 1.0, 2.0, 1.0, 1.0) if is_motion else (1.0, 1.0) if is_chase else (1.0,)
+         anchor_dim = 9 if cfg.env.anchor_obs else 6 if cfg.env.anchor_orientation_obs else 0
+         per_frame_goal_dim = 268 if full_body_goal else (2 * robot_spec.amp_dim + 10)
+-        goal_dim = cfg.env.future_frames * per_frame_goal_dim + anchor_dim if is_motion else 6 if is_chase else 8 if is_m1_prior_joint else 3
++        goal_dim = cfg.env.future_frames * per_frame_goal_dim + anchor_dim if is_motion else 6 if is_chase else 8 if (is_m1_prior_joint or is_m1_reward) else 3
+         cfg.policy.num_joints = n_joints
+         cfg.policy.history = cfg.env.history_length
+         # The imagination rollout must use the same flattened observation
+@@ -206,10 +215,10 @@ class Trainer:
+         # task overrides the default (Go2-SuperMimic uses five frames).
+         cfg.policy_trainer.history = cfg.env.history_length
+         cfg.policy.goal_dim = goal_dim
+-        cfg.policy.goal_interface = "motion" if is_motion else "velocity" if is_velocity else "chase_ball" if is_chase else "m1_prior_joint" if is_m1_prior_joint else "world_point_reach"
++        cfg.policy.goal_interface = "motion" if is_motion else "velocity" if is_velocity else "chase_ball" if is_chase else "m1_reward" if is_m1_reward else "m1_prior_joint" if is_m1_prior_joint else "world_point_reach"
+         # Keep G1/M1 on the original encoded goal path; only Go2 gets the compact
+         # proprioception + velocity-command actor.
+-        cfg.policy.goal_encoding = cfg.env.velocity_policy_encoding if is_velocity else "direct" if (is_world_point or is_chase or is_m1_prior_joint) else "encoded"
++        cfg.policy.goal_encoding = cfg.env.velocity_policy_encoding if is_velocity else "direct" if (is_world_point or is_chase or is_m1_prior_joint or is_m1_reward) else "encoded"
+         # Direct task actors must stay inside the action interval during BPTT.
+         # A smooth tanh has useful gradients near the boundary, unlike relying on
+         # a hard execution clamp after an unbounded decoder. Old checkpoints omit
+@@ -224,6 +233,9 @@ class Trainer:
+         cfg.world_model.action_dim = n_joints
+         cfg.world_model.xi_dim = n_joints + 4
+         cfg.world_model.termination_base_height = robot_spec.default_base_height
++        if is_m1_reward:
++            cfg.world_model.height_threshold = robot_spec.default_base_height - cfg.env.m1_fall_height
++            cfg.world_model.tilt_threshold = 1.0 - math.cos(math.radians(cfg.env.velocity_fall_tilt_deg))
+         if robot_spec.name == "go2":
+             if cfg.env.velocity_fall_height >= robot_spec.default_base_height:
+                 raise ValueError("Go2 fall height must be below the 0.42 m default base height")
+@@ -304,6 +316,7 @@ class Trainer:
+                 velocity_reward_direction=cfg.env.velocity_reward_direction,
+                 velocity_reward_tracking_sigma_sq=cfg.env.velocity_reward_tracking_sigma_sq,
+                 velocity_reward_zero_speed_baseline=cfg.env.velocity_reward_zero_speed_baseline,
++                go2_gait=cfg.env.go2_gait,
+                 velocity_curriculum=cfg.env.velocity_curriculum,
+                 velocity_curriculum_initial_stage=cfg.env.velocity_curriculum_initial_stage,
+                 velocity_curriculum_fixed_stage=cfg.env.velocity_curriculum_fixed_stage,
+@@ -347,6 +360,8 @@ class Trainer:
+                 chase_facing_weight=cfg.env.chase_facing_weight,
+                 chase_joint_torque_weight=cfg.env.chase_joint_torque_weight,
+                 chase_joint_acceleration_weight=cfg.env.chase_joint_acceleration_weight,
++                m1_reward=cfg.env.m1_reward,
++                m1_target=cfg.env.m1_target,
+                 m1_fall_height=cfg.env.m1_fall_height,
+                 m1_success_distance=cfg.env.m1_success_distance,
+                 m1_target_curriculum=cfg.env.m1_target_curriculum,
+@@ -381,7 +396,7 @@ class Trainer:
+             device=self.device,
+         )
+         env = self.env
+-        command_name = "motion" if is_motion else "velocity" if is_velocity else "chase_ball" if is_chase else "m1_prior_joint" if is_m1_prior_joint else "world_point"
++        command_name = "motion" if is_motion else "velocity" if is_velocity else "chase_ball" if is_chase else "m1_prior_joint" if (is_m1_prior_joint or is_m1_reward) else "world_point"
+         self.command = env.command_manager.get_term(command_name)
+         self.lib = getattr(self.command, "library", None)
+         self.recorder = env.recorder_manager.get_term("replay")
+@@ -434,6 +449,7 @@ class Trainer:
+                 command_direction=cfg.env.velocity_reward_direction,
+                 tracking_sigma_sq=cfg.env.velocity_reward_tracking_sigma_sq,
+                 zero_speed_baseline=cfg.env.velocity_reward_zero_speed_baseline,
++                gait=cfg.env.go2_gait,
+                 min_safe_height=cfg.env.velocity_min_safe_height,
+             )
+             default_joint_pos = robot.data.default_joint_pos[0].detach().clone()
+@@ -480,7 +496,7 @@ class Trainer:
+                 fall_height=cfg.env.velocity_fall_height,
+                 fall_tilt_deg=cfg.env.velocity_fall_tilt_deg,
+             )
+-        elif is_world_point:
++        elif is_world_point or is_m1_reward:
+             tcp_indices = m1_tcp_proxy_indices(heads.fk)
+             world_point_params = WorldPointRobotParams(
+                 default_joint_pos=robot.data.default_joint_pos[0].detach().clone(),
+@@ -488,11 +504,18 @@ class Trainer:
+                 dt=robot_spec.control_dt,
+                 fall_height=cfg.env.m1_fall_height,
+                 success_distance=cfg.env.m1_success_distance,
++                tilt_feature_threshold=1.0 - math.cos(math.radians(cfg.env.velocity_fall_tilt_deg if is_m1_reward else 70.0)),
+                 joint_velocity_weight=cfg.env.m1_joint_velocity_weight,
+                 joint_acceleration_weight=cfg.env.m1_joint_acceleration_weight,
+                 leg_action_magnitude_weight=cfg.env.m1_leg_action_magnitude_weight,
+             )
+-            self.task = WorldPointReachTask(
++            task_cls = M1RewardTask if is_m1_reward else WorldPointReachTask
++            reward_kwargs = {"reward_cfg": cfg.env.m1_reward, "base_height": robot_spec.default_base_height,
++                             "terminal_distance_weight": cfg.policy_trainer.m1_terminal_distance_weight,
++                             "resample_on_success": cfg.env.m1_target.resample_on_success,
++                             "task_balanced": cfg.env.m1_joint_task_type == "balanced"} if is_m1_reward else {}
++            self.task = task_cls(
++                **reward_kwargs,
+                 params=world_point_params,
+                 fk=heads.fk,
+                 tcp_body_indices=tcp_indices,
+@@ -556,6 +579,10 @@ class Trainer:
+         self.is_go2_chase = robot_spec.name == "go2" and is_chase
+         self.is_go2_task = self.is_go2_velocity or self.is_go2_chase
+         self.is_m1_motion = robot_spec.name == "m1_piper" and is_motion
++        self.is_m1_reward = is_m1_reward
++        if is_m1_reward:
++            self._m1_reward_hold = torch.zeros(env.num_envs, device=self.device)
++            self._m1_reward_success = torch.zeros(env.num_envs, dtype=torch.bool, device=self.device)
+         self.is_m1_world_point = robot_spec.name == "m1_piper" and is_world_point
+         self.is_m1_prior_joint = robot_spec.name == "m1_piper" and is_m1_prior_joint
+         self.go2_action_stats = self._empty_go2_action_stats() if self.is_go2_task else None
+@@ -743,7 +770,7 @@ class Trainer:
+             # weights came from native M1 Reach. Refit/evaluate on this run's
+             # collected distribution before allowing a Planner update.
+             return int(self.cfg.schedule.m1_wm_only_iterations)
+-        if self.is_m1_motion or getattr(self, "is_m1_world_point", False) or getattr(self, "is_m1_prior_joint", False):
++        if self.is_m1_motion or getattr(self, "is_m1_world_point", False) or getattr(self, "is_m1_reward", False) or getattr(self, "is_m1_prior_joint", False):
+             return 0 if self.pretrained_wm else int(self.cfg.schedule.m1_wm_only_iterations)
+         if self.cfg.env.robot_name == "g1" and self.cfg.env.task_name == "motion_tracking":
+             return int(self.cfg.schedule.g1_motion_wm_only_updates)
+@@ -777,6 +804,9 @@ class Trainer:
+             "kd": tuple(self.robot_spec.kd),
+             "effort_limits": tuple(self.robot_spec.effort_limits),
+         })
++        if self.is_m1_reward:
++            from supermimic.tasks.action_contract import serialize_m1_action_contract
++            config["m1_reward_action_mapping"] = serialize_m1_action_contract(self.robot_spec)
+         return config
+ 
+     @staticmethod
+@@ -824,6 +854,7 @@ class Trainer:
+                             initial_tmp.unlink()
+             return
+         state = {
++            "training_wall_seconds": getattr(self, "_training_elapsed_before", 0.) + (time.time() - self._training_start_time if hasattr(self, "_training_start_time") else 0.),
+             "iteration": self.iteration,
+             "num_updates": self.num_updates,
+             "wm": self.wm.state_dict(),
+@@ -926,6 +957,10 @@ class Trainer:
+                 f"checkpoint action output mapping {saved_action_output!r} cannot resume into "
+                 f"{self.cfg.policy.action_output!r}; start a fresh learner or use the saved mapping for evaluation"
+             )
++        if self.is_m1_reward:
++            from supermimic.tasks.action_contract import serialize_m1_action_contract
++            if saved_config.get("m1_reward_action_mapping") != serialize_m1_action_contract(self.robot_spec):
++                raise ValueError("m1_reward resume requires the identical saved pose/action contract")
+         self.wm.load_state_dict(ck["wm"])
+         self.policy.load_state_dict(ck["policy"])
+         self.critic.load_state_dict(ck["critic"])
+@@ -940,6 +975,7 @@ class Trainer:
+         action_term = self.recorder.action_term
+         if "action_state" in ck and hasattr(action_term, "load_state_dict"):
+             action_term.load_state_dict(ck["action_state"])
++        self._training_elapsed_before = float(ck.get("training_wall_seconds", 0.))
+         self.iteration = ck["iteration"]
+         self.num_updates = ck.get("num_updates", 0)
+         self.wm_only_updates = ck.get("wm_only_updates", 0)
+@@ -1109,6 +1145,42 @@ class Trainer:
+         for name in names:
+             value = self.env.reward_manager.get_term(name).mean().detach()
+             self.real_reward_term_sum[name] = self.real_reward_term_sum.get(name, value.new_zeros(())) + value
++        if self.is_m1_reward:
++            from supermimic.motion_prior.velocity import velocity_command_errors
++            from supermimic.tasks.world_point_reward import tcp_position_world
++
++            cache = self.env._supermimic_m1_reward_cache
++            state, context = cache["state_next"], cache["context"]
++            is_l, is_m = context[:, 0] < 0.5, context[:, 0] >= 0.5
++            xy_error, xy_sq, yaw_error, _ = velocity_command_errors(state, context[:, 1:4])
++            distance = (tcp_position_world(state, self.task.fk, self.task.tcp_body_indices) - context[:, 4:7]).norm(dim=-1)
++            stable = (self.task.termination_features(state) < 0).all(-1)
++            within = is_m & stable & (distance < self.cfg.env.m1_success_distance)
++            if self.cfg.env.m1_target.resample_on_success:
++                reached = (cache["terms"]["m_success"] > 0) & stable
++                self._m1_reward_success |= reached
++                m_metrics = {"ee_distance": distance, "within_8cm": within.float(),
++                             "goals_per_env_minute": reached.float() * (60. / self.env.step_dt),
++                             "episode_any_goal_success_so_far": self._m1_reward_success.float()}
++            else:
++                self._m1_reward_hold = torch.where(within, self._m1_reward_hold + self.env.step_dt, 0.0)
++                self._m1_reward_success |= self._m1_reward_hold >= 0.5
++                m_metrics = {"ee_distance": distance, "within_8cm": within.float(),
++                             "stable_hold_success_so_far": self._m1_reward_success.float()}
++            metrics = {}
++            for mask, prefix, values in (
++                (is_l, "real/L", {"velocity_xy_mse": xy_sq, "yaw_rate_mse": yaw_error.square(),
++                                 "command_vx": context[:, 1], "base_vx": xy_error[:, 0] + context[:, 1],
++                                 "wrong_direction": ((context[:, 1] > 0.05) & (xy_error[:, 0] + context[:, 1] < 0)).float()}),
++                (is_m, "real/M", m_metrics),
++            ):
++                if bool(mask.any()):
++                    metrics.update({f"{prefix}/{key}": value[mask].mean() for key, value in values.items()})
++            done = self.env.reset_terminated | self.env.reset_time_outs
++            self._m1_reward_hold[done] = 0.0
++            self._m1_reward_success[done] = False
++            for key, value in metrics.items():
++                self.task_diag_sum[key] = self.task_diag_sum.get(key, value.new_zeros(())) + value.detach()
+         if self.cfg.env.robot_name.lower().replace("-", "_") == "g1" and self.cfg.env.task_name == "motion_tracking":
+             # Diagnostics only: expose drift that a pure-proprio Actor cannot
+             # observe, without changing the reward or policy inputs.
+@@ -1264,6 +1336,7 @@ class Trainer:
+             ):
+                 self.save("ckpt_initial_actor.pt")
+         t_start = time.time()
++        self._training_start_time = t_start
+         checkpoint_interval_seconds = max(0.0, float(sch.checkpoint_interval_minutes) * 60.0)
+         next_wall_checkpoint = checkpoint_interval_seconds
+         timers = {"sim": 0.0, "wm": 0.0, "policy": 0.0}
+@@ -1585,7 +1658,7 @@ class Trainer:
+                 if self.has_tracking_return:
+                     norm_ret = self.ep_reward_sum[ids] / (self.max_step_reward * lens.clamp_min(1))
+                     finished_returns.extend(norm_ret.tolist())
+-                elif self.is_go2_task or self.is_m1_world_point or self.is_m1_prior_joint:
++                elif self.is_go2_task or self.is_m1_world_point or self.is_m1_prior_joint or self.is_m1_reward:
+                     finished_returns.extend(self.ep_reward_sum[ids].tolist())
+                     finished_falls.extend(term[ids].float().tolist())
+                 finished_lens.extend(lens.tolist())
+@@ -1656,7 +1729,7 @@ class Trainer:
+                     critic_lr = scheduled_lr(sch.lr_schedule, self.iteration, sch.total_iterations, cfg.policy_trainer.critic_lr, sch.lr_final_ratio, sch.lr_decay_fraction)
+                     self.wm_trainer.set_lr(wm_lr)
+                     t0 = time.perf_counter()
+-                    m_wm = self.wm_trainer.update(self.buffer)
++                    m_wm = self.wm_trainer.update(self.buffer, task_balanced=self.is_m1_reward and self.task.task_balanced)
+                     torch.cuda.synchronize()
+                     timers["wm"] += time.perf_counter() - t0
+                     m_pi = {}
+@@ -1680,7 +1753,7 @@ class Trainer:
+                         t0 = time.perf_counter()
+                         for _ in range(sch.policy_updates_per_wm_update):
+                             ramp_updates = max(int(sch.actor_ramp_iterations), 0)
+-                            if self.is_go2_task and ramp_updates > 0:
++                            if (self.is_go2_task or self.is_m1_reward) and ramp_updates > 0:
+                                 ramp_scale = actor_ramp_scale(self.actor_updates + 1, ramp_updates)
+                             else:
+                                 ramp_scale = 1.0
+@@ -1736,7 +1809,7 @@ class Trainer:
+                         "wm/lr", "prior/lr", "actor/lr", "schedule/wm_only_updates",
+                     )
+                     for k, v in agg.items():
+-                        metric_count = agg_counts.get(k, agg_n) if self.is_m1_prior_joint else agg_n
++                        metric_count = agg_counts.get(k, agg_n) if self.is_m1_prior_joint or self.is_m1_reward else agg_n
+                         denominator = 1 if k in last_value_keys else metric_count
+                         self.writer.add_scalar(k, v / max(denominator, 1), it)
+                 if self.is_main and self.policy_trainer is not None and self.policy_trainer.last_imag_diagnostics:
+@@ -1764,6 +1837,8 @@ class Trainer:
+                         self.writer.add_scalar("go2/chase_timeout_success_fraction", tag_rate, it)
+                     elif self.is_m1_world_point:
+                         self.writer.add_scalar("m1/world_point_episode_return", tr, it)
++                    elif self.is_m1_reward:
++                        self.writer.add_scalar("m1/reward_only_episode_return", tr, it)
+                     elif self.is_m1_prior_joint:
+                         self.writer.add_scalar("m1/prior_joint_episode_return", tr, it)
+                     self.writer.add_scalar("train/episode_len", sum(finished_lens) / max(len(finished_lens), 1), it)
+@@ -1777,6 +1852,8 @@ class Trainer:
+                     fall_rate = sum(finished_falls) / len(finished_falls)
+                     self.writer.add_scalar("m1/world_point_fall_rate", fall_rate, it)
+                     self.writer.add_scalar("m1/fall_rate", fall_rate, it)
++                if self.is_m1_reward and self.is_main and finished_falls:
++                    self.writer.add_scalar("m1/reward_only_fall_rate", sum(finished_falls) / len(finished_falls), it)
+                 if self.is_m1_prior_joint and self.is_main and finished_falls:
+                     self.writer.add_scalar("m1/fall_rate", sum(finished_falls) / len(finished_falls), it)
+                 if self.is_go2_velocity and self.is_main:
+@@ -1923,7 +2000,7 @@ class Trainer:
+                                   "validation": 4}.get(self.m1_joint_trainer.stage, -1)
+                     self.writer.add_scalar("schedule/m1_joint_phase", stage_code, it)
+                 if self.is_main:
+-                    task_prefix = "go2" if self.is_go2_task else ("m1" if self.is_m1_motion or self.is_m1_world_point or self.is_m1_prior_joint else "g1")
++                    task_prefix = "go2" if self.is_go2_task else ("m1" if self.is_m1_motion or self.is_m1_world_point or self.is_m1_prior_joint or self.is_m1_reward else "g1")
+                     for key, value in self.real_reward_term_sum.items():
+                         self.writer.add_scalar(f"{task_prefix}/reward_real/{key}", float(value / sch.log_interval), it)
+                     for key, value in self.task_diag_sum.items():
+@@ -1931,7 +2008,8 @@ class Trainer:
+                     for key, value in agg.items():
+                         if key.startswith("policy/imag_r/"):
+                             term = key.removeprefix("policy/imag_r/")
+-                            self.writer.add_scalar(f"{task_prefix}/reward_imag/{term}", value / max(agg_n, 1), it)
++                            term_count = agg_counts.get(key, agg_n) if self.is_m1_reward else agg_n
++                            self.writer.add_scalar(f"{task_prefix}/reward_imag/{term}", value / max(term_count, 1), it)
+                 with torch.no_grad():
+                     if self.is_main and self.is_m1_prior_joint and bool(self.buffer.window_mask(8).any()):
+                         wm_components = self.wm_trainer.online_error_components(
+@@ -1966,11 +2044,12 @@ class Trainer:
+                         self.writer.add_scalar("sampler/bin_return_mean", float(self.command.bin_return.mean()), it)
+                     dt_log = time.time() - last_log
+                     last_log = time.time()
++                    pi_count = agg_counts.get("policy/imag_return_undisc", agg_n) if self.is_m1_reward else agg_n
+                     msg = (
+                         f"it {it} | {elapsed/3600:.2f} h | {sch.log_interval / dt_log:.1f} it/s | updates {self.num_updates} | "
+                         f"train_ret {tr:.3f} (n={n_finished}) | "
+                         f"wm nse1 {agg.get('wm/nse_1step', float('nan'))/max(agg_n,1):.4f} nse8 {(float(err[-1]) if err is not None else float('nan')):.4f} | "
+-                        f"imag_ret {agg.get('policy/imag_return_undisc', float('nan'))/max(agg_n,1):.3f} surv {agg.get('policy/imag_survival_H', float('nan'))/max(agg_n,1):.3f} | "
++                        f"imag_ret {agg.get('policy/imag_return_undisc', float('nan'))/max(pi_count,1):.3f} surv {agg.get('policy/imag_survival_H', float('nan'))/max(pi_count,1):.3f} | "
+                         f"WM-only {self.wm_only_updates}/{wm_only_target} actor-ramp {agg.get('policy/actor_ramp_scale', 0.0):.3f} | "
+                         f"t sim/wm/pi {timers['sim']:.1f}/{timers['wm']:.1f}/{timers['policy']:.1f}s"
+                     )
+@@ -2047,12 +2126,13 @@ class Trainer:
+                 while time.time() - t_start >= next_wall_checkpoint:
+                     wall_minutes = int(round(next_wall_checkpoint / 60.0))
+                     self.save(f"ckpt_wall_{wall_minutes:03d}m.pt")
++                    self.save("ckpt_latest.pt")
+                     next_wall_checkpoint += checkpoint_interval_seconds
+             if sch.stop_at_iteration is not None and self.iteration >= sch.stop_at_iteration:
+                 if self.is_main:
+                     print(f"[INFO] stop_at_iteration reached ({self.iteration}), stopping", flush=True)
+                 break
+-            if sch.max_hours is not None and self.iteration % sch.log_interval == 0:
++            if sch.max_hours is not None:
+                 stop = float((time.time() - t_start) / 3600 > sch.max_hours)
+                 if self.world > 1:
+                     stop = allreduce_mean(stop)  # rank 0's clock decides (all ranks agree on the mean > 0)

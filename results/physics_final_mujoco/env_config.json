@@ -1,0 +1,188 @@
+{
+  "scene": {
+    "model_file": "/home/yifeiy/ws_go2_unilab/Uni-SuperMimic/src/unisupermimic/assets/robots/go2_velocity/flat.xml",
+    "fragment_files": [],
+    "terrain": null,
+    "entities": {
+      "robot": {
+        "root_body_name": "robot/base",
+        "joint_names": [
+          "robot/FL_hip_joint",
+          "robot/FL_thigh_joint",
+          "robot/FL_calf_joint",
+          "robot/FR_hip_joint",
+          "robot/FR_thigh_joint",
+          "robot/FR_calf_joint",
+          "robot/RL_hip_joint",
+          "robot/RL_thigh_joint",
+          "robot/RL_calf_joint",
+          "robot/RR_hip_joint",
+          "robot/RR_thigh_joint",
+          "robot/RR_calf_joint"
+        ],
+        "body_names": [
+          "robot/base"
+        ],
+        "geom_names": [
+          "robot/FL_foot_collision",
+          "robot/FR_foot_collision",
+          "robot/RL_foot_collision",
+          "robot/RR_foot_collision"
+        ],
+        "site_names": null,
+        "actuator_names": [
+          "robot/FL_hip_joint",
+          "robot/FL_thigh_joint",
+          "robot/FL_calf_joint",
+          "robot/FR_hip_joint",
+          "robot/FR_thigh_joint",
+          "robot/FR_calf_joint",
+          "robot/RL_hip_joint",
+          "robot/RL_thigh_joint",
+          "robot/RL_calf_joint",
+          "robot/RR_hip_joint",
+          "robot/RR_thigh_joint",
+          "robot/RR_calf_joint"
+        ],
+        "physical_entity": null
+      }
+    },
+    "visual_model_file": null,
+    "default_keyframe_name": "init_state",
+    "fixed_variant_plan": null,
+    "entity_assets": [],
+    "entity_variant": null,
+    "contact_excludes": [],
+    "primary_entity": null,
+    "tracked_body_names": null
+  },
+  "fixed_model_variants": null,
+  "sim_dt": 0.005,
+  "max_episode_seconds": 10.0,
+  "ctrl_dt": 0.02,
+  "render_spacing": 1.0,
+  "render_offset_mode": "grid",
+  "drake_backend_mode": "batch",
+  "drake_nthread": 0,
+  "superdex_num_workers": 0,
+  "superdex_execution_mode": "batch",
+  "superdex_assets_root": null,
+  "superdex_effort_limits": null,
+  "superdex_allow_contact_approximation": false,
+  "motrix_max_iterations": null,
+  "cpu_ids": null,
+  "mjwarp_nconmax": 128,
+  "mjwarp_njmax": 512,
+  "mjwarp_validate_tensor_finite": false,
+  "newton_device": null,
+  "newton_nconmax": null,
+  "newton_njmax": null,
+  "newton_capacity_check_steps": 1,
+  "newton_use_cuda_graph": true,
+  "isaacgym_device_id": null,
+  "isaacgym_worker_timeout_s": null,
+  "genesis_device_id": null,
+  "genesis_integrator": null,
+  "genesis_constraint_solver": null,
+  "genesis_friction_cone": null,
+  "genesis_solver_iterations": null,
+  "isaacsim_device_id": null,
+  "isaacsim_worker_timeout_s": null,
+  "isaacsim_render_mode": null,
+  "isaacsim_render_width": 1280,
+  "isaacsim_render_height": 720,
+  "isaacsim_tensor_cuda_ipc": false,
+  "isaacsim_share_friction_materials": false,
+  "isaacsim_env_spacing": null,
+  "observations": {
+    "policy": {
+      "terms": {
+        "proprio": {
+          "func": "<function observation at 0x7fe3e75d4e00>",
+          "params": {},
+          "noise": null,
+          "clip": null,
+          "scale": null,
+          "delay_min_lag": 0,
+          "delay_max_lag": 0,
+          "delay_per_env": true,
+          "delay_hold_prob": 0.0,
+          "delay_update_period": 0,
+          "delay_per_env_phase": true,
+          "history_length": 0,
+          "flatten_history_dim": true
+        }
+      },
+      "concatenate_terms": true,
+      "concatenate_dim": -1,
+      "enable_corruption": false,
+      "history_length": null,
+      "flatten_history_dim": true,
+      "nan_policy": "error",
+      "nan_check_per_term": true
+    }
+  },
+  "actions": {
+    "joint_pos": {
+      "entity_name": "robot",
+      "clip": null,
+      "ou_env_fraction": 0.25,
+      "ou_noise_std": 0.3,
+      "ou_theta": 2.0
+    }
+  },
+  "events": {},
+  "rewards": {
+    "velocity": {
+      "func": "<function reward at 0x7fe3e75d7b00>",
+      "params": {},
+      "weight": 1.0,
+      "reward_pack_names": []
+    }
+  },
+  "terminations": {
+    "fallen": {
+      "func": "<function fallen at 0x7fe3e75d7ba0>",
+      "params": {},
+      "time_out": false
+    },
+    "time_out": {
+      "func": "<function time_out at 0x7fe3e8e26480>",
+      "params": {},
+      "time_out": true
+    }
+  },
+  "commands": {
+    "velocity": {
+      "resampling_time_range": [
+        5.0,
+        5.0
+      ],
+      "debug_vis": false,
+      "entity_name": "robot",
+      "stage": 0,
+      "standing_fraction": 0.05,
+      "fixed_command": null,
+      "spawn_heading": 0.0,
+      "spawn_offset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "domain_randomization": false
+    }
+  },
+  "curriculum": {},
+  "metrics": {},
+  "recorders": {},
+  "reset_owners": {},
+  "collector_tensor_device": null,
+  "seed": 2026,
+  "is_finite_horizon": false,
+  "auto_reset": true,
+  "scale_rewards_by_dt": false,
+  "policy_observation_group": "policy",
+  "critic_observation_group": null,
+  "defer_finite_validation": true,
+  "finite_validation_interval": 1
+}

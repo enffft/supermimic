@@ -75,6 +75,20 @@ class SupportsSuperMimicProtocol(Protocol):
     def supermimic_mdp(self) -> SuperMimicMdpProtocol: ...
 
 
+@runtime_checkable
+class DirectGoalMdpProtocol(SuperMimicMdpProtocol, Protocol):
+    """Reference-free reward with replay-owned commands and preceding states."""
+
+    def reward_transition(
+        self,
+        previous: State,
+        state: State,
+        goal: torch.Tensor,
+        action: torch.Tensor,
+        previous_action: torch.Tensor,
+    ) -> torch.Tensor: ...
+
+
 def get_supermimic_mdp(env: Any) -> SuperMimicMdpProtocol:
     """Return the injected task MDP, failing closed for unsupported envs."""
     if not isinstance(env, SupportsSuperMimicProtocol):
@@ -83,6 +97,7 @@ def get_supermimic_mdp(env: Any) -> SuperMimicMdpProtocol:
 
 
 __all__ = [
+    "DirectGoalMdpProtocol",
     "SUPERMIMIC_STATE_KEY",
     "SUPERMIMIC_TRANSITION_KEY",
     "State",

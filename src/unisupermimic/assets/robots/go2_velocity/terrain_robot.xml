@@ -1,0 +1,192 @@
+<mujoco model="mjlab scene">
+  <compiler angle="radian" />
+
+  <option timestep="0.005" iterations="10" ls_iterations="20" />
+
+  <size nkey="1" />
+
+  <statistic meansize="0.03" />
+
+  <visual>
+    <global azimuth="135" elevation="-25" offwidth="1920" offheight="1080" />
+    <quality shadowsize="8192" />
+    <headlight ambient="0.3 0.3 0.3" diffuse="0.6 0.6 0.6" specular="0 0 0" />
+    <scale forcewidth="0.25" contactwidth="0.4" contactheight="0.15" framelength="5" framewidth="0.3" />
+    <rgba haze="0.15 0.25 0.35 1" force="1 0 0 1" />
+  </visual>
+
+  <default>
+    <default class="robot/main" />
+  </default>
+
+  <asset>
+    <texture type="2d" colorspace="auto" name="groundplane" builtin="checker" mark="edge" rgb1="0.2 0.3 0.4" rgb2="0.1 0.2 0.3" markrgb="0.8 0.8 0.8" width="300" height="300" />
+    <material name="groundplane" texture="groundplane" texrepeat="4 4" texuniform="true" reflectance="0.2" />
+    <mesh name="robot/visual_mesh_9f63efb62ca5" file="/home/yifeiy/ws_go2_unilab/Uni-SuperMimic/src/unisupermimic/assets/robots/go2_velocity/meshes/base_5096d1f13edc7aa7.obj" smoothnormal="true" />
+    <mesh name="robot/visual_mesh_14991b0fb81b" file="/home/yifeiy/ws_go2_unilab/Uni-SuperMimic/src/unisupermimic/assets/robots/go2_velocity/meshes/hip_6b4acd283a1f7ab4.obj" smoothnormal="true" />
+    <mesh name="robot/visual_mesh_936f46206c0d" file="/home/yifeiy/ws_go2_unilab/Uni-SuperMimic/src/unisupermimic/assets/robots/go2_velocity/meshes/thigh_02b2b1202d2c0023.obj" smoothnormal="true" />
+    <mesh name="robot/visual_mesh_c5df34356160" file="/home/yifeiy/ws_go2_unilab/Uni-SuperMimic/src/unisupermimic/assets/robots/go2_velocity/meshes/calf_55538301cd7c78fb.obj" smoothnormal="true" />
+    <mesh name="robot/visual_mesh_15dc604b4195" file="/home/yifeiy/ws_go2_unilab/Uni-SuperMimic/src/unisupermimic/assets/robots/go2_velocity/meshes/foot_c5257103990ee24a.obj" smoothnormal="true" />
+    <mesh name="robot/visual_mesh_e261dafef23f" file="/home/yifeiy/ws_go2_unilab/Uni-SuperMimic/src/unisupermimic/assets/robots/go2_velocity/meshes/thigh_mirror_425f2c537925f8b2.obj" smoothnormal="true" />
+    <mesh name="robot/visual_mesh_400e8f727e1f" file="/home/yifeiy/ws_go2_unilab/Uni-SuperMimic/src/unisupermimic/assets/robots/go2_velocity/meshes/calf_mirror_df5764c6c4f85926.obj" smoothnormal="true" />
+  </asset>
+
+  <worldbody>
+    <light name="sun" pos="0 0 1.5" type="directional" />
+    <body name="robot/base">
+      <inertial pos="0.021112 0 -0.005366" quat="-0.000543471 0.713435 -0.00173769 0.700719" mass="6.921" diaginertia="0.107027 0.0980771 0.0244531" />
+      <joint name="robot/root" type="free" />
+      <geom name="robot/base_collision" size="0.1881 0.04675 0.057" type="box" condim="1" group="3" rgba="1 1 1 1" />
+      <geom name="robot/visual_base_0" pos="0 0 0" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="1" rgba="0.671705 0.692426 0.77427 1" mass="0" mesh="robot/visual_mesh_9f63efb62ca5" />
+      <body name="robot/Head_upper" pos="0.285 0 0.01">
+        <inertial pos="0 0 0" mass="0.001" diaginertia="9.6e-06 9.6e-06 9.6e-06" />
+        <geom name="robot/Head_upper_collision" size="0.05 0.045" type="cylinder" condim="1" group="3" />
+        <body name="robot/Head_lower" pos="0.008 0 -0.07">
+          <inertial pos="0 0 0" mass="0.001" diaginertia="9.6e-06 9.6e-06 9.6e-06" />
+          <geom name="robot/Head_lower_collision" size="0.047" condim="1" group="3" />
+        </body>
+      </body>
+      <body name="robot/FL_hip" pos="0.1934 0.0465 0">
+        <inertial pos="-0.0054 0.00194 -0.000105" quat="0.497014 0.499245 0.505462 0.498237" mass="0.678" diaginertia="0.00088403 0.000596003 0.000479967" />
+        <joint name="robot/FL_hip_joint" range="-1.0472 1.0472" actuatorfrcrange="-23.7 23.7" axis="1 0 0" />
+        <geom name="robot/FL_hip_collision" size="0.046 0.02" pos="0 0.08 0" quat="0.707107 0.707107 0 0" type="cylinder" condim="1" group="3" rgba="1 1 1 1" />
+        <geom name="robot/visual_FL_hip_0" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="1" rgba="0.9 0.95 0.95 1" mass="0" mesh="robot/visual_mesh_14991b0fb81b" />
+        <body name="robot/FL_thigh" pos="0 0.0955 0">
+          <inertial pos="-0.00374 -0.0223 -0.0327" quat="0.829533 0.0847635 -0.0200632 0.551623" mass="1.152" diaginertia="0.00594973 0.00584149 0.000878787" />
+          <joint name="robot/FL_thigh_joint" range="-1.5708 3.4907" actuatorfrcrange="-23.7 23.7" axis="0 1 0" />
+          <geom name="robot/FL_thigh_collision" size="0.055 0.01225 0.017" pos="0 0 -0.1065" quat="0.707107 0 0.707107 0" type="box" condim="1" group="3" rgba="1 1 1 1" />
+          <geom name="robot/visual_FL_thigh_0" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="1" rgba="0.9 0.95 0.95 1" mass="0" mesh="robot/visual_mesh_936f46206c0d" />
+          <body name="robot/FL_calf" pos="0 0 -0.213">
+            <inertial pos="0.00548 -0.000975 -0.115" quat="0.715503 -0.00296114 -0.00858043 0.698551" mass="0.154" diaginertia="0.00110008 0.00108027 3.25534e-05" />
+            <joint name="robot/FL_calf_joint" range="-2.7227 -0.83776" actuatorfrcrange="-35.55 35.55" axis="0 1 0" />
+            <geom name="robot/FL_calf_collision" size="0.012 0.06" pos="0.008 0 -0.06" quat="0.994493 0 -0.104807 0" type="cylinder" condim="1" group="3" rgba="1 1 1 1" />
+            <geom name="robot/visual_FL_calf_0" pos="0 0 0" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="1" rgba="0.671705 0.692426 0.77427 1" mass="0" mesh="robot/visual_mesh_c5df34356160" />
+            <body name="robot/FL_calflower" pos="0.02 0 -0.148" quat="0.999688 0 0.0249974 0">
+              <geom name="robot/FL_calflower_collision" size="0.011 0.0325" type="cylinder" condim="1" group="3" />
+              <body name="robot/FL_calflower1" pos="-0.01 0 -0.04" quat="0.971338 0 0.237703 0">
+                <geom name="robot/FL_calflower1_collision" size="0.0155 0.015" type="cylinder" condim="1" group="3" />
+              </body>
+            </body>
+            <body name="robot/FL_foot" pos="0 0 -0.213">
+              <inertial pos="0 0 0" mass="0.04" diaginertia="9.6e-06 9.6e-06 9.6e-06" />
+              <geom name="robot/FL_foot_collision" size="0.022" pos="-0.002 0 0" condim="6" group="3" priority="1" friction="1 0.005 0.0005" rgba="1 1 1 1" />
+              <geom name="robot/visual_FL_foot_0" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="1" rgba="0 0 0 1" mass="0" mesh="robot/visual_mesh_15dc604b4195" />
+            </body>
+          </body>
+        </body>
+      </body>
+      <body name="robot/FR_hip" pos="0.1934 -0.0465 0">
+        <inertial pos="-0.0054 -0.00194 -0.000105" quat="0.498237 0.505462 0.499245 0.497014" mass="0.678" diaginertia="0.00088403 0.000596003 0.000479967" />
+        <joint name="robot/FR_hip_joint" range="-1.0472 1.0472" actuatorfrcrange="-23.7 23.7" axis="1 0 0" />
+        <geom name="robot/FR_hip_collision" size="0.046 0.02" pos="0 -0.08 0" quat="0.707107 0.707107 0 0" type="cylinder" condim="1" group="3" rgba="1 1 1 1" />
+        <geom name="robot/visual_FR_hip_0" quat="4.63268e-05 1 0 0" type="mesh" contype="0" conaffinity="0" group="1" rgba="0.9 0.95 0.95 1" mass="0" mesh="robot/visual_mesh_14991b0fb81b" />
+        <body name="robot/FR_thigh" pos="0 -0.0955 0">
+          <inertial pos="-0.00374 0.0223 -0.0327" quat="0.551623 -0.0200632 0.0847635 0.829533" mass="1.152" diaginertia="0.00594973 0.00584149 0.000878787" />
+          <joint name="robot/FR_thigh_joint" range="-1.5708 3.4907" actuatorfrcrange="-23.7 23.7" axis="0 1 0" />
+          <geom name="robot/FR_thigh_collision" size="0.055 0.01225 0.017" pos="0 0 -0.1065" quat="0.707107 0 0.707107 0" type="box" condim="1" group="3" rgba="1 1 1 1" />
+          <geom name="robot/visual_FR_thigh_0" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="1" rgba="0.9 0.95 0.95 1" mass="0" mesh="robot/visual_mesh_e261dafef23f" />
+          <body name="robot/FR_calf" pos="0 0 -0.213">
+            <inertial pos="0.00548 0.000975 -0.115" quat="0.698551 -0.00858043 -0.00296114 0.715503" mass="0.154" diaginertia="0.00110008 0.00108027 3.25534e-05" />
+            <joint name="robot/FR_calf_joint" range="-2.7227 -0.83776" actuatorfrcrange="-35.55 35.55" axis="0 1 0" />
+            <geom name="robot/FR_calf_collision" size="0.013 0.06" pos="0.01 0 -0.06" quat="0.995004 0 -0.0998334 0" type="cylinder" condim="1" group="3" rgba="1 1 1 1" />
+            <geom name="robot/visual_FR_calf_0" pos="0 0 0" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="1" rgba="0.671705 0.692426 0.77427 1" mass="0" mesh="robot/visual_mesh_400e8f727e1f" />
+            <body name="robot/FR_calflower" pos="0.02 0 -0.148" quat="0.999688 0 0.0249974 0">
+              <geom name="robot/FR_calflower_collision" size="0.011 0.0325" type="cylinder" condim="1" group="3" />
+              <body name="robot/FR_calflower1" pos="-0.01 0 -0.04" quat="0.971338 0 0.237703 0">
+                <geom name="robot/FR_calflower1_collision" size="0.0155 0.015" type="cylinder" condim="1" group="3" />
+              </body>
+            </body>
+            <body name="robot/FR_foot" pos="0 0 -0.213">
+              <inertial pos="0 0 0" mass="0.04" diaginertia="9.6e-06 9.6e-06 9.6e-06" />
+              <geom name="robot/FR_foot_collision" size="0.022" pos="-0.002 0 0" condim="6" group="3" priority="1" friction="1 0.005 0.0005" rgba="1 1 1 1" />
+              <geom name="robot/visual_FR_foot_0" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="1" rgba="0 0 0 1" mass="0" mesh="robot/visual_mesh_15dc604b4195" />
+            </body>
+          </body>
+        </body>
+      </body>
+      <body name="robot/RL_hip" pos="-0.1934 0.0465 0">
+        <inertial pos="0.0054 0.00194 -0.000105" quat="0.505462 0.498237 0.497014 0.499245" mass="0.678" diaginertia="0.00088403 0.000596003 0.000479967" />
+        <joint name="robot/RL_hip_joint" range="-1.0472 1.0472" actuatorfrcrange="-23.7 23.7" axis="1 0 0" />
+        <geom name="robot/RL_hip_collision" size="0.046 0.02" pos="0 0.08 0" quat="0.707107 0.707107 0 0" type="cylinder" condim="1" group="3" rgba="1 1 1 1" />
+        <geom name="robot/visual_RL_hip_0" quat="4.63268e-05 0 1 0" type="mesh" contype="0" conaffinity="0" group="1" rgba="0.9 0.95 0.95 1" mass="0" mesh="robot/visual_mesh_14991b0fb81b" />
+        <body name="robot/RL_thigh" pos="0 0.0955 0">
+          <inertial pos="-0.00374 -0.0223 -0.0327" quat="0.829533 0.0847635 -0.0200632 0.551623" mass="1.152" diaginertia="0.00594973 0.00584149 0.000878787" />
+          <joint name="robot/RL_thigh_joint" range="-0.5236 4.5379" actuatorfrcrange="-23.7 23.7" axis="0 1 0" />
+          <geom name="robot/RL_thigh_collision" size="0.055 0.01225 0.017" pos="0 0 -0.1065" quat="0.707107 0 0.707107 0" type="box" condim="1" group="3" rgba="1 1 1 1" />
+          <geom name="robot/visual_RL_thigh_0" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="1" rgba="0.9 0.95 0.95 1" mass="0" mesh="robot/visual_mesh_936f46206c0d" />
+          <body name="robot/RL_calf" pos="0 0 -0.213">
+            <inertial pos="0.00548 -0.000975 -0.115" quat="0.715503 -0.00296114 -0.00858043 0.698551" mass="0.154" diaginertia="0.00110008 0.00108027 3.25534e-05" />
+            <joint name="robot/RL_calf_joint" range="-2.7227 -0.83776" actuatorfrcrange="-35.55 35.55" axis="0 1 0" />
+            <geom name="robot/RL_calf_collision" size="0.013 0.06" pos="0.01 0 -0.06" quat="0.995004 0 -0.0998334 0" type="cylinder" condim="1" group="3" rgba="1 1 1 1" />
+            <geom name="robot/visual_RL_calf_0" pos="0 0 0" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="1" rgba="0.671705 0.692426 0.77427 1" mass="0" mesh="robot/visual_mesh_c5df34356160" />
+            <body name="robot/RL_calflower" pos="0.02 0 -0.148" quat="0.999688 0 0.0249974 0">
+              <geom name="robot/RL_calflower_collision" size="0.011 0.0325" type="cylinder" condim="1" group="3" />
+              <body name="robot/RL_calflower1" pos="-0.01 0 -0.04" quat="0.971338 0 0.237703 0">
+                <geom name="robot/RL_calflower1_collision" size="0.0155 0.015" type="cylinder" condim="1" group="3" />
+              </body>
+            </body>
+            <body name="robot/RL_foot" pos="0 0 -0.213">
+              <inertial pos="0 0 0" mass="0.04" diaginertia="9.6e-06 9.6e-06 9.6e-06" />
+              <geom name="robot/RL_foot_collision" size="0.022" pos="-0.002 0 0" condim="6" group="3" priority="1" friction="1 0.005 0.0005" rgba="1 1 1 1" />
+              <geom name="robot/visual_RL_foot_0" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="1" rgba="0 0 0 1" mass="0" mesh="robot/visual_mesh_15dc604b4195" />
+            </body>
+          </body>
+        </body>
+      </body>
+      <body name="robot/RR_hip" pos="-0.1934 -0.0465 0">
+        <inertial pos="0.0054 -0.00194 -0.000105" quat="0.499245 0.497014 0.498237 0.505462" mass="0.678" diaginertia="0.00088403 0.000596003 0.000479967" />
+        <joint name="robot/RR_hip_joint" range="-1.0472 1.0472" actuatorfrcrange="-23.7 23.7" axis="1 0 0" />
+        <geom name="robot/RR_hip_collision" size="0.046 0.02" pos="0 -0.08 0" quat="0.707107 0.707107 0 0" type="cylinder" condim="1" group="3" rgba="1 1 1 1" />
+        <geom name="robot/visual_RR_hip_0" quat="2.14617e-09 4.63268e-05 4.63268e-05 -1" type="mesh" contype="0" conaffinity="0" group="1" rgba="0.9 0.95 0.95 1" mass="0" mesh="robot/visual_mesh_14991b0fb81b" />
+        <body name="robot/RR_thigh" pos="0 -0.0955 0">
+          <inertial pos="-0.00374 0.0223 -0.0327" quat="0.551623 -0.0200632 0.0847635 0.829533" mass="1.152" diaginertia="0.00594973 0.00584149 0.000878787" />
+          <joint name="robot/RR_thigh_joint" range="-0.5236 4.5379" actuatorfrcrange="-23.7 23.7" axis="0 1 0" />
+          <geom name="robot/RR_thigh_collision" size="0.055 0.01225 0.017" pos="0 0 -0.1065" quat="0.707107 0 0.707107 0" type="box" condim="1" group="3" rgba="1 1 1 1" />
+          <geom name="robot/visual_RR_thigh_0" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="1" rgba="0.9 0.95 0.95 1" mass="0" mesh="robot/visual_mesh_e261dafef23f" />
+          <body name="robot/RR_calf" pos="0 0 -0.213">
+            <inertial pos="0.00548 0.000975 -0.115" quat="0.698551 -0.00858043 -0.00296114 0.715503" mass="0.154" diaginertia="0.00110008 0.00108027 3.25534e-05" />
+            <joint name="robot/RR_calf_joint" range="-2.7227 -0.83776" actuatorfrcrange="-35.55 35.55" axis="0 1 0" />
+            <geom name="robot/RR_calf_collision" size="0.013 0.06" pos="0.01 0 -0.06" quat="0.995004 0 -0.0998334 0" type="cylinder" condim="1" group="3" rgba="1 1 1 1" />
+            <geom name="robot/visual_RR_calf_0" pos="0 0 0" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="1" rgba="0.671705 0.692426 0.77427 1" mass="0" mesh="robot/visual_mesh_400e8f727e1f" />
+            <body name="robot/RR_calflower" pos="0.02 0 -0.148" quat="0.999688 0 0.0249974 0">
+              <geom name="robot/RR_calflower_collision" size="0.011 0.0325" type="cylinder" condim="1" group="3" />
+              <body name="robot/RR_calflower1" pos="-0.01 0 -0.04" quat="0.971338 0 0.237703 0">
+                <geom name="robot/RR_calflower1_collision" size="0.0155 0.015" type="cylinder" condim="1" group="3" />
+              </body>
+            </body>
+            <body name="robot/RR_foot" pos="0 0 -0.213">
+              <inertial pos="0 0 0" mass="0.04" diaginertia="9.6e-06 9.6e-06 9.6e-06" />
+              <geom name="robot/RR_foot_collision" size="0.022" pos="-0.002 0 0" condim="6" group="3" priority="1" friction="1 0.005 0.0005" rgba="1 1 1 1" />
+              <geom name="robot/visual_RR_foot_0" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="1" rgba="0 0 0 1" mass="0" mesh="robot/visual_mesh_15dc604b4195" />
+            </body>
+          </body>
+        </body>
+      </body>
+      <body name="robot/imu" pos="-0.02557 0 0.04232">
+        <inertial pos="0 0 0" mass="0" diaginertia="0 0 0" />
+      </body>
+      <body name="robot/radar" pos="0.28945 0 -0.046825" quat="0.131316 0 0.991341 0">
+        <inertial pos="0 0 0" mass="0" diaginertia="0 0 0" />
+      </body>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <general name="robot/FL_hip_joint" joint="robot/FL_hip_joint" ctrlrange="-1.6397 1.6397" ctrllimited="false" forcelimited="true" forcerange="-23.7 23.7" biastype="affine" gainprm="40" biasprm="0 -40 -1" />
+    <general name="robot/FL_thigh_joint" joint="robot/FL_thigh_joint" ctrlrange="-2.1633 4.0832" ctrllimited="false" forcelimited="true" forcerange="-23.7 23.7" biastype="affine" gainprm="40" biasprm="0 -40 -1" />
+    <general name="robot/FR_hip_joint" joint="robot/FR_hip_joint" ctrlrange="-1.6397 1.6397" ctrllimited="false" forcelimited="true" forcerange="-23.7 23.7" biastype="affine" gainprm="40" biasprm="0 -40 -1" />
+    <general name="robot/FR_thigh_joint" joint="robot/FR_thigh_joint" ctrlrange="-2.1633 4.0832" ctrllimited="false" forcelimited="true" forcerange="-23.7 23.7" biastype="affine" gainprm="40" biasprm="0 -40 -1" />
+    <general name="robot/RL_hip_joint" joint="robot/RL_hip_joint" ctrlrange="-1.6397 1.6397" ctrllimited="false" forcelimited="true" forcerange="-23.7 23.7" biastype="affine" gainprm="40" biasprm="0 -40 -1" />
+    <general name="robot/RL_thigh_joint" joint="robot/RL_thigh_joint" ctrlrange="-1.1161 5.1304" ctrllimited="false" forcelimited="true" forcerange="-23.7 23.7" biastype="affine" gainprm="40" biasprm="0 -40 -1" />
+    <general name="robot/RR_hip_joint" joint="robot/RR_hip_joint" ctrlrange="-1.6397 1.6397" ctrllimited="false" forcelimited="true" forcerange="-23.7 23.7" biastype="affine" gainprm="40" biasprm="0 -40 -1" />
+    <general name="robot/RR_thigh_joint" joint="robot/RR_thigh_joint" ctrlrange="-1.1161 5.1304" ctrllimited="false" forcelimited="true" forcerange="-23.7 23.7" biastype="affine" gainprm="40" biasprm="0 -40 -1" />
+    <general name="robot/FL_calf_joint" joint="robot/FL_calf_joint" ctrlrange="-3.61145 0.05099" ctrllimited="false" forcelimited="true" forcerange="-35.55 35.55" biastype="affine" gainprm="40" biasprm="0 -40 -1" />
+    <general name="robot/FR_calf_joint" joint="robot/FR_calf_joint" ctrlrange="-3.61145 0.05099" ctrllimited="false" forcelimited="true" forcerange="-35.55 35.55" biastype="affine" gainprm="40" biasprm="0 -40 -1" />
+    <general name="robot/RL_calf_joint" joint="robot/RL_calf_joint" ctrlrange="-3.61145 0.05099" ctrllimited="false" forcelimited="true" forcerange="-35.55 35.55" biastype="affine" gainprm="40" biasprm="0 -40 -1" />
+    <general name="robot/RR_calf_joint" joint="robot/RR_calf_joint" ctrlrange="-3.61145 0.05099" ctrllimited="false" forcelimited="true" forcerange="-35.55 35.55" biastype="affine" gainprm="40" biasprm="0 -40 -1" />
+  </actuator>
+
+  <keyframe>
+    <key name="init_state" qpos="0 0 0.42 1 0 0 0 0.1 0.8 -1.5 -0.1 0.8 -1.5 0.1 1 -1.5 -0.1 1 -1.5" ctrl="0.1 0.8 -0.1 0.8 0.1 1 -0.1 1 -1.5 -1.5 -1.5 -1.5" />
+  </keyframe>
+<sensor><jointactuatorfrc name="robot/FL_hip_joint_torque" joint="robot/FL_hip_joint" /><jointactuatorfrc name="robot/FL_thigh_joint_torque" joint="robot/FL_thigh_joint" /><jointactuatorfrc name="robot/FL_calf_joint_torque" joint="robot/FL_calf_joint" /><jointactuatorfrc name="robot/FR_hip_joint_torque" joint="robot/FR_hip_joint" /><jointactuatorfrc name="robot/FR_thigh_joint_torque" joint="robot/FR_thigh_joint" /><jointactuatorfrc name="robot/FR_calf_joint_torque" joint="robot/FR_calf_joint" /><jointactuatorfrc name="robot/RL_hip_joint_torque" joint="robot/RL_hip_joint" /><jointactuatorfrc name="robot/RL_thigh_joint_torque" joint="robot/RL_thigh_joint" /><jointactuatorfrc name="robot/RL_calf_joint_torque" joint="robot/RL_calf_joint" /><jointactuatorfrc name="robot/RR_hip_joint_torque" joint="robot/RR_hip_joint" /><jointactuatorfrc name="robot/RR_thigh_joint_torque" joint="robot/RR_thigh_joint" /><jointactuatorfrc name="robot/RR_calf_joint_torque" joint="robot/RR_calf_joint" /></sensor></mujoco>

@@ -1,0 +1,365 @@
+"""Multi-clip motion library held as flat GPU tensors.
+
+All clips are concatenated along a single global frame axis.  A per-frame
+``clip_id`` and per-clip ``start`` / ``length`` tables let a batch of
+environments index arbitrary clips and frames with plain gathers.
+
+Two storage modes:
+
+* **full** (small sets, e.g. LAFAN1): per frame we keep the reference joints, the pelvis
+  state and the world-frame link states of the *tracked* bodies, plus precomputed 68-d
+  goal features. ~1 KB/frame.
+* **compact** (BONES-SEED, 47.5M frames): per frame only the 71-d reference state
+  ``[root_pos(3), root_quat(4), joint_pos(29), root_lin_vel_w(3), root_ang_vel_w(3),
+  joint_vel(29)]`` in fp16/fp32 (284 B/frame in fp32); tracked-body states and goal
+  features are computed on the fly with the differentiable FK (plan 1.3).
+
+Goal features (per frame, 68-d, plan D5):
+  [joint_pos - q0 (29), joint_vel (29), projected gravity of the ref root (3),
+   ref root angular velocity in the root frame (3),
+   ref root linear velocity in the ref heading frame (3), ref root height (1)]
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from pathlib import Path
+
+import numpy as np
+import torch
+
+from supermimic.kinematics.rotations import matrix_from_quat, projected_gravity, quat_apply, quat_apply_inverse, quat_mul, quat_inv, yaw_quat
+
+GOAL_FEAT_DIM = 68  # G1 compatibility constant.
+REF_DIM = 71  # G1 compatibility constant.
+
+
+@dataclass
+class ClipInfo:
+    name: str
+    start: int
+    length: int
+
+    @property
+    def end(self) -> int:  # exclusive
+        return self.start + self.length
+
+
+@dataclass
+class RefState:
+    root_pos_w: torch.Tensor  # (N,3)
+    root_quat_w: torch.Tensor  # (N,4) wxyz
+    joint_pos: torch.Tensor  # (N,29)
+    root_lin_vel_w: torch.Tensor  # (N,3)
+    root_ang_vel_w: torch.Tensor  # (N,3)
+    joint_vel: torch.Tensor  # (N,29)
+
+
+@dataclass
+class RefBodies:
+    pos_w: torch.Tensor  # (N,B,3)
+    quat_w: torch.Tensor  # (N,B,4)
+    lin_vel_w: torch.Tensor  # (N,B,3)
+    ang_vel_w: torch.Tensor  # (N,B,3)
+
+
+def goal_features(ref: RefState, default_joint_pos: torch.Tensor, joint_indices: torch.Tensor | None = None) -> torch.Tensor:
+    q = ref.root_quat_w
+    grav = projected_gravity(q)
+    ang_b = quat_apply_inverse(q, ref.root_ang_vel_w)
+    lin_h = quat_apply_inverse(yaw_quat(q), ref.root_lin_vel_w)
+    height = ref.root_pos_w[..., 2:3]
+    if joint_indices is not None:
+        ref_pos = ref.joint_pos[..., joint_indices]
+        ref_vel = ref.joint_vel[..., joint_indices]
+        default_joint_pos = default_joint_pos[joint_indices]
+    else:
+        ref_pos, ref_vel = ref.joint_pos, ref.joint_vel
+    return torch.cat([ref_pos - default_joint_pos, ref_vel, grav, ang_b, lin_h, height], dim=-1)
+
+
+def full_body_goal_features(
+    ref: RefState,
+    bodies: RefBodies,
+    default_joint_pos: torch.Tensor,
+) -> torch.Tensor:
+    """Breezewrf legacy 268-D/frame schema (root-yaw frame, wxyz quaternions).
+
+    Layout: joint position(29), joint velocity(29), body position(14x3),
+    body orientation 6D(14x6), body linear velocity(14x3), body angular
+    velocity(14x3). The reference is anchored at pelvis XY and heading yaw.
+    """
+    yaw_inverse = quat_inv(yaw_quat(ref.root_quat_w))
+    origin = torch.cat((ref.root_pos_w[..., :2], torch.zeros_like(ref.root_pos_w[..., 2:3])), -1)
+    yaw_per_body = yaw_inverse[..., None, :].expand_as(bodies.quat_w)
+    pos = quat_apply(yaw_per_body, bodies.pos_w - origin[..., None, :]) / 0.3
+    quat = quat_mul(yaw_per_body, bodies.quat_w)
+    matrix = matrix_from_quat(quat)
+    orientation = torch.cat((matrix[..., :, 0], matrix[..., :, 1]), dim=-1)
+    lin = quat_apply(yaw_per_body, bodies.lin_vel_w)
+    ang = quat_apply(yaw_per_body, bodies.ang_vel_w) / 3.14
+    return torch.cat((
+        (ref.joint_pos - default_joint_pos) / 0.3,
+        ref.joint_vel / 5.0,
+        pos.flatten(-2),
+        orientation.flatten(-2),
+        lin.flatten(-2),
+        ang.flatten(-2),
+    ), dim=-1)
+
+
+class MotionLibrary:
+    def __init__(
+        self,
+        npz_files: list[str | Path],
+        body_names: tuple[str, ...],
+        default_joint_pos: torch.Tensor | np.ndarray,
+        device: str | torch.device = "cuda",
+        dtype: torch.dtype = torch.float32,
+        bin_frames: int = 50,
+        compact: bool = False,
+        store_dtype: torch.dtype = torch.float16,
+        joint_names: tuple[str, ...] | None = None,
+        goal_joint_names: tuple[str, ...] | None = None,
+        root_body_name: str = "pelvis",
+        goal_schema: str = "root_joint",
+        fk_model=None,
+    ):
+        self.device = torch.device(device)
+        self.dtype = dtype
+        self.body_names = tuple(body_names)
+        self.bin_frames = int(bin_frames)
+        self.compact = compact
+        if len(npz_files) == 0:
+            raise ValueError("MotionLibrary needs at least one clip")
+        if isinstance(default_joint_pos, torch.Tensor):
+            q0 = default_joint_pos.detach().to(device=self.device, dtype=dtype).reshape(-1)
+        else:
+            q0 = torch.as_tensor(np.asarray(default_joint_pos), dtype=dtype, device=self.device).reshape(-1)
+        self.default_joint_pos = q0
+        self.joint_names = tuple(joint_names) if joint_names is not None else None
+        self.goal_joint_names = tuple(goal_joint_names) if goal_joint_names is not None else None
+        self.root_body_name = root_body_name
+        self.goal_schema = str(goal_schema)
+        self.num_joints = int(q0.numel())
+        if self.goal_joint_names is not None:
+            if self.joint_names is None:
+                raise ValueError("joint_names is required when goal_joint_names is provided")
+            self.goal_joint_indices = torch.tensor([self.joint_names.index(n) for n in self.goal_joint_names], device=self.device, dtype=torch.long)
+        else:
+            self.goal_joint_indices = None
+        if self.goal_schema not in ("root_joint", "full_body"):
+            raise ValueError(f"unknown Motion Goal schema {self.goal_schema!r}")
+        if self.goal_schema == "full_body" and (compact or len(self.body_names) != 14 or self.num_joints != 29):
+            raise ValueError("full_body Goal currently requires the full G1 14-body/29-joint Motion Library")
+        self.goal_feat_dim = 268 if self.goal_schema == "full_body" else 2 * (len(self.goal_joint_names) if self.goal_joint_names is not None else self.num_joints) + 10
+        self.ref_dim = 13 + 2 * self.num_joints
+
+        clips: list[ClipInfo] = []
+        start = 0
+        body_idx = root_idx = None
+        ref_chunks: list[np.ndarray] | None = []
+        joint_valid_chunks: list[np.ndarray] = []
+        body_chunks = {"pos": [], "quat": [], "lin": [], "ang": []}
+        # A single packed cache (build_library.py) can stand in for the npz list (compact mode only).
+        if len(npz_files) == 1 and str(npz_files[0]).endswith(".pt"):
+            assert compact, "packed .pt libraries are compact-only"
+            pack = torch.load(npz_files[0], map_location="cpu", weights_only=False)
+            self._ref = pack["ref"].to(device=self.device, dtype=store_dtype)
+            clips = [ClipInfo(n, int(st), int(ln)) for n, st, ln in zip(pack["names"], pack["starts"], pack["lengths"])]
+            start = int(self._ref.shape[0])
+            ref_chunks = None
+        for f in (npz_files if ref_chunks is not None else []):
+            with np.load(f) as d:
+                if body_idx is None:
+                    names = [str(n) for n in d["body_names"]]
+                    body_idx = np.array([names.index(n) for n in self.body_names])
+                    root_idx = names.index(self.root_body_name)
+                n = int(d["joint_pos"].shape[0])
+                joint_pos = d["joint_pos"]
+                joint_vel = d["joint_vel"]
+                valid = np.ones((n, self.num_joints), dtype=bool)
+                if self.joint_names is not None:
+                    if "joint_names" not in d:
+                        raise ValueError(f"{f}: joint_names metadata is required for name-based reference mapping")
+                    source_joint_names = tuple(str(name) for name in d["joint_names"])
+                    if len(set(source_joint_names)) != len(source_joint_names):
+                        raise ValueError(f"{f}: joint_names metadata contains duplicates")
+                    if set(source_joint_names) != set(self.joint_names):
+                        raise ValueError(
+                            f"{f}: joint names differ; missing={set(self.joint_names)-set(source_joint_names)}, "
+                            f"extra={set(source_joint_names)-set(self.joint_names)}"
+                        )
+                    reorder = [source_joint_names.index(name) for name in self.joint_names]
+                    joint_pos = joint_pos[:, reorder]
+                    joint_vel = joint_vel[:, reorder]
+                    if "joint_valid" in d:
+                        valid = np.asarray(d["joint_valid"], dtype=bool)[:, reorder]
+                    if "joint_valid" in d and self.goal_joint_indices is not None:
+                        required = self.goal_joint_indices.detach().cpu().numpy()
+                        if not valid[:, required].all():
+                            invalid = [self.joint_names[i] for i in required if not valid[:, i].all()]
+                            raise ValueError(f"{f}: invalid reference joints are selected for Goal: {invalid}")
+                bp, bq, blv, bav = d["body_pos_w"], d["body_quat_w"], d["body_lin_vel_w"], d["body_ang_vel_w"]
+                ref = np.concatenate(
+                    [bp[:, root_idx], bq[:, root_idx], joint_pos, blv[:, root_idx], bav[:, root_idx], joint_vel], axis=1
+                ).astype(np.float32)
+                ref_chunks.append(ref)
+                joint_valid_chunks.append(valid)
+                if not compact:
+                    body_chunks["pos"].append(bp[:, body_idx])
+                    body_chunks["quat"].append(bq[:, body_idx])
+                    body_chunks["lin"].append(blv[:, body_idx])
+                    body_chunks["ang"].append(bav[:, body_idx])
+            clips.append(ClipInfo(Path(f).stem, start, n))
+            start += n
+        self.clips = clips
+        self.num_clips = len(clips)
+        self.num_frames = start
+
+        if ref_chunks is not None:
+            ref_np = np.concatenate(ref_chunks, 0)
+            if ref_np.shape[1] != self.ref_dim:
+                raise ValueError(f"reference state dim {ref_np.shape[1]} != expected {self.ref_dim}")
+            self._ref = torch.as_tensor(ref_np, device=self.device, dtype=store_dtype if compact else dtype)
+            self.joint_valid = torch.as_tensor(np.concatenate(joint_valid_chunks, 0), device=self.device, dtype=torch.bool)
+            del ref_np, ref_chunks
+        else:
+            # Packed references predate validity metadata; they are treated as fully valid.
+            self.joint_valid = None
+        if not compact:
+            t = lambda arrs: torch.as_tensor(np.concatenate(arrs, 0), dtype=dtype, device=self.device)  # noqa: E731
+            self.body_pos_w = t(body_chunks["pos"])
+            self.body_quat_w = t(body_chunks["quat"])
+            self.body_lin_vel_w = t(body_chunks["lin"])
+            self.body_ang_vel_w = t(body_chunks["ang"])
+            del body_chunks
+            if self.goal_schema == "full_body":
+                ref = self._split(self._ref)
+                bodies = RefBodies(self.body_pos_w, self.body_quat_w, self.body_lin_vel_w, self.body_ang_vel_w)
+                self.goal_feat = full_body_goal_features(ref, bodies, q0)
+            else:
+                self.goal_feat = goal_features(self._split(self._ref), q0, self.goal_joint_indices)
+        else:
+            from supermimic.kinematics.g1_fk import G1Kinematics
+
+            if fk_model is None:
+                from supermimic.data.motion_convert import load_g1_model
+                fk_model = load_g1_model()
+            self._fk = G1Kinematics(fk_model, device=self.device, dtype=dtype)
+            self._tracked_idx = self._fk.body_indices(self.body_names)
+
+        self.clip_start = torch.tensor([c.start for c in clips], device=self.device, dtype=torch.long)
+        self.clip_len = torch.tensor([c.length for c in clips], device=self.device, dtype=torch.long)
+        self.clip_last = self.clip_start + self.clip_len - 1
+        self.frame_clip = torch.repeat_interleave(torch.arange(self.num_clips, device=self.device), self.clip_len)
+        # Bins of `bin_frames` frames inside each clip (plan D14), numbered globally.
+        bins_per_clip = (self.clip_len + self.bin_frames - 1) // self.bin_frames
+        self.clip_bin_offset = torch.cumsum(bins_per_clip, 0) - bins_per_clip
+        self.num_bins = int(bins_per_clip.sum().item())
+        bin_clip = torch.repeat_interleave(torch.arange(self.num_clips, device=self.device), bins_per_clip)
+        local_bin = torch.arange(self.num_bins, device=self.device) - self.clip_bin_offset[bin_clip]
+        self.bin_start = self.clip_start[bin_clip] + local_bin * self.bin_frames
+        self.bin_end = torch.minimum(self.bin_start + self.bin_frames, self.clip_start[bin_clip] + self.clip_len[bin_clip])
+        self.bin_clip = bin_clip
+
+    # ------------------------------------------------------------------ per-frame access
+
+    def _split(self, r: torch.Tensor) -> RefState:
+        nj = self.num_joints
+        q0 = 7 + nj
+        return RefState(r[..., 0:3], r[..., 3:7], r[..., 7:q0], r[..., q0:q0 + 3], r[..., q0 + 3:q0 + 6], r[..., q0 + 6:q0 + 6 + nj])
+
+    def ref(self, frame: torch.Tensor) -> RefState:
+        return self._split(self._ref[frame].to(self.dtype))
+
+    def ref71(self, frame: torch.Tensor) -> torch.Tensor:
+        """Return the packed root/joint reference state (G1's historical method name)."""
+        return self._ref[frame].to(self.dtype)
+
+    def bodies(self, frame: torch.Tensor) -> RefBodies:
+        """Tracked-body link states (world) at the given frames."""
+        if not self.compact:
+            return RefBodies(self.body_pos_w[frame], self.body_quat_w[frame], self.body_lin_vel_w[frame], self.body_ang_vel_w[frame])
+        qpos, qvel = self.ref_qpos_qvel(frame)
+        with torch.no_grad():
+            out = self._fk(qpos, qvel)
+        i = self._tracked_idx
+        return RefBodies(out["pos"][..., i, :], out["quat"][..., i, :], out["lin_vel"][..., i, :], out["ang_vel"][..., i, :])
+
+    # Convenience column accessors (full fp32 copies; prefer ``ref()`` in hot paths).
+    @property
+    def root_pos_w(self) -> torch.Tensor:
+        return self._ref[:, 0:3].to(self.dtype)
+
+    @property
+    def root_quat_w(self) -> torch.Tensor:
+        return self._ref[:, 3:7].to(self.dtype)
+
+    @property
+    def joint_pos(self) -> torch.Tensor:
+        return self._ref[:, 7:7 + self.num_joints].to(self.dtype)
+
+    @property
+    def root_lin_vel_w(self) -> torch.Tensor:
+        return self._ref[:, 7 + self.num_joints:10 + self.num_joints].to(self.dtype)
+
+    @property
+    def root_ang_vel_w(self) -> torch.Tensor:
+        return self._ref[:, 10 + self.num_joints:13 + self.num_joints].to(self.dtype)
+
+    @property
+    def joint_vel(self) -> torch.Tensor:
+        return self._ref[:, 13 + self.num_joints:13 + 2 * self.num_joints].to(self.dtype)
+
+    # ------------------------------------------------------------------ queries
+
+    def bin_of_frame(self, frame: torch.Tensor) -> torch.Tensor:
+        clip = self.frame_clip[frame]
+        return self.clip_bin_offset[clip] + (frame - self.clip_start[clip]) // self.bin_frames
+
+    def last_frame_of(self, frame: torch.Tensor) -> torch.Tensor:
+        return self.clip_last[self.frame_clip[frame]]
+
+    def goal_window(self, frame: torch.Tensor, k: int) -> torch.Tensor:
+        """(N, k*68) goal features of frames frame..frame+k-1, clamped at the clip end."""
+        last = self.last_frame_of(frame)
+        offs = torch.arange(k, device=self.device)
+        idx = torch.minimum(frame[:, None] + offs[None, :], last[:, None])  # (N,k)
+        if not self.compact:
+            return self.goal_feat[idx].reshape(frame.shape[0], k * self.goal_feat_dim)
+        feat = goal_features(self.ref(idx.reshape(-1)), self.default_joint_pos, self.goal_joint_indices)
+        return feat.reshape(frame.shape[0], k * self.goal_feat_dim)
+
+    def ref_qpos_qvel(self, frame: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
+        """MuJoCo-layout root/joint arrays; root angular velocity is stored in world frame."""
+        r = self.ref(frame)
+        qpos = torch.cat([r.root_pos_w, r.root_quat_w, r.joint_pos], dim=-1)
+        ang_b = quat_apply_inverse(r.root_quat_w, r.root_ang_vel_w)
+        qvel = torch.cat([r.root_lin_vel_w, ang_b, r.joint_vel], dim=-1)
+        return qpos, qvel
+
+    def summary(self) -> str:
+        hours = self.num_frames / 50.0 / 3600.0
+        mem = self._ref.numel() * self._ref.element_size() / 1e9
+        if not self.compact:
+            mem += sum(t.numel() * t.element_size() for t in (self.body_pos_w, self.body_quat_w, self.body_lin_vel_w, self.body_ang_vel_w, self.goal_feat)) / 1e9
+        return f"MotionLibrary({'compact' if self.compact else 'full'}): {self.num_clips} clips, {self.num_frames} frames ({hours:.3f} h @50Hz), {self.num_bins} bins, {mem:.2f} GB on {self.device}"
+
+
+def discover_npz(directory: str | Path, limit: int | None = None, names: list[str] | None = None, manifest: str | Path | None = None) -> list[Path]:
+    """List npz clips; ``manifest`` (csv with name,keep columns) restricts to keep==1."""
+    directory = Path(directory)
+    files = sorted(directory.glob("*.npz"))
+    if manifest is not None:
+        import csv
+
+        with open(manifest) as f:
+            keep = {row["name"] for row in csv.DictReader(f) if row.get("keep", "1") in ("1", "True", "true")}
+        files = [f for f in files if f.stem in keep]
+    if names is not None:
+        wanted = set(names)
+        files = [f for f in files if f.stem in wanted]
+    if limit is not None:
+        files = files[:limit]
+    return files

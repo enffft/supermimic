@@ -1,0 +1,15 @@
+{
+  "mode": "train",
+  "backend": "mjwarp",
+  "envs": 32,
+  "steps": 250,
+  "iterations": 8,
+  "batch": 1024,
+  "device": "cuda:0",
+  "reference_actor": false,
+  "domain_randomization": false,
+  "terrain": "flat",
+  "heading": 0.0,
+  "quarter_turns": 0,
+  "output": "results/profile_serial_mjwarp"
+}

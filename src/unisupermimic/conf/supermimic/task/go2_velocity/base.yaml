@@ -1,0 +1,88 @@
+# @package _global_
+training:
+  task_name: Go2VelocitySuperMimic
+algo:
+  # Bounded flat bring-up defaults; acceptance is required before long runs.
+  num_envs: 32
+  iterations: 8
+  seed: 2026
+  wm_batch: 1024
+  pi_batch: 1024
+  wm_batches: 1
+  buffer_steps: 128
+  warmup_steps: 64
+  wm_only_iters: 2
+  log_every: 1
+  no_sync: false
+  goal_mode: direct
+  goal_frames: 1
+  hist: 5
+  pi_opt: adam
+  wm_opt: adam
+  pi_ema: 0.0
+  amp: none
+  compile: false
+env:
+  seed: 2026
+  sim_dt: 0.005
+  ctrl_dt: 0.02
+  max_episode_seconds: 10.0
+  auto_reset: true
+  scale_rewards_by_dt: false
+  mjwarp_nconmax: 128
+  mjwarp_njmax: 512
+  scene:
+    model_file: src/unisupermimic/assets/robots/go2_velocity/flat.xml
+    default_keyframe_name: init_state
+    entities:
+      robot:
+        root_body_name: robot/base
+        body_names: [robot/base]
+        joint_names: &joints
+          - robot/FL_hip_joint
+          - robot/FL_thigh_joint
+          - robot/FL_calf_joint
+          - robot/FR_hip_joint
+          - robot/FR_thigh_joint
+          - robot/FR_calf_joint
+          - robot/RL_hip_joint
+          - robot/RL_thigh_joint
+          - robot/RL_calf_joint
+          - robot/RR_hip_joint
+          - robot/RR_thigh_joint
+          - robot/RR_calf_joint
+        actuator_names: *joints
+        geom_names:
+          - robot/FL_foot_collision
+          - robot/FR_foot_collision
+          - robot/RL_foot_collision
+          - robot/RR_foot_collision
+  observations:
+    policy:
+      enable_corruption: false
+      terms:
+        proprio:
+          func: unisupermimic.tasks.velocity.go2.manager_terms.observation
+  actions:
+    joint_pos:
+      _target_: unisupermimic.tasks.velocity.go2.manager_terms.VelocityActionCfg
+      entity_name: robot
+  commands:
+    velocity:
+      _target_: unisupermimic.tasks.velocity.go2.manager_terms.VelocityCommandCfg
+      stage: 0
+      standing_fraction: 0.05
+      fixed_command: null
+      resampling_time_range: [5.0, 5.0]
+  terminations:
+    fallen:
+      func: unisupermimic.tasks.velocity.go2.manager_terms.fallen
+    time_out:
+      func: unilab.envs.mdp.time_out
+      time_out: true
+  policy_observation_group: policy
+  critic_observation_group: null
+reward:
+  velocity:
+    func: unisupermimic.tasks.velocity.go2.manager_terms.reward
+    weight: 1.0

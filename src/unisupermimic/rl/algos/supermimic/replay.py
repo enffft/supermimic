@@ -34,11 +34,14 @@ class ReplayBuffer:
         device: str | torch.device,
         num_joints: int = 29,
         context_dim: int = 33,
+        goal_dim: int = 0,
     ):
         self.T = T
         self.N = N
         self.device = torch.device(device)
         self.fields = _make_fields(num_joints, context_dim)
+        if goal_dim:
+            self.fields["g"] = (goal_dim, torch.float32)
         self.data = {}
         for key, (shape, dtype) in self.fields.items():
             field_shape = (T, N) + ((shape,) if isinstance(shape, int) else shape)
@@ -94,6 +97,8 @@ class ReplayBuffer:
         history_rows = self._row(age.unsqueeze(-1) - back)
         history_envs = env.unsqueeze(-1).expand_as(history_rows)
         start = {key: self.data[key][row, env] for key in ("s", "a_prev", "xi", "f")}
+        if "g" in self.fields:
+            start["g"] = self.data["g"][row, env]
         history = {
             key: self.data[key][history_rows, history_envs] for key in ("s", "a_prev", "xi", "f")
         }

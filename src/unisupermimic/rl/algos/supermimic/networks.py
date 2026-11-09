@@ -316,9 +316,34 @@ class Policy(nn.Module):
         z_dim: int = 32,
         num_joints: int = 29,
         hidden: Sequence[int] = (2048, 1024, 512, 256),
+        goal_mode: str = "encoded",
     ):
         super().__init__()
         self.hist = hist
+        self.goal_mode = goal_mode
+        if goal_mode == "direct":
+            if obs_dim != 42 or goal_dim != 3 or num_joints != 12 or hist != 5:
+                raise ValueError("Go2 direct contract requires History5x42 + Goal3 -> Action12")
+            # Original actor: term-major history, fixed scales, SiLU, tanh.
+            # No encoder, adaptive normalization, context, or reference input.
+            self.dec = mlp(obs_dim * hist + goal_dim, hidden, num_joints, act=nn.SiLU)
+            self.obs_norm = FixedNorm(obs_dim)
+            self.goal_norm = FixedNorm(goal_dim)
+            self.register_buffer(
+                "obs_scale",
+                torch.cat(
+                    [
+                        torch.full((hist * width,), scale)
+                        for width, scale in zip((12, 12, 3, 3, 12), (1.0, 0.2, 0.5, 1.0, 1.0))
+                    ]
+                ),
+            )
+            output = self.dec[-1]
+            nn.init.orthogonal_(output.weight, gain=0.01)
+            nn.init.zeros_(output.bias)
+            return
+        if goal_mode != "encoded":
+            raise ValueError(f"unsupported goal_mode={goal_mode!r}")
         self.enc = mlp(goal_dim, hidden, z_dim)
         self.dec = mlp(z_dim + obs_dim * hist, hidden, num_joints)
         output = self.dec[-1]
@@ -331,9 +356,27 @@ class Policy(nn.Module):
 
     def forward(self, obs_hist: torch.Tensor, goal: torch.Tensor) -> torch.Tensor:
         """Consume ``(batch, hist, obs_dim)`` observations, newest last."""
+        if self.goal_mode == "direct":
+            parts = obs_hist.split((12, 12, 3, 3, 12), -1)
+            history = torch.cat([part.flatten(-2) for part in parts], -1)
+            return torch.tanh(run_mlp(self.dec, torch.cat((history * self.obs_scale, goal), -1)))
         latent = torch.tanh(run_mlp(self.enc, self.goal_norm(goal)))
         obs = self.obs_norm(obs_hist).flatten(-2)
         return run_mlp(self.dec, torch.cat((latent, obs), -1))
+
+
+class FixedNorm(nn.Module):
+    """Identity interface for task-owned fixed input scales."""
+
+    def __init__(self, dim: int):
+        super().__init__()
+        self.register_buffer("mean", torch.zeros(dim))
+
+    def update(self, x: torch.Tensor) -> None:
+        pass
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        return x
 
 
 class Critic(nn.Module):

@@ -1,0 +1,217 @@
+[
+  {
+    "directory": "results/cli_chain",
+    "role": "preliminary",
+    "result_files": [],
+    "has_checkpoint": true,
+    "has_profiler_archive": false
+  },
+  {
+    "directory": "results/cli_delivery",
+    "role": "preliminary",
+    "result_files": [],
+    "has_checkpoint": true,
+    "has_profiler_archive": false
+  },
+  {
+    "directory": "results/cpu_chain",
+    "role": "preliminary",
+    "result_files": [],
+    "has_checkpoint": true,
+    "has_profiler_archive": false
+  },
+  {
+    "directory": "results/physics_final_mjwarp",
+    "role": "delivery",
+    "result_files": [
+      "physical.json"
+    ],
+    "has_checkpoint": false,
+    "has_profiler_archive": false
+  },
+  {
+    "directory": "results/physics_final_mujoco",
+    "role": "delivery",
+    "result_files": [
+      "physical.json"
+    ],
+    "has_checkpoint": false,
+    "has_profiler_archive": false
+  },
+  {
+    "directory": "results/physics_mjwarp",
+    "role": "preliminary",
+    "result_files": [
+      "physical.json"
+    ],
+    "has_checkpoint": false,
+    "has_profiler_archive": false
+  },
+  {
+    "directory": "results/physics_mujoco",
+    "role": "preliminary",
+    "result_files": [
+      "physical.json"
+    ],
+    "has_checkpoint": false,
+    "has_profiler_archive": false
+  },
+  {
+    "directory": "results/profile_serial_mjwarp",
+    "role": "delivery",
+    "result_files": [
+      "training.json"
+    ],
+    "has_checkpoint": true,
+    "has_profiler_archive": true
+  },
+  {
+    "directory": "results/profile_serial_mujoco",
+    "role": "delivery",
+    "result_files": [
+      "training.json"
+    ],
+    "has_checkpoint": true,
+    "has_profiler_archive": true
+  },
+  {
+    "directory": "results/terrain_mixed",
+    "role": "preliminary",
+    "result_files": [
+      "terrain.json"
+    ],
+    "has_checkpoint": false,
+    "has_profiler_archive": false
+  },
+  {
+    "directory": "results/terrain_mixed_contacts",
+    "role": "preliminary",
+    "result_files": [
+      "terrain.json"
+    ],
+    "has_checkpoint": false,
+    "has_profiler_archive": false
+  },
+  {
+    "directory": "results/terrain_mixed_force",
+    "role": "delivery",
+    "result_files": [
+      "terrain.json"
+    ],
+    "has_checkpoint": false,
+    "has_profiler_archive": false
+  },
+  {
+    "directory": "results/terrain_rough_contacts",
+    "role": "preliminary",
+    "result_files": [
+      "terrain.json"
+    ],
+    "has_checkpoint": false,
+    "has_profiler_archive": false
+  },
+  {
+    "directory": "results/terrain_rough_force",
+    "role": "delivery",
+    "result_files": [
+      "terrain.json"
+    ],
+    "has_checkpoint": false,
+    "has_profiler_archive": false
+  },
+  {
+    "directory": "results/terrain_slope_contacts",
+    "role": "preliminary",
+    "result_files": [
+      "terrain.json"
+    ],
+    "has_checkpoint": false,
+    "has_profiler_archive": false
+  },
+  {
+    "directory": "results/terrain_slope_force",
+    "role": "delivery",
+    "result_files": [
+      "terrain.json"
+    ],
+    "has_checkpoint": false,
+    "has_profiler_archive": false
+  },
+  {
+    "directory": "results/terrain_stairs",
+    "role": "preliminary",
+    "result_files": [],
+    "has_checkpoint": false,
+    "has_profiler_archive": false
+  },
+  {
+    "directory": "results/terrain_stairs_checked",
+    "role": "preliminary",
+    "result_files": [
+      "terrain.json"
+    ],
+    "has_checkpoint": false,
+    "has_profiler_archive": false
+  },
+  {
+    "directory": "results/terrain_stairs_contacts",
+    "role": "preliminary",
+    "result_files": [
+      "terrain.json"
+    ],
+    "has_checkpoint": false,
+    "has_profiler_archive": false
+  },
+  {
+    "directory": "results/terrain_stairs_final",
+    "role": "preliminary",
+    "result_files": [],
+    "has_checkpoint": false,
+    "has_profiler_archive": false
+  },
+  {
+    "directory": "results/terrain_stairs_force",
+    "role": "delivery",
+    "result_files": [
+      "terrain.json"
+    ],
+    "has_checkpoint": false,
+    "has_profiler_archive": false
+  },
+  {
+    "directory": "results/train_final_mjwarp",
+    "role": "preliminary",
+    "result_files": [
+      "training.json"
+    ],
+    "has_checkpoint": true,
+    "has_profiler_archive": true
+  },
+  {
+    "directory": "results/train_mjwarp",
+    "role": "preliminary",
+    "result_files": [
+      "training.json"
+    ],
+    "has_checkpoint": true,
+    "has_profiler_archive": true
+  },
+  {
+    "directory": "results/train_mujoco",
+    "role": "preliminary",
+    "result_files": [
+      "training.json"
+    ],
+    "has_checkpoint": true,
+    "has_profiler_archive": true
+  },
+  {
+    "directory": "results/train_reference_batch",
+    "role": "preliminary",
+    "result_files": [
+      "training.json"
+    ],
+    "has_checkpoint": true,
+    "has_profiler_archive": true
+  }
+]

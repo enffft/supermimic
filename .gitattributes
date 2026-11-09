@@ -1,0 +1,4 @@
+# Preserve imported source snapshots and generated evidence byte-for-byte.
+migration/source_reference/** -whitespace
+results/**/profiler_operators.txt -whitespace
+src/unisupermimic/assets/robots/go2_velocity/meshes/*.obj -whitespace

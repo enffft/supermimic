@@ -1,0 +1,9 @@
+# Apply only inside the independently cloned go2_unilab conda environment.
+# Keep its existing torch==2.11.0+cu126; see environment/pip-freeze.txt for full provenance.
+unisim-core==2.7.1
+mujoco==3.11.0
+mujoco-warp==3.11.0
+warp-lang==1.16.0
+mjbatch-uni==0.2.5
+pytest==9.1.1
+ruff==0.17.1

@@ -1,0 +1,216 @@
+{
+  "checkpoint": "logs/phase3_training/go2_velocity_diagonal_slip_3072_2p5h_20261103/ckpt_0034000.pt",
+  "evaluation": "seed=2026; 64 envs; 64 completed 10s episodes per command; no obs/action/reset noise or domain randomization",
+  "commands": [
+    {
+      "command_body_xy_yaw": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "episodes": 64,
+      "mean_vx": -0.008625205970020033,
+      "mean_vy": -0.000861598288793175,
+      "mean_yaw_rate": -0.012807075487216935,
+      "velocity_rmse": 0.014806053339270875,
+      "yaw_rate_rmse": 0.028776537772500888,
+      "mean_displacement_xy": 0.0877130035078153,
+      "mean_displacement_x": -0.08753452356904745,
+      "mean_base_height": 0.32502075284719467,
+      "mean_abs_executed_action": 0.6409366223961115,
+      "action_saturation_fraction": 0.0,
+      "fall_rate": 0.0,
+      "timeout_rate": 1.0,
+      "mean_episode_peak_foot_clearance_m": [
+        0.0024253185838460922,
+        0.0001108816359192133,
+        0.012586327269673347,
+        0.0002872105687856674
+      ],
+      "stance_slip_rms_m_s": 0.044837409048341215,
+      "diagonal_support_fraction": 0.0,
+      "name": "stop"
+    },
+    {
+      "command_body_xy_yaw": [
+        0.3,
+        0.0,
+        0.0
+      ],
+      "episodes": 64,
+      "mean_vx": 0.28943193471059203,
+      "mean_vy": -0.004095235064596636,
+      "mean_yaw_rate": 0.01843285872018896,
+      "velocity_rmse": 0.03680513805011287,
+      "yaw_rate_rmse": 0.025839126203209162,
+      "mean_displacement_xy": 2.8847493454813957,
+      "mean_displacement_x": 2.8758011497557163,
+      "mean_base_height": 0.33331228513270617,
+      "mean_abs_executed_action": 0.5944065768271685,
+      "action_saturation_fraction": 0.0,
+      "fall_rate": 0.0,
+      "timeout_rate": 1.0,
+      "mean_episode_peak_foot_clearance_m": [
+        0.05136053543537855,
+        0.034429891500622034,
+        0.03469187393784523,
+        0.05040359264239669
+      ],
+      "stance_slip_rms_m_s": 0.16718457615934312,
+      "diagonal_support_fraction": 0.4855208331719041,
+      "name": "forward_030"
+    },
+    {
+      "command_body_xy_yaw": [
+        0.5,
+        0.0,
+        0.0
+      ],
+      "episodes": 64,
+      "mean_vx": 0.48340633464977145,
+      "mean_vy": 4.0662831338522665e-05,
+      "mean_yaw_rate": 0.02238031820161268,
+      "velocity_rmse": 0.0598006431828253,
+      "yaw_rate_rmse": 0.03160945192212239,
+      "mean_displacement_xy": 4.814235858619213,
+      "mean_displacement_x": 4.781509257853031,
+      "mean_base_height": 0.3320831414312124,
+      "mean_abs_executed_action": 0.5976346265524626,
+      "action_saturation_fraction": 0.00033333332976326346,
+      "fall_rate": 0.0,
+      "timeout_rate": 1.0,
+      "mean_episode_peak_foot_clearance_m": [
+        0.05028860177844763,
+        0.04753601737320423,
+        0.0413245870731771,
+        0.04895235085859895
+      ],
+      "stance_slip_rms_m_s": 0.21832388476468623,
+      "diagonal_support_fraction": 0.5088889002799988,
+      "name": "forward_050"
+    },
+    {
+      "command_body_xy_yaw": [
+        -0.3,
+        0.0,
+        0.0
+      ],
+      "episodes": 64,
+      "mean_vx": -0.2901574461720884,
+      "mean_vy": -0.003670339814561885,
+      "mean_yaw_rate": 0.02171640653978102,
+      "velocity_rmse": 0.04012824862729758,
+      "yaw_rate_rmse": 0.02898526276112534,
+      "mean_displacement_xy": 2.8875624872744083,
+      "mean_displacement_x": -2.8654186502099037,
+      "mean_base_height": 0.3296462777070701,
+      "mean_abs_executed_action": 0.6157874213531613,
+      "action_saturation_fraction": 0.0,
+      "fall_rate": 0.0,
+      "timeout_rate": 1.0,
+      "mean_episode_peak_foot_clearance_m": [
+        0.0317076425999403,
+        0.005958396941423416,
+        0.028094765730202198,
+        0.03807709412649274
+      ],
+      "stance_slip_rms_m_s": 0.36670209001749754,
+      "diagonal_support_fraction": 0.23111110925674438,
+      "name": "backward_030"
+    },
+    {
+      "command_body_xy_yaw": [
+        0.0,
+        0.3,
+        0.0
+      ],
+      "episodes": 64,
+      "mean_vx": -0.005970204860204831,
+      "mean_vy": 0.30049574468284845,
+      "mean_yaw_rate": 0.029841879761079326,
+      "velocity_rmse": 0.03831841074861586,
+      "yaw_rate_rmse": 0.049823985202237964,
+      "mean_displacement_xy": 2.9899556897580624,
+      "mean_displacement_x": -0.5854965504258871,
+      "mean_base_height": 0.32965142372995615,
+      "mean_abs_executed_action": 0.6289737410843372,
+      "action_saturation_fraction": 0.0,
+      "fall_rate": 0.0,
+      "timeout_rate": 1.0,
+      "mean_episode_peak_foot_clearance_m": [
+        0.04602031549438834,
+        0.03128659399226308,
+        0.03500282997265458,
+        0.03818019386380911
+      ],
+      "stance_slip_rms_m_s": 0.248715840280056,
+      "diagonal_support_fraction": 0.41111111640930176,
+      "name": "lateral_left"
+    },
+    {
+      "command_body_xy_yaw": [
+        0.0,
+        0.0,
+        0.4
+      ],
+      "episodes": 64,
+      "mean_vx": -0.0051934227158199064,
+      "mean_vy": -0.0015596170833305223,
+      "mean_yaw_rate": 0.4071716624312103,
+      "velocity_rmse": 0.014802854362642393,
+      "yaw_rate_rmse": 0.053123085701372474,
+      "mean_displacement_xy": 0.004160514778050128,
+      "mean_displacement_x": -0.003344775177538395,
+      "mean_base_height": 0.3300186316482723,
+      "mean_abs_executed_action": 0.5293003059923649,
+      "action_saturation_fraction": 0.0,
+      "fall_rate": 0.0,
+      "timeout_rate": 1.0,
+      "mean_episode_peak_foot_clearance_m": [
+        0.005403787363320589,
+        0.0026489514857530594,
+        0.02976066991686821,
+        0.005168577190488577
+      ],
+      "stance_slip_rms_m_s": 0.2556506874971092,
+      "diagonal_support_fraction": 0.0,
+      "name": "yaw_ccw"
+    },
+    {
+      "command_body_xy_yaw": [
+        0.4,
+        0.15,
+        0.3
+      ],
+      "episodes": 64,
+      "mean_vx": 0.38455813890323043,
+      "mean_vy": 0.1512894795741886,
+      "mean_yaw_rate": 0.31965191196650267,
+      "velocity_rmse": 0.05347936908947304,
+      "yaw_rate_rmse": 0.04331349942367524,
+      "mean_displacement_xy": 2.575339935719967,
+      "mean_displacement_x": -1.042729714885354,
+      "mean_base_height": 0.33308187406510115,
+      "mean_abs_executed_action": 0.6095422618091106,
+      "action_saturation_fraction": 0.0006666666595265269,
+      "fall_rate": 0.0,
+      "timeout_rate": 1.0,
+      "mean_episode_peak_foot_clearance_m": [
+        0.05928675411269069,
+        0.04357955837622285,
+        0.03821272635832429,
+        0.044851936399936676
+      ],
+      "stance_slip_rms_m_s": 0.2319001171272248,
+      "diagonal_support_fraction": 0.5067361053079367,
+      "name": "diagonal"
+    }
+  ],
+  "provenance": {
+    "git_head": "2c49522f1371a6239f26861cb9ea4e333e025a20",
+    "checkpoint_sha256": "0b3d8e4bb26173d13a6ce0b99d5eecf43005927a8ab2e01947c4d0311009487a",
+    "evaluation_script_sha256": "65c725cc776f0529a28f10da5949090b34fff04f2466ceb0adde37258c48e7c3",
+    "evaluation_script_worktree_modified": true,
+    "training_lineage_file": "docs/results/training_audit_20261106/go2_lineage_clocks.json"
+  }
+}

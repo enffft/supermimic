@@ -681,3 +681,15 @@ def test_resample_resume_preserves_replay_budgets_value_norm_and_absolute_stage(
     assert resumed.actor_scale_at(resumed.iteration) == 0
     assert resumed.extra_state["coverage"]["transitions"].item() == 8
     assert "not_exact" in resumed.resume_mode
+
+
+def test_wall_stop_saves_full_checkpoint_and_numbered_cadence(tmp_path):
+    cfg = replace(_config(), iterations=10, ckpt_every=1, numbered_ckpt_every=2)
+    learner = SuperMimicLearner(FakeEnv(), cfg, tmp_path)
+    learner.on_iteration = lambda owner: setattr(owner, "stop_requested", owner.iteration == 3)
+    result = learner.train()
+    assert result["iteration"] == 3 and not result["completed"]
+    assert (tmp_path / "last.pt").is_file()
+    assert (tmp_path / "ckpt_000002.pt").is_file()
+    assert (tmp_path / "ckpt_000003.pt").is_file()
+    assert not (tmp_path / "ckpt_000001.pt").exists()

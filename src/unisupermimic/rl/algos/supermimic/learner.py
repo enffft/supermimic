@@ -65,6 +65,7 @@ class SuperMimicConfig:
     wm_only_iters: int = 500
     lr_decay_iters: int = 250_000
     ckpt_every: int = 2000
+    numbered_ckpt_every: int = 0  # 0 retains the original checkpoint cadence
     log_every: int = 50
     log_backend: str = "tensorboard"
     seed: int = 0
@@ -273,6 +274,7 @@ class SuperMimicLearner:
         ).to(self.device)
 
         self.on_iteration = None  # Optional validation/guard callback; one shared train loop.
+        self.stop_requested = False
         self.extra_state = {}
         self.update_counts = {"wm": 0, "actor": 0, "critic": 0}
         self.step_accumulator = 0.0
@@ -1093,7 +1095,7 @@ class SuperMimicLearner:
 
             log_path = self.log_dir / "train_log.csv"
             with log_path.open("a", encoding="utf-8", newline="") as log_file:
-                if start_iteration == 0:
+                if log_file.tell() == 0:
                     log_file.write(",".join(_LOG_FIELDS) + "\n")
                 train_start = time.time() - self.wall_time
                 log_start = time.time()
@@ -1233,14 +1235,23 @@ class SuperMimicLearner:
                     if (
                         self.iteration % self.cfg.ckpt_every == 0
                         or self.iteration == self.cfg.iterations
+                        or self.stop_requested
                     ):
                         self.wall_time = time.time() - train_start
                         self.save()
-                        numbered = self.save(
-                            self.log_dir / f"ckpt_{self.iteration:06d}.pt",
-                            include_optimizers=self.cfg.checkpoint_replay,
-                        )
-                        logger.log_save(str(numbered))
+                        if (
+                            not self.cfg.numbered_ckpt_every
+                            or self.iteration % self.cfg.numbered_ckpt_every == 0
+                            or self.iteration == self.cfg.iterations
+                            or self.stop_requested
+                        ):
+                            numbered = self.save(
+                                self.log_dir / f"ckpt_{self.iteration:06d}.pt",
+                                include_optimizers=self.cfg.checkpoint_replay,
+                            )
+                            logger.log_save(str(numbered))
+                    if self.stop_requested:
+                        break
 
             self.wall_time = time.time() - train_start
             logger.finish()

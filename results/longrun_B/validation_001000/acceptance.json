@@ -1,0 +1,17 @@
+{
+  "iteration": 1000,
+  "update_counts": {
+    "wm": 4000,
+    "actor": 0,
+    "critic": 0
+  },
+  "real_transitions": 5251072,
+  "prediction_pass": true,
+  "physical_gradient_pass": false,
+  "actor_unfreeze_allowed": false,
+  "minimum_probe_sign_agreement": 0.7152777777777778,
+  "mean_probe_sign_agreement": 0.871875,
+  "mean_probe_normalized_error": 0.2900668475776911,
+  "thresholds": "level1/2 H32 n>=8,q<.12rad,v<.25m/s,p<.15m,R<.15rad; each contact probe qd Jacobian agreement>=.8,error<.6",
+  "limitations": "Contact discontinuities and FD epsilon dependence reported separately; passing signs alone is insufficient"
+}

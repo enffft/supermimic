@@ -1,0 +1,47 @@
+{
+  "result": {
+    "completed": true,
+    "iteration": 12,
+    "sim_steps": 96256,
+    "wall_time": 2.7004740238189697
+  },
+  "profile": {
+    "simulation": {
+      "count": 94,
+      "median_ms": 30.540354549884796,
+      "mean_ms": 32.813625831275864,
+      "p90_ms": 41.41148300841451
+    },
+    "wm_fit": {
+      "count": 24,
+      "median_ms": 33.41370902489871,
+      "mean_ms": 43.44951295449088,
+      "p90_ms": 52.30677012586966
+    },
+    "actor_bptt": {
+      "count": 4,
+      "median_ms": 121.90898699918762,
+      "mean_ms": 134.39408200792968,
+      "p90_ms": 164.7993310703896
+    },
+    "critic_update": {
+      "count": 4,
+      "median_ms": 15.560834493953735,
+      "mean_ms": 18.83904595160857,
+      "p90_ms": 24.99088940676302
+    }
+  },
+  "total_process_wall_s": 7.465757811907679,
+  "updates": {
+    "wm": 24,
+    "actor": 0,
+    "critic": 80
+  },
+  "torch_peak_allocated_mib": 925.30419921875,
+  "torch_peak_reserved_mib": 934.0,
+  "simulation_vector_steps_s": 30.475144842020583,
+  "simulation_transitions_s": 31206.548318229077,
+  "wm_updates_s": 23.0152177090547,
+  "frozen_actor": true,
+  "checkpoint": "/home/yifeiy/ws_go2_unilab/Uni-SuperMimic/results/longrun_B/benchmark_1024_verified/last.pt"
+}

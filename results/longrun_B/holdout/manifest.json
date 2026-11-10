@@ -1,0 +1,21 @@
+{
+  "real_transitions": 24500,
+  "probe_states": 44,
+  "seed": 2326,
+  "geometry_seed": 2026,
+  "command": [
+    0.4,
+    0,
+    0
+  ],
+  "exploration": 0.05,
+  "starts": "entry and controlled drop/contact probes; probe traversals are NOT successes",
+  "data_not_added_to_training_replay": true,
+  "types": [
+    "rough",
+    "slope_up",
+    "slope_down",
+    "stairs_up",
+    "stairs_down"
+  ]
+}

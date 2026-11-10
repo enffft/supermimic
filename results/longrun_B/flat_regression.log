@@ -1,0 +1,23 @@
+{
+  "baseline": "1cfffb6594b852512d30253993f00f75248e695b",
+  "actor_input_dim": 213,
+  "wm_input_dim": 65,
+  "actor_output_max_abs_error": 0.0,
+  "wm_h32_max_abs_error": 0.0,
+  "reward_terms_max_abs_error": 0.0,
+  "hard_soft_termination_identical": true,
+  "wm_widths": [
+    2048,
+    2048,
+    2048
+  ],
+  "actor_widths": [
+    2048,
+    1024,
+    512,
+    256
+  ],
+  "device": "cpu",
+  "amp": "none",
+  "batch": 16
+}

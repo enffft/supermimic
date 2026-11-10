@@ -1,0 +1,49 @@
+{
+  "result": {
+    "iteration": 2000,
+    "wall_h": 0.1605230951971478,
+    "sim_steps": 10371072,
+    "wm_loss": 0.08419334247708321,
+    "wm_err8": 0.15502673387527466,
+    "pi_loss": 0.0,
+    "v_loss": 0.0,
+    "imag_rew": 0.0,
+    "pi_gradnorm": 0.0,
+    "imag_survival": 0.0,
+    "sim_rew": 0.5163230460787577,
+    "ep_len": null,
+    "ep_ret_norm": null,
+    "term_frac": 0.45454545454545453,
+    "it_per_s": 4.557833123678064,
+    "lr": 0.00019996939698485074,
+    "completed": true,
+    "wall_time": 580.3047671318054
+  },
+  "profile": {
+    "simulation": {
+      "count": 1250,
+      "median_ms": 40.317036502528936,
+      "mean_ms": 42.20109017919749,
+      "p90_ms": 51.82816432788968
+    },
+    "wm_fit": {
+      "count": 2000,
+      "median_ms": 25.204845995176584,
+      "mean_ms": 30.042565183946863,
+      "p90_ms": 46.05179885402322
+    }
+  },
+  "total_process_wall_s": 130.2008339749882,
+  "updates": {
+    "wm": 8000,
+    "actor": 0,
+    "critic": 0
+  },
+  "torch_peak_allocated_mib": 1332.53564453125,
+  "torch_peak_reserved_mib": 2196.0,
+  "simulation_vector_steps_s": 23.696070308935706,
+  "simulation_transitions_s": 48529.551992700326,
+  "wm_updates_s": 33.28610569294351,
+  "frozen_actor": true,
+  "checkpoint": "/home/yifeiy/ws_go2_unilab/Uni-SuperMimic/results/longrun_B/warmstart/last.pt"
+}

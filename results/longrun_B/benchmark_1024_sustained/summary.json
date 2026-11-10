@@ -1,0 +1,61 @@
+{
+  "result": {
+    "completed": true,
+    "iteration": 50,
+    "sim_steps": 193536,
+    "wall_time": 11.41264271736145,
+    "wall_h": 0.0023871469497680664,
+    "wm_loss": 0.49389898777008057,
+    "wm_err8": 0.7955738472938537,
+    "pi_loss": 0.0,
+    "v_loss": 0.0,
+    "imag_rew": 0.0,
+    "pi_gradnorm": 0.0,
+    "imag_survival": 0.0,
+    "sim_rew": 0.4839527431934599,
+    "ep_len": null,
+    "ep_ret_norm": null,
+    "term_frac": 0.008547008547008548,
+    "it_per_s": 6.0858396982385194,
+    "lr": 0.00019999998161119055
+  },
+  "profile": {
+    "simulation": {
+      "count": 224,
+      "median_ms": 29.630550008732826,
+      "mean_ms": 32.32573413749508,
+      "p90_ms": 41.853444278240204
+    },
+    "wm_fit": {
+      "count": 128,
+      "median_ms": 27.03287295298651,
+      "mean_ms": 33.58779795962619,
+      "p90_ms": 44.369068066589534
+    },
+    "actor_bptt": {
+      "count": 4,
+      "median_ms": 163.88282197294757,
+      "mean_ms": 170.7964692323003,
+      "p90_ms": 213.11413241783157
+    },
+    "critic_update": {
+      "count": 4,
+      "median_ms": 18.292665481567383,
+      "mean_ms": 22.263938997639343,
+      "p90_ms": 32.05790942301974
+    }
+  },
+  "total_process_wall_s": 16.165916841942817,
+  "updates": {
+    "wm": 128,
+    "actor": 0,
+    "critic": 80
+  },
+  "torch_peak_allocated_mib": 925.2177734375,
+  "torch_peak_reserved_mib": 934.0,
+  "simulation_vector_steps_s": 30.935105626575258,
+  "simulation_transitions_s": 31677.548161613064,
+  "wm_updates_s": 29.772716901597363,
+  "frozen_actor": true,
+  "checkpoint": "/home/yifeiy/ws_go2_unilab/Uni-SuperMimic/results/longrun_B/benchmark_1024_sustained/last.pt"
+}

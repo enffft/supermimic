@@ -1,0 +1,18 @@
+{
+  "mode": "curriculum",
+  "actor_sha_before": "9b9ec22282abda1db6ca24c789772878cc95ac9d4ebe8a9e6abffe5e877d78dd",
+  "actor_sha_after": "9b9ec22282abda1db6ca24c789772878cc95ac9d4ebe8a9e6abffe5e877d78dd",
+  "identical_to_original_actor": true,
+  "actor_input": 213,
+  "actor_output": 12,
+  "seeds": [
+    2426
+  ],
+  "vector_steps": 5000,
+  "real_transitions": 125000,
+  "optimizer_updates": 0,
+  "episode_seconds": 10.0,
+  "full_tile_progress_target_m": 6.8,
+  "protocol": "Fixed: .35-.45m/s commands by seed, 20s budget, finish at 6.8m in .6m corridor; curriculum: .25m/s, 10s, entry target1.2m",
+  "contact_note": "Foot slip is a geometric clearance proxy; contact/body events use public-model MuJoCo forward every25steps"
+}

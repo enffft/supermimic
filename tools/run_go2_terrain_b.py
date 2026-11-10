@@ -154,7 +154,7 @@ def main():
         )
     OmegaConf.save(cfg, out / ("config_resume.yaml" if args.resume else "config.yaml"))
     dump(
-        out / "source.json",
+        out / ("source_resume.json" if args.resume else "source.json"),
         dict(
             commit=subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
             dirty=subprocess.check_output(["git", "status", "--short"], text=True),
@@ -167,7 +167,9 @@ def main():
         ),
     )
     if (
-        json.loads((out / "source.json").read_text())["actor_sha256"]
+        json.loads((out / ("source_resume.json" if args.resume else "source.json")).read_text())[
+            "actor_sha256"
+        ]
         != "0b3d8e4bb26173d13a6ce0b99d5eecf43005927a8ab2e01947c4d0311009487a"
     ):
         raise ValueError("Old actor SHA differs from audited source")

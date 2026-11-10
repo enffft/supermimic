@@ -1,0 +1,16 @@
+{
+  "commit": "eb5a299a1e00499e01c6230c23ab501f3da3fddc",
+  "dirty": "",
+  "argv": [
+    "tools/run_go2_terrain_b.py",
+    "--mode",
+    "warmstart",
+    "--envs",
+    "2048",
+    "--output",
+    "results/longrun_B/warmstart"
+  ],
+  "actor_sha256": "0b3d8e4bb26173d13a6ce0b99d5eecf43005927a8ab2e01947c4d0311009487a",
+  "omp_num_threads": "4",
+  "formal_networks": true
+}

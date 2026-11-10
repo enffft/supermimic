@@ -1,0 +1,13 @@
+WARNING: Attach conflict when attaching 'mjlab scene', policy is 'warning'
+timestep: parent has 0.002 (default), child has 0.005, keeping parent value
+iterations: parent has 100 (default), child has 10, keeping parent value
+ls_iterations: parent has 50 (default), child has 20, keeping parent value
+nkey: parent has 0 (default), child has 1, keeping parent value
+
+/home/yifeiy/miniconda3/envs/go2_unilab/lib/python3.12/site-packages/unisim/backend/mujoco/xml.py:490: UserWarning: Attach conflict when attaching 'mjlab scene', policy is 'warning'
+timestep: parent has 0.002 (default), child has 0.005, keeping parent value
+iterations: parent has 100 (default), child has 10, keeping parent value
+ls_iterations: parent has 50 (default), child has 20, keeping parent value
+nkey: parent has 0 (default), child has 1, keeping parent value
+  root = ET.fromstring(spec.to_xml())
+IMAGEIO FFMPEG_WRITER WARNING: input image is not divisible by macro_block_size=16, resizing from (640, 360) to (640, 368) to ensure video compatibility with most codecs and players. To prevent resizing, make your input image divisible by the macro_block_size or set the macro_block_size to 1 (risking incompatibility).

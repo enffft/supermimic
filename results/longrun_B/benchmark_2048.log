@@ -1,0 +1,13 @@
+WARNING: Attach conflict when attaching 'mjlab scene', policy is 'warning'
+timestep: parent has 0.002 (default), child has 0.005, keeping parent value
+iterations: parent has 100 (default), child has 10, keeping parent value
+ls_iterations: parent has 50 (default), child has 20, keeping parent value
+nkey: parent has 0 (default), child has 1, keeping parent value
+
+/home/yifeiy/miniconda3/envs/go2_unilab/lib/python3.12/site-packages/unisim/backend/mujoco/xml.py:490: UserWarning: Attach conflict when attaching 'mjlab scene', policy is 'warning'
+timestep: parent has 0.002 (default), child has 0.005, keeping parent value
+iterations: parent has 100 (default), child has 10, keeping parent value
+ls_iterations: parent has 50 (default), child has 20, keeping parent value
+nkey: parent has 0 (default), child has 1, keeping parent value
+  root = ET.fromstring(spec.to_xml())
+{"iteration": 12, "real_transitions": 192512, "wm": 24, "actor": 0, "critic": 0, "wall_s": 2.715928554534912, "rss_mib": 1844.3203125, "cpu_percent": 664.1, "available_host_mib": 6654.8046875, "gpu_allocated_mib": 298.1728515625, "gpu_reserved_mib": 488.0, "actor_digest": "9b9ec22282abda1db6ca24c789772878cc95ac9d4ebe8a9e6abffe5e877d78dd", "resume_mode": "new_run"}

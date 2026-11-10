@@ -68,3 +68,15 @@ src/unisupermimic/assets/motions/
 !results/blind_hydra_terrain_verified/
 results/**/*profiler_trace.json
 !results/blind_legacy_resume_verified/
+# Reviewed experiment B evidence; model/replay/binary physics caches remain local.
+!results/longrun_B/
+results/longrun_B/**
+!results/longrun_B/**/
+!results/longrun_B/**/*.json
+!results/longrun_B/**/*.jsonl
+!results/longrun_B/**/*.csv
+!results/longrun_B/**/*.yaml
+!results/longrun_B/**/*.png
+!results/longrun_B/**/*.txt
+!results/longrun_B/**/*.log
+!results/longrun_B/**/*.mp4

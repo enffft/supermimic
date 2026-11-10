@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/home/yifeiy/ws_go2_unilab/Uni-SuperMimic/tools/run_go2_terrain_b.py", line 284, in <module>
+    main()
+  File "/home/yifeiy/ws_go2_unilab/Uni-SuperMimic/tools/run_go2_terrain_b.py", line 172, in main
+    apply_cfg_overrides(
+  File "/home/yifeiy/ws_go2_unilab/UniLab/src/unilab/base/config_materialization.py", line 382, in apply_cfg_overrides
+    _apply_manager_mapping(
+  File "/home/yifeiy/ws_go2_unilab/UniLab/src/unilab/base/config_materialization.py", line 348, in _apply_manager_mapping
+    apply_cfg_overrides(current, value, _path=path)
+  File "/home/yifeiy/ws_go2_unilab/UniLab/src/unilab/base/config_materialization.py", line 391, in apply_cfg_overrides
+    raise ValueError(
+ValueError: Config field 'RewardTermCfg.func' belongs to the typed term declaration and cannot be changed by a partial override

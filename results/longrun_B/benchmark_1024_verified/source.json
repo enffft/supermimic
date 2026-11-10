@@ -1,0 +1,16 @@
+{
+  "commit": "b3f9aa8798d9faa0ba91973a840706162a3ea841",
+  "dirty": " M src/unisupermimic/rl/algos/supermimic/learner.py\n M src/unisupermimic/rl/algos/supermimic/replay.py\n M src/unisupermimic/tasks/velocity/go2/curriculum.py\n M src/unisupermimic/tasks/velocity/go2/env.py\n M src/unisupermimic/tasks/velocity/go2/manager_terms.py\n M tests/rl/algos/test_supermimic_learner.py\n M tests/tasks/test_go2_blind_terrain.py\n?? src/unisupermimic/conf/supermimic/task/go2_velocity/longrun_B.yaml\n?? tests/tasks/test_go2_longrun_curriculum.py\n?? tools/run_go2_terrain_b.py\n",
+  "argv": [
+    "tools/run_go2_terrain_b.py",
+    "--mode",
+    "benchmark",
+    "--envs",
+    "1024",
+    "--output",
+    "results/longrun_B/benchmark_1024_verified"
+  ],
+  "actor_sha256": "0b3d8e4bb26173d13a6ce0b99d5eecf43005927a8ab2e01947c4d0311009487a",
+  "omp_num_threads": "4",
+  "formal_networks": true
+}

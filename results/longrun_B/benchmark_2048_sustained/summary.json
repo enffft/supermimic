@@ -1,0 +1,61 @@
+{
+  "result": {
+    "completed": true,
+    "iteration": 50,
+    "sim_steps": 387072,
+    "wall_time": 14.00560188293457,
+    "wall_h": 0.0030158819092644586,
+    "wm_loss": 0.5156295800209045,
+    "wm_err8": 0.8249991559982299,
+    "pi_loss": 0.0,
+    "v_loss": 0.0,
+    "imag_rew": 0.0,
+    "pi_gradnorm": 0.0,
+    "imag_survival": 0.0,
+    "sim_rew": 0.4846349476821839,
+    "ep_len": null,
+    "ep_ret_norm": null,
+    "term_frac": 0.03214285714285714,
+    "it_per_s": 4.846440444660689,
+    "lr": 0.00019999998161119055
+  },
+  "profile": {
+    "simulation": {
+      "count": 224,
+      "median_ms": 46.70746251940727,
+      "mean_ms": 49.30570062684377,
+      "p90_ms": 60.056036966852844
+    },
+    "wm_fit": {
+      "count": 128,
+      "median_ms": 26.12307801609859,
+      "mean_ms": 32.63946830156783,
+      "p90_ms": 45.89469977654517
+    },
+    "actor_bptt": {
+      "count": 4,
+      "median_ms": 177.6922985445708,
+      "mean_ms": 167.8736347821541,
+      "p90_ms": 192.9085260606371
+    },
+    "critic_update": {
+      "count": 4,
+      "median_ms": 24.93720198981464,
+      "mean_ms": 27.86005349480547,
+      "p90_ms": 37.058945815078914
+    }
+  },
+  "total_process_wall_s": 19.913103478960693,
+  "updates": {
+    "wm": 128,
+    "actor": 0,
+    "critic": 80
+  },
+  "torch_peak_allocated_mib": 992.6513671875,
+  "torch_peak_reserved_mib": 1000.0,
+  "simulation_vector_steps_s": 20.281630466387988,
+  "simulation_transitions_s": 41536.7791951626,
+  "wm_updates_s": 30.637753984245055,
+  "frozen_actor": true,
+  "checkpoint": "/home/yifeiy/ws_go2_unilab/Uni-SuperMimic/results/longrun_B/benchmark_2048_sustained/last.pt"
+}

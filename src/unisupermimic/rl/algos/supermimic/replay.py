@@ -35,6 +35,7 @@ class ReplayBuffer:
         num_joints: int = 29,
         context_dim: int = 33,
         goal_dim: int = 0,
+        terrain_metadata: bool = False,
     ):
         self.T = T
         self.N = N
@@ -42,6 +43,12 @@ class ReplayBuffer:
         self.fields = _make_fields(num_joints, context_dim)
         if goal_dim:
             self.fields["g"] = (goal_dim, torch.float32)
+        if terrain_metadata:
+            self.fields.update(
+                terrain_type=((), torch.long),
+                terrain_level=((), torch.long),
+                terrain_probe=((), torch.bool),
+            )
         self.data = {}
         for key, (shape, dtype) in self.fields.items():
             field_shape = (T, N) + ((shape,) if isinstance(shape, int) else shape)
@@ -63,6 +70,20 @@ class ReplayBuffer:
             self.data[key][self.ptr] = transition[key]
         self.ptr = (self.ptr + 1) % self.T
         self.size = min(self.size + 1, self.T)
+
+    def state_dict(self):
+        return {"T": self.T, "N": self.N, "ptr": self.ptr, "size": self.size, "data": self.data}
+
+    def load_state_dict(self, values):
+        if (values["T"], values["N"]) != (self.T, self.N) or values[
+            "data"
+        ].keys() != self.data.keys():
+            raise ValueError("Replay layout mismatch; use explicit fresh-data resume")
+        for name, tensor in values["data"].items():
+            if tensor.shape != self.data[name].shape or tensor.dtype != self.data[name].dtype:
+                raise ValueError(f"Replay field mismatch: {name}")
+            self.data[name].copy_(tensor)
+        self.ptr, self.size = values["ptr"], values["size"]
 
     def _row(self, age: torch.Tensor) -> torch.Tensor:
         """Map age-ordered time indices (zero is oldest) to storage rows."""

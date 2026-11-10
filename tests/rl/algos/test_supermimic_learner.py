@@ -632,3 +632,52 @@ def test_early_nonfinite_world_model_batch_cannot_be_masked_by_later_batches(tmp
     assert calls == 1
     assert not (tmp_path / "ckpt_000001.pt").exists()
     assert not (tmp_path / "last.pt").exists()
+
+
+def test_actor_lr_scale_does_not_scale_wm_or_critic(tmp_path):
+    cfg = replace(
+        _config(), actor_lr_scale=0.3, actor_ramp_iters=10, wm_only_iters=5, critic_warmup_iters=3
+    )
+    learner = SuperMimicLearner(FakeEnv(), cfg, tmp_path)
+    for it, scale in ((4, 0.0), (7, 0.0), (8, 0.03), (17, 0.3), (30, 0.3)):
+        rate = learner.set_learning_rates(it)
+        assert learner.opt_wm.param_groups[0]["lr"] == rate
+        assert learner.opt_v.param_groups[0]["lr"] == rate
+        assert learner.opt_pi.param_groups[0]["lr"] == pytest.approx(rate * scale)
+
+
+def test_critic_only_warmup_does_not_step_actor_optimizer(tmp_path):
+    learner = SuperMimicLearner(FakeEnv(), replace(_config(), pi_opt="adam"), tmp_path)
+    learner.collect(4)
+    before = {k: v.clone() for k, v in learner.pi.state_dict().items()}
+    learner.policy_update(update_actor=False)
+    assert all(torch.equal(v, before[k]) for k, v in learner.pi.state_dict().items())
+    assert len(learner.opt_pi.state) == 0
+    assert learner.update_counts == dict(wm=0, actor=0, critic=2)
+
+
+def test_resample_resume_preserves_replay_budgets_value_norm_and_absolute_stage(tmp_path):
+    cfg = replace(_config(), checkpoint_replay=True, wm_only_iters=10, iterations=2)
+    env = FakeEnv()
+    learner = SuperMimicLearner(env, cfg, tmp_path / "source")
+    learner.collect(4)
+    learner.wm_update()
+    learner.policy_update(update_actor=False)
+    learner.iteration = 1
+    learner.step_accumulator = 0.5
+    learner.extra_state = dict(coverage=dict(transitions=torch.tensor([8])))
+    saved = learner.save()
+    env2 = FakeEnv()
+    env2.reset = env2.init_state
+    resumed = SuperMimicLearner(env2, cfg, tmp_path / "resumed")
+    resumed.load(saved)
+    assert resumed.iteration == 1 and resumed.step_accumulator == 0.5
+    assert resumed.update_counts == dict(wm=1, actor=0, critic=2)
+    assert resumed.buffer.size == 4 and resumed.buffer.ptr == 4
+    assert torch.equal(resumed.buffer.data["s"], learner.buffer.data["s"])
+    assert resumed.buffer.data["done"][3].all()  # close discarded physics trajectory
+    assert torch.equal(resumed._v_mean, learner._v_mean)
+    assert torch.equal(resumed._v_std, learner._v_std) and resumed._v_init
+    assert resumed.actor_scale_at(resumed.iteration) == 0
+    assert resumed.extra_state["coverage"]["transitions"].item() == 8
+    assert "not_exact" in resumed.resume_mode

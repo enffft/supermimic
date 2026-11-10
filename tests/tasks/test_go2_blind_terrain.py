@@ -149,18 +149,20 @@ def test_curriculum_progress_failure_recycling_and_fixed_eval():
 
     origins = np.zeros((5, 2, 3))
     origins[:, 0, 0] = np.arange(5) * 8
-    c = TerrainCurriculum(3, origins, enabled=True)
+    c = TerrainCurriculum(3, origins, enabled=True, min_episodes=1, flat_probability=0.)
     ids = torch.arange(3)
     c.reset(ids, RNG())
     c.steps[:] = 500
     c.episode_progress[:] = torch.tensor([4.0, 0.0, 1.0])
     c.commanded_progress[:] = 4.0
+    c.eligible_steps[:] = 500
     c.episode_fall[2] = True
     c.reset(ids, RNG())
     assert c.mastery.tolist() == [1, 0, 0]  # stationary cannot promote
-    c.steps[:] = 300
-    c.episode_fall[:] = True
-    c.reset(ids, RNG())
+    for _ in range(2):
+        c.steps[:] = 300
+        c.episode_fall[:] = True
+        c.reset(ids, RNG())
     assert c.mastery.tolist() == [0, 0, 0]
     c = TerrainCurriculum(3, origins, enabled=False, fixed_level=2)
     c.steps[:] = 500

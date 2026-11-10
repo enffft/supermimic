@@ -32,6 +32,12 @@ class VelocityCommandCfg(CommandTermCfg):
     terrain_fixed_level: int = 0
     terrain_max_level: int = 4
     terrain_recycle_probability: float = 0.15
+    terrain_phase: str = "skill"
+    terrain_coverage_weights: tuple[float, ...] = (0.2, 0.4, 0.3, 0.1, 0.0)
+    terrain_min_episodes: int = 3
+    terrain_target_progress: float = 1.2
+    terrain_flat_probability: float = 0.15
+    terrain_probe_probability: float = 0.0
 
     def build(self, env):
         return VelocityCommand(self, env)
@@ -135,6 +141,11 @@ class VelocityCommand(CommandTerm):
         root = torch.zeros(self.num_envs, 13, device=self._device)
         root[:, :3] = self._origins
         root[:, :3] += root.new_tensor(self.cfg.spawn_offset)
+        if self.curriculum is not None:
+            direction = root.new_tensor(
+                (math.cos(self.cfg.spawn_heading), math.sin(self.cfg.spawn_heading))
+            )
+            root[:, :2] += self.curriculum.probe_offset[:, None] * direction
         if self.cfg.terrain_aware and self.mdp.terrain is not None:
             root[:, 2] = self.mdp.terrain.ground_height(root[:, :2]) + self.cfg.spawn_offset[2]
         root[:, 2] += 0.42

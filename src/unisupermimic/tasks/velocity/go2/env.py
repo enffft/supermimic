@@ -51,6 +51,12 @@ class Go2VelocityEnv(ManagerBasedRlEnv):
             "terrain_fixed_level",
             "terrain_max_level",
             "terrain_recycle_probability",
+            "terrain_phase",
+            "terrain_coverage_weights",
+            "terrain_min_episodes",
+            "terrain_target_progress",
+            "terrain_flat_probability",
+            "terrain_probe_probability",
         )
         if not self.cfg.commands["velocity"].terrain_aware:
             # Preserve v2 flat checkpoint contract byte-for-byte.
@@ -103,6 +109,15 @@ class Go2VelocityEnv(ManagerBasedRlEnv):
             "previous_action": c.a_prev.detach().clone(),
             "action": actions.clamp(-1, 1).detach().clone(),
         }
+        self.velocity_terrain_tags = (
+            {}
+            if c.curriculum is None
+            else {
+                "terrain_type": c.curriculum.terrain_type.clone(),
+                "terrain_level": c.curriculum.terrain_level.clone(),
+                "terrain_probe": c.curriculum.probe.clone(),
+            }
+        )
         return super().apply_action(actions.clamp(-1, 1), state)
 
     def _update_state_in_read_phase(self, state):
@@ -126,6 +141,7 @@ class Go2VelocityEnv(ManagerBasedRlEnv):
             }.items()
         }
         updated.info[SUPERMIMIC_STATE_KEY] = self.current_info()
+        updated.info[SUPERMIMIC_TRANSITION_KEY].update(self.velocity_terrain_tags)
         return updated
 
     def reset(self, env_ids=None, *, seed=None, options=None):
@@ -219,6 +235,12 @@ def make_go2_env(cfg, num_envs=1, backend_type="mujoco"):
                     fixed_level=command_cfg.terrain_fixed_level,
                     max_level=command_cfg.terrain_max_level,
                     recycle_probability=command_cfg.terrain_recycle_probability,
+                    phase=command_cfg.terrain_phase,
+                    coverage_weights=command_cfg.terrain_coverage_weights,
+                    min_episodes=command_cfg.terrain_min_episodes,
+                    target_progress=command_cfg.terrain_target_progress,
+                    flat_probability=command_cfg.terrain_flat_probability,
+                    probe_probability=command_cfg.terrain_probe_probability,
                     device=env.device,
                 )
                 # All compiled atlas entry footprints must be finite and planar.

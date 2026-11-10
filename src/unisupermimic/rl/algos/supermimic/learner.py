@@ -79,6 +79,11 @@ class SuperMimicConfig:
     terrain_conditioning: bool = False
     terrain_sensor_grad: bool = True
     critic_terrain_conditioning: bool = False  # reserved, not silently enabled
+    actor_lr_scale: float = 1.0
+    actor_ramp_iters: int = 0
+    critic_warmup_iters: int = 0
+    checkpoint_replay: bool = False
+    strict_finite: bool = False
 
 
 _LOG_FIELDS = (
@@ -251,6 +256,9 @@ class SuperMimicLearner:
             num_joints=self.mdp.num_joints,
             context_dim=self.mdp.context_dim,
             goal_dim=self.mdp.goal_frame_dim if cfg.goal_mode == "direct" else 0,
+            terrain_metadata=cfg.checkpoint_replay
+            and generated_terrain
+            and cfg.goal_mode == "direct",
         )
         self.obs_hist = torch.zeros(env.num_envs, cfg.hist, self.mdp.obs_dim, device=self.device)
         self.err_floor = torch.cat(
@@ -264,6 +272,11 @@ class SuperMimicLearner:
             )
         ).to(self.device)
 
+        self.on_iteration = None  # Optional validation/guard callback; one shared train loop.
+        self.extra_state = {}
+        self.update_counts = {"wm": 0, "actor": 0, "critic": 0}
+        self.step_accumulator = 0.0
+        self.resume_mode = "new_run"
         self.iteration = 0
         self.sim_steps = 0
         self.wall_time = 0.0
@@ -627,8 +640,11 @@ class SuperMimicLearner:
         loss, last_error = self._wm_err_fn(predicted, window["s1"], window["mask"])
         self.opt_wm.zero_grad(set_to_none=True)
         loss.backward()
-        nn.utils.clip_grad_norm_(self.wm.parameters(), 1.0)
+        nn.utils.clip_grad_norm_(
+            self.wm.parameters(), 1.0, error_if_nonfinite=self.cfg.strict_finite
+        )
         self.opt_wm.step()
+        self.update_counts["wm"] += 1
         mask = window["mask"][:, -1]
         mean_last_error = (last_error.detach() * mask).sum() / mask.sum().clamp(min=1)
         timing.__exit__(None, None, None)
@@ -667,6 +683,7 @@ class SuperMimicLearner:
 
     def policy_update(
         self,
+        update_actor: bool = True,
     ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
         start, history = self._sample_valid_starts(self.cfg.pi_batch)
         state = unflatten_state(start["s"])
@@ -760,7 +777,11 @@ class SuperMimicLearner:
             loss.backward()
             grad_norm = nn.utils.clip_grad_norm_(self.pi.parameters(), 1.0)
             nn.utils.clip_grad_value_(self.pi.parameters(), 0.1)
-            if self.cfg.no_sync:
+            if self.cfg.strict_finite and not torch.isfinite(grad_norm):
+                raise FloatingPointError("Non-finite actor gradient; optimizer not stepped")
+            if not update_actor:
+                pass  # Critic warmup must not mutate actor Adam moments or weights.
+            elif self.cfg.no_sync:
                 # Skip a non-finite update without reading the norm on the host: zero the
                 # gradients on-device instead of branching on ``torch.isfinite``.
                 finite = torch.isfinite(grad_norm)
@@ -770,7 +791,9 @@ class SuperMimicLearner:
                 self.opt_pi.step()
             elif torch.isfinite(grad_norm):
                 self.opt_pi.step()
-            if self.pi_avg is not None:
+            if update_actor:
+                self.update_counts["actor"] += 1
+            if update_actor and self.pi_avg is not None:
                 self.pi_avg.update_parameters(self.pi)
         finally:
             _set_requires_grad(self.wm, True)
@@ -849,8 +872,11 @@ class SuperMimicLearner:
                     ).mean()
                     self.opt_v.zero_grad(set_to_none=True)
                     value_loss.backward()
-                    nn.utils.clip_grad_norm_(self.critic.parameters(), 1.0)
+                    nn.utils.clip_grad_norm_(
+                        self.critic.parameters(), 1.0, error_if_nonfinite=self.cfg.strict_finite
+                    )
                     self.opt_v.step()
+                    self.update_counts["critic"] += 1
 
         imagined_reward = (reward_sum / self.cfg.horizon / self.mdp.max_step_reward).mean()
         critic_timing.__exit__(None, None, None)
@@ -868,6 +894,24 @@ class SuperMimicLearner:
         return self.cfg.lr * (
             0.03 + 0.97 * 0.5 * (1 + math.cos(math.pi * iteration / self.cfg.lr_decay_iters))
         )
+
+    def actor_scale_at(self, iteration: int) -> float:
+        start = self.cfg.wm_only_iters + self.cfg.critic_warmup_iters
+        if iteration < start:
+            return 0.0
+        ramp = min(1.0, (iteration - start + 1) / max(1, self.cfg.actor_ramp_iters))
+        return self.cfg.actor_lr_scale * ramp
+
+    def set_learning_rates(self, iteration: int) -> float:
+        rate = self.lr_at(iteration)
+        for optimizer, scale in (
+            (self.opt_wm, 1.0),
+            (self.opt_v, 1.0),
+            (self.opt_pi, self.actor_scale_at(iteration)),
+        ):
+            for group in optimizer.param_groups:
+                group["lr"] = rate * scale
+        return rate
 
     def _checkpoint(self, include_optimizers: bool) -> dict[str, Any]:
         policy_state = (
@@ -895,6 +939,27 @@ class SuperMimicLearner:
                     "opt_v": self.opt_v.state_dict(),
                 }
             )
+        if self.cfg.checkpoint_replay:
+            checkpoint.update(
+                extra_state=self.extra_state,
+                update_counts=self.update_counts.copy(),
+                step_accumulator=self.step_accumulator,
+                value_normalization={
+                    "mean": self._v_mean,
+                    "std": self._v_std,
+                    "initialized": self._v_init,
+                },
+                resume_semantics="weights_optimizers_replay_curriculum; fresh_environment; not_step_equivalent",
+            )
+        if include_optimizers and self.cfg.checkpoint_replay:
+            checkpoint["replay"] = self.buffer.state_dict()
+            checkpoint["torch_rng"] = torch.get_rng_state()
+            if self.device.type == "cuda":
+                checkpoint["cuda_rng"] = torch.cuda.get_rng_state(self.device)
+            command = getattr(self.env, "command_manager", None)
+            curriculum = command.get_term("velocity").curriculum if command else None
+            if curriculum is not None:
+                checkpoint["curriculum"] = curriculum.state_dict()
         return checkpoint
 
     def save(self, path: str | Path | None = None, include_optimizers: bool = True) -> Path:
@@ -959,6 +1024,41 @@ class SuperMimicLearner:
         self.iteration = checkpoint["iteration"]
         self.wall_time = checkpoint["wall_time"]
         self.sim_steps = checkpoint["sim_steps"]
+        self.extra_state = checkpoint.get("extra_state", {})
+        self.update_counts = checkpoint.get("update_counts", {"wm": 0, "actor": 0, "critic": 0})
+        self.step_accumulator = checkpoint.get("step_accumulator", 0.0)
+        if "value_normalization" in checkpoint:
+            values = checkpoint["value_normalization"]
+            self._v_mean, self._v_std, self._v_init = (
+                values["mean"],
+                values["std"],
+                values["initialized"],
+            )
+        if "replay" in checkpoint:
+            self.buffer.load_state_dict(checkpoint["replay"])
+            # Physics and command-manager RNG are deliberately restarted. Close every
+            # prior trajectory and clear partial curriculum episodes before new reset.
+            self.buffer.mark_reset_boundary(
+                torch.ones(self.env.num_envs, device=self.device, dtype=torch.bool)
+            )
+            command = getattr(self.env, "command_manager", None)
+            curriculum = command.get_term("velocity").curriculum if command else None
+            if curriculum is not None and "curriculum" in checkpoint:
+                curriculum.load_state_dict(checkpoint["curriculum"])
+                curriculum.steps.zero_()
+                curriculum.episode_fall.zero_()
+            self.env.reset()
+            self.obs_hist.zero_()
+            torch.set_rng_state(checkpoint["torch_rng"].cpu())
+            if self.device.type == "cuda" and "cuda_rng" in checkpoint:
+                torch.cuda.set_rng_state(checkpoint["cuda_rng"].cpu(), self.device)
+            self.resume_mode = (
+                "weights_optimizers_replay_curriculum_restored; environment_resampled; not_exact"
+            )
+        else:
+            self.resume_mode = (
+                "weights_optimizers_only; replay_environment_curriculum_resampled; not_exact"
+            )
 
     @staticmethod
     def _mean(values: list[torch.Tensor]) -> float:
@@ -997,7 +1097,7 @@ class SuperMimicLearner:
                     log_file.write(",".join(_LOG_FIELDS) + "\n")
                 train_start = time.time() - self.wall_time
                 log_start = time.time()
-                step_accumulator = 0.0
+
                 aggregate: dict[str, list[torch.Tensor]] = {
                     key: [] for key in ("wm", "wm8", "pi", "v", "ir", "gn", "surv")
                 }
@@ -1008,13 +1108,10 @@ class SuperMimicLearner:
                     if self.cfg.compile and iteration == self.cfg.wm_only_iters:
                         logger.log_status("Compiling policy update (one-off, slow on first run)")
                     iteration_start = time.time()
-                    learning_rate = self.lr_at(iteration)
-                    for optimizer in (self.opt_wm, self.opt_pi, self.opt_v):
-                        for group in optimizer.param_groups:
-                            group["lr"] = learning_rate
-                    step_accumulator += 1.0 / self.cfg.utd
-                    collect_steps = int(step_accumulator)
-                    step_accumulator -= collect_steps
+                    learning_rate = self.set_learning_rates(iteration)
+                    self.step_accumulator += 1.0 / self.cfg.utd
+                    collect_steps = int(self.step_accumulator)
+                    self.step_accumulator -= collect_steps
                     stats_mark = len(self.stats["r"])
                     self.collect(collect_steps)
                     train_phase_start = time.time()
@@ -1036,7 +1133,9 @@ class SuperMimicLearner:
                     imag_survival: float | None = None
                     if iteration >= self.cfg.wm_only_iters:
                         policy_loss, value_loss, imagined_reward, grad_norm, survival = (
-                            self.policy_update()
+                            self.policy_update(update_actor=False)
+                            if iteration < self.cfg.wm_only_iters + self.cfg.critic_warmup_iters
+                            else self.policy_update()
                         )
                         # Fail fast on divergence instead of checkpointing a diverged model.
                         # ``grad_norm`` is deliberately excluded: ``no_sync`` training already
@@ -1066,6 +1165,8 @@ class SuperMimicLearner:
                     self.wall_time = time.time() - train_start
                     iteration_time = time.time() - iteration_start
 
+                    if self.on_iteration is not None:
+                        self.on_iteration(self)
                     iter_rewards = self.stats["r"][stats_mark:]
                     mean_reward = self._mean(iter_rewards) if iter_rewards else None
                     ep_len = self._mean(self.stats["ep_len"]) if self.stats["ep_len"] else None
@@ -1137,18 +1238,18 @@ class SuperMimicLearner:
                         self.save()
                         numbered = self.save(
                             self.log_dir / f"ckpt_{self.iteration:06d}.pt",
-                            include_optimizers=False,
+                            include_optimizers=self.cfg.checkpoint_replay,
                         )
                         logger.log_save(str(numbered))
 
             self.wall_time = time.time() - train_start
             logger.finish()
             return {
+                **last_metrics,
                 "completed": self.iteration >= self.cfg.iterations,
                 "iteration": self.iteration,
                 "sim_steps": self.sim_steps,
                 "wall_time": self.wall_time,
-                **last_metrics,
             }
         finally:
             logger.close()

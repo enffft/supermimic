@@ -1,0 +1,40 @@
+# @package _global_
+defaults:
+  - /task/go2_velocity/terrain
+# Experiment B. Stage I stops for independent physical-gradient acceptance.
+algo:
+  num_envs: 2048
+  iterations: 1500
+  wm_only_iters: 1500
+  wm_batches: 4
+  wm_batch: 256
+  pi_batch: 256
+  buffer_steps: 1024
+  warmup_steps: 64
+  utd: 0.4
+  lr: 0.0002
+  actor_lr_scale: 0.3
+  actor_ramp_iters: 500
+  critic_warmup_iters: 300
+  checkpoint_replay: true
+  strict_finite: true
+  ckpt_every: 250
+  log_every: 25
+  log_backend: no_print
+  profile: true
+  action_noise: 0.1
+  init_actor_from: /home/yifeiy/ws_supermimic/logs/phase3_training/go2_velocity_diagonal_slip_3072_2p5h_20261103/ckpt_0034000.pt
+  init_wm_from: null
+  driver_enabled: false
+env:
+  commands:
+    velocity:
+      terrain_profile: mixed
+      terrain_curriculum: true
+      terrain_phase: wm
+      terrain_fixed_level: 0
+      terrain_coverage_weights: [0.2, 0.4, 0.3, 0.1, 0.0]
+      terrain_min_episodes: 3
+      terrain_target_progress: 1.2
+      terrain_flat_probability: 0.15
+      terrain_probe_probability: 0.25

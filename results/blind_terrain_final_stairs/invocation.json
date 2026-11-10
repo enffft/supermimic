@@ -1,0 +1,14 @@
+{
+  "profile": "stairs",
+  "level": 1,
+  "envs": 16,
+  "iterations": 8,
+  "wm_only": 2,
+  "steps": 64,
+  "batch": 64,
+  "conditioning": true,
+  "device": "cuda",
+  "curriculum": false,
+  "mode": "smoke",
+  "output": "results/blind_terrain_final_stairs"
+}

@@ -1,0 +1,15 @@
+{
+  "profile": "mixed",
+  "level": 0,
+  "envs": 32,
+  "iterations": 8,
+  "wm_only": 2,
+  "steps": 64,
+  "batch": 64,
+  "conditioning": true,
+  "device": "cuda",
+  "curriculum": true,
+  "mode": "smoke",
+  "wm_checkpoint": null,
+  "output": "results/blind_curriculum_mixed_verified"
+}

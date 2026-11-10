@@ -1,0 +1,15 @@
+{
+  "profile": "rough",
+  "level": 1,
+  "envs": 16,
+  "iterations": 8,
+  "wm_only": 2,
+  "steps": 64,
+  "batch": 64,
+  "conditioning": true,
+  "device": "cuda",
+  "curriculum": false,
+  "mode": "smoke",
+  "wm_checkpoint": null,
+  "output": "results/blind_terrain_rough_random"
+}

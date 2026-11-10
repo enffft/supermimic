@@ -31,18 +31,23 @@ def go2_gait_reward_terms(
     state: torch.Tensor,
     goal: torch.Tensor,
     cfg: Go2GaitCfg,
+    *,
+    foot_ground: torch.Tensor | None = None,
 ) -> dict[str, torch.Tensor]:
     """Encourage swing clearance, diagonal support, and stationary stance feet.
 
     No phase clock or contact history is required: the WM predicts the same
     joint/root state used by real rewards. Contact is a smooth geometric proxy,
-    NOT a measured contact force. Ground is z=0 in the current velocity task.
+    NOT a measured contact force. Optional per-foot world terrain heights share
+    the same geometric proxy in real transitions and imagination.
     """
     zero = state[..., 0] * 0.0
     if cfg.feet_clearance == cfg.diagonal_gait == cfg.feet_slip == 0.0:
         return dict.fromkeys(GO2_GAIT_REWARD_NAMES, zero)
     pos, vel = go2_feet_world(state)
     height = pos[..., 2] - GO2_FOOT_RADIUS
+    if foot_ground is not None:
+        height = height - foot_ground
     speed_sq = vel[..., :2].square().sum(-1)
     # Includes pure yaw commands (0.25 m is a representative foot lever arm).
     command_speed = (

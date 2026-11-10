@@ -1,0 +1,13 @@
+{
+  "sample_count": 256,
+  "actor_input_dim": 213,
+  "environment_created": false,
+  "terrain_map_loaded": false,
+  "baseline_saturation_fraction": 0.1165364608168602,
+  "adapted_saturation_fraction": 0.1451822966337204,
+  "baseline_abs_max": 1.0,
+  "adapted_abs_max": 1.0,
+  "action_change_rmse": 0.5196020603179932,
+  "bounded_finite": true,
+  "note": "same replay histories and goals; tanh threshold .98; inference uses no map or simulated environment"
+}

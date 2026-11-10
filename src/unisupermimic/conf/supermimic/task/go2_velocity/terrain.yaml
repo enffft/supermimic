@@ -1,0 +1,23 @@
+# @package _global_
+defaults:
+  - /task/go2_velocity/mujoco
+# Independent opt-in. Flat baseline owner and G1 defaults are unchanged.
+algo:
+  terrain_training: true
+  terrain_conditioning: true
+  terrain_sensor_grad: true
+  critic_terrain_conditioning: false
+  iterations: 8
+  wm_only_iters: 500
+  wm_window: 8
+  horizon: 32
+env:
+  commands:
+    velocity:
+      terrain_profile: rough
+      terrain_aware: true
+      terrain_seed: 2026
+      terrain_curriculum: false
+      terrain_fixed_level: 0
+      terrain_max_level: 4
+      terrain_recycle_probability: 0.15

@@ -165,3 +165,151 @@ def test_terrain_learner_is_gated(tmp_path):
     finally:
         env.close()
         env.backend.close()
+
+
+@pytest.mark.parametrize(
+    "profile", ["rough", "slope", "slope_down", "stairs", "stairs_down", "mixed"]
+)
+def test_blind_terrain_world_replay_relative_reward_partial_reset(tmp_path, profile):
+    cfg = load_config(terrain=True)
+    cfg.commands["velocity"].terrain_profile = profile
+    cfg.commands["velocity"].terrain_fixed_level = 1
+    cfg.max_episode_seconds = 0.10
+    env = make_go2_env(cfg, num_envs=4)
+    try:
+        env.init_state()
+        command = env.command_manager.get_term("velocity")
+        lc = SuperMimicConfig(
+            goal_mode="direct",
+            goal_frames=1,
+            hist=5,
+            terrain_training=True,
+            terrain_conditioning=True,
+            compile=False,
+            amp="none",
+            no_sync=False,
+            wm_hidden=(32, 32),
+            policy_hidden=(32, 16),
+            critic_hidden=(16,),
+            buffer_steps=64,
+            wm_batch=4,
+            pi_batch=4,
+            wm_window=8,
+            horizon=32,
+            wm_opt="adam",
+            pi_opt="adam",
+        )
+        learner = SuperMimicLearner(env, lc, tmp_path / profile)
+        for _ in range(12):
+            before = env.current_info()
+            learner.collect(1)
+            row = (learner.buffer.ptr - 1) % learner.buffer.T
+            assert torch.equal(learner.buffer.data["s"][row], before["s"])
+            tr = env.state.info["supermimic"]
+            terms = command.mdp.reward_transition(
+                unflatten_state(tr["s"]),
+                unflatten_state(tr["s1"]),
+                tr["g"],
+                tr["a_clean"],
+                tr["a_prev"],
+                executed_action=tr["a"],
+                measured_torque=env.velocity_measured_torque,
+            )
+            torch.testing.assert_close(terms, tr["r"])
+            if (before["ep_step"] == 0).all():
+                assert torch.equal(
+                    learner.obs_hist, learner.obs_hist[:, :1].expand_as(learner.obs_hist)
+                )
+        before = env.current_info()["s"].clone()
+        env.reset(torch.tensor([0]))
+        assert torch.equal(before[1:], env.current_info()["s"][1:])
+        assert command.mdp.local_height(command.state())[0] == pytest.approx(0.42, abs=1e-6)
+        assert learner.wm.in_dim == 142 and learner.pi.dec[0].in_features == 213
+        assert learner.critic.norm.mean.numel() == 56
+        loss, _ = learner.wm_update()
+        assert torch.isfinite(loss)
+        metrics = learner.policy_update()
+        assert all(torch.isfinite(x).all() for x in metrics)
+    finally:
+        env.close()
+        env.backend.close()
+
+
+def test_actor_and_unilab_wm_initialization_are_independent(tmp_path):
+    from dataclasses import replace
+
+    cfg = load_config()
+    env = make_go2_env(cfg, 2)
+    env.init_state()
+    common = SuperMimicConfig(
+        goal_mode="direct",
+        hist=5,
+        goal_frames=1,
+        compile=False,
+        amp="none",
+        wm_hidden=(16,),
+        policy_hidden=(16,),
+        critic_hidden=(16,),
+        wm_opt="adam",
+        pi_opt="adam",
+    )
+    try:
+        source = SuperMimicLearner(env, common, tmp_path / "source")
+        with torch.no_grad():
+            source.wm.net[-1].weight.normal_(std=0.01)
+        checkpoint = source.save()
+        target_cfg = load_config(terrain=True)
+        target_cfg.commands["velocity"].terrain_profile = "rough"
+        target = make_go2_env(target_cfg, 2)
+        target.init_state()
+        try:
+            adapted = SuperMimicLearner(
+                target,
+                replace(
+                    common,
+                    terrain_training=True,
+                    terrain_conditioning=True,
+                    init_actor_from=str(checkpoint),
+                    init_wm_from=str(checkpoint),
+                ),
+                tmp_path / "target",
+            )
+            for key, value in source.pi.state_dict().items():
+                assert torch.equal(value, adapted.pi.state_dict()[key])
+            assert adapted.wm.net[0].weight[:, 65:].eq(0).all()
+            assert torch.equal(source.wm.net[0].weight, adapted.wm.net[0].weight[:, :65])
+            assert source.wm.net[-1].weight.equal(adapted.wm.net[-1].weight)
+            assert not adapted.opt_wm.state  # fresh optimizer
+        finally:
+            target.close()
+            target.backend.close()
+    finally:
+        env.close()
+        env.backend.close()
+
+
+@pytest.mark.parametrize("heading", [0.0, np.pi / 2, np.pi, 3 * np.pi / 2])
+def test_terrain_heading_controls_entry_and_root_reset(heading):
+    cfg = load_config(terrain=True)
+    cmdcfg = cfg.commands["velocity"]
+    cmdcfg.terrain_profile = "stairs_down"
+    cmdcfg.terrain_fixed_level = 2
+    cmdcfg.spawn_heading = heading
+    env = make_go2_env(cfg, 2)
+    try:
+        env.init_state()
+        c = env.command_manager.get_term("velocity")
+        p, R, *_ = c.state()
+        torch.testing.assert_close(
+            c.mdp.local_height(c.state()), torch.full((2,), 0.42), atol=1e-6, rtol=1e-6
+        )
+        assert float(R[0, 0, 0]) == pytest.approx(np.cos(heading), abs=1e-6)
+        assert float(R[0, 1, 0]) == pytest.approx(np.sin(heading), abs=1e-6)
+        direction = p.new_tensor([np.cos(heading), np.sin(heading)])
+        ahead = p[:, :2] + direction * 2.0
+        assert (
+            c.mdp.terrain.ground_height(ahead) < c.mdp.terrain.ground_height(p[:, :2]) - 0.01
+        ).all()
+    finally:
+        env.close()
+        env.backend.close()

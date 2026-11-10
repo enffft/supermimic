@@ -1,0 +1,148 @@
+{
+  "finite": true,
+  "envs": 16,
+  "cases": [
+    {
+      "goal": [
+        0.5,
+        0,
+        0
+      ],
+      "steps": 64,
+      "terminated_transitions": 0,
+      "done_transitions": 0,
+      "max_recomputed_real_reward_error": 7.450580596923828e-09,
+      "mean_real_vs_pd_proxy_reward_gap": 3.441049557295628e-06,
+      "mean_step_reward": 0.060390187940356554,
+      "min_root_clearance_m": 0.31319478154182434,
+      "net_displacement_m": [
+        0.5689702033996582,
+        -0.00022045162040740252,
+        -0.09193222969770432
+      ]
+    },
+    {
+      "goal": [
+        -0.3,
+        0,
+        0
+      ],
+      "steps": 64,
+      "terminated_transitions": 0,
+      "done_transitions": 0,
+      "max_recomputed_real_reward_error": 1.862645149230957e-09,
+      "mean_real_vs_pd_proxy_reward_gap": 2.3728358087282686e-06,
+      "mean_step_reward": 0.04328711686042652,
+      "min_root_clearance_m": 0.32460904121398926,
+      "net_displacement_m": [
+        -0.3258955478668213,
+        -0.005793291609734297,
+        -0.08081746101379395
+      ]
+    },
+    {
+      "goal": [
+        0,
+        0.25,
+        0
+      ],
+      "steps": 64,
+      "terminated_transitions": 0,
+      "done_transitions": 0,
+      "max_recomputed_real_reward_error": 7.450580596923828e-09,
+      "mean_real_vs_pd_proxy_reward_gap": 2.3536667868029326e-06,
+      "mean_step_reward": 0.03613606220096699,
+      "min_root_clearance_m": 0.31872186064720154,
+      "net_displacement_m": [
+        -0.002040088176727295,
+        0.28995031118392944,
+        -0.08899088203907013
+      ]
+    },
+    {
+      "goal": [
+        0,
+        0,
+        0.6
+      ],
+      "steps": 64,
+      "terminated_transitions": 0,
+      "done_transitions": 0,
+      "max_recomputed_real_reward_error": 3.725290298461914e-09,
+      "mean_real_vs_pd_proxy_reward_gap": 1.5039904610603116e-06,
+      "mean_step_reward": 0.02586941997105896,
+      "min_root_clearance_m": 0.3281223773956299,
+      "net_displacement_m": [
+        -0.014663279056549072,
+        0.0026816558092832565,
+        -0.08616702258586884
+      ]
+    },
+    {
+      "goal": [
+        0,
+        0,
+        0
+      ],
+      "steps": 64,
+      "terminated_transitions": 0,
+      "done_transitions": 0,
+      "max_recomputed_real_reward_error": 3.725290298461914e-09,
+      "mean_real_vs_pd_proxy_reward_gap": 1.2401873163980781e-06,
+      "mean_step_reward": 0.006956691577215679,
+      "min_root_clearance_m": 0.32668131589889526,
+      "net_displacement_m": [
+        -0.032099008560180664,
+        0.0016188120935112238,
+        -0.08557252585887909
+      ]
+    },
+    {
+      "contact_probe_entry_offset_m": 1.3,
+      "steps": 64,
+      "root_clearance_m": [
+        0.33068275451660156,
+        0.32052740454673767,
+        0.3359217345714569,
+        0.32008129358291626,
+        0.3412347435951233,
+        0.33068275451660156,
+        0.32052740454673767,
+        0.3359217345714569,
+        0.32008129358291626,
+        0.3412347435951233,
+        0.33068275451660156,
+        0.32052740454673767,
+        0.3359217345714569,
+        0.32008129358291626,
+        0.3412347435951233,
+        0.33068275451660156
+      ]
+    },
+    {
+      "contact_probe_entry_offset_m": 2.0,
+      "steps": 64,
+      "root_clearance_m": [
+        0.3290368318557739,
+        0.3281058371067047,
+        0.3295161724090576,
+        0.3303266763687134,
+        0.3320452570915222,
+        0.3290368318557739,
+        0.3281058371067047,
+        0.3295161724090576,
+        0.3303266763687134,
+        0.3320452570915222,
+        0.3290368318557739,
+        0.3281058371067047,
+        0.3295161724090576,
+        0.3303266763687134,
+        0.3320452570915222,
+        0.3290368318557739
+      ]
+    }
+  ],
+  "acceleration": "both control-period FD; legacy instantaneous substep acceleration remains different",
+  "torque": "real measured jointactuatorfrc vs imagination PD proxy",
+  "note": "bounded command/protocol test; no terrain locomotion success claim"
+}

@@ -1,0 +1,148 @@
+{
+  "finite": true,
+  "envs": 16,
+  "cases": [
+    {
+      "goal": [
+        0.5,
+        0,
+        0
+      ],
+      "steps": 64,
+      "terminated_transitions": 0,
+      "done_transitions": 0,
+      "max_recomputed_real_reward_error": 2.7939677238464355e-09,
+      "mean_real_vs_pd_proxy_reward_gap": 3.362976713106036e-06,
+      "mean_step_reward": 0.06047867358211079,
+      "min_root_clearance_m": 0.31540247797966003,
+      "net_displacement_m": [
+        0.5707740783691406,
+        -0.0057401810772717,
+        -0.08530688285827637
+      ]
+    },
+    {
+      "goal": [
+        -0.3,
+        0,
+        0
+      ],
+      "steps": 64,
+      "terminated_transitions": 0,
+      "done_transitions": 0,
+      "max_recomputed_real_reward_error": 3.725290298461914e-09,
+      "mean_real_vs_pd_proxy_reward_gap": 2.3407288267662807e-06,
+      "mean_step_reward": 0.043299710626286014,
+      "min_root_clearance_m": 0.3257371485233307,
+      "net_displacement_m": [
+        -0.32146644592285156,
+        -0.004855540581047535,
+        -0.08014672994613647
+      ]
+    },
+    {
+      "goal": [
+        0,
+        0.25,
+        0
+      ],
+      "steps": 64,
+      "terminated_transitions": 0,
+      "done_transitions": 0,
+      "max_recomputed_real_reward_error": 0.0,
+      "mean_real_vs_pd_proxy_reward_gap": 2.3241918825078756e-06,
+      "mean_step_reward": 0.03614697191733285,
+      "min_root_clearance_m": 0.3193247616291046,
+      "net_displacement_m": [
+        -0.0054779052734375,
+        0.29300087690353394,
+        -0.0882415771484375
+      ]
+    },
+    {
+      "goal": [
+        0,
+        0,
+        0.6
+      ],
+      "steps": 64,
+      "terminated_transitions": 0,
+      "done_transitions": 0,
+      "max_recomputed_real_reward_error": 0.0,
+      "mean_real_vs_pd_proxy_reward_gap": 1.4696106518385932e-06,
+      "mean_step_reward": 0.026080656503836508,
+      "min_root_clearance_m": 0.3285068869590759,
+      "net_displacement_m": [
+        -0.012005805969238281,
+        0.002160103525966406,
+        -0.08612412214279175
+      ]
+    },
+    {
+      "goal": [
+        0,
+        0,
+        0
+      ],
+      "steps": 64,
+      "terminated_transitions": 0,
+      "done_transitions": 0,
+      "max_recomputed_real_reward_error": 9.313225746154785e-10,
+      "mean_real_vs_pd_proxy_reward_gap": 1.2527143553597853e-06,
+      "mean_step_reward": 0.006939381552001578,
+      "min_root_clearance_m": 0.3276221752166748,
+      "net_displacement_m": [
+        -0.029375076293945312,
+        0.004680710379034281,
+        -0.08641141653060913
+      ]
+    },
+    {
+      "contact_probe_entry_offset_m": 1.3,
+      "steps": 64,
+      "root_clearance_m": [
+        0.3212246000766754,
+        0.3212246000766754,
+        0.3212246000766754,
+        0.3212246000766754,
+        0.3212246000766754,
+        0.3212246000766754,
+        0.3212246000766754,
+        0.3212246000766754,
+        0.3212246000766754,
+        0.3212246000766754,
+        0.3212246000766754,
+        0.3212246000766754,
+        0.3212246000766754,
+        0.3212246000766754,
+        0.3212246000766754,
+        0.3212246000766754
+      ]
+    },
+    {
+      "contact_probe_entry_offset_m": 2.0,
+      "steps": 64,
+      "root_clearance_m": [
+        0.3295031487941742,
+        0.3295031487941742,
+        0.3295031487941742,
+        0.3295031487941742,
+        0.3295031487941742,
+        0.3295031487941742,
+        0.3295031487941742,
+        0.3295031487941742,
+        0.3295031487941742,
+        0.3295031487941742,
+        0.3295031487941742,
+        0.3295031487941742,
+        0.3295031487941742,
+        0.3295031487941742,
+        0.3295031487941742,
+        0.3295031487941742
+      ]
+    }
+  ],
+  "acceleration": "both control-period FD; legacy instantaneous substep acceleration remains different",
+  "torque": "real measured jointactuatorfrc vs imagination PD proxy",
+  "note": "bounded command/protocol test; no terrain locomotion success claim"
+}

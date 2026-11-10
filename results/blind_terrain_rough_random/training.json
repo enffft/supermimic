@@ -1,0 +1,130 @@
+{
+  "summary": {
+    "completed": true,
+    "iteration": 8,
+    "sim_steps": 8512,
+    "wall_time": 9.682651042938232,
+    "wall_h": 0.002632048726081848,
+    "wm_loss": 1.9802734851837158,
+    "wm_err8": 2.8538122177124023,
+    "pi_loss": -2.392033100128174,
+    "v_loss": 0.12798069417476654,
+    "imag_rew": 0.3373349606990814,
+    "pi_gradnorm": 2.9939465522766113,
+    "imag_survival": 0.9906467795372009,
+    "sim_rew": 0.23028405010700226,
+    "ep_len": null,
+    "ep_ret_norm": null,
+    "term_frac": null,
+    "it_per_s": 3.5330778762299384,
+    "lr": 0.00039999999924943635
+  },
+  "elapsed_s": 11.417701379978098,
+  "config": {
+    "iterations": 8,
+    "buffer_steps": 512,
+    "utd": 0.4,
+    "horizon": 32,
+    "goal_frames": 1,
+    "goal_mode": "direct",
+    "hist": 5,
+    "z_dim": 32,
+    "wm_hidden": [
+      2048,
+      2048,
+      2048
+    ],
+    "wm_structured": false,
+    "policy_hidden": [
+      2048,
+      1024,
+      512,
+      256
+    ],
+    "critic_hidden": [
+      256,
+      128
+    ],
+    "wm_window": 8,
+    "wm_batches": 1,
+    "wm_batch": 64,
+    "pi_batch": 64,
+    "lr": 0.0004,
+    "pi_opt": "adam",
+    "wm_opt": "adam",
+    "no_sync": false,
+    "pi_ema": 0.0,
+    "gamma": 0.99,
+    "lam": 0.95,
+    "action_noise": 0.0,
+    "critic_epochs": 5,
+    "critic_minibatches": 4,
+    "no_critic": false,
+    "warmup_steps": 64,
+    "wm_only_iters": 2,
+    "lr_decay_iters": 250000,
+    "ckpt_every": 2000,
+    "log_every": 1,
+    "log_backend": "none",
+    "seed": 2026,
+    "amp": "none",
+    "compile": false,
+    "test_hidden_dims": null,
+    "profile": true,
+    "init_actor_from": "/home/yifeiy/ws_supermimic/logs/phase3_training/go2_velocity_diagonal_slip_3072_2p5h_20261103/ckpt_0034000.pt",
+    "init_wm_from": null,
+    "driver_enabled": false,
+    "terrain_training": true,
+    "terrain_conditioning": true,
+    "terrain_sensor_grad": true,
+    "critic_terrain_conditioning": false
+  },
+  "actor": {
+    "loaded": "actor_only",
+    "tensor_count": 10,
+    "optimizer": "fresh",
+    "world_model": "fresh",
+    "critic": "fresh",
+    "path": "/home/yifeiy/ws_supermimic/logs/phase3_training/go2_velocity_diagonal_slip_3072_2p5h_20261103/ckpt_0034000.pt",
+    "sha256": "0b3d8e4bb26173d13a6ce0b99d5eecf43005927a8ab2e01947c4d0311009487a"
+  },
+  "network_parameters": {
+    "wm": 8771620,
+    "actor": 3195660,
+    "critic": 47617
+  },
+  "timings": {
+    "simulation": {
+      "count": 607,
+      "mean_ms": 8.147215785971142,
+      "median_ms": 5.422272020950913,
+      "max_ms": 316.8249150039628
+    },
+    "wm_fit": {
+      "count": 8,
+      "mean_ms": 83.7003718916094,
+      "median_ms": 60.018584539648145,
+      "max_ms": 243.56615694705397
+    },
+    "actor_bptt": {
+      "count": 6,
+      "mean_ms": 250.23085882033533,
+      "median_ms": 229.85679394332692,
+      "max_ms": 394.50486400164664
+    },
+    "critic_update": {
+      "count": 6,
+      "mean_ms": 29.194346512667835,
+      "median_ms": 27.998049510642886,
+      "max_ms": 37.62732108589262
+    }
+  },
+  "actor_abs_max": 0.9999995231628418,
+  "actor_saturation_fraction": 0.0989583358168602,
+  "peak_torch_allocated_bytes": 396076032,
+  "peak_torch_reserved_bytes": 455081984,
+  "finite_parameters_and_actor_gradients": true,
+  "horizon": 32,
+  "wm_window": 8,
+  "warmup_note": "two WM-only iterations for plumbing SMOKE only; insufficient for terrain policy optimization"
+}

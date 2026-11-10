@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+import math
 from dataclasses import asdict
 from pathlib import Path
 
@@ -41,6 +42,25 @@ class Go2VelocityEnv(ManagerBasedRlEnv):
             "sim_dt": self.cfg.sim_dt,
             "ctrl_dt": self.cfg.ctrl_dt,
         }
+        new_fields = (
+            "terrain_profile",
+            "terrain_aware",
+            "terrain_seed",
+            "terrain_quarter_turns",
+            "terrain_curriculum",
+            "terrain_fixed_level",
+            "terrain_max_level",
+            "terrain_recycle_probability",
+        )
+        if not self.cfg.commands["velocity"].terrain_aware:
+            # Preserve v2 flat checkpoint contract byte-for-byte.
+            for key in new_fields:
+                contract["commands"].pop(key, None)
+        else:
+            contract["schema"] = "go2_velocity_blind_terrain_v3"
+            contract["state_coordinates"] = "world"
+            contract["terrain_fingerprint"] = self.supermimic_mdp.terrain.fingerprint
+            contract["terrain_height"] = "compiled_collision_triangle; root_xy; per_foot_xy"
         # Checkpoints use weights_only loading: persist callable names, never classes.
         return json.loads(
             json.dumps(
@@ -117,6 +137,32 @@ class Go2VelocityEnv(ManagerBasedRlEnv):
 
 
 def make_go2_env(cfg, num_envs=1, backend_type="mujoco"):
+    command_cfg = cfg.commands["velocity"]
+    if command_cfg.terrain_profile is not None:
+        from .terrain import apply_profile, terrain_profile
+
+        apply_profile(
+            cfg,
+            command_cfg.terrain_profile,
+            backend=backend_type,
+            seed=command_cfg.terrain_seed,
+            quarter_turns=command_cfg.terrain_quarter_turns,
+            heading=command_cfg.spawn_heading,
+        )
+        if command_cfg.terrain_profile != "flat":
+            entry_turns = round(command_cfg.spawn_heading / (math.pi / 2))
+            if not math.isclose(command_cfg.spawn_heading, entry_turns * math.pi / 2, abs_tol=1e-6):
+                raise NotImplementedError(
+                    "Terrain entry headings currently require multiples of pi/2"
+                )
+            cfg.scene.terrain = terrain_profile(
+                command_cfg.terrain_profile,
+                seed=command_cfg.terrain_seed,
+                quarter_turns=command_cfg.terrain_quarter_turns,
+                levels=True,
+                entry_quarter_turns=entry_turns,
+            )
+        command_cfg.terrain_aware = True
     if (
         set(cfg.actions) != {"joint_pos"}
         or set(cfg.rewards) != {"velocity"}
@@ -146,7 +192,47 @@ def make_go2_env(cfg, num_envs=1, backend_type="mujoco"):
         **env_backend_kwargs(cfg),
     )
     try:
-        return Go2VelocityEnv(cfg, backend, num_envs)
+        env = Go2VelocityEnv(cfg, backend, num_envs)
+        if command_cfg.terrain_aware:
+            from .curriculum import TerrainCurriculum
+            from .heightfield import TerrainHeightField
+
+            command = env.command_manager.get_term("velocity")
+            if cfg.scene.terrain is None:
+                command.mdp.terrain = TerrainHeightField.flat(env.device)
+            else:
+                spawn = backend.get_terrain_spawn_data()
+                origins = spawn.terrain_origins
+                command.mdp.terrain = TerrainHeightField.from_mujoco(
+                    env.get_playback_model(0),
+                    device=env.device,
+                    metadata={
+                        "seed": command_cfg.terrain_seed,
+                        "origins": origins.tolist(),
+                        "generator": asdict(cfg.scene.terrain),
+                    },
+                )
+                command.curriculum = TerrainCurriculum(
+                    num_envs,
+                    origins,
+                    enabled=command_cfg.terrain_curriculum,
+                    fixed_level=command_cfg.terrain_fixed_level,
+                    max_level=command_cfg.terrain_max_level,
+                    recycle_probability=command_cfg.terrain_recycle_probability,
+                    device=env.device,
+                )
+                # All compiled atlas entry footprints must be finite and planar.
+                field = command.mdp.terrain
+                points = torch.tensor(origins.copy(), dtype=torch.float32, device=env.device)
+                offsets = points.new_tensor([[-0.3, -0.2], [-0.3, 0.2], [0.3, -0.2], [0.3, 0.2]])
+                samples = field.ground_height(points[..., None, :2] + offsets)
+                if (
+                    not torch.isfinite(samples).all()
+                    or (samples.max(-1).values - samples.min(-1).values).max() > 0.008
+                ):
+                    raise ValueError("Compiled terrain entry footprint is not safely planar")
+                command.curriculum.origins[..., 2] = field.ground_height(points[..., :2])
+        return env
     except Exception:
         backend.cleanup_scene_assets()
         raise

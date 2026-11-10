@@ -119,6 +119,7 @@ class WorldModel(nn.Module):
         context_dim: int = 33,
         structured: bool = False,
         dt: float = 0.02,
+        terrain_dim: int = 0,
     ):
         super().__init__()
         if dt <= 0:
@@ -127,7 +128,10 @@ class WorldModel(nn.Module):
         self.context_dim = context_dim
         self.structured = structured
         self.dt = dt
-        self.in_dim = 13 + 3 * num_joints + context_dim
+        if terrain_dim not in (0, 77):
+            raise ValueError("terrain_dim must be 0 or the Go2 77-point scan")
+        self.terrain_dim = terrain_dim
+        self.in_dim = 13 + 3 * num_joints + context_dim + terrain_dim
         self.out_dim = 12 + 2 * num_joints
         self.net = mlp(self.in_dim, hidden, self.out_dim, act=nn.SiLU, layer_norm=True)
         output = self.net[-1]
@@ -141,9 +145,20 @@ class WorldModel(nn.Module):
         self.inc_norm = RunningNorm(self.out_dim, eps=1e-4)
 
     def inputs(
-        self, state: State, action: torch.Tensor, normalized_context: torch.Tensor
+        self,
+        state: State,
+        action: torch.Tensor,
+        normalized_context: torch.Tensor,
+        terrain_scan: torch.Tensor | None = None,
     ) -> torch.Tensor:
-        return torch.cat((invariant_features(state), action, normalized_context), -1)
+        parts = (invariant_features(state), action, normalized_context)
+        if self.terrain_dim:
+            if terrain_scan is None or terrain_scan.shape != (*action.shape[:-1], self.terrain_dim):
+                raise ValueError("terrain-conditioned WM requires aligned 77D terrain scan")
+            parts += (terrain_scan,)
+        elif terrain_scan is not None:
+            raise ValueError("flat WM does not accept terrain features")
+        return torch.cat(parts, -1)
 
     def _drift(
         self,
@@ -222,10 +237,11 @@ class WorldModel(nn.Module):
         state: State,
         action: torch.Tensor,
         normalized_context: torch.Tensor,
+        terrain_scan: torch.Tensor | None = None,
     ) -> State:
         prediction = run_mlp(
             self.net,
-            self.in_norm(self.inputs(state, action, normalized_context)),
+            self.in_norm(self.inputs(state, action, normalized_context, terrain_scan)),
         )
         increment = prediction * self.out_norm.std() + self.out_norm.mean
         return self.integrate(state, increment)
@@ -277,6 +293,24 @@ class WorldModel(nn.Module):
             for suffix in ("mean", "var", "count"):
                 values[f"inc_norm.{suffix}"] = values[f"out_norm.{suffix}"]
         return super().load_state_dict(values, strict=strict, assign=assign)
+
+    def initialize_from_flat(self, source: "WorldModel") -> None:
+        """Exact same-UniLab protocol expansion; optimizer state is deliberately fresh."""
+        if (
+            source.terrain_dim != 0
+            or self.terrain_dim != 77
+            or (self.num_joints, self.context_dim, self.structured, self.dt)
+            != (source.num_joints, source.context_dim, source.structured, source.dt)
+        ):
+            raise ValueError("Incompatible WM protocol; cannot expand")
+        values = {k: v.clone() for k, v in source.state_dict().items()}
+        weight = torch.zeros_like(self.net[0].weight)
+        weight[:, : source.in_dim] = values["net.0.weight"]
+        values["net.0.weight"] = weight
+        for name, fill in (("mean", 0.0), ("var", 1.0)):
+            old = values[f"in_norm.{name}"]
+            values[f"in_norm.{name}"] = torch.cat((old, old.new_full((77,), fill)))
+        self.load_state_dict(values, strict=True)
 
     @staticmethod
     def state_error(predicted_state: State, state: State) -> torch.Tensor:

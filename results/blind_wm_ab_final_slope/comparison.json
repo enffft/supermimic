@@ -1,0 +1,135 @@
+{
+  "source": "results/blind_terrain_final_slope",
+  "replay_sha256": "e765c470342948d66d297136ea0b66558573cea16829e9caeff155d10ed4e5c0",
+  "seed": 2026,
+  "train_transitions": 6144,
+  "heldout_transitions": 2048,
+  "split": "chronological 75/25, done-masked windows",
+  "ring_metadata": "explicit ring metadata",
+  "nonreset_state_alignment_max": 0.0,
+  "legacy_manual_reset_boundaries_closed": 0,
+  "wm_widths": [
+    2048,
+    2048,
+    2048
+  ],
+  "batch": 64,
+  "initialization": "paired original parameters and normalization; B appended columns zero; independent Adam",
+  "actor_updated": false,
+  "reports": [
+    {
+      "mode": "A",
+      "conditioning": false,
+      "predictions": [
+        {
+          "horizon": 1,
+          "valid_samples": 64,
+          "position_rmse_m": 0.0023100003600120544,
+          "attitude_rmse_rad": 0.011417018249630928,
+          "linear_velocity_rmse_m_s": 0.034335020929574966,
+          "angular_velocity_rmse_rad_s": 0.3030793368816376,
+          "joint_position_rmse_rad": 0.02367692068219185,
+          "joint_velocity_rmse_rad_s": 0.9727203845977783,
+          "foot_position_rmse_m": 0.0058104246854782104
+        },
+        {
+          "horizon": 8,
+          "valid_samples": 53,
+          "position_rmse_m": 0.01686561107635498,
+          "attitude_rmse_rad": 0.0597619004547596,
+          "linear_velocity_rmse_m_s": 0.15947070717811584,
+          "angular_velocity_rmse_rad_s": 0.47821044921875,
+          "joint_position_rmse_rad": 0.06772151589393616,
+          "joint_velocity_rmse_rad_s": 0.9889683723449707,
+          "foot_position_rmse_m": 0.0233981441706419
+        },
+        {
+          "horizon": 16,
+          "valid_samples": 31,
+          "position_rmse_m": 0.03579949960112572,
+          "attitude_rmse_rad": 0.10143166035413742,
+          "linear_velocity_rmse_m_s": 0.18053191900253296,
+          "angular_velocity_rmse_rad_s": 0.47720420360565186,
+          "joint_position_rmse_rad": 0.09514794498682022,
+          "joint_velocity_rmse_rad_s": 0.95084148645401,
+          "foot_position_rmse_m": 0.04069579392671585
+        },
+        {
+          "horizon": 32,
+          "valid_samples": 9,
+          "position_rmse_m": 0.014964916743338108,
+          "attitude_rmse_rad": 0.025043994188308716,
+          "linear_velocity_rmse_m_s": 0.05964379012584686,
+          "angular_velocity_rmse_rad_s": 0.36401456594467163,
+          "joint_position_rmse_rad": 0.04346856102347374,
+          "joint_velocity_rmse_rad_s": 0.8503770232200623,
+          "foot_position_rmse_m": 0.02009069174528122
+        }
+      ],
+      "updates": 100,
+      "elapsed_s": 2.570815246901475,
+      "final_loss": 0.14620015025138855,
+      "wm_parameters": 8613924,
+      "mean_wm_update_ms": 24.87817504326813
+    },
+    {
+      "mode": "B",
+      "conditioning": true,
+      "predictions": [
+        {
+          "horizon": 1,
+          "valid_samples": 64,
+          "position_rmse_m": 0.0024277628399431705,
+          "attitude_rmse_rad": 0.011725357733666897,
+          "linear_velocity_rmse_m_s": 0.03331546485424042,
+          "angular_velocity_rmse_rad_s": 0.30616283416748047,
+          "joint_position_rmse_rad": 0.02277584746479988,
+          "joint_velocity_rmse_rad_s": 0.9604182839393616,
+          "foot_position_rmse_m": 0.005776833277195692
+        },
+        {
+          "horizon": 8,
+          "valid_samples": 53,
+          "position_rmse_m": 0.014681331813335419,
+          "attitude_rmse_rad": 0.06060564145445824,
+          "linear_velocity_rmse_m_s": 0.14289849996566772,
+          "angular_velocity_rmse_rad_s": 0.4886794984340668,
+          "joint_position_rmse_rad": 0.06749369949102402,
+          "joint_velocity_rmse_rad_s": 0.9393645524978638,
+          "foot_position_rmse_m": 0.021107368171215057
+        },
+        {
+          "horizon": 16,
+          "valid_samples": 31,
+          "position_rmse_m": 0.030133714899420738,
+          "attitude_rmse_rad": 0.1039431244134903,
+          "linear_velocity_rmse_m_s": 0.1790560483932495,
+          "angular_velocity_rmse_rad_s": 0.4871482849121094,
+          "joint_position_rmse_rad": 0.09427455067634583,
+          "joint_velocity_rmse_rad_s": 0.835455060005188,
+          "foot_position_rmse_m": 0.035554107278585434
+        },
+        {
+          "horizon": 32,
+          "valid_samples": 9,
+          "position_rmse_m": 0.018877701833844185,
+          "attitude_rmse_rad": 0.02182892896234989,
+          "linear_velocity_rmse_m_s": 0.051388930529356,
+          "angular_velocity_rmse_rad_s": 0.38342344760894775,
+          "joint_position_rmse_rad": 0.04000881686806679,
+          "joint_velocity_rmse_rad_s": 0.8915578126907349,
+          "foot_position_rmse_m": 0.020451899617910385
+        }
+      ],
+      "updates": 100,
+      "elapsed_s": 4.470543704926968,
+      "final_loss": 0.1340581327676773,
+      "wm_parameters": 8771620,
+      "mean_wm_update_ms": 43.66468998370692
+    }
+  ],
+  "limitations": [
+    "one seed and bounded data; no statistical performance claim",
+    "WM-only test does not establish improved real Actor locomotion"
+  ]
+}

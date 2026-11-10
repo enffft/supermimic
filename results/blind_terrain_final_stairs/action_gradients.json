@@ -1,0 +1,434 @@
+[
+  {
+    "samples": [
+      {
+        "epsilon": 0.01,
+        "groups": {
+          "position": {
+            "units": "m/action",
+            "active_components": 35,
+            "sign_agreement": 0.5714285714285714,
+            "opposite_sign_fraction": 0.4285714285714286,
+            "physical_gradient_norm": 0.0024218617472797632,
+            "wm_gradient_norm": 0.0012120186584070325,
+            "normalized_error": 1.0647141933441162
+          },
+          "linear_velocity": {
+            "units": "m/s/action",
+            "active_components": 36,
+            "sign_agreement": 0.5277777777777778,
+            "opposite_sign_fraction": 0.4722222222222222,
+            "physical_gradient_norm": 0.17940768599510193,
+            "wm_gradient_norm": 0.010430079884827137,
+            "normalized_error": 1.002865195274353
+          },
+          "joint_position": {
+            "units": "rad/action",
+            "active_components": 143,
+            "sign_agreement": 0.48951048951048953,
+            "opposite_sign_fraction": 0.5104895104895104,
+            "physical_gradient_norm": 0.23000900447368622,
+            "wm_gradient_norm": 0.030360480770468712,
+            "normalized_error": 0.9715791940689087
+          },
+          "joint_velocity": {
+            "units": "rad/s/action",
+            "active_components": 144,
+            "sign_agreement": 0.4513888888888889,
+            "opposite_sign_fraction": 0.5486111111111112,
+            "physical_gradient_norm": 10.826186180114746,
+            "wm_gradient_norm": 0.5324082970619202,
+            "normalized_error": 1.0051987171173096
+          }
+        }
+      },
+      {
+        "epsilon": 0.03,
+        "groups": {
+          "position": {
+            "units": "m/action",
+            "active_components": 35,
+            "sign_agreement": 0.5714285714285714,
+            "opposite_sign_fraction": 0.4285714285714286,
+            "physical_gradient_norm": 0.002203838899731636,
+            "wm_gradient_norm": 0.0012120186584070325,
+            "normalized_error": 1.0860313177108765
+          },
+          "linear_velocity": {
+            "units": "m/s/action",
+            "active_components": 36,
+            "sign_agreement": 0.5277777777777778,
+            "opposite_sign_fraction": 0.4722222222222222,
+            "physical_gradient_norm": 0.1620296835899353,
+            "wm_gradient_norm": 0.010430079884827137,
+            "normalized_error": 1.0060299634933472
+          },
+          "joint_position": {
+            "units": "rad/action",
+            "active_components": 143,
+            "sign_agreement": 0.48951048951048953,
+            "opposite_sign_fraction": 0.5104895104895104,
+            "physical_gradient_norm": 0.22721271216869354,
+            "wm_gradient_norm": 0.030360480770468712,
+            "normalized_error": 0.9720668792724609
+          },
+          "joint_velocity": {
+            "units": "rad/s/action",
+            "active_components": 144,
+            "sign_agreement": 0.4513888888888889,
+            "opposite_sign_fraction": 0.5486111111111112,
+            "physical_gradient_norm": 10.605345726013184,
+            "wm_gradient_norm": 0.5324082970619202,
+            "normalized_error": 1.0053462982177734
+          }
+        }
+      },
+      {
+        "epsilon": 0.1,
+        "groups": {
+          "position": {
+            "units": "m/action",
+            "active_components": 35,
+            "sign_agreement": 0.5714285714285714,
+            "opposite_sign_fraction": 0.4285714285714286,
+            "physical_gradient_norm": 0.001976095838472247,
+            "wm_gradient_norm": 0.0012120186584070325,
+            "normalized_error": 1.1077425479888916
+          },
+          "linear_velocity": {
+            "units": "m/s/action",
+            "active_components": 36,
+            "sign_agreement": 0.5277777777777778,
+            "opposite_sign_fraction": 0.4722222222222222,
+            "physical_gradient_norm": 0.14414851367473602,
+            "wm_gradient_norm": 0.010430079884827137,
+            "normalized_error": 1.0060741901397705
+          },
+          "joint_position": {
+            "units": "rad/action",
+            "active_components": 143,
+            "sign_agreement": 0.48951048951048953,
+            "opposite_sign_fraction": 0.5104895104895104,
+            "physical_gradient_norm": 0.21527723968029022,
+            "wm_gradient_norm": 0.030360480770468712,
+            "normalized_error": 0.9706987738609314
+          },
+          "joint_velocity": {
+            "units": "rad/s/action",
+            "active_components": 144,
+            "sign_agreement": 0.4583333333333333,
+            "opposite_sign_fraction": 0.5416666666666667,
+            "physical_gradient_norm": 9.948871612548828,
+            "wm_gradient_norm": 0.5324082970619202,
+            "normalized_error": 1.005626916885376
+          }
+        }
+      }
+    ],
+    "state": "controlled local support/contact probe; all 12 action dimensions",
+    "entry_offset_m": 0.0,
+    "settle_steps": 25,
+    "contacts_in_public_oracle": 6,
+    "root_local_height_m": 0.31633052229881287,
+    "position_world_m": [
+      -11.376988410949707,
+      0.10175472497940063,
+      0.31633052229881287
+    ],
+    "oracle_live_max_error": 1.1389995623889426e-06,
+    "limitations": [
+      "not a contact-continuity proof",
+      "bounded local probes; broad contact-state coverage required before long training",
+      "finite-difference steps are in normalized action units",
+      "signs alone do not measure gradient magnitude accuracy"
+    ]
+  },
+  {
+    "samples": [
+      {
+        "epsilon": 0.01,
+        "groups": {
+          "position": {
+            "units": "m/action",
+            "active_components": 35,
+            "sign_agreement": 0.5714285714285714,
+            "opposite_sign_fraction": 0.4285714285714286,
+            "physical_gradient_norm": 0.002289685420691967,
+            "wm_gradient_norm": 0.0011502614943310618,
+            "normalized_error": 1.0500526428222656
+          },
+          "linear_velocity": {
+            "units": "m/s/action",
+            "active_components": 36,
+            "sign_agreement": 0.5277777777777778,
+            "opposite_sign_fraction": 0.4722222222222222,
+            "physical_gradient_norm": 0.1667681634426117,
+            "wm_gradient_norm": 0.009967491030693054,
+            "normalized_error": 0.9959336519241333
+          },
+          "joint_position": {
+            "units": "rad/action",
+            "active_components": 144,
+            "sign_agreement": 0.4930555555555556,
+            "opposite_sign_fraction": 0.5069444444444444,
+            "physical_gradient_norm": 0.23561730980873108,
+            "wm_gradient_norm": 0.03192737698554993,
+            "normalized_error": 0.9685182571411133
+          },
+          "joint_velocity": {
+            "units": "rad/s/action",
+            "active_components": 144,
+            "sign_agreement": 0.4791666666666667,
+            "opposite_sign_fraction": 0.5208333333333333,
+            "physical_gradient_norm": 11.178278923034668,
+            "wm_gradient_norm": 0.5849445462226868,
+            "normalized_error": 1.0043563842773438
+          }
+        }
+      },
+      {
+        "epsilon": 0.03,
+        "groups": {
+          "position": {
+            "units": "m/action",
+            "active_components": 35,
+            "sign_agreement": 0.5714285714285714,
+            "opposite_sign_fraction": 0.4285714285714286,
+            "physical_gradient_norm": 0.0022236730437725782,
+            "wm_gradient_norm": 0.0011502614943310618,
+            "normalized_error": 1.052110195159912
+          },
+          "linear_velocity": {
+            "units": "m/s/action",
+            "active_components": 36,
+            "sign_agreement": 0.5277777777777778,
+            "opposite_sign_fraction": 0.4722222222222222,
+            "physical_gradient_norm": 0.16190767288208008,
+            "wm_gradient_norm": 0.009967491030693054,
+            "normalized_error": 0.9974569082260132
+          },
+          "joint_position": {
+            "units": "rad/action",
+            "active_components": 144,
+            "sign_agreement": 0.4930555555555556,
+            "opposite_sign_fraction": 0.5069444444444444,
+            "physical_gradient_norm": 0.23285722732543945,
+            "wm_gradient_norm": 0.03192737698554993,
+            "normalized_error": 0.968339741230011
+          },
+          "joint_velocity": {
+            "units": "rad/s/action",
+            "active_components": 144,
+            "sign_agreement": 0.4791666666666667,
+            "opposite_sign_fraction": 0.5208333333333333,
+            "physical_gradient_norm": 10.993311882019043,
+            "wm_gradient_norm": 0.5849445462226868,
+            "normalized_error": 1.0046272277832031
+          }
+        }
+      },
+      {
+        "epsilon": 0.1,
+        "groups": {
+          "position": {
+            "units": "m/action",
+            "active_components": 35,
+            "sign_agreement": 0.5714285714285714,
+            "opposite_sign_fraction": 0.4285714285714286,
+            "physical_gradient_norm": 0.0019231217447668314,
+            "wm_gradient_norm": 0.0011502614943310618,
+            "normalized_error": 1.0845304727554321
+          },
+          "linear_velocity": {
+            "units": "m/s/action",
+            "active_components": 36,
+            "sign_agreement": 0.5277777777777778,
+            "opposite_sign_fraction": 0.4722222222222222,
+            "physical_gradient_norm": 0.13813704252243042,
+            "wm_gradient_norm": 0.009967491030693054,
+            "normalized_error": 0.996764600276947
+          },
+          "joint_position": {
+            "units": "rad/action",
+            "active_components": 144,
+            "sign_agreement": 0.4930555555555556,
+            "opposite_sign_fraction": 0.5069444444444444,
+            "physical_gradient_norm": 0.22123658657073975,
+            "wm_gradient_norm": 0.03192737698554993,
+            "normalized_error": 0.9676870107650757
+          },
+          "joint_velocity": {
+            "units": "rad/s/action",
+            "active_components": 144,
+            "sign_agreement": 0.4791666666666667,
+            "opposite_sign_fraction": 0.5208333333333333,
+            "physical_gradient_norm": 10.344644546508789,
+            "wm_gradient_norm": 0.5849445462226868,
+            "normalized_error": 1.0050441026687622
+          }
+        }
+      }
+    ],
+    "state": "controlled local support/contact probe; all 12 action dimensions",
+    "entry_offset_m": 1.2,
+    "settle_steps": 25,
+    "contacts_in_public_oracle": 5,
+    "root_local_height_m": 0.30678287148475647,
+    "position_world_m": [
+      -10.226129531860352,
+      0.10833428055047989,
+      0.34693974256515503
+    ],
+    "oracle_live_max_error": 6.0609575420755846e-06,
+    "limitations": [
+      "not a contact-continuity proof",
+      "bounded local probes; broad contact-state coverage required before long training",
+      "finite-difference steps are in normalized action units",
+      "signs alone do not measure gradient magnitude accuracy"
+    ]
+  },
+  {
+    "samples": [
+      {
+        "epsilon": 0.01,
+        "groups": {
+          "position": {
+            "units": "m/action",
+            "active_components": 35,
+            "sign_agreement": 0.5714285714285714,
+            "opposite_sign_fraction": 0.4285714285714286,
+            "physical_gradient_norm": 0.0022825300693511963,
+            "wm_gradient_norm": 0.0013207838637754321,
+            "normalized_error": 1.0795928239822388
+          },
+          "linear_velocity": {
+            "units": "m/s/action",
+            "active_components": 36,
+            "sign_agreement": 0.5,
+            "opposite_sign_fraction": 0.5,
+            "physical_gradient_norm": 0.16575226187705994,
+            "wm_gradient_norm": 0.01242290809750557,
+            "normalized_error": 0.9993492364883423
+          },
+          "joint_position": {
+            "units": "rad/action",
+            "active_components": 144,
+            "sign_agreement": 0.4791666666666667,
+            "opposite_sign_fraction": 0.5208333333333333,
+            "physical_gradient_norm": 0.23785258829593658,
+            "wm_gradient_norm": 0.03532484546303749,
+            "normalized_error": 0.9645702838897705
+          },
+          "joint_velocity": {
+            "units": "rad/s/action",
+            "active_components": 144,
+            "sign_agreement": 0.4791666666666667,
+            "opposite_sign_fraction": 0.5208333333333333,
+            "physical_gradient_norm": 11.298813819885254,
+            "wm_gradient_norm": 0.6505290865898132,
+            "normalized_error": 1.0065891742706299
+          }
+        }
+      },
+      {
+        "epsilon": 0.03,
+        "groups": {
+          "position": {
+            "units": "m/action",
+            "active_components": 35,
+            "sign_agreement": 0.5714285714285714,
+            "opposite_sign_fraction": 0.4285714285714286,
+            "physical_gradient_norm": 0.0021583412308245897,
+            "wm_gradient_norm": 0.0013207838637754321,
+            "normalized_error": 1.091862678527832
+          },
+          "linear_velocity": {
+            "units": "m/s/action",
+            "active_components": 36,
+            "sign_agreement": 0.5,
+            "opposite_sign_fraction": 0.5,
+            "physical_gradient_norm": 0.15648843348026276,
+            "wm_gradient_norm": 0.01242290809750557,
+            "normalized_error": 1.002053141593933
+          },
+          "joint_position": {
+            "units": "rad/action",
+            "active_components": 144,
+            "sign_agreement": 0.4791666666666667,
+            "opposite_sign_fraction": 0.5208333333333333,
+            "physical_gradient_norm": 0.23308174312114716,
+            "wm_gradient_norm": 0.03532484546303749,
+            "normalized_error": 0.9646896123886108
+          },
+          "joint_velocity": {
+            "units": "rad/s/action",
+            "active_components": 144,
+            "sign_agreement": 0.4791666666666667,
+            "opposite_sign_fraction": 0.5208333333333333,
+            "physical_gradient_norm": 10.987361907958984,
+            "wm_gradient_norm": 0.6505290865898132,
+            "normalized_error": 1.007043480873108
+          }
+        }
+      },
+      {
+        "epsilon": 0.1,
+        "groups": {
+          "position": {
+            "units": "m/action",
+            "active_components": 35,
+            "sign_agreement": 0.5714285714285714,
+            "opposite_sign_fraction": 0.4285714285714286,
+            "physical_gradient_norm": 0.001912457519210875,
+            "wm_gradient_norm": 0.0013207838637754321,
+            "normalized_error": 1.1259751319885254
+          },
+          "linear_velocity": {
+            "units": "m/s/action",
+            "active_components": 36,
+            "sign_agreement": 0.5,
+            "opposite_sign_fraction": 0.5,
+            "physical_gradient_norm": 0.1370263546705246,
+            "wm_gradient_norm": 0.01242290809750557,
+            "normalized_error": 1.0017588138580322
+          },
+          "joint_position": {
+            "units": "rad/action",
+            "active_components": 144,
+            "sign_agreement": 0.4791666666666667,
+            "opposite_sign_fraction": 0.5208333333333333,
+            "physical_gradient_norm": 0.22260414063930511,
+            "wm_gradient_norm": 0.03532484546303749,
+            "normalized_error": 0.9641286134719849
+          },
+          "joint_velocity": {
+            "units": "rad/s/action",
+            "active_components": 144,
+            "sign_agreement": 0.4791666666666667,
+            "opposite_sign_fraction": 0.5208333333333333,
+            "physical_gradient_norm": 10.412982940673828,
+            "wm_gradient_norm": 0.6505290865898132,
+            "normalized_error": 1.0074055194854736
+          }
+        }
+      }
+    ],
+    "state": "controlled local support/contact probe; all 12 action dimensions",
+    "entry_offset_m": 2.0,
+    "settle_steps": 25,
+    "contacts_in_public_oracle": 5,
+    "root_local_height_m": 0.30460935831069946,
+    "position_world_m": [
+      -9.397540092468262,
+      0.11644334346055984,
+      0.3849230706691742
+    ],
+    "oracle_live_max_error": 4.020568778240197e-06,
+    "limitations": [
+      "not a contact-continuity proof",
+      "bounded local probes; broad contact-state coverage required before long training",
+      "finite-difference steps are in normalized action units",
+      "signs alone do not measure gradient magnitude accuracy"
+    ]
+  }
+]

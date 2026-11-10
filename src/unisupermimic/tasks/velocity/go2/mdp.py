@@ -22,8 +22,9 @@ class Go2VelocityMdp:
     goal_frame_dim = 3
     max_step_reward = 5.2 * DT
 
-    def __init__(self, device="cpu"):
+    def __init__(self, device="cpu", terrain=None):
         self.device = torch.device(device)
+        self.terrain = terrain
         self.default_q = torch.tensor(DEFAULT_Q, device=device)
         self.params = VelocityRobotParams(
             self.default_q,
@@ -37,7 +38,7 @@ class Go2VelocityMdp:
         )
 
     def to(self, device):
-        return type(self)(device)
+        return type(self)(device, None if self.terrain is None else self.terrain.to(device))
 
     def obs(self, state, previous_action, context, frames):
         p, R, v, w, q, qd = state
@@ -63,6 +64,13 @@ class Go2VelocityMdp:
         return torch.cat((p, mat_to_quat(R), q, v, matvec(R.transpose(-1, -2), w), qd), -1)
 
     def terms(self, previous, state, goal, action, previous_action, **measurements):
+        if self.terrain is not None:
+            from .feet import go2_feet_world
+
+            source = self.source_state(state)
+            feet, _ = go2_feet_world(source)
+            measurements["base_height"] = self.local_height(state)
+            measurements["foot_ground"] = self.terrain.ground_height(feet[..., :2])
         return velocity_reward_terms(
             self.source_state(previous),
             self.source_state(state),
@@ -78,13 +86,25 @@ class Go2VelocityMdp:
             self.terms(previous, state, goal, action, previous_action, **measurements)
         )
 
+    def local_height(self, state):
+        height = state[0][..., 2]
+        if self.terrain is not None:
+            height = height - self.terrain.ground_height(state[0][..., :2])
+        return height
+
     def hard_termination(self, state):
-        return (state[0][..., 2] < 0.17) | (state[1][..., 2, 2] < 0.3420201433256688)
+        fallen = (self.local_height(state) < 0.17) | (state[1][..., 2, 2] < 0.3420201433256688)
+        if self.terrain is not None:
+            fallen = fallen | ~self.terrain.contains(state[0][..., :2])
+        return fallen
 
     def soft_termination(self, state, frames):
-        height = torch.sigmoid((0.17 - state[0][..., 2]) / 0.02)
+        height = torch.sigmoid((0.17 - self.local_height(state)) / 0.02)
         tilt = torch.sigmoid((0.3420201433256688 - state[1][..., 2, 2]) / 0.05)
-        return 1 - (1 - height) * (1 - tilt)
+        termination = 1 - (1 - height) * (1 - tilt)
+        if self.terrain is not None:
+            termination = torch.where(self.terrain.contains(state[0][..., :2]), termination, 1.0)
+        return termination
 
     def critic_features(self, state, frames, normalized_context):
         return torch.cat((invariant_features(state), normalized_context), -1)

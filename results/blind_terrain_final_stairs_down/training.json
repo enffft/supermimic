@@ -1,0 +1,128 @@
+{
+  "summary": {
+    "completed": true,
+    "iteration": 8,
+    "sim_steps": 8512,
+    "wall_time": 10.495925664901733,
+    "wall_h": 0.002872822880744934,
+    "wm_loss": 2.1185150146484375,
+    "wm_err8": 3.001781463623047,
+    "pi_loss": -2.207674026489258,
+    "v_loss": 0.19499407708644867,
+    "imag_rew": 0.2920752167701721,
+    "pi_gradnorm": 3.2288177013397217,
+    "imag_survival": 0.9912780523300171,
+    "sim_rew": 0.34218881527582806,
+    "ep_len": null,
+    "ep_ret_norm": null,
+    "term_frac": null,
+    "it_per_s": 2.119153046933261,
+    "lr": 0.00039999999924943635
+  },
+  "elapsed_s": 11.873932354035787,
+  "config": {
+    "iterations": 8,
+    "buffer_steps": 512,
+    "utd": 0.4,
+    "horizon": 32,
+    "goal_frames": 1,
+    "goal_mode": "direct",
+    "hist": 5,
+    "z_dim": 32,
+    "wm_hidden": [
+      2048,
+      2048,
+      2048
+    ],
+    "wm_structured": false,
+    "policy_hidden": [
+      2048,
+      1024,
+      512,
+      256
+    ],
+    "critic_hidden": [
+      256,
+      128
+    ],
+    "wm_window": 8,
+    "wm_batches": 1,
+    "wm_batch": 64,
+    "pi_batch": 64,
+    "lr": 0.0004,
+    "pi_opt": "adam",
+    "wm_opt": "adam",
+    "no_sync": false,
+    "pi_ema": 0.0,
+    "gamma": 0.99,
+    "lam": 0.95,
+    "action_noise": 0.0,
+    "critic_epochs": 5,
+    "critic_minibatches": 4,
+    "no_critic": false,
+    "warmup_steps": 64,
+    "wm_only_iters": 2,
+    "lr_decay_iters": 250000,
+    "ckpt_every": 2000,
+    "log_every": 1,
+    "log_backend": "none",
+    "seed": 2026,
+    "amp": "none",
+    "compile": false,
+    "test_hidden_dims": null,
+    "profile": true,
+    "init_actor_from": null,
+    "init_wm_from": null,
+    "driver_enabled": false,
+    "terrain_training": true,
+    "terrain_conditioning": true,
+    "terrain_sensor_grad": true,
+    "critic_terrain_conditioning": false
+  },
+  "actor": {
+    "loaded": "actor_only",
+    "tensor_count": 10,
+    "optimizer": "fresh",
+    "world_model": "fresh",
+    "critic": "fresh"
+  },
+  "network_parameters": {
+    "wm": 8771620,
+    "actor": 3195660,
+    "critic": 47617
+  },
+  "timings": {
+    "simulation": {
+      "count": 607,
+      "mean_ms": 8.069020074399424,
+      "median_ms": 5.659322952851653,
+      "max_ms": 320.89862902648747
+    },
+    "wm_fit": {
+      "count": 8,
+      "mean_ms": 80.56028562714346,
+      "median_ms": 65.86980255087838,
+      "max_ms": 244.45728596765548
+    },
+    "actor_bptt": {
+      "count": 6,
+      "mean_ms": 264.1846227925271,
+      "median_ms": 264.0846219728701,
+      "max_ms": 327.89192197378725
+    },
+    "critic_update": {
+      "count": 6,
+      "mean_ms": 28.160533382712554,
+      "median_ms": 23.593180056195706,
+      "max_ms": 56.62535806186497
+    }
+  },
+  "actor_abs_max": 1.0,
+  "actor_saturation_fraction": 0.1419270932674408,
+  "peak_torch_allocated_bytes": 396076032,
+  "peak_torch_reserved_bytes": 455081984,
+  "finite_parameters_and_actor_gradients": true,
+  "horizon": 32,
+  "wm_window": 8,
+  "warmup_note": "two WM-only iterations for plumbing SMOKE only; insufficient for terrain policy optimization"
+}

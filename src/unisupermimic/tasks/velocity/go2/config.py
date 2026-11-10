@@ -8,12 +8,16 @@ from unilab.base.config_adapter import EnvConfigAdapter
 from unilab.base.config_materialization import apply_cfg_overrides
 
 
-def load_config(backend="mujoco"):
+def load_config(backend="mujoco", *, terrain=False):
+    if terrain and backend != "mujoco":
+        raise NotImplementedError("Terrain owner currently supports only MuJoCo")
     root = Path(__file__).resolve().parents[5]
     with initialize_config_dir(
         config_dir=str(root / "src/unisupermimic/conf/supermimic"), version_base="1.3"
     ):
-        owner = compose("config", overrides=[f"task=go2_velocity/{backend}"])
+        owner = compose(
+            "config", overrides=[f"task=go2_velocity/{'terrain' if terrain else backend}"]
+        )
     # Register lazily, just as the public task plugin does.
     registry.ensure_registries()
     from . import registry as go2_registry

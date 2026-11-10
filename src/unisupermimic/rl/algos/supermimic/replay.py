@@ -49,6 +49,15 @@ class ReplayBuffer:
         self.ptr = 0
         self.size = 0
 
+    def mark_reset_boundary(self, reset_mask: torch.Tensor) -> None:
+        """Close prior transitions after an explicit reset outside env.step().
+
+        Auto-resets already carry done. This opt-in also handles data-collection
+        resets and tile reassignment without changing legacy flat/G1 paths.
+        """
+        if self.size:
+            self.data["done"][(self.ptr - 1) % self.T].logical_or_(reset_mask)
+
     def add(self, transition: dict[str, torch.Tensor]) -> None:
         for key in self.fields:
             self.data[key][self.ptr] = transition[key]

@@ -1,0 +1,14 @@
+{
+  "profile": "stairs_down",
+  "level": 1,
+  "envs": 32,
+  "iterations": 8,
+  "wm_only": 2,
+  "steps": 64,
+  "batch": 64,
+  "conditioning": true,
+  "device": "cuda",
+  "curriculum": false,
+  "mode": "evaluate",
+  "output": "results/blind_fixed_stairs_down_eval"
+}

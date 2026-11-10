@@ -24,6 +24,14 @@ class VelocityCommandCfg(CommandTermCfg):
     spawn_heading: float = 0.0
     spawn_offset: tuple[float, float, float] = (0.0, 0.0, 0.0)
     domain_randomization: bool = False
+    terrain_profile: str | None = None  # None preserves legacy flat path
+    terrain_aware: bool = False
+    terrain_seed: int = 2026
+    terrain_quarter_turns: int = 0
+    terrain_curriculum: bool = False
+    terrain_fixed_level: int = 0
+    terrain_max_level: int = 4
+    terrain_recycle_probability: float = 0.15
 
     def build(self, env):
         return VelocityCommand(self, env)
@@ -44,7 +52,8 @@ class VelocityCommand(CommandTerm):
         self.a_prev = torch.zeros(self.num_envs, 12, device=env.device)
         self.ep_step = torch.zeros(self.num_envs, dtype=torch.int32, device=env.device)
         self.f = torch.zeros(self.num_envs, dtype=torch.long, device=env.device)
-        self._origins = env.scene.env_origins(env.device)
+        self._origins = env.scene.env_origins(env.device).clone()
+        self.curriculum = None
         # Resolve names once; public qpos/qvel are authoritative after the last
         # physics substep (body sensors can otherwise lag by one substep).
         self.q_indices = torch.as_tensor(
@@ -87,7 +96,7 @@ class VelocityCommand(CommandTerm):
         root_v = views["qvel"][:, self.root_v]
         R = quat_to_mat(root_q[:, 3:7])
         return (
-            root_q[:, :3] - self._origins,
+            root_q[:, :3] if self.cfg.terrain_aware else root_q[:, :3] - self._origins,
             R,
             root_v[:, :3],
             matvec(R, root_v[:, 3:6]),
@@ -121,10 +130,16 @@ class VelocityCommand(CommandTerm):
         mask = self._reset_mask_buffer.resolve(ids, owner="Go2Velocity.reset")
         if ids.numel() == 0:
             return {}
+        if self.curriculum is not None:
+            self._origins[ids] = self.curriculum.reset(ids, self._rng)
         root = torch.zeros(self.num_envs, 13, device=self._device)
         root[:, :3] = self._origins
         root[:, :3] += root.new_tensor(self.cfg.spawn_offset)
+        if self.cfg.terrain_aware and self.mdp.terrain is not None:
+            root[:, 2] = self.mdp.terrain.ground_height(root[:, :2]) + self.cfg.spawn_offset[2]
         root[:, 2] += 0.42
+        if self.curriculum is not None:
+            self.curriculum.start_xy[ids] = root[ids, :2]
         root[:, 3] = math.cos(self.cfg.spawn_heading / 2)
         root[:, 6] = math.sin(self.cfg.spawn_heading / 2)
         self.robot.write_motion_state_tensor_to_sim(
@@ -241,6 +256,13 @@ def reward(env):
     pre = env.velocity_pre_action
     # Snapshot post-physics state before any manager reset or command resampling.
     env.velocity_next_state = tuple(t.detach().clone() for t in c.state())
+    if c.curriculum is not None:
+        c.curriculum.observe(
+            env.velocity_next_state,
+            pre["goal"],
+            c.mdp.hard_termination(env.velocity_next_state),
+            c.cfg.spawn_heading,
+        )
     views = env.scene.read_plan.sensor_tensor_views(c.robot, c.tensor_sensor_names)
     torque = torch.cat([views.values[name] for name in c.tensor_sensor_names], -1)
     env.velocity_measured_torque = torque.detach().clone()

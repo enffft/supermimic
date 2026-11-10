@@ -72,6 +72,13 @@ class SuperMimicConfig:
     compile: bool = True
     test_hidden_dims: tuple[int, ...] | None = None
     profile: bool = False
+    init_actor_from: str | None = None
+    init_wm_from: str | None = None
+    driver_enabled: bool = False
+    terrain_training: bool = False  # explicit opt-in, including no-scan ablation
+    terrain_conditioning: bool = False
+    terrain_sensor_grad: bool = True
+    critic_terrain_conditioning: bool = False  # reserved, not silently enabled
 
 
 _LOG_FIELDS = (
@@ -150,11 +157,22 @@ class SuperMimicLearner:
         self.mdp = mdp.to(self.device) if self._bridged else mdp
         if cfg.goal_mode == "direct" and not isinstance(self.mdp, DirectGoalMdpProtocol):
             raise TypeError("direct goals require DirectGoalMdpProtocol")
-        if (
-            cfg.goal_mode == "direct"
-            and getattr(getattr(env.cfg, "scene", None), "terrain", None) is not None
+        generated_terrain = (
+            getattr(getattr(getattr(env, "cfg", None), "scene", None), "terrain", None) is not None
+        )
+        if cfg.critic_terrain_conditioning:
+            raise NotImplementedError(
+                "Privileged terrain critic is not implemented; use the original critic"
+            )
+        if generated_terrain and cfg.goal_mode == "direct":
+            if not cfg.terrain_training or getattr(self.mdp, "terrain", None) is None:
+                raise ValueError(
+                    "Go2 terrain training is gated: requires explicit opt-in and collision-aligned terrain MDP"
+                )
+        if cfg.terrain_conditioning and (
+            cfg.goal_mode != "direct" or getattr(self.mdp, "terrain", None) is None
         ):
-            raise ValueError("Go2 terrain training is gated pending flat baseline acceptance")
+            raise ValueError("Terrain WM requires Go2 direct mode and a bound heightfield")
         self.profile_ms: dict[str, list[float]] = {}
 
         # TF32 only pays off for fp32 (amp="none") training: under bf16 autocast
@@ -169,6 +187,20 @@ class SuperMimicLearner:
 
         self.wm = self._make_world_model().to(self.device)
         self.pi = self._make_policy().to(self.device)
+        self.collection_driver = None
+        self.initialization = {"actor": "fresh", "wm": "fresh", "critic": "fresh"}
+        if cfg.init_actor_from is not None:
+            if cfg.goal_mode != "direct":
+                raise ValueError(
+                    "Actor-only initialization is implemented only for Go2 direct mode"
+                )
+            from unisupermimic.tasks.velocity.go2.checkpoint import initialize_actor
+
+            self.initialization["actor"] = initialize_actor(
+                self.pi, cfg.init_actor_from, env.supermimic_contract
+            )
+        if cfg.init_wm_from is not None:
+            self._initialize_world_model(cfg.init_wm_from)
         self.critic = Critic(self._critic_input_dim(), hidden=cfg.critic_hidden).to(self.device)
         if cfg.test_hidden_dims is not None:
             self.critic.net = mlp(self.critic.norm.mean.numel(), cfg.test_hidden_dims, 1).to(
@@ -244,6 +276,64 @@ class SuperMimicLearner:
 
         with (self.log_dir / "args.json").open("w", encoding="utf-8") as stream:
             json.dump(asdict(cfg), stream, indent=2)
+        (self.log_dir / "initialization.json").write_text(json.dumps(self.initialization, indent=2))
+
+    def _initialize_world_model(self, path):
+        import hashlib
+
+        values = torch.load(path, map_location=self.device, weights_only=True)
+        source_contract = values.get("task_contract")
+        target_contract = getattr(self.env, "supermimic_contract", None)
+        source_args = values.get("args", {})
+        if not source_contract or not target_contract:
+            raise ValueError("WM initialization requires explicit UniLab task protocol metadata")
+        for key in ("actor", "joints", "context", "action", "sim_dt", "ctrl_dt", "state"):
+            if source_contract.get(key) != target_contract.get(key):
+                raise ValueError(f"WM protocol mismatch: {key}")
+        # Explicitly permit only the known nominal flat -> audited same Go2 model.
+        # Absolute XY is absent from phi(s); the known flat vertical datum is zero.
+        from unisupermimic.tasks.velocity.go2.contract import MODEL
+
+        if source_contract.get("model_sha256") != hashlib.sha256(MODEL.read_bytes()).hexdigest():
+            raise ValueError("WM expansion supports only the known nominal UniLab flat robot")
+        if source_contract.get("terrain") is not None or source_args.get(
+            "terrain_conditioning", False
+        ):
+            raise ValueError("WM expansion source must be an unconditioned flat UniLab model")
+        if (
+            tuple(source_args.get("wm_hidden", ())) != tuple(self.cfg.wm_hidden)
+            or bool(source_args.get("wm_structured", False)) != self.cfg.wm_structured
+        ):
+            raise ValueError("WM widths or integration protocol differ")
+        if not self.cfg.terrain_conditioning:
+            raise ValueError(
+                "WM-only transfer is reserved for explicit terrain expansion; use resume for flat"
+            )
+        source = WorldModel(
+            hidden=self.cfg.wm_hidden,
+            num_joints=self.mdp.num_joints,
+            context_dim=self.mdp.context_dim,
+            structured=self.cfg.wm_structured,
+        ).to(self.device)
+        source.load_state_dict(values["wm"], strict=True)
+        self.wm.initialize_from_flat(source)
+        self.initialization["wm"] = {
+            "path": str(Path(path).resolve()),
+            "sha256": hashlib.sha256(Path(path).read_bytes()).hexdigest(),
+            "method": "same_UniLab_protocol; appended_zero_columns; fresh_optimizer",
+        }
+
+    def set_collection_driver(self, driver):
+        if not self.cfg.driver_enabled or self.cfg.goal_mode != "direct":
+            raise ValueError("Driver requires explicit Go2 opt-in")
+        from unisupermimic.tasks.velocity.go2.contract import DEFAULT_Q, JOINTS
+
+        from .driver import DriverActionContract
+
+        expected = DriverActionContract(tuple(JOINTS), tuple(DEFAULT_Q), 0.25, 0.02, 40.0, 1.0, 1.0)
+        if driver.contract != expected:
+            raise ValueError("Driver joint/default/scale/PD/frequency/coordinate contract mismatch")
+        self.collection_driver = driver
 
     def _compile(self, function):
         if not self.cfg.compile:
@@ -282,6 +372,7 @@ class SuperMimicLearner:
             num_joints=self.mdp.num_joints,
             context_dim=self.mdp.context_dim,
             structured=self.cfg.wm_structured,
+            terrain_dim=77 if self.cfg.terrain_conditioning else 0,
         )
 
     def _make_policy(self) -> Policy:
@@ -331,13 +422,24 @@ class SuperMimicLearner:
             )
         return int(features.shape[-1] + self.mdp.goal_frame_dim * self.cfg.goal_frames)
 
+    def _terrain_scan(self, state):
+        if not self.cfg.terrain_conditioning:
+            return None
+        return self.mdp.terrain.local_scan(
+            state[0], state[1], sensor_grad=self.cfg.terrain_sensor_grad
+        )
+
+    def _wm_step(self, state, action, normalized_context):
+        # Every autoregressive H8/H32 step queries its own predicted WORLD pose.
+        return self.wm.step(state, action, normalized_context, self._terrain_scan(state))
+
     def _wm_rollout(
         self, states: torch.Tensor, actions: torch.Tensor, contexts: torch.Tensor
     ) -> State:
         state = unflatten_state(states[:, 0])
         predictions = []
         for index in range(self.cfg.wm_window):
-            state = self.wm.step(
+            state = self._wm_step(
                 state,
                 actions[:, index],
                 self.mdp.normalize_context(contexts[:, index]),
@@ -371,7 +473,7 @@ class SuperMimicLearner:
         goal: torch.Tensor,
     ) -> tuple[State, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
         action = self.pi(obs_hist, goal)
-        next_state = self.wm.step(state, action, normalized_context)
+        next_state = self._wm_step(state, action, normalized_context)
         next_frames = frames + 1
         obs = self.mdp.add_noise(self.mdp.obs(next_state, action, context, next_frames))
         next_hist = torch.cat((obs_hist[:, 1:], obs.unsqueeze(1)), 1)
@@ -465,7 +567,15 @@ class SuperMimicLearner:
             )
             self.pi.obs_norm.update(obs)
             self.pi.goal_norm.update(goal)
-            action = self.pi(self.obs_hist, goal)
+            if self.cfg.driver_enabled:
+                if self.collection_driver is None:
+                    raise ValueError("driver_enabled requires a validated collection driver")
+                self.collection_driver.reset(fresh)
+                action = self.collection_driver(self.obs_hist, goal)
+                if action.shape != info["a_prev"].shape or not torch.isfinite(action).all():
+                    raise ValueError("Driver returned invalid action")
+            else:
+                action = self.pi(self.obs_hist, goal)
             bound = 1 if self.cfg.goal_mode == "direct" else 20
             if self.cfg.goal_mode == "direct" and hasattr(self.env, "set_collection_exploration"):
                 self.env.set_collection_exploration(self.cfg.action_noise)
@@ -482,6 +592,8 @@ class SuperMimicLearner:
             transition = step_state.info[SUPERMIMIC_TRANSITION_KEY]
             if self._bridged:
                 transition = {key: value.to(self.device) for key, value in transition.items()}
+            if self.cfg.terrain_training:
+                self.buffer.mark_reset_boundary(transition["ep_step"] == 0)
             self.buffer.add(transition)
             initial = unflatten_state(transition["s"])
             next_state = unflatten_state(transition["s1"])
@@ -490,6 +602,7 @@ class SuperMimicLearner:
                     initial,
                     transition["a"],
                     self.mdp.normalize_context(transition["xi"]),
+                    self._terrain_scan(initial),
                 )
             )
             target = self.wm.targets(initial, next_state)
@@ -818,6 +931,14 @@ class SuperMimicLearner:
             ):
                 if checkpoint_args.get(key) != asdict(self.cfg)[key]:
                     raise ValueError(f"Cannot resume with changed {key}")
+        for key, default in (
+            ("terrain_training", False),
+            ("terrain_conditioning", False),
+            ("terrain_sensor_grad", True),
+            ("critic_terrain_conditioning", False),
+        ):
+            if checkpoint_args.get(key, default) != getattr(self.cfg, key):
+                raise ValueError(f"Cannot resume with changed {key}")
         checkpoint_structured = bool(checkpoint_args.get("wm_structured", False))
         if checkpoint_structured != self.cfg.wm_structured:
             raise ValueError(

@@ -1,0 +1,148 @@
+{
+  "finite": true,
+  "envs": 16,
+  "cases": [
+    {
+      "goal": [
+        0.5,
+        0,
+        0
+      ],
+      "steps": 64,
+      "terminated_transitions": 0,
+      "done_transitions": 0,
+      "max_recomputed_real_reward_error": 2.7939677238464355e-09,
+      "mean_real_vs_pd_proxy_reward_gap": 3.4507320378907025e-06,
+      "mean_step_reward": 0.06044549392754561,
+      "min_root_clearance_m": 0.31233808398246765,
+      "net_displacement_m": [
+        0.5671305060386658,
+        -0.0043776254169642925,
+        -0.09174790978431702
+      ]
+    },
+    {
+      "goal": [
+        -0.3,
+        0,
+        0
+      ],
+      "steps": 64,
+      "terminated_transitions": 0,
+      "done_transitions": 0,
+      "max_recomputed_real_reward_error": 3.725290298461914e-09,
+      "mean_real_vs_pd_proxy_reward_gap": 2.262803320718376e-06,
+      "mean_step_reward": 0.04368029370465365,
+      "min_root_clearance_m": 0.3233455419540405,
+      "net_displacement_m": [
+        -0.3237651288509369,
+        -0.004935018252581358,
+        -0.08347222208976746
+      ]
+    },
+    {
+      "goal": [
+        0,
+        0.25,
+        0
+      ],
+      "steps": 64,
+      "terminated_transitions": 0,
+      "done_transitions": 0,
+      "max_recomputed_real_reward_error": 7.450580596923828e-09,
+      "mean_real_vs_pd_proxy_reward_gap": 2.2817439457867295e-06,
+      "mean_step_reward": 0.03617654427580419,
+      "min_root_clearance_m": 0.31786492466926575,
+      "net_displacement_m": [
+        0.002524005249142647,
+        0.2864624857902527,
+        -0.08984142541885376
+      ]
+    },
+    {
+      "goal": [
+        0,
+        0,
+        0.6
+      ],
+      "steps": 64,
+      "terminated_transitions": 0,
+      "done_transitions": 0,
+      "max_recomputed_real_reward_error": 0.0,
+      "mean_real_vs_pd_proxy_reward_gap": 1.4570377970812842e-06,
+      "mean_step_reward": 0.026032194813524256,
+      "min_root_clearance_m": 0.3278362452983856,
+      "net_displacement_m": [
+        -0.013230837881565094,
+        -0.000846827169880271,
+        -0.08669650554656982
+      ]
+    },
+    {
+      "goal": [
+        0,
+        0,
+        0
+      ],
+      "steps": 64,
+      "terminated_transitions": 0,
+      "done_transitions": 0,
+      "max_recomputed_real_reward_error": 0.0,
+      "mean_real_vs_pd_proxy_reward_gap": 1.1697084119077772e-06,
+      "mean_step_reward": 0.007077449386997614,
+      "min_root_clearance_m": 0.32600343227386475,
+      "net_displacement_m": [
+        -0.029305553063750267,
+        0.001929686637595296,
+        -0.08811503648757935
+      ]
+    },
+    {
+      "contact_probe_entry_offset_m": 1.3,
+      "steps": 64,
+      "root_clearance_m": [
+        0.32825207710266113,
+        0.32825207710266113,
+        0.32825207710266113,
+        0.32825207710266113,
+        0.32825207710266113,
+        0.32825207710266113,
+        0.32825207710266113,
+        0.32825207710266113,
+        0.32825207710266113,
+        0.32825207710266113,
+        0.32825207710266113,
+        0.32825207710266113,
+        0.32825207710266113,
+        0.32825207710266113,
+        0.32825207710266113,
+        0.32825207710266113
+      ]
+    },
+    {
+      "contact_probe_entry_offset_m": 2.0,
+      "steps": 64,
+      "root_clearance_m": [
+        0.32825207710266113,
+        0.32825207710266113,
+        0.32825207710266113,
+        0.32825207710266113,
+        0.32825207710266113,
+        0.32825207710266113,
+        0.32825207710266113,
+        0.32825207710266113,
+        0.32825207710266113,
+        0.32825207710266113,
+        0.32825207710266113,
+        0.32825207710266113,
+        0.32825207710266113,
+        0.32825207710266113,
+        0.32825207710266113,
+        0.32825207710266113
+      ]
+    }
+  ],
+  "acceleration": "both control-period FD; legacy instantaneous substep acceleration remains different",
+  "torque": "real measured jointactuatorfrc vs imagination PD proxy",
+  "note": "bounded command/protocol test; no terrain locomotion success claim"
+}

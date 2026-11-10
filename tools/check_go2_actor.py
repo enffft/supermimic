@@ -1,5 +1,6 @@
 """Check every imported tensor and every actor layer against the frozen source."""
 
+import argparse
 import ast
 import json
 import sys
@@ -47,6 +48,9 @@ exec(compile(ast.Module(body=nodes, type_ignores=[]), str(head_path), "exec"), g
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--output", type=Path, default=ROOT / "results/actor_equivalence.json")
+    args = parser.parse_args()
     manifest = json.loads(
         (ROOT / "migration/source_reference/checkpoint_manifest.json").read_text()
     )
@@ -103,7 +107,7 @@ def main():
             "limitations": "Actor forward only; no claim of WM/critic/optimizer or training trajectory equivalence",
         }
     )
-    out = ROOT / "results/actor_equivalence.json"
+    out = args.output
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(result, indent=2) + "\n")
     print(json.dumps(result, indent=2))

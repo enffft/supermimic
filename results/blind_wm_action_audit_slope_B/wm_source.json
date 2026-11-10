@@ -1,0 +1,16 @@
+{
+  "path": "results/blind_wm_ab_final_slope/B/wm_only.pt",
+  "sha256": "979232fc5672a81b270698140b3ed9ee116bff1bb6c66d40a3c85767c2f78a3b",
+  "actor": {
+    "loaded": "actor_only",
+    "tensor_count": 10,
+    "optimizer": "fresh",
+    "world_model": "fresh",
+    "critic": "fresh",
+    "path": "/home/yifeiy/ws_supermimic/logs/phase3_training/go2_velocity_diagonal_slip_3072_2p5h_20261103/ckpt_0034000.pt",
+    "sha256": "0b3d8e4bb26173d13a6ce0b99d5eecf43005927a8ab2e01947c4d0311009487a"
+  },
+  "actor_updated": false,
+  "wm_updated": false,
+  "physical_probe_steps": 120
+}

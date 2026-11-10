@@ -1,0 +1,53 @@
+{
+  "selection": "identical starts surviving full H32; potentially easier than failing contact transitions",
+  "results": [
+    {
+      "horizon": 1,
+      "valid_samples": 92,
+      "requested_samples": 256,
+      "position_rmse_m": 0.0010864116484299302,
+      "attitude_rmse_rad": 0.0039184666238725185,
+      "linear_velocity_rmse_m_s": 0.02164498157799244,
+      "angular_velocity_rmse_rad_s": 0.1997150033712387,
+      "joint_position_rmse_rad": 0.01529028918594122,
+      "joint_velocity_rmse_rad_s": 1.2599149942398071,
+      "foot_position_rmse_m": 0.003832712769508362
+    },
+    {
+      "horizon": 8,
+      "valid_samples": 92,
+      "requested_samples": 256,
+      "position_rmse_m": 0.008303551934659481,
+      "attitude_rmse_rad": 0.011927313171327114,
+      "linear_velocity_rmse_m_s": 0.05324122682213783,
+      "angular_velocity_rmse_rad_s": 0.14540180563926697,
+      "joint_position_rmse_rad": 0.02209276147186756,
+      "joint_velocity_rmse_rad_s": 0.491189569234848,
+      "foot_position_rmse_m": 0.009028969332575798
+    },
+    {
+      "horizon": 16,
+      "valid_samples": 92,
+      "requested_samples": 256,
+      "position_rmse_m": 0.01872931234538555,
+      "attitude_rmse_rad": 0.01797165349125862,
+      "linear_velocity_rmse_m_s": 0.05849534645676613,
+      "angular_velocity_rmse_rad_s": 0.18084469437599182,
+      "joint_position_rmse_rad": 0.02656680718064308,
+      "joint_velocity_rmse_rad_s": 0.6685535311698914,
+      "foot_position_rmse_m": 0.015956835821270943
+    },
+    {
+      "horizon": 32,
+      "valid_samples": 92,
+      "requested_samples": 256,
+      "position_rmse_m": 0.04201524704694748,
+      "attitude_rmse_rad": 0.01830369420349598,
+      "linear_velocity_rmse_m_s": 0.07342755794525146,
+      "angular_velocity_rmse_rad_s": 0.15264178812503815,
+      "joint_position_rmse_rad": 0.02710644342005253,
+      "joint_velocity_rmse_rad_s": 0.6325736045837402,
+      "foot_position_rmse_m": 0.039099402725696564
+    }
+  ]
+}

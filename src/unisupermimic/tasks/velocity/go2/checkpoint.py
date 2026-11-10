@@ -66,3 +66,38 @@ def map_actor(policy, checkpoint):
         "world_model": "fresh",
         "critic": "fresh",
     }
+
+
+def initialize_actor(policy, path, target_contract):
+    """Import only Actor parameters; do not resume WM, optimizers or curriculum."""
+    import hashlib
+    from pathlib import Path, PosixPath
+
+    with torch.serialization.safe_globals([PosixPath]):
+        checkpoint = torch.load(path, map_location="cpu", weights_only=True)
+    if "policy" in checkpoint:
+        result = map_actor(policy, checkpoint)
+    else:
+        source = checkpoint.get("task_contract", {})
+        args = checkpoint.get("args", {})
+        for key in ("actor", "joints", "context", "action", "sim_dt", "ctrl_dt"):
+            if key not in source or source[key] != target_contract[key]:
+                raise ValueError(f"Actor protocol mismatch: {key}")
+        if args.get("goal_mode") != "direct" or args.get("hist") != 5:
+            raise ValueError("Actor initialization requires proven direct History5 protocol")
+        from .contract import MODEL
+
+        known_flat = hashlib.sha256(MODEL.read_bytes()).hexdigest()
+        if source.get("model_sha256") not in (target_contract["model_sha256"], known_flat):
+            raise ValueError("Unrecognized source robot model")
+        values = checkpoint["pi"]
+        if not torch.equal(values["obs_scale"].cpu(), policy.obs_scale.cpu()):
+            raise ValueError("Actor scales differ")
+        if not all(torch.isfinite(t).all() for t in values.values()):
+            raise ValueError("Actor has nonfinite tensors")
+        policy.load_state_dict(values, strict=True)
+        result = {"loaded": "unilab_actor_only", "world_model": "independent", "optimizer": "fresh"}
+    result.update(
+        path=str(Path(path).resolve()), sha256=hashlib.sha256(Path(path).read_bytes()).hexdigest()
+    )
+    return result

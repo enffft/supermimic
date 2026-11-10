@@ -1,0 +1,236 @@
+{
+  "run": {
+    "algo": "supermimic",
+    "task": "Go2VelocitySuperMimic",
+    "sim_backend": "mujoco",
+    "device": "cuda:0",
+    "collector_tensor_device": "cuda:0",
+    "seed": {
+      "configured_seed": 2026,
+      "configured_seed_source": "algo.seed",
+      "effective_seed": 2026
+    }
+  },
+  "config": {
+    "algo": {
+      "algo": "supermimic",
+      "algo_log_name": "supermimic",
+      "load_run": "-1",
+      "checkpoint": -1,
+      "resume": false,
+      "seed": 2026,
+      "num_envs": 16,
+      "iterations": 8,
+      "buffer_steps": 128,
+      "utd": 0.4,
+      "horizon": 32,
+      "goal_frames": 1,
+      "hist": 5,
+      "z_dim": 32,
+      "wm_hidden": [
+        2048,
+        2048,
+        2048
+      ],
+      "wm_structured": false,
+      "policy_hidden": [
+        2048,
+        1024,
+        512,
+        256
+      ],
+      "critic_hidden": [
+        256,
+        128
+      ],
+      "wm_window": 8,
+      "wm_batches": 1,
+      "wm_batch": 64,
+      "pi_batch": 64,
+      "lr": 0.0004,
+      "pi_opt": "adam",
+      "wm_opt": "adam",
+      "no_sync": false,
+      "pi_ema": 0.0,
+      "gamma": 0.99,
+      "lam": 0.95,
+      "action_noise": 0.1,
+      "critic_epochs": 5,
+      "critic_minibatches": 4,
+      "no_critic": false,
+      "warmup_steps": 64,
+      "wm_only_iters": 500,
+      "lr_decay_iters": 250000,
+      "ckpt_every": 2000,
+      "log_every": 1,
+      "log_backend": "none",
+      "amp": "none",
+      "compile": false,
+      "test_hidden_dims": null,
+      "goal_mode": "direct",
+      "terrain_training": true,
+      "terrain_conditioning": true,
+      "terrain_sensor_grad": true,
+      "critic_terrain_conditioning": false,
+      "init_actor_from": "/home/yifeiy/ws_supermimic/logs/phase3_training/go2_velocity_diagonal_slip_3072_2p5h_20261103/ckpt_0034000.pt"
+    },
+    "training": {
+      "task_name": "Go2VelocitySuperMimic",
+      "sim_backend": "mujoco",
+      "collector_tensor_device": "auto",
+      "sim2sim_strict": true,
+      "log_root": null,
+      "log_dir": "results/blind_hydra_terrain_verified"
+    },
+    "env": {
+      "seed": 2026,
+      "sim_dt": 0.005,
+      "ctrl_dt": 0.02,
+      "max_episode_seconds": 10.0,
+      "auto_reset": true,
+      "scale_rewards_by_dt": false,
+      "mjwarp_nconmax": 128,
+      "mjwarp_njmax": 512,
+      "scene": {
+        "model_file": "src/unisupermimic/assets/robots/go2_velocity/flat.xml",
+        "default_keyframe_name": "init_state",
+        "entities": {
+          "robot": {
+            "root_body_name": "robot/base",
+            "body_names": [
+              "robot/base"
+            ],
+            "joint_names": [
+              "robot/FL_hip_joint",
+              "robot/FL_thigh_joint",
+              "robot/FL_calf_joint",
+              "robot/FR_hip_joint",
+              "robot/FR_thigh_joint",
+              "robot/FR_calf_joint",
+              "robot/RL_hip_joint",
+              "robot/RL_thigh_joint",
+              "robot/RL_calf_joint",
+              "robot/RR_hip_joint",
+              "robot/RR_thigh_joint",
+              "robot/RR_calf_joint"
+            ],
+            "actuator_names": [
+              "robot/FL_hip_joint",
+              "robot/FL_thigh_joint",
+              "robot/FL_calf_joint",
+              "robot/FR_hip_joint",
+              "robot/FR_thigh_joint",
+              "robot/FR_calf_joint",
+              "robot/RL_hip_joint",
+              "robot/RL_thigh_joint",
+              "robot/RL_calf_joint",
+              "robot/RR_hip_joint",
+              "robot/RR_thigh_joint",
+              "robot/RR_calf_joint"
+            ],
+            "geom_names": [
+              "robot/FL_foot_collision",
+              "robot/FR_foot_collision",
+              "robot/RL_foot_collision",
+              "robot/RR_foot_collision"
+            ]
+          }
+        }
+      },
+      "observations": {
+        "policy": {
+          "enable_corruption": false,
+          "terms": {
+            "proprio": {
+              "func": "unisupermimic.tasks.velocity.go2.manager_terms.observation"
+            }
+          }
+        }
+      },
+      "actions": {
+        "joint_pos": {
+          "_target_": "unisupermimic.tasks.velocity.go2.manager_terms.VelocityActionCfg",
+          "entity_name": "robot"
+        }
+      },
+      "commands": {
+        "velocity": {
+          "_target_": "unisupermimic.tasks.velocity.go2.manager_terms.VelocityCommandCfg",
+          "stage": 0,
+          "standing_fraction": 0.05,
+          "fixed_command": null,
+          "resampling_time_range": [
+            5.0,
+            5.0
+          ],
+          "terrain_profile": "mixed",
+          "terrain_aware": true,
+          "terrain_seed": 2026,
+          "terrain_curriculum": false,
+          "terrain_fixed_level": 0,
+          "terrain_max_level": 4,
+          "terrain_recycle_probability": 0.15
+        }
+      },
+      "terminations": {
+        "fallen": {
+          "func": "unisupermimic.tasks.velocity.go2.manager_terms.fallen"
+        },
+        "time_out": {
+          "func": "unilab.envs.mdp.time_out",
+          "time_out": true
+        }
+      },
+      "policy_observation_group": "policy",
+      "critic_observation_group": null
+    },
+    "reward": {
+      "velocity": {
+        "func": "unisupermimic.tasks.velocity.go2.manager_terms.reward",
+        "weight": 1.0
+      }
+    }
+  },
+  "contract_snapshot": {
+    "env.observations": {
+      "policy": {
+        "enable_corruption": false,
+        "terms": {
+          "proprio": {
+            "func": "unisupermimic.tasks.velocity.go2.manager_terms.observation"
+          }
+        }
+      }
+    },
+    "env.actions": {
+      "joint_pos": {
+        "_target_": "unisupermimic.tasks.velocity.go2.manager_terms.VelocityActionCfg",
+        "entity_name": "robot"
+      }
+    },
+    "env.policy_observation_group": "policy",
+    "env.ctrl_dt": 0.02,
+    "algo.goal_frames": 1,
+    "algo.hist": 5,
+    "algo.z_dim": 32,
+    "algo.wm_hidden": [
+      2048,
+      2048,
+      2048
+    ],
+    "algo.wm_structured": false,
+    "algo.policy_hidden": [
+      2048,
+      1024,
+      512,
+      256
+    ],
+    "algo.critic_hidden": [
+      256,
+      128
+    ],
+    "algo.wm_window": 8,
+    "algo.horizon": 32,
+    "algo.amp": "none"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "profile": "stairs",
+  "level": 1,
+  "envs": 16,
+  "iterations": 8,
+  "wm_only": 2,
+  "steps": 64,
+  "batch": 64,
+  "conditioning": false,
+  "device": "cuda",
+  "curriculum": false,
+  "mode": "diagnose",
+  "wm_checkpoint": "results/blind_wm_ab_final_stairs/A/wm_only.pt",
+  "output": "results/blind_wm_action_audit_stairs_A"
+}

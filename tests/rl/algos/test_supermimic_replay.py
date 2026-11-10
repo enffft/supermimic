@@ -109,3 +109,16 @@ def test_history_does_not_cross_oldest_buffered_transition(
 
     torch.testing.assert_close(start["f"], torch.full((3,), 2))
     torch.testing.assert_close(history["f"], torch.full((3, 4), 2))
+
+
+def test_explicit_collection_reset_closes_previous_window():
+    buffer = ReplayBuffer(8, 2, "cpu", num_joints=2, context_dim=3)
+    buffer.add(_transition(0, 2, 2, 3, ep_step=0))
+    buffer.mark_reset_boundary(torch.tensor([True, False]))
+    assert buffer.data["done"][0].tolist() == [True, False]
+    buffer.add(_transition(1, 2, 2, 3, ep_step=0))
+    buffer.add(_transition(2, 2, 2, 3, ep_step=1))
+    sampled = buffer.sample_windows(100, 3)
+    selected = sampled["done"][:, 0]
+    assert sampled["mask"][selected, 1:].eq(0).all()
+    assert sampled["mask"][~selected].eq(1).all()

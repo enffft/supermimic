@@ -28,11 +28,7 @@ def main():
     try:
         process = psutil.Process(args.pid)
         while process.is_running() and process.status() != psutil.STATUS_ZOMBIE:
-            try:
-                process.wait(timeout=30)
-                break
-            except psutil.TimeoutExpired:
-                continue
+            time.sleep(2)
     except psutil.NoSuchProcess:
         pass
     failure = (run / "failure.json").exists()

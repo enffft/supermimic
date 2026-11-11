@@ -1,0 +1,61 @@
+{
+  "result": {
+    "iteration": 26807,
+    "wall_h": 3.4032779465119045,
+    "sim_steps": 140453888,
+    "wm_loss": 0.04820833757519722,
+    "wm_err8": 0.08538356944918632,
+    "pi_loss": -2.969249601364136,
+    "v_loss": 0.00020114873361308129,
+    "imag_rew": 0.28677860856056214,
+    "pi_gradnorm": 0.48997896432876586,
+    "imag_survival": 0.9941083097457886,
+    "sim_rew": 0.35297188730466933,
+    "ep_len": null,
+    "ep_ret_norm": null,
+    "term_frac": 0.0,
+    "it_per_s": 1.9694896790067804,
+    "lr": 0.00019455133307244262,
+    "completed": true,
+    "wall_time": 12359.402943134308
+  },
+  "stop_reason": "iteration_budget",
+  "source": {
+    "iteration": 25307,
+    "sim_steps": 132773888,
+    "wall_time": 11374.984853029251,
+    "updates": {
+      "wm": 101228,
+      "actor": 23007,
+      "critic": 466140
+    }
+  },
+  "new_transitions": 7680000,
+  "new_updates": {
+    "wm": 6000,
+    "actor": 1350,
+    "critic": 28000
+  },
+  "wall_s": 1001.1943665170111,
+  "profile": {
+    "simulation": {
+      "count": 3750,
+      "mean_ms": 48.998011170234534
+    },
+    "wm_fit": {
+      "count": 6000,
+      "mean_ms": 36.39200381552413
+    },
+    "actor_bptt": {
+      "count": 1400,
+      "mean_ms": 152.13689174453197
+    },
+    "critic_update": {
+      "count": 1400,
+      "mean_ms": 20.253549699804612
+    }
+  },
+  "peak_allocated_mib": 2268.60400390625,
+  "peak_reserved_mib": 2458.0,
+  "checkpoint": "/home/yifeiy/ws_go2_unilab/Uni-SuperMimic/results/omnidirectional_terrain/stageB/last.pt"
+}

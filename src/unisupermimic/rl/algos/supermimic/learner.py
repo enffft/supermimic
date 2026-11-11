@@ -85,6 +85,7 @@ class SuperMimicConfig:
     critic_warmup_iters: int = 0
     checkpoint_replay: bool = False
     strict_finite: bool = False
+    command_start_weights: tuple[float, ...] | None = None
 
 
 _LOG_FIELDS = (
@@ -257,6 +258,12 @@ class SuperMimicLearner:
             num_joints=self.mdp.num_joints,
             context_dim=self.mdp.context_dim,
             goal_dim=self.mdp.goal_frame_dim if cfg.goal_mode == "direct" else 0,
+            command_metadata=getattr(getattr(env, "cfg", None), "commands", {}).get(
+                "velocity", None
+            )
+            is not None
+            and getattr(env.cfg.commands["velocity"], "sampling_mode", "legacy_stage")
+            == "terrain_adaptive",
             terrain_metadata=cfg.checkpoint_replay
             and generated_terrain
             and cfg.goal_mode == "direct",
@@ -659,7 +666,9 @@ class SuperMimicLearner:
             # Fixed-size selection without reading the valid count on the host: oversample by 2x,
             # stable-sort the valid starts first, and keep the leading ``batch_size``. Only starts
             # within ``horizon`` frames of a clip end are invalid (< 1 %), so 2x is enough.
-            start, history = self.buffer.sample_starts(2 * batch_size, self.cfg.hist)
+            start, history = self.buffer.sample_starts(
+                2 * batch_size, self.cfg.hist, self.cfg.command_start_weights
+            )
             valid = self.mdp.valid_imagination_start(start["f"], self.cfg.horizon)
             indices = torch.sort((~valid).to(torch.uint8), stable=True).indices[:batch_size]
             return (
@@ -671,7 +680,9 @@ class SuperMimicLearner:
         histories = []
         count = 0
         while count < batch_size:
-            start, history = self.buffer.sample_starts(2 * batch_size, self.cfg.hist)
+            start, history = self.buffer.sample_starts(
+                2 * batch_size, self.cfg.hist, self.cfg.command_start_weights
+            )
             valid = self.mdp.valid_imagination_start(start["f"], self.cfg.horizon)
             indices = valid.nonzero(as_tuple=False).squeeze(-1)[: batch_size - count]
             starts.append({key: value[indices] for key, value in start.items()})
@@ -688,6 +699,14 @@ class SuperMimicLearner:
         update_actor: bool = True,
     ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
         start, history = self._sample_valid_starts(self.cfg.pi_batch)
+        if "command_mode" in start:
+            self.extra_state.setdefault(
+                "actual_policy_start_modes", torch.zeros(6, device=self.device, dtype=torch.long)
+            ).add_(torch.bincount(start["command_mode"], minlength=6))
+            if update_actor:
+                self.extra_state.setdefault(
+                    "actual_actor_start_modes", torch.zeros(6, device=self.device, dtype=torch.long)
+                ).add_(torch.bincount(start["command_mode"], minlength=6))
         state = unflatten_state(start["s"])
         context, frames, previous_action = start["xi"], start["f"], start["a_prev"]
         normalized_context = self.mdp.normalize_context(context)
@@ -962,6 +981,9 @@ class SuperMimicLearner:
             curriculum = command.get_term("velocity").curriculum if command else None
             if curriculum is not None:
                 checkpoint["curriculum"] = curriculum.state_dict()
+            term = command.get_term("velocity") if command else None
+            if getattr(term, "sampler", None) is not None:
+                checkpoint["command_sampler"] = term.sampler.state_dict()
         return checkpoint
 
     def save(self, path: str | Path | None = None, include_optimizers: bool = True) -> Path:
@@ -972,7 +994,7 @@ class SuperMimicLearner:
         os.replace(temporary, destination)
         return destination
 
-    def load(self, path: str | Path) -> None:
+    def load(self, path: str | Path, *, allow_command_distribution_change=False) -> None:
         checkpoint = torch.load(path, map_location=self.device, weights_only=True)
         required = {"critic", "opt_wm", "opt_pi", "opt_v"}
         missing = sorted(required - checkpoint.keys())
@@ -984,7 +1006,15 @@ class SuperMimicLearner:
         if checkpoint_args.get("goal_mode", "encoded") != self.cfg.goal_mode:
             raise ValueError("Cannot resume with a different goal_mode")
         if self.cfg.goal_mode == "direct":
-            if checkpoint.get("task_contract") != getattr(self.env, "supermimic_contract", None):
+            old_contract = checkpoint.get("task_contract")
+            new_contract = getattr(self.env, "supermimic_contract", None)
+            if allow_command_distribution_change:
+                from unisupermimic.tasks.velocity.go2.command_sampler import (
+                    validate_distribution_migration,
+                )
+
+                validate_distribution_migration(old_contract, new_contract)
+            elif old_contract != new_contract:
                 raise ValueError(
                     "Cannot resume Go2 with changed state/action/reward/model/terrain semantics"
                 )
@@ -1037,7 +1067,9 @@ class SuperMimicLearner:
                 values["initialized"],
             )
         if "replay" in checkpoint:
-            self.buffer.load_state_dict(checkpoint["replay"])
+            self.buffer.load_state_dict(
+                checkpoint["replay"], infer_command_metadata=allow_command_distribution_change
+            )
             # Physics and command-manager RNG are deliberately restarted. Close every
             # prior trajectory and clear partial curriculum episodes before new reset.
             self.buffer.mark_reset_boundary(
@@ -1049,6 +1081,9 @@ class SuperMimicLearner:
                 curriculum.load_state_dict(checkpoint["curriculum"])
                 curriculum.steps.zero_()
                 curriculum.episode_fall.zero_()
+            term = command.get_term("velocity") if command else None
+            if getattr(term, "sampler", None) is not None and "command_sampler" in checkpoint:
+                term.sampler.load_state_dict(checkpoint["command_sampler"])
             self.env.reset()
             self.obs_hist.zero_()
             torch.set_rng_state(checkpoint["torch_rng"].cpu())
@@ -1057,6 +1092,15 @@ class SuperMimicLearner:
             self.resume_mode = (
                 "weights_optimizers_replay_curriculum_restored; environment_resampled; not_exact"
             )
+            if allow_command_distribution_change:
+                self.extra_state["command_distribution_migration"] = {
+                    "source": str(path),
+                    "iteration": self.iteration,
+                    "old_commands": old_contract["commands"],
+                    "new_commands": new_contract["commands"],
+                    "old_replay_tags": "inferred_from_recorded_goal_and_tile; not_original_mode_labels",
+                }
+                self.resume_mode += "; explicit_command_distribution_migration"
         else:
             self.resume_mode = (
                 "weights_optimizers_only; replay_environment_curriculum_resampled; not_exact"

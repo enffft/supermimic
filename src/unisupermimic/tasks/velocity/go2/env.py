@@ -42,6 +42,20 @@ class Go2VelocityEnv(ManagerBasedRlEnv):
             "sim_dt": self.cfg.sim_dt,
             "ctrl_dt": self.cfg.ctrl_dt,
         }
+        if not any(self.cfg.commands["velocity"].reset_jitter):
+            contract["commands"].pop("reset_jitter", None)
+        if self.cfg.commands["velocity"].sampling_mode == "legacy_stage":
+            for key in ("sampling_mode", "sampler"):
+                contract["commands"].pop(key, None)
+        if "sampler" in contract["commands"]:
+            from .command_sampler import VelocitySamplerCfg
+
+            defaults = asdict(VelocitySamplerCfg())
+            # Adding explicit default range fields preserves early-adaptation
+            # checkpoint contracts; nondefault ranges remain strictly recorded.
+            for key in ("flat_velocity_levels", "terrain_velocity_ranges"):
+                if json.dumps(contract["commands"]["sampler"][key]) == json.dumps(defaults[key]):
+                    contract["commands"]["sampler"].pop(key)
         new_fields = (
             "terrain_profile",
             "terrain_aware",
@@ -118,6 +132,12 @@ class Go2VelocityEnv(ManagerBasedRlEnv):
                 "terrain_probe": c.curriculum.probe.clone(),
             }
         )
+        if c.sampler is not None:
+            self.velocity_terrain_tags.update(
+                command_domain=c.command_domain.clone(),
+                command_mode=c.command_mode.clone(),
+                crossing_episode=c.crossing_episode.clone(),
+            )
         return super().apply_action(actions.clamp(-1, 1), state)
 
     def _update_state_in_read_phase(self, state):
@@ -197,6 +217,18 @@ def make_go2_env(cfg, num_envs=1, backend_type="mujoco"):
         raise NotImplementedError(
             "UniSim 2.7.1 mjwarp does not support generated terrain or height scanners"
         )
+    if command_cfg.sampling_mode == "terrain_adaptive":
+        if command_cfg.terrain_profile != "mixed" or command_cfg.spawn_heading != 0:
+            raise ValueError("Adaptive domains require the audited mixed atlas, heading zero")
+        if command_cfg.sampler.terrain_hold_seconds < cfg.max_episode_seconds:
+            raise ValueError("Terrain command must cover the full episode")
+        from unilab.managers import TerminationTermCfg
+
+        from .manager_terms import flat_domain_boundary
+
+        cfg.terminations["flat_domain_boundary"] = TerminationTermCfg(
+            func=flat_domain_boundary, time_out=True
+        )
     cfg.validate()
     backend = create_backend(
         backend_type,
@@ -243,6 +275,9 @@ def make_go2_env(cfg, num_envs=1, backend_type="mujoco"):
                     probe_probability=command_cfg.terrain_probe_probability,
                     device=env.device,
                 )
+                if command.sampler is not None:
+                    command.curriculum.fixed_domain = command.command_domain
+                    command.curriculum.flat_probability = 0.0
                 # All compiled atlas entry footprints must be finite and planar.
                 field = command.mdp.terrain
                 points = torch.tensor(origins.copy(), dtype=torch.float32, device=env.device)

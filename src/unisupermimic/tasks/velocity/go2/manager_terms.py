@@ -1,7 +1,7 @@
 """Go2 Manager terms. Commands resample after reward and are snapshotted in replay."""
 
 import math
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import torch
 from unilab.base.reset_selectors import resolve_reset_env_ids
@@ -9,12 +9,16 @@ from unilab.managers import ActionTerm, ActionTermCfg, CommandTerm, CommandTermC
 
 from unisupermimic.rl.algos.supermimic.geometry import matvec, quat_to_mat
 
+from .command_sampler import TerrainAwareVelocitySampler, VelocitySamplerCfg, fixed_domains
 from .contract import DEFAULT_Q, JOINTS, soft_limits
 from .mdp import Go2VelocityMdp
 
 
 @dataclass(kw_only=True)
 class VelocityCommandCfg(CommandTermCfg):
+    reset_jitter: tuple[float, float, float] = (0.0, 0.0, 0.0)  # eval XY/yaw/joints
+    sampling_mode: str = "legacy_stage"
+    sampler: VelocitySamplerCfg = field(default_factory=VelocitySamplerCfg)
     entity_name: str = "robot"
     resampling_time_range: tuple[float, float] = (5.0, 5.0)
     # Fixed stage is explicit; automatic promotion is gated pending matched evaluation.
@@ -60,6 +64,20 @@ class VelocityCommand(CommandTerm):
         self.f = torch.zeros(self.num_envs, dtype=torch.long, device=env.device)
         self._origins = env.scene.env_origins(env.device).clone()
         self.curriculum = None
+        if cfg.sampling_mode not in ("legacy_stage", "terrain_adaptive"):
+            raise ValueError("Unknown velocity command sampling mode")
+        self.sampler = (
+            TerrainAwareVelocitySampler(cfg.sampler, env.device)
+            if cfg.sampling_mode == "terrain_adaptive"
+            else None
+        )
+        self.command_domain = (
+            fixed_domains(self.num_envs, cfg.sampler.domain_weights, env.device)
+            if self.sampler is not None
+            else None
+        )
+        self.command_mode = torch.zeros(self.num_envs, dtype=torch.long, device=env.device)
+        self.crossing_episode = torch.zeros(self.num_envs, dtype=torch.bool, device=env.device)
         # Resolve names once; public qpos/qvel are authoritative after the last
         # physics substep (body sensors can otherwise lag by one substep).
         self.q_indices = torch.as_tensor(
@@ -113,6 +131,18 @@ class VelocityCommand(CommandTerm):
     def _resample_command(self, mask):
         if self.cfg.fixed_command is not None:
             sampled = self.g.new_tensor(self.cfg.fixed_command).expand_as(self.g)
+        elif self.sampler is not None:
+            level = (
+                self.curriculum.terrain_level
+                if self.curriculum is not None
+                else torch.zeros_like(self.command_domain)
+            )
+            sampled, mode, crossing, hold = self.sampler.sample(self.command_domain, level)
+            self.command_mode.copy_(torch.where(mask, mode, self.command_mode))
+            self.crossing_episode.copy_(torch.where(mask, crossing, self.crossing_episode))
+            self.time_left.copy_(torch.where(mask, hold, self.time_left))
+            if self.curriculum is not None:
+                self.curriculum.crossing_episode.copy_(self.crossing_episode)
         else:
             lo, hi = (
                 ((0.25, 0.0, 0.0), (0.6, 0.0, 0.0)),
@@ -153,9 +183,18 @@ class VelocityCommand(CommandTerm):
             self.curriculum.start_xy[ids] = root[ids, :2]
         root[:, 3] = math.cos(self.cfg.spawn_heading / 2)
         root[:, 6] = math.sin(self.cfg.spawn_heading / 2)
+        position = self.mdp.default_q.expand(self.num_envs, 12).contiguous()
+        if any(self.cfg.reset_jitter):
+            xy, yaw, joints = self.cfg.reset_jitter
+            root[:, :2] += self._rng.uniform(-xy, xy, (self.num_envs, 2))
+            angle = self.cfg.spawn_heading + self._rng.uniform(-yaw, yaw, (self.num_envs,))
+            root[:, 3], root[:, 6] = torch.cos(angle / 2), torch.sin(angle / 2)
+            position = position + self._rng.uniform(-joints, joints, (self.num_envs, 12))
+        if self.curriculum is not None:
+            self.curriculum.start_xy[ids] = root[ids, :2]
         self.robot.write_motion_state_tensor_to_sim(
             root_state=root,
-            position=self.mdp.default_q.expand(self.num_envs, 12).contiguous(),
+            position=position,
             velocity=torch.zeros_like(self.a_prev),
             reset_mask=mask,
         )
@@ -165,7 +204,8 @@ class VelocityCommand(CommandTerm):
         self.ep_step[ids] = 0
         self.f[ids] = 0
         self._resample_command(mask)
-        self.time_left[ids] = self.cfg.resampling_time_range[0]
+        if self.sampler is None:
+            self.time_left[ids] = self.cfg.resampling_time_range[0]
         self.command_counter[ids] += 1
         return {}
 
@@ -348,3 +388,17 @@ class ContextEvent(ManagerTermBase):
             self.robot.write_geom_friction_to_sim(
                 fr, geom_ids=self.geom_ids, env_ids=ids, term_name="go2_context"
             )
+
+
+def flat_domain_boundary(env):
+    """Episode truncation before leaving the known flat atlas tile, never a fall.
+
+    General flat commands need room behind and beside the robot; spawn at tile
+    center and keep the whole footprint inside its 8m flat collision geometry.
+    """
+    c = env.command_manager.get_term("velocity")
+    if c.sampler is None or c.curriculum is None:
+        return torch.zeros(env.num_envs, dtype=torch.bool, device=env.device)
+    return (c.command_domain == 0) & (
+        (c.state()[0][:, :2] - c._origins[:, :2]).abs().amax(-1) > 3.2
+    )

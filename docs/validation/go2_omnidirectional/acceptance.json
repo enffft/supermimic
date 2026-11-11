@@ -1,0 +1,43 @@
+{
+  "core_14_commands_pass": true,
+  "core_command_checks": {
+    "stand": true,
+    "forward_low": true,
+    "forward_medium": true,
+    "forward_high": true,
+    "backward_low": true,
+    "backward_medium": true,
+    "lateral_left": true,
+    "lateral_right": true,
+    "turn_left": true,
+    "turn_right": true,
+    "forward_turn": true,
+    "forward_lateral": true,
+    "mixed": true,
+    "reverse_turn": true
+  },
+  "level4_forward_retained": true,
+  "level4_checks": {
+    "stairs_up_L4_cmd0": true,
+    "stairs_down_L4_cmd0": true
+  },
+  "original_contact_gradient_gate": false,
+  "original_minimum_gradient_agreement": 0.7569444444444444,
+  "boundary_commands_with_falls": [
+    "lateral_boundary"
+  ],
+  "terrain_perturbation_falls": [
+    {
+      "scenario": "stairs_up_L4_cmd4",
+      "seed": 2429,
+      "survival_s": 15.68
+    },
+    {
+      "scenario": "stairs_up_L4_cmd4",
+      "seed": 2430,
+      "survival_s": 16.12
+    }
+  ],
+  "stageC_longrun_allowed": false,
+  "reason": "Core omnidirectional recovery passed. Keep speed level0; contact-gradient tail and extreme lateral failures block unattended speed-range expansion/long training."
+}

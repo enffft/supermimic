@@ -46,6 +46,8 @@ class TerrainCurriculum:
         self.mastery = torch.full((num_envs,), fixed_level, device=device, dtype=torch.long)
         self.terrain_level = self.mastery.clone()
         self.terrain_type = torch.arange(num_envs, device=device) % self.origins.shape[1]
+        self.fixed_domain = None
+        self.crossing_episode = torch.ones(num_envs, device=device, dtype=torch.bool)
         self.start_xy = torch.zeros(num_envs, 2, device=device)
         self.last_decision = torch.zeros(num_envs, device=device, dtype=torch.long)
         self.probe = torch.zeros(num_envs, device=device, dtype=torch.bool)
@@ -68,6 +70,8 @@ class TerrainCurriculum:
             name: torch.zeros(shape, device=device, dtype=torch.float64)
             for name in (
                 "episodes",
+                "crossing_episodes",
+                "crossing_falls",
                 "success",
                 "falls",
                 "timeouts",
@@ -112,7 +116,11 @@ class TerrainCurriculum:
         count = self.steps[ids]
         completed = (count >= 499) | self.episode_fall[ids]
         ratio = self.episode_progress[ids] / self.commanded_progress[ids].clamp_min(1e-6)
-        crossing = (self.eligible_steps[ids] >= 0.9 * count) & (self.commanded_progress[ids] >= 1.0)
+        crossing = (
+            self.crossing_episode[ids]
+            & (self.eligible_steps[ids] >= 0.9 * count)
+            & (self.commanded_progress[ids] >= 1.0)
+        )
         success = (
             completed
             & crossing
@@ -126,11 +134,15 @@ class TerrainCurriculum:
         )
         stalled = completed & crossing & (ratio < 0.2)
         failure = self.episode_fall[ids] | stalled
+        if self.fixed_domain is not None:
+            failure &= self.crossing_episode[ids]
         # Manual reset/probes are counted separately and can never certify skill.
         recorded = completed & (count > 0)
         indices = self.terrain_type[ids] * self.origins.shape[0] + self.terrain_level[ids]
         metrics = dict(
             episodes=recorded,
+            crossing_episodes=recorded & self.crossing_episode[ids],
+            crossing_falls=recorded & self.crossing_episode[ids] & self.episode_fall[ids],
             success=success,
             falls=recorded & self.episode_fall[ids],
             timeouts=recorded & ~self.episode_fall[ids],
@@ -148,6 +160,8 @@ class TerrainCurriculum:
             at_ceiling = (
                 (self.terrain_level[ids] == self.mastery[ids]) & ~self.probe[ids] & recorded
             )
+            if self.fixed_domain is not None:
+                at_ceiling &= self.crossing_episode[ids]
             self.success_streak[ids] = torch.where(
                 at_ceiling,
                 torch.where(success, self.success_streak[ids] + 1, 0),
@@ -180,6 +194,10 @@ class TerrainCurriculum:
             self.terrain_level[ids] = torch.searchsorted(self.coverage_cdf, draws).clamp_max(
                 self.max_level
             )
+        if self.fixed_domain is not None:
+            self.terrain_level[ids] = torch.where(
+                self.fixed_domain[ids] == 0, 0, self.terrain_level[ids]
+            )
         self.probe[ids] = (self.enabled and self.phase == "wm") & (
             rng.random((ids.numel(),)) < self.probe_probability
         )
@@ -198,7 +216,10 @@ class TerrainCurriculum:
             "episode_fall",
         ):
             getattr(self, name)[ids] = 0
-        selected_origins = self.origins[self.terrain_level[ids], self.terrain_type[ids]]
+        selected_origins = self.origins[self.terrain_level[ids], self.terrain_type[ids]].clone()
+        if self.fixed_domain is not None:
+            # Atlas entry is .6m from the X edge, center is +3.4m.
+            selected_origins[:, 0] += (self.fixed_domain[ids] == 0) * 3.4
         self.start_xy[ids] = selected_origins[:, :2]
         return selected_origins
 
@@ -228,9 +249,22 @@ class TerrainCurriculum:
         steps = self.statistics["steps"].clamp_min(1)
         for name in ("success", "falls", "timeouts"):
             out[name + "_rate"] = (self.statistics[name] / episodes).cpu().tolist()
+        crossing_episodes = self.statistics["crossing_episodes"].clamp_min(1)
+        out["crossing_success_rate"] = (
+            (self.statistics["success"] / crossing_episodes).cpu().tolist()
+        )
+        out["crossing_fall_rate"] = (
+            (self.statistics["crossing_falls"] / crossing_episodes).cpu().tolist()
+        )
         out["xy_rmse_m_s"] = (self.statistics["xy_sq_sum"] / steps).sqrt().cpu().tolist()
         out["yaw_rmse_rad_s"] = (self.statistics["yaw_sq_sum"] / steps).sqrt().cpu().tolist()
         out["mastery_histogram"] = torch.bincount(self.mastery, minlength=5).cpu().tolist()
         out["level_histogram"] = torch.bincount(self.terrain_level, minlength=5).cpu().tolist()
+        if self.fixed_domain is not None:
+            terrain_envs = self.fixed_domain != 0
+            out["terrain_domain_mastery_histogram"] = (
+                torch.bincount(self.mastery[terrain_envs], minlength=5).cpu().tolist()
+            )
+            out["fixed_flat_envs"] = int((~terrain_envs).sum())
         out["phase"] = self.phase
         return out

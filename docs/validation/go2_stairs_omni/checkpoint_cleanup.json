@@ -1,0 +1,367 @@
+{
+  "scope": "/home/yifeiy/ws_go2_unilab/Uni-SuperMimic/results/stairs_omni_continuation_v2",
+  "authorization": "User explicitly requested keeping one best stable policy and deleting other checkpoints in this experiment.",
+  "kept": {
+    "path": "/home/yifeiy/ws_go2_unilab/Uni-SuperMimic/results/stairs_omni_continuation_v2/best.pt",
+    "sha256": "008ef06e29a78a288879a1b6d9138ef74d505975c67526e8fbee2fa9d3775e3e",
+    "bytes": 1235008329,
+    "iteration": 30807,
+    "sim_steps": 161064960,
+    "update_counts": {
+      "wm": 123228,
+      "actor": 25807,
+      "critic": 526140
+    },
+    "resume_fields": [
+      "command_sampler",
+      "critic",
+      "curriculum",
+      "opt_pi",
+      "opt_v",
+      "opt_wm",
+      "pi",
+      "replay",
+      "update_counts",
+      "value_normalization",
+      "wm"
+    ],
+    "actor_lineage": "Original StageB + original-map 450 retained Actor updates + this extra phase first 250 Actor updates; later rolled-back attempts remain in optimizer counters"
+  },
+  "deleted": [
+    {
+      "path": "atlas_level7_verified/migrated.pt",
+      "bytes": 1234994234,
+      "sha256": "c66b4d9e4adf13b7c1df7036f22b01290dd0148011ada52400fbe0d83b0e5967",
+      "iteration": 29307,
+      "sim_steps": 153253888,
+      "update_counts": {
+        "wm": 117228,
+        "actor": 24807,
+        "critic": 504140
+      }
+    },
+    {
+      "path": "best_accepted.pt",
+      "bytes": 1234992997,
+      "sha256": "52ebc6fdf1e3d575733756939645e4baec1e26c3be4f010892655275ffbdf8d9",
+      "iteration": 26807,
+      "sim_steps": 140453888,
+      "update_counts": {
+        "wm": 107228,
+        "actor": 24357,
+        "critic": 494140
+      }
+    },
+    {
+      "path": "controlled/ckpt_029307.pt",
+      "bytes": 1235004971,
+      "sha256": "7870a9fbcf0ba3f4a7bf87e8728b443d625a6a7093ccb0df287b61e48fe0fb47",
+      "iteration": 29307,
+      "sim_steps": 153253888,
+      "update_counts": {
+        "wm": 117228,
+        "actor": 24807,
+        "critic": 504140
+      }
+    },
+    {
+      "path": "controlled/evaluation_policy.pt",
+      "bytes": 47911305,
+      "sha256": "6f9c40266dc7008d44321dffe878f78a271a9aa3125846cfbaed22ef3dcbc116",
+      "iteration": 29307,
+      "sim_steps": 153253888,
+      "update_counts": {
+        "wm": 117228,
+        "actor": 24807,
+        "critic": 504140
+      }
+    },
+    {
+      "path": "controlled/last.pt",
+      "bytes": 1235002827,
+      "sha256": "f1877167bfae402d1a7a9769969d9fbb3e18e42a964b09e0c954f776e3d6de1a",
+      "iteration": 29307,
+      "sim_steps": 153253888,
+      "update_counts": {
+        "wm": 117228,
+        "actor": 24807,
+        "critic": 504140
+      }
+    },
+    {
+      "path": "controlled/pre_rollback.pt",
+      "bytes": 1235005323,
+      "sha256": "24a128081e531bb8ff0a13982f3bf00d6ad453d7e6f0f4e7597ca1d43da1a9aa",
+      "iteration": 29307,
+      "sim_steps": 153253888,
+      "update_counts": {
+        "wm": 117228,
+        "actor": 24807,
+        "critic": 504140
+      }
+    },
+    {
+      "path": "coverage_audit/last.pt",
+      "bytes": 1234999507,
+      "sha256": "ce38caee2f05e5058254dc102348cbef2d49a86ec08bbd27caf5890b794f4e18",
+      "iteration": 26807,
+      "sim_steps": 143525888,
+      "update_counts": {
+        "wm": 107228,
+        "actor": 24357,
+        "critic": 494140
+      }
+    },
+    {
+      "path": "extra40_training/ckpt_032000.pt",
+      "bytes": 1235010480,
+      "sha256": "4058398bc737874cddba996af82e17391e375670faa81f5d18e8b5c0e03cca5e",
+      "iteration": 32000,
+      "sim_steps": 167174144,
+      "update_counts": {
+        "wm": 128000,
+        "actor": 27000,
+        "critic": 550000
+      }
+    },
+    {
+      "path": "extra40_training/ckpt_034000.pt",
+      "bytes": 1235010480,
+      "sha256": "08ec6276680e7957f85c07cfc5c76ec107294ad1121b944718a5c4bc6547bbba",
+      "iteration": 34000,
+      "sim_steps": 177414144,
+      "update_counts": {
+        "wm": 136000,
+        "actor": 29000,
+        "critic": 590000
+      }
+    },
+    {
+      "path": "extra40_training/ckpt_036000.pt",
+      "bytes": 1235010480,
+      "sha256": "717a390231a1d81fa1486956e31cf3e7c4dd2f6c3d2f2748b5c21d478ee43ce4",
+      "iteration": 36000,
+      "sim_steps": 187654144,
+      "update_counts": {
+        "wm": 144000,
+        "actor": 31000,
+        "critic": 630000
+      }
+    },
+    {
+      "path": "extra40_training/ckpt_036170.pt",
+      "bytes": 1235010480,
+      "sha256": "1eeebf01b4115ea1386411dbbb38e77096f7e522e0d130194662633fa3f04b29",
+      "iteration": 36170,
+      "sim_steps": 188524544,
+      "update_counts": {
+        "wm": 144680,
+        "actor": 31170,
+        "critic": 633400
+      }
+    },
+    {
+      "path": "extra40_training/evaluation_policy.pt",
+      "bytes": 47914377,
+      "sha256": "ed39c7805d2f89ff5f844b950de5713b21921a033134b48059b9c7c507dfdddf",
+      "iteration": 31307,
+      "sim_steps": 163624960,
+      "update_counts": {
+        "wm": 125228,
+        "actor": 26307,
+        "critic": 536140
+      }
+    },
+    {
+      "path": "extra40_training/interrupted.pt",
+      "bytes": 1235010480,
+      "sha256": "c996b019d3d914062ed9fd7f8f750da17386c0cf87829a34674fc32775c4a4f9",
+      "iteration": 31307,
+      "sim_steps": 163624960,
+      "update_counts": {
+        "wm": 125228,
+        "actor": 26307,
+        "critic": 536140
+      }
+    },
+    {
+      "path": "extra40_training/last.pt",
+      "bytes": 1235008329,
+      "sha256": "e6d849d857bd9b7906b989575cbd130502e0a44da0dedf92c72fc902e35a0d34",
+      "iteration": 36170,
+      "sim_steps": 188524544,
+      "update_counts": {
+        "wm": 144680,
+        "actor": 31170,
+        "critic": 633400
+      }
+    },
+    {
+      "path": "level7_training/ckpt_030000.pt",
+      "bytes": 1235010416,
+      "sha256": "ba4796269eef464b6c9ed17f7e5f3bf3dee396b91a60896a65d6998673189812",
+      "iteration": 30000,
+      "sim_steps": 156934144,
+      "update_counts": {
+        "wm": 120000,
+        "actor": 25250,
+        "critic": 514000
+      }
+    },
+    {
+      "path": "level7_training/ckpt_030307.pt",
+      "bytes": 1235010416,
+      "sha256": "11c2d0cd298d5f140a7ca10d577619b13ae2ede4c6c1dc76a8f1926ad816c5d9",
+      "iteration": 30307,
+      "sim_steps": 158504960,
+      "update_counts": {
+        "wm": 121228,
+        "actor": 25557,
+        "critic": 520140
+      }
+    },
+    {
+      "path": "level7_training/evaluation_policy.pt",
+      "bytes": 47914377,
+      "sha256": "ca203a65e8ae1151615a459f581aab56738e0dc76d9e42c5ac747bdad4d22843",
+      "iteration": 30307,
+      "sim_steps": 158504960,
+      "update_counts": {
+        "wm": 121228,
+        "actor": 25557,
+        "critic": 520140
+      }
+    },
+    {
+      "path": "level7_training/interrupted.pt",
+      "bytes": 1234998432,
+      "sha256": "48e3c2ff959ae0d932cf73d0b0caf6b2e60a5ef9a1dbfa26298a68fd9a29ffb6",
+      "iteration": 29307,
+      "sim_steps": 153253888,
+      "update_counts": {
+        "wm": 117228,
+        "actor": 24807,
+        "critic": 504140
+      }
+    },
+    {
+      "path": "level7_training/last.pt",
+      "bytes": 1235008201,
+      "sha256": "312ea8f4369296b3d66ebb04ce79cc5f6fcc7e8221bca06a043216dfd4c1e478",
+      "iteration": 30307,
+      "sim_steps": 158504960,
+      "update_counts": {
+        "wm": 121228,
+        "actor": 25557,
+        "critic": 520140
+      }
+    },
+    {
+      "path": "level7_training/pre_rollback.pt",
+      "bytes": 1235010769,
+      "sha256": "21879d2e1cb9f6829ef4d3eee580699147bca608e3625dbcdc7a8217acafc68d",
+      "iteration": 30307,
+      "sim_steps": 158504960,
+      "update_counts": {
+        "wm": 121228,
+        "actor": 25557,
+        "critic": 520140
+      }
+    },
+    {
+      "path": "training/ckpt_028000.pt",
+      "bytes": 1235002775,
+      "sha256": "f68f859d7132e4c681e5c749ac42fd18fdf6c97adb9cb25c18b7fad42a7e5e81",
+      "iteration": 28000,
+      "sim_steps": 146563072,
+      "update_counts": {
+        "wm": 112000,
+        "actor": 24357,
+        "critic": 494140
+      }
+    },
+    {
+      "path": "training/ckpt_028807.pt",
+      "bytes": 1235002775,
+      "sha256": "1be7f4d26b14778f023499e27995bc087d9391bc76abf15a124a94ecc4708f9f",
+      "iteration": 28807,
+      "sim_steps": 150693888,
+      "update_counts": {
+        "wm": 115228,
+        "actor": 24357,
+        "critic": 494140
+      }
+    },
+    {
+      "path": "training/evaluation_policy.pt",
+      "bytes": 47909355,
+      "sha256": "87cbbf8ae9178e7fd455141a046a21a1b3c3ae48c48cf8386d0f3978f7cef061",
+      "iteration": 28807,
+      "sim_steps": 150693888,
+      "update_counts": {
+        "wm": 115228,
+        "actor": 24357,
+        "critic": 494140
+      }
+    },
+    {
+      "path": "training/interrupted.pt",
+      "bytes": 1235002199,
+      "sha256": "aceb808ef9c4e3c7cf1e06b5a114e26642e44ff042aad7d42ebab92107c78133",
+      "iteration": 27007,
+      "sim_steps": 141477888,
+      "update_counts": {
+        "wm": 108028,
+        "actor": 24357,
+        "critic": 494140
+      }
+    },
+    {
+      "path": "training/last.pt",
+      "bytes": 1235000659,
+      "sha256": "52495945c768e6ac2d0eec110a3191e01093e38ac6d3df5924c4bba46fc8df82",
+      "iteration": 28807,
+      "sim_steps": 150693888,
+      "update_counts": {
+        "wm": 115228,
+        "actor": 24357,
+        "critic": 494140
+      }
+    },
+    {
+      "path": "training/pre_rollback.pt",
+      "bytes": 1235003123,
+      "sha256": "ed3b81f25afe6572273fdc911b690ecd834c9bf0c4eeffef1acf2ad8db400fb8",
+      "iteration": 28807,
+      "sim_steps": 150693888,
+      "update_counts": {
+        "wm": 115228,
+        "actor": 24357,
+        "critic": 494140
+      }
+    }
+  ],
+  "retained_datasets": [
+    "candidate_holdout/heldout.pt",
+    "controlled/holdout_S0/heldout.pt",
+    "controlled/holdout_S1/heldout.pt",
+    "controlled/holdout_S2/heldout.pt",
+    "controlled/holdout_S3/heldout.pt",
+    "extra40_fresh_holdout/heldout.pt",
+    "extra40_training/holdout_S0/heldout.pt",
+    "extra40_training/holdout_S1/heldout.pt",
+    "extra40_training/holdout_S2/heldout.pt",
+    "extra40_training/holdout_S3/heldout.pt",
+    "level7_training/holdout_S0/heldout.pt",
+    "level7_training/holdout_S1/heldout.pt",
+    "level7_training/holdout_S2/heldout.pt",
+    "level7_training/holdout_S3/heldout.pt",
+    "training/holdout_S0/heldout.pt",
+    "training/holdout_S1/heldout.pt",
+    "training/holdout_S2/heldout.pt",
+    "training/holdout_S3/heldout.pt"
+  ],
+  "freed_bytes": 27361759767,
+  "deleted_count": 26,
+  "completed_unix_time": 1794386084.0811648
+}

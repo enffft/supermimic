@@ -1,0 +1,71 @@
+{
+  "commit": "efb25dfd016aaa6516df7574e24f076bc9491532",
+  "argv": [
+    "tools/train_go2_stairs_omni.py",
+    "--checkpoint",
+    "results/stairs_omni_continuation_v2/extra40_training/interrupted.pt",
+    "--output",
+    "results/stairs_omni_continuation_v2/extra40_training",
+    "--task",
+    "stairs_omni_level7",
+    "--resume",
+    "--baseline",
+    "results/stairs_omni_continuation_v2/extra40_baseline/evaluation.json",
+    "--seconds",
+    "1800",
+    "--iterations",
+    "100000",
+    "--eval-period",
+    "100000",
+    "--retained-max-level",
+    "4",
+    "--actor-lr-scale",
+    "0.03"
+  ],
+  "source": "/home/yifeiy/ws_go2_unilab/Uni-SuperMimic/results/stairs_omni_continuation_v2/extra40_training/interrupted.pt",
+  "source_sha256": "c996b019d3d914062ed9fd7f8f750da17386c0cf87829a34674fc32775c4a4f9",
+  "source_counters": {
+    "iteration": 31307,
+    "sim_steps": 163624960,
+    "update_counts": {
+      "wm": 125228,
+      "actor": 26307,
+      "critic": 536140
+    },
+    "wall_time": 14071.340194940567
+  },
+  "num_envs": 2048,
+  "resume_mode": "weights_optimizers_replay_curriculum_restored; environment_resampled; not_exact",
+  "protected_contract_equal": true,
+  "reward": {
+    "linear_tracking": 3.0,
+    "command_direction": 0.5,
+    "yaw_tracking": 1.2,
+    "upright": 0.5,
+    "base_lin_vel_z": -1.0,
+    "base_ang_vel_xy": -0.05,
+    "action_rate": -0.03,
+    "joint_torque": -1e-05,
+    "joint_acceleration": -2.5e-07,
+    "joint_deviation": -0.02,
+    "joint_limit": -1.0,
+    "base_height_low": -5.0,
+    "tracking_sigma_sq": 0.09,
+    "zero_speed_baseline": true,
+    "upright_sigma_sq": 0.16,
+    "min_safe_height": 0.22,
+    "action_clip": 1.0,
+    "gait": {
+      "feet_clearance": 0.0,
+      "diagonal_gait": -0.15,
+      "feet_slip": -0.2,
+      "clearance_target": 0.05,
+      "clearance_sigma": 0.025
+    }
+  },
+  "historical_stageC_gate_unchanged": true,
+  "retained_max_level": 4,
+  "higher_levels": "exploration, not retained-skill regression; all falls logged",
+  "safe_spawn_change": "opt-in minimal vertical lift, default legacy false; command-only migration",
+  "gate": "S0 min qd sign .75, mean .85, paired deterioration <=5pp in <=10% probes; promotion min .80 per probe plus physics"
+}

@@ -1,0 +1,342 @@
+{
+  "checkpoint": "/home/yifeiy/ws_go2_unilab/Uni-SuperMimic/results/stairs_omni_continuation_v2/extra40_training/last.pt",
+  "checkpoint_sha256": "e6d849d857bd9b7906b989575cbd130502e0a44da0dedf92c72fc902e35a0d34",
+  "source": "/home/yifeiy/ws_go2_unilab/Uni-SuperMimic/results/omnidirectional_terrain/stageB/last.pt",
+  "source_sha256": "52ebc6fdf1e3d575733756939645e4baec1e26c3be4f010892655275ffbdf8d9",
+  "iteration": 36170,
+  "source_iteration": 26807,
+  "cumulative_real_transitions": 188524544,
+  "new_training_transitions": 48070656,
+  "cumulative_updates": {
+    "wm": 144680,
+    "actor": 31170,
+    "critic": 633400
+  },
+  "new_attempted_updates": {
+    "wm": 37452,
+    "actor": 6813,
+    "critic": 139260
+  },
+  "rollback_note": "Counters include executed then rolled-back Actor optimizer updates. Selected Actor lineage must be read separately.",
+  "learner_wall_delta_s": 3499.190526485443,
+  "wall_note": "Learner-accounted wall time differs from process wall including external diagnostics; do not equate to two hours.",
+  "initial_actor_max_diff": 0.01754625141620636,
+  "protected_contract_unchanged": {
+    "actor": true,
+    "joints": true,
+    "context": true,
+    "action": true,
+    "reward": true,
+    "reward_manager": true,
+    "terminations": true,
+    "actions": true,
+    "events": true,
+    "model_sha256": true,
+    "sim_dt": true,
+    "ctrl_dt": true
+  },
+  "stairs_speed_levels": [
+    [
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  ],
+  "flat_speed_level": 1,
+  "episode_counts": 3420,
+  "evaluation_seeds": [
+    2426,
+    2427,
+    2428,
+    2429,
+    2430
+  ],
+  "same_evaluation_seeds": true,
+  "same_evaluation_durations": true,
+  "same_safe_spawn": true,
+  "phase_summaries": {
+    "training": {
+      "stop_reason": "wm_new_distribution_gate",
+      "result": {
+        "iteration": 28807,
+        "wall_h": 3.579072092043029,
+        "sim_steps": 150693888,
+        "wm_loss": 0.05279908239841461,
+        "wm_err8": 0.09799985557794572,
+        "pi_loss": 0.0,
+        "v_loss": 0.0,
+        "imag_rew": 0.0,
+        "pi_gradnorm": 0.0,
+        "imag_survival": 0.0,
+        "sim_rew": 0.38377897843482,
+        "ep_len": null,
+        "ep_ret_norm": null,
+        "term_frac": 0.052083333333333336,
+        "it_per_s": 3.8302283823204797,
+        "lr": 0.0001937169414589651,
+        "completed": false,
+        "wall_time": 12895.157983541489
+      },
+      "new_transitions": 9216000,
+      "new_updates": {
+        "wm": 7200,
+        "actor": 0,
+        "critic": 0
+      },
+      "wall_s": 505.0971960640745,
+      "stairs_speed_levels": [
+        [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "flat_speed_level": 1,
+      "profile": {
+        "simulation": {
+          "count": 4500,
+          "mean_ms": 44.30432293892631
+        },
+        "wm_fit": {
+          "count": 7200,
+          "mean_ms": 26.348353174916056
+        }
+      },
+      "checkpoint": "/home/yifeiy/ws_go2_unilab/Uni-SuperMimic/results/stairs_omni_continuation_v2/training/last.pt"
+    },
+    "controlled": {
+      "stop_reason": "physical_regression",
+      "result": {
+        "iteration": 29307,
+        "wall_h": 3.645445323586464,
+        "sim_steps": 153253888,
+        "wm_loss": 0.058615118414163586,
+        "wm_err8": 0.10530867487192154,
+        "pi_loss": -3.1545174980163573,
+        "v_loss": 0.00045251384610310195,
+        "imag_rew": 0.3038446259498596,
+        "pi_gradnorm": 5.198879653215409,
+        "imag_survival": 0.9921728777885437,
+        "sim_rew": 0.37683710928947206,
+        "ep_len": null,
+        "ep_ret_norm": null,
+        "term_frac": 0.11538461538461539,
+        "it_per_s": 3.283297954461062,
+        "lr": 0.0001934993692390523,
+        "completed": false,
+        "wall_time": 13181.583935022354
+      },
+      "new_transitions": 2560000,
+      "new_updates": {
+        "wm": 2000,
+        "actor": 450,
+        "critic": 10000
+      },
+      "wall_s": 337.9367566630244,
+      "stairs_speed_levels": [
+        [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "flat_speed_level": 1,
+      "profile": {
+        "simulation": {
+          "count": 1250,
+          "mean_ms": 39.461383402813226
+        },
+        "wm_fit": {
+          "count": 2000,
+          "mean_ms": 23.878253506612964
+        },
+        "actor_bptt": {
+          "count": 500,
+          "mean_ms": 108.46361434133723
+        },
+        "critic_update": {
+          "count": 500,
+          "mean_ms": 14.92306147608906
+        }
+      },
+      "checkpoint": "/home/yifeiy/ws_go2_unilab/Uni-SuperMimic/results/stairs_omni_continuation_v2/controlled/last.pt"
+    },
+    "level7_training": {
+      "stop_reason": "physical_regression",
+      "result": {
+        "iteration": 30307,
+        "wall_h": 3.755630982716878,
+        "sim_steps": 158504960,
+        "wm_loss": 0.06528297886252403,
+        "wm_err8": 0.1156198263168335,
+        "pi_loss": -3.228805112838745,
+        "v_loss": 0.0002847599287633784,
+        "imag_rew": 0.3101073884963989,
+        "pi_gradnorm": 0.6054316437244416,
+        "imag_survival": 0.9939846801757812,
+        "sim_rew": 0.32257144564082696,
+        "ep_len": null,
+        "ep_ret_norm": null,
+        "term_frac": 0.0005820721769499418,
+        "it_per_s": 3.3042046604280073,
+        "lr": 0.0001930535152492385,
+        "completed": false,
+        "wall_time": 13616.268763065338
+      },
+      "new_transitions": 5251072,
+      "new_updates": {
+        "wm": 4000,
+        "actor": 750,
+        "critic": 16000
+      },
+      "wall_s": 550.6224621899892,
+      "stairs_speed_levels": [
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "flat_speed_level": 1,
+      "profile": {
+        "simulation": {
+          "count": 2564,
+          "mean_ms": 36.14380979260674
+        },
+        "wm_fit": {
+          "count": 4000,
+          "mean_ms": 22.545600709388964
+        },
+        "actor_bptt": {
+          "count": 800,
+          "mean_ms": 101.17214561149012
+        },
+        "critic_update": {
+          "count": 800,
+          "mean_ms": 14.678488459612709
+        }
+      },
+      "checkpoint": "/home/yifeiy/ws_go2_unilab/Uni-SuperMimic/results/stairs_omni_continuation_v2/level7_training/last.pt"
+    },
+    "extra40_training": {
+      "stop_reason": "wall_budget",
+      "result": {
+        "iteration": 36170,
+        "wall_h": 4.402025103701486,
+        "sim_steps": 188524544,
+        "wm_loss": 0.06913984030485153,
+        "wm_err8": 0.11694501459598541,
+        "pi_loss": -3.2517161846160887,
+        "v_loss": 0.0001302927352662664,
+        "imag_rew": 0.3136344301700592,
+        "pi_gradnorm": 0.6207173764705658,
+        "imag_survival": 0.9938843250274658,
+        "sim_rew": 0.3482660386297438,
+        "ep_len": null,
+        "ep_ret_norm": null,
+        "term_frac": 0.06086956521739131,
+        "it_per_s": 3.0864116132265096,
+        "lr": 0.0001901627667870666,
+        "completed": false,
+        "wall_time": 15855.982967615128
+      },
+      "new_transitions": 24899584,
+      "new_updates": {
+        "wm": 19452,
+        "actor": 4863,
+        "critic": 97260
+      },
+      "wall_s": 1790.7873880220577,
+      "stairs_speed_levels": [
+        [
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "flat_speed_level": 1,
+      "profile": {
+        "simulation": {
+          "count": 12158,
+          "mean_ms": 45.461452256195365
+        },
+        "wm_fit": {
+          "count": 19452,
+          "mean_ms": 25.16257464771523
+        },
+        "actor_bptt": {
+          "count": 4863,
+          "mean_ms": 111.02179800675971
+        },
+        "critic_update": {
+          "count": 4863,
+          "mean_ms": 14.861232820387341
+        }
+      },
+      "checkpoint": "/home/yifeiy/ws_go2_unilab/Uni-SuperMimic/results/stairs_omni_continuation_v2/extra40_training/last.pt"
+    }
+  }
+}

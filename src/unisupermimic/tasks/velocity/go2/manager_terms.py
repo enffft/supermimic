@@ -138,6 +138,14 @@ class VelocityCommand(CommandTerm):
                 else torch.zeros_like(self.command_domain)
             )
             sampled, mode, crossing, hold = self.sampler.sample(self.command_domain, level)
+            if self.sampler.cfg.stairs_omni:
+                # Episode intent is latched at reset. A maneuver resample can
+                # never turn its accumulated history into traversal evidence.
+                ongoing_stairs = (self.command_domain >= 4) & (self.ep_step > 0)
+                crossing = crossing & ~ongoing_stairs
+                hold = torch.where(
+                    ongoing_stairs, hold.clamp(*self.sampler.cfg.stairs_maneuver_hold_range), hold
+                )
             self.command_mode.copy_(torch.where(mask, mode, self.command_mode))
             self.crossing_episode.copy_(torch.where(mask, crossing, self.crossing_episode))
             self.time_left.copy_(torch.where(mask, hold, self.time_left))
@@ -168,9 +176,23 @@ class VelocityCommand(CommandTerm):
             return {}
         if self.curriculum is not None:
             self._origins[ids] = self.curriculum.reset(ids, self._rng)
+        early_command = self.sampler is not None and self.sampler.cfg.stairs_omni
+        if early_command:
+            self.ep_step[ids] = 0
+            self._resample_command(mask)
         root = torch.zeros(self.num_envs, 13, device=self._device)
         root[:, :3] = self._origins
         root[:, :3] += root.new_tensor(self.cfg.spawn_offset)
+        if early_command:
+            # Pure lateral/turning at the flat approach never reaches stairs.
+            # Maneuvers start on an existing tread; traversals retain entry reset.
+            maneuver = (self.command_domain >= 4) & ~self.crossing_episode
+            direction = root.new_tensor(
+                (math.cos(self.cfg.spawn_heading), math.sin(self.cfg.spawn_heading))
+            )
+            root[:, :2] += (
+                maneuver[:, None] * direction * self.sampler.cfg.stairs_maneuver_entry_offset
+            )
         if self.curriculum is not None:
             direction = root.new_tensor(
                 (math.cos(self.cfg.spawn_heading), math.sin(self.cfg.spawn_heading))
@@ -203,7 +225,8 @@ class VelocityCommand(CommandTerm):
             self.xi[ids, 1:13] = self._rng.uniform(-0.01, 0.01, (ids.numel(), 12))
         self.ep_step[ids] = 0
         self.f[ids] = 0
-        self._resample_command(mask)
+        if not early_command:
+            self._resample_command(mask)
         if self.sampler is None:
             self.time_left[ids] = self.cfg.resampling_time_range[0]
         self.command_counter[ids] += 1

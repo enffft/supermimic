@@ -707,6 +707,15 @@ class SuperMimicLearner:
                 self.extra_state.setdefault(
                     "actual_actor_start_modes", torch.zeros(6, device=self.device, dtype=torch.long)
                 ).add_(torch.bincount(start["command_mode"], minlength=6))
+                if "terrain_level" in start:
+                    self.extra_state.setdefault(
+                        "actual_actor_start_scopes",
+                        torch.zeros(6, 5, device=self.device, dtype=torch.long),
+                    ).view(-1).add_(
+                        torch.bincount(
+                            start["command_domain"] * 5 + start["terrain_level"], minlength=30
+                        )
+                    )
         state = unflatten_state(start["s"])
         context, frames, previous_action = start["xi"], start["f"], start["a_prev"]
         normalized_context = self.mdp.normalize_context(context)
@@ -1083,7 +1092,10 @@ class SuperMimicLearner:
                 curriculum.episode_fall.zero_()
             term = command.get_term("velocity") if command else None
             if getattr(term, "sampler", None) is not None and "command_sampler" in checkpoint:
-                term.sampler.load_state_dict(checkpoint["command_sampler"])
+                term.sampler.load_state_dict(
+                    checkpoint["command_sampler"],
+                    allow_distribution_change=allow_command_distribution_change,
+                )
             self.env.reset()
             self.obs_hist.zero_()
             torch.set_rng_state(checkpoint["torch_rng"].cpu())

@@ -1,0 +1,22 @@
+# @package _global_
+defaults:
+  - /task/go2_velocity/omnidirectional_terrain
+# Only the opt-in command sampler changes task semantics. No reward overrides.
+algo:
+  iterations: 200000
+  actor_lr_scale: 0.1
+  actor_ramp_iters: 500
+env:
+  commands:
+    velocity:
+      sampler:
+        flat_velocity_levels:
+          - [[-0.25, 0.60], [-0.15, 0.15], [-0.35, 0.35]]
+          - [[-0.30, 0.80], [-0.20, 0.20], [-0.50, 0.50]]
+          - [[-0.40, 0.80], [-0.30, 0.30], [-0.65, 0.65]]
+        stairs_omni: true
+        stairs_mode_weights: [0.30, 0.25, 0.20, 0.10, 0.10, 0.05]
+        stairs_speed_limits: [[0.08, 0.15], [0.15, 0.30], [0.22, 0.45], [0.30, 0.60]]
+        stairs_vx_range: [-0.30, 0.80]
+        stairs_maneuver_hold_range: [2.0, 4.0]
+        stairs_maneuver_entry_offset: 1.6

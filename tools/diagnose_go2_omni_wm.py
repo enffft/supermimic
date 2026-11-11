@@ -24,7 +24,7 @@ from evaluate_go2_omnidirectional import FLAT, TYPES
 from evaluate_go2_terrain_b import physical_fd
 
 
-def collect(checkpoint, out):
+def collect(checkpoint, out, stairs_speed=None):
     out.mkdir(parents=True, exist_ok=False)
     source = torch.load(checkpoint, map_location="cpu", weights_only=True, mmap=True)
     pi = Policy(
@@ -48,6 +48,16 @@ def collect(checkpoint, out):
     scenarios = [(name, 0, 0, g) for name, g in FLAT] + [
         (f"{TYPES[t]}_L{level}", t, level, (0.4, 0, 0)) for level in (1, 2, 4) for t in range(5)
     ]
+    if stairs_speed is not None:
+        from evaluate_go2_omnidirectional import stairs_speed_commands
+
+        scenarios = [
+            (f"{TYPES[t]}_L{level}_S{stairs_speed}_{i}", t, level, g)
+            for t in (3, 4)
+            for level in range(1, 5)
+            for i, g in enumerate(stairs_speed_commands(stairs_speed))
+        ]
+        cmdcfg.spawn_offset = (1.6, 0, 0)
     env = make_go2_env(cfg, len(scenarios))
     env.init_state()
     c = env.command_manager.get_term("velocity")
@@ -69,6 +79,8 @@ def collect(checkpoint, out):
         env.reset(seed=3526)
         c.g[:] = torch.tensor([s[3] for s in scenarios])
         for t in range(300):
+            if stairs_speed is not None:
+                c.g[:] = torch.tensor([s[3] for s in scenarios])
             info = env.current_info()
             state = unflatten_state(info["s"])
             obs = c.mdp.obs(state, info["a_prev"], info["xi"], info["f"])
@@ -81,7 +93,11 @@ def collect(checkpoint, out):
                 a = pi(history, info["g"])
             if t == 80:
                 snap = env.get_physics_state_layout().split_state(env.get_physics_state_snapshot())
-                for i in [2, 5, 6, 7, 8, 9, *range(len(FLAT), len(scenarios))]:
+                for i in (
+                    list(range(len(scenarios)))
+                    if stairs_speed is not None
+                    else [2, 5, 6, 7, 8, 9, *range(len(FLAT), len(scenarios))]
+                ):
                     probes.append(
                         dict(
                             s=info["s"][i].clone(),
@@ -261,9 +277,10 @@ def main():
     p.add_argument("--checkpoint", type=Path, required=True)
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--dataset", type=Path)
+    p.add_argument("--stairs-speed", type=int, choices=range(4))
     a = p.parse_args()
     if a.mode == "collect":
-        collect(a.checkpoint, a.output)
+        collect(a.checkpoint, a.output, a.stairs_speed)
     else:
         evaluate(a.checkpoint, a.dataset, a.output)
 

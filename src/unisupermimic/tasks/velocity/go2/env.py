@@ -53,7 +53,16 @@ class Go2VelocityEnv(ManagerBasedRlEnv):
             defaults = asdict(VelocitySamplerCfg())
             # Adding explicit default range fields preserves early-adaptation
             # checkpoint contracts; nondefault ranges remain strictly recorded.
-            for key in ("flat_velocity_levels", "terrain_velocity_ranges"):
+            for key in (
+                "flat_velocity_levels",
+                "terrain_velocity_ranges",
+                "stairs_omni",
+                "stairs_mode_weights",
+                "stairs_speed_limits",
+                "stairs_vx_range",
+                "stairs_maneuver_hold_range",
+                "stairs_maneuver_entry_offset",
+            ):
                 if json.dumps(contract["commands"]["sampler"][key]) == json.dumps(defaults[key]):
                     contract["commands"]["sampler"].pop(key)
         new_fields = (

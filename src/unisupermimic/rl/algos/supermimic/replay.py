@@ -67,6 +67,8 @@ class ReplayBuffer:
             self.data[key] = torch.zeros(field_shape, dtype=dtype, device=self.device)
         self.ptr = 0
         self.size = 0
+        # Opt-in collector metadata admission, never an observation feature.
+        self.start_scope_mask = None
 
     def mark_reset_boundary(self, reset_mask: torch.Tensor) -> None:
         """Close prior transitions after an explicit reset outside env.step().
@@ -91,6 +93,7 @@ class ReplayBuffer:
             "size": self.size,
             "data": self.data,
             "sampling_counts": self.sampling_counts,
+            "start_scope_mask": self.start_scope_mask,
         }
 
     def load_state_dict(self, values, *, infer_command_metadata=False):
@@ -115,6 +118,11 @@ class ReplayBuffer:
                 raise ValueError(f"Replay field mismatch: {name}")
             self.data[name].copy_(tensor)
         self.ptr, self.size = values["ptr"], values["size"]
+        scope = values.get("start_scope_mask")
+        if scope is not None:
+            if scope.shape != (6, 5) or scope.dtype != torch.bool:
+                raise ValueError("Invalid imagination domain/terrain-level admission")
+            self.start_scope_mask = scope.to(self.device).clone()
         for name, count in values.get("sampling_counts", {}).items():
             self.sampling_counts[name].copy_(count)
 
@@ -158,9 +166,26 @@ class ReplayBuffer:
             raise ValueError("cannot sample from an empty replay buffer")
         if hist < 1:
             raise ValueError(f"history length must be positive, got {hist}")
-        pool = B if command_bucket_weights is None else max(8192, B * 32)
+        pool = (
+            B
+            if command_bucket_weights is None and self.start_scope_mask is None
+            else max(8192, B * 32)
+        )
         age = torch.randint(0, self.size, (pool,), device=self.device)
         env = torch.randint(0, self.N, (pool,), device=self.device)
+        if self.start_scope_mask is not None:
+            if not {"command_domain", "terrain_level"} <= self.fields.keys():
+                raise ValueError("Scope admission requires command and terrain metadata")
+            rows = self._row(age)
+            valid = self.start_scope_mask[
+                self.data["command_domain"][rows, env], self.data["terrain_level"][rows, env]
+            ]
+            age, env = age[valid], env[valid]
+            if not len(age):
+                raise ValueError("No admitted imagination starts in sampled replay pool")
+            if command_bucket_weights is None:
+                selected = torch.randint(len(age), (B,), device=self.device)
+                age, env = age[selected], env[selected]
         if command_bucket_weights is not None:
             if "command_mode" not in self.fields:
                 raise ValueError("Stratified starts require explicit command metadata")
@@ -191,7 +216,7 @@ class ReplayBuffer:
         start = {key: self.data[key][row, env] for key in ("s", "a_prev", "xi", "f")}
         if "g" in self.fields:
             start["g"] = self.data["g"][row, env]
-        for key in ("command_mode", "command_domain"):
+        for key in ("command_mode", "command_domain", "terrain_level"):
             if key in self.fields:
                 start[key] = self.data[key][row, env]
         if "command_mode" in start:

@@ -32,11 +32,17 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--checkpoint", type=Path, default=DEFAULT_CHECKPOINT)
     parser.add_argument("--terrain", choices=TERRAINS, default="stairs")
-    parser.add_argument("--level", type=int, choices=range(5), default=4)
+    parser.add_argument("--level", type=int, choices=range(8), default=4)
     parser.add_argument("--vx", type=float, default=0.4)
     parser.add_argument("--vy", type=float, default=0.0)
     parser.add_argument("--wz", type=float, default=0.0)
     parser.add_argument("--seconds", type=float, default=20.0)
+    parser.add_argument(
+        "--entry-offset",
+        type=float,
+        default=0.0,
+        help="Explicit maneuver reset along terrain entry, metres (0..2)",
+    )
     parser.add_argument("--episodes", type=int, default=1)
     parser.add_argument("--seed", type=int, default=2426)
     parser.add_argument("--device", default="cpu")
@@ -46,6 +52,7 @@ def main():
     args = parser.parse_args()
     if (
         args.seconds <= 0
+        or not 0 <= args.entry_offset <= 2
         or args.episodes < 1
         or not all(math.isfinite(v) for v in (args.vx, args.vy, args.wz))
     ):
@@ -65,7 +72,13 @@ def main():
     command.terrain_profile = args.terrain
     command.terrain_curriculum = False
     command.terrain_fixed_level = args.level
+    if args.level > 4:
+        if args.terrain not in ("stairs", "stairs_down"):
+            parser.error("Only stairs may exceed Level4")
+        command.terrain_max_level = 7
+        command.terrain_coverage_weights = (0.2, 0.4, 0.3, 0.1, 0, 0, 0, 0)
     command.fixed_command = (args.vx, args.vy, args.wz)
+    command.spawn_offset = (args.entry_offset, 0.0, 0.0)
     command.resampling_time_range = (max(args.seconds + 1, 21.0),) * 2
     cfg.max_episode_seconds = args.seconds
     cfg.seed = args.seed

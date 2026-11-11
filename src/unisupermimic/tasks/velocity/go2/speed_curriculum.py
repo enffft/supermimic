@@ -62,10 +62,11 @@ def imagination_scope_admission(diagnostics_by_speed, stairs_levels):
     """
     import torch
 
-    mask = torch.ones(6, 5, dtype=torch.bool)
+    nlevels = len(stairs_levels[0])
+    mask = torch.ones(6, nlevels, dtype=torch.bool)
     details = {}
     for direction in range(2):
-        for level in range(1, 5):
+        for level in range(1, nlevels):
             speed = int(stairs_levels[direction][level])
             diag = diagnostics_by_speed[speed]
             prefix = f"stairs_{'up' if direction == 0 else 'down'}_L{level}_S{speed}_"

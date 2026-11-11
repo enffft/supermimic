@@ -1,0 +1,70 @@
+{
+  "controlled/last.pt": {
+    "sha256": "f1877167bfae402d1a7a9769969d9fbb3e18e42a964b09e0c954f776e3d6de1a",
+    "bytes": 1235002827
+  },
+  "controlled/pre_rollback.pt": {
+    "sha256": "24a128081e531bb8ff0a13982f3bf00d6ad453d7e6f0f4e7597ca1d43da1a9aa",
+    "bytes": 1235005323
+  },
+  "training/last.pt": {
+    "sha256": "52495945c768e6ac2d0eec110a3191e01093e38ac6d3df5924c4bba46fc8df82",
+    "bytes": 1235000659
+  },
+  "coverage_audit/last.pt": {
+    "sha256": "ce38caee2f05e5058254dc102348cbef2d49a86ec08bbd27caf5890b794f4e18",
+    "bytes": 1234999507
+  },
+  "rollback_actor_max_tensor_diff": 0.0,
+  "new_transitions_training": 12800000,
+  "new_updates": {
+    "wm": 10000,
+    "actor": 450,
+    "critic": 10000
+  },
+  "learner_wall_delta_s": 824.7914938926697,
+  "actual_actor_start_scopes": [
+    [
+      54462,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      598,
+      888,
+      1050,
+      738,
+      20184
+    ],
+    [
+      491,
+      425,
+      346,
+      443,
+      7615
+    ],
+    [
+      299,
+      422,
+      426,
+      304,
+      7387
+    ],
+    [
+      279,
+      309,
+      0,
+      407,
+      8792
+    ],
+    [
+      445,
+      0,
+      0,
+      520,
+      8370
+    ]
+  ]
+}

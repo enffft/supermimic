@@ -1,0 +1,11 @@
+# @package _global_
+defaults:
+  - /task/go2_velocity/stairs_omni_continuation
+# User-authorized independent atlas extension. Rough/slopes remain capped at4.
+env:
+  commands:
+    velocity:
+      terrain_max_level: 7
+      terrain_coverage_weights: [0.2, 0.4, 0.3, 0.1, 0.0, 0.0, 0.0, 0.0]
+      sampler:
+        terrain_level_count: 8

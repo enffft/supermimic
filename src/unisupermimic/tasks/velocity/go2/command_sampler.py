@@ -14,6 +14,7 @@ MODES = ("standing", "forward", "backward", "lateral", "turning", "mixed")
 
 @dataclass
 class VelocitySamplerCfg:
+    terrain_level_count: int = 5
     stairs_omni: bool = False
     stairs_mode_weights: tuple = (0.30, 0.25, 0.20, 0.10, 0.10, 0.05)
     stairs_speed_limits: tuple = ((0.08, 0.15), (0.15, 0.30), (0.22, 0.45), (0.30, 0.60))
@@ -118,7 +119,11 @@ class TerrainAwareVelocitySampler:
         if not torch.isfinite(ranges).all() or (ranges[..., 0] > ranges[..., 1]).any():
             raise ValueError("Invalid velocity range endpoints")
         self.lows, self.highs = ranges[..., 0], ranges[..., 1]
-        self.stairs_levels = torch.zeros(2, 5, dtype=torch.long, device=device)
+        if not 5 <= cfg.terrain_level_count <= 8:
+            raise ValueError("Expected 5..8 terrain levels")
+        self.stairs_levels = torch.zeros(
+            2, cfg.terrain_level_count, dtype=torch.long, device=device
+        )
         sw = w.new_tensor(cfg.stairs_mode_weights)
         limits = w.new_tensor(cfg.stairs_speed_limits)
         if (
@@ -145,7 +150,11 @@ class TerrainAwareVelocitySampler:
         self.stairs_cdf, self.stairs_limits = sw.cumsum(0), limits
 
     def set_stairs_speed_level(self, direction, terrain_level, speed_level):
-        if direction not in (0, 1) or terrain_level not in range(5) or speed_level not in range(4):
+        if (
+            direction not in (0, 1)
+            or terrain_level not in range(self.cfg.terrain_level_count)
+            or speed_level not in range(4)
+        ):
             raise ValueError("Expected stairs direction 0/1, terrain level 0..4, speed level 0..3")
         self.stairs_levels[direction, terrain_level] = speed_level
 
@@ -267,9 +276,16 @@ class TerrainAwareVelocitySampler:
         self.set_speed_level(state["speed_level"])
         if "stairs_levels" in state:
             levels = state["stairs_levels"]
-            if levels.shape != (2, 5) or ((levels < 0) | (levels > 3)).any():
+            if (
+                levels.ndim != 2
+                or levels.shape[0] != 2
+                or levels.shape[1] > self.cfg.terrain_level_count
+                or ((levels < 0) | (levels > 3)).any()
+            ):
                 raise ValueError("Invalid saved stairs speed curriculum")
-            self.stairs_levels.copy_(levels)
+            if not allow_distribution_change and levels.shape != self.stairs_levels.shape:
+                raise ValueError("Explicit atlas expansion required for speed state shape change")
+            self.stairs_levels[:, : levels.shape[1]].copy_(levels)
         self.rng.set_state(state["rng"].cpu())
 
 

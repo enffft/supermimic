@@ -708,12 +708,16 @@ class SuperMimicLearner:
                     "actual_actor_start_modes", torch.zeros(6, device=self.device, dtype=torch.long)
                 ).add_(torch.bincount(start["command_mode"], minlength=6))
                 if "terrain_level" in start:
+                    scope_levels = (
+                        self.env.command_manager.get_term("velocity").cfg.terrain_max_level + 1
+                    )
                     self.extra_state.setdefault(
                         "actual_actor_start_scopes",
-                        torch.zeros(6, 5, device=self.device, dtype=torch.long),
+                        torch.zeros(6, scope_levels, device=self.device, dtype=torch.long),
                     ).view(-1).add_(
                         torch.bincount(
-                            start["command_domain"] * 5 + start["terrain_level"], minlength=30
+                            start["command_domain"] * scope_levels + start["terrain_level"],
+                            minlength=6 * scope_levels,
                         )
                     )
         state = unflatten_state(start["s"])
@@ -1076,6 +1080,7 @@ class SuperMimicLearner:
                 values["initialized"],
             )
         if "replay" in checkpoint:
+            recorded_command_metadata = "command_mode" in checkpoint["replay"]["data"]
             self.buffer.load_state_dict(
                 checkpoint["replay"], infer_command_metadata=allow_command_distribution_change
             )
@@ -1110,7 +1115,11 @@ class SuperMimicLearner:
                     "iteration": self.iteration,
                     "old_commands": old_contract["commands"],
                     "new_commands": new_contract["commands"],
-                    "old_replay_tags": "inferred_from_recorded_goal_and_tile; not_original_mode_labels",
+                    "old_replay_tags": (
+                        "preserved_recorded_command_metadata"
+                        if recorded_command_metadata
+                        else "inferred_from_recorded_goal_and_tile; not_original_mode_labels"
+                    ),
                 }
                 self.resume_mode += "; explicit_command_distribution_migration"
         else:

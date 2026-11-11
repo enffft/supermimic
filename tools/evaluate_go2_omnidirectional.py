@@ -76,6 +76,7 @@ def evaluate(
     seconds=20,
     quick=False,
     stairs_omni=False,
+    terrain_max_level=4,
 ):
     output = Path(output)
     output.mkdir(parents=True, exist_ok=False)
@@ -98,8 +99,9 @@ def evaluate(
             if domain == "flat"
             else [
                 (f"{TYPES[t]}_L{level}_cmd{i}", t, level, cmd)
-                for level in range(1, 5)
+                for level in range(1, terrain_max_level + 1)
                 for t in range(5)
+                if t >= 3 or level <= 4
                 for i, cmd in enumerate(PERTURBATIONS)
             ]
         )
@@ -112,13 +114,13 @@ def evaluate(
             scenarios = [
                 (f"{TYPES[t]}_L{level}_omni{i}", t, level, g)
                 for t in (3, 4)
-                for level in range(1, 5)
+                for level in range(1, terrain_max_level + 1)
                 for i, g in enumerate(STAIRS_OMNI)
             ]
             scenarios += [
                 (f"{TYPES[t]}_L{level}_S{speed}_{i}", t, level, g)
                 for t in (3, 4)
-                for level in range(1, 5)
+                for level in range(1, terrain_max_level + 1)
                 for speed in range(4)
                 for i, g in enumerate(stairs_speed_commands(speed))
             ]
@@ -148,6 +150,9 @@ def evaluate(
         episode_seconds = min(seconds, 4.0) if domain == "stairs_maneuver" else seconds
         cfg = load_config(terrain=True)
         c = cfg.commands["velocity"]
+        c.terrain_max_level = terrain_max_level
+        if terrain_max_level == 7:
+            c.terrain_coverage_weights = (0.2, 0.4, 0.3, 0.1, 0, 0, 0, 0)
         c.terrain_profile = "flat" if domain == "flat" else "mixed"
         c.terrain_curriculum = False
         c.terrain_phase = "fixed"
@@ -337,10 +342,11 @@ def main():
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--quick", action="store_true")
     p.add_argument("--stairs-omni", action="store_true")
+    p.add_argument("--max-level", type=int, choices=(4, 7), default=4)
     p.add_argument("--seconds", type=float, default=20)
     p.add_argument("--seeds", type=int, nargs="+", default=[2426, 2427, 2428, 2429, 2430])
     a = p.parse_args()
-    evaluate(a.checkpoint, a.output, a.seeds, a.seconds, a.quick, a.stairs_omni)
+    evaluate(a.checkpoint, a.output, a.seeds, a.seconds, a.quick, a.stairs_omni, a.max_level)
 
 
 if __name__ == "__main__":

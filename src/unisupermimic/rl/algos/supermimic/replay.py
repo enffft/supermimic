@@ -120,7 +120,12 @@ class ReplayBuffer:
         self.ptr, self.size = values["ptr"], values["size"]
         scope = values.get("start_scope_mask")
         if scope is not None:
-            if scope.shape != (6, 5) or scope.dtype != torch.bool:
+            if (
+                scope.ndim != 2
+                or scope.shape[0] != 6
+                or not 5 <= scope.shape[1] <= 8
+                or scope.dtype != torch.bool
+            ):
                 raise ValueError("Invalid imagination domain/terrain-level admission")
             self.start_scope_mask = scope.to(self.device).clone()
         for name, count in values.get("sampling_counts", {}).items():

@@ -1,0 +1,30 @@
+{
+  "checkpoint": "/home/yifeiy/ws_go2_unilab/Uni-SuperMimic/results/stairs_omni_continuation_v2/controlled/pre_rollback.pt",
+  "terrain": "stairs",
+  "level": 1,
+  "command": [
+    0.4,
+    0.08,
+    0.15
+  ],
+  "episodes": [
+    {
+      "episode": 0,
+      "seed": 2426,
+      "steps": 200,
+      "elapsed_sim_s": 4.0,
+      "fallen": false,
+      "displacement_world_m": [
+        1.4106502532958984,
+        0.6077916622161865,
+        -0.05332326889038086
+      ],
+      "velocity_xy_rmse_m_s": 0.08273098101371591,
+      "yaw_rmse_rad_s": 0.04024269123146745,
+      "reward_sum": 13.204484327230603,
+      "mean_geometric_foot_slip_m_s": 0.20241671642288567,
+      "actor_saturation_fraction": 0.2100000035017729
+    }
+  ],
+  "note": "Foot slip uses geometric clearance proxy; fall is environment hard termination."
+}

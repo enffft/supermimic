@@ -1,0 +1,66 @@
+{
+  "stop_reason": "physical_regression",
+  "result": {
+    "iteration": 29307,
+    "wall_h": 3.645445323586464,
+    "sim_steps": 153253888,
+    "wm_loss": 0.058615118414163586,
+    "wm_err8": 0.10530867487192154,
+    "pi_loss": -3.1545174980163573,
+    "v_loss": 0.00045251384610310195,
+    "imag_rew": 0.3038446259498596,
+    "pi_gradnorm": 5.198879653215409,
+    "imag_survival": 0.9921728777885437,
+    "sim_rew": 0.37683710928947206,
+    "ep_len": null,
+    "ep_ret_norm": null,
+    "term_frac": 0.11538461538461539,
+    "it_per_s": 3.283297954461062,
+    "lr": 0.0001934993692390523,
+    "completed": false,
+    "wall_time": 13181.583935022354
+  },
+  "new_transitions": 2560000,
+  "new_updates": {
+    "wm": 2000,
+    "actor": 450,
+    "critic": 10000
+  },
+  "wall_s": 337.9367566630244,
+  "stairs_speed_levels": [
+    [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  ],
+  "flat_speed_level": 1,
+  "profile": {
+    "simulation": {
+      "count": 1250,
+      "mean_ms": 39.461383402813226
+    },
+    "wm_fit": {
+      "count": 2000,
+      "mean_ms": 23.878253506612964
+    },
+    "actor_bptt": {
+      "count": 500,
+      "mean_ms": 108.46361434133723
+    },
+    "critic_update": {
+      "count": 500,
+      "mean_ms": 14.92306147608906
+    }
+  },
+  "checkpoint": "/home/yifeiy/ws_go2_unilab/Uni-SuperMimic/results/stairs_omni_continuation_v2/controlled/last.pt"
+}

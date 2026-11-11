@@ -1,0 +1,62 @@
+{
+  "commit": "ff31189623890d47e9d491862172c8378b95f52f",
+  "argv": [
+    "tools/train_go2_stairs_omni.py",
+    "--checkpoint",
+    "results/stairs_omni_continuation_v2/training/last.pt",
+    "--output",
+    "results/stairs_omni_continuation_v2/controlled",
+    "--resume",
+    "--baseline",
+    "results/stairs_omni_continuation_v2/baseline/evaluation.json",
+    "--seconds",
+    "6200",
+    "--iterations",
+    "100000",
+    "--eval-period",
+    "250"
+  ],
+  "source": "/home/yifeiy/ws_go2_unilab/Uni-SuperMimic/results/stairs_omni_continuation_v2/training/last.pt",
+  "source_sha256": "52495945c768e6ac2d0eec110a3191e01093e38ac6d3df5924c4bba46fc8df82",
+  "source_counters": {
+    "iteration": 28807,
+    "sim_steps": 150693888,
+    "update_counts": {
+      "wm": 115228,
+      "actor": 24357,
+      "critic": 494140
+    },
+    "wall_time": 12895.157983541489
+  },
+  "num_envs": 2048,
+  "resume_mode": "weights_optimizers_replay_curriculum_restored; environment_resampled; not_exact",
+  "protected_contract_equal": true,
+  "reward": {
+    "linear_tracking": 3.0,
+    "command_direction": 0.5,
+    "yaw_tracking": 1.2,
+    "upright": 0.5,
+    "base_lin_vel_z": -1.0,
+    "base_ang_vel_xy": -0.05,
+    "action_rate": -0.03,
+    "joint_torque": -1e-05,
+    "joint_acceleration": -2.5e-07,
+    "joint_deviation": -0.02,
+    "joint_limit": -1.0,
+    "base_height_low": -5.0,
+    "tracking_sigma_sq": 0.09,
+    "zero_speed_baseline": true,
+    "upright_sigma_sq": 0.16,
+    "min_safe_height": 0.22,
+    "action_clip": 1.0,
+    "gait": {
+      "feet_clearance": 0.0,
+      "diagonal_gait": -0.15,
+      "feet_slip": -0.2,
+      "clearance_target": 0.05,
+      "clearance_sigma": 0.025
+    }
+  },
+  "historical_stageC_gate_unchanged": true,
+  "gate": "S0 min qd sign .75, mean .85, paired deterioration <=5pp in <=10% probes; promotion min .80 per probe plus physics"
+}

@@ -1,0 +1,58 @@
+{
+  "stop_reason": "wm_new_distribution_gate",
+  "result": {
+    "iteration": 28807,
+    "wall_h": 3.579072092043029,
+    "sim_steps": 150693888,
+    "wm_loss": 0.05279908239841461,
+    "wm_err8": 0.09799985557794572,
+    "pi_loss": 0.0,
+    "v_loss": 0.0,
+    "imag_rew": 0.0,
+    "pi_gradnorm": 0.0,
+    "imag_survival": 0.0,
+    "sim_rew": 0.38377897843482,
+    "ep_len": null,
+    "ep_ret_norm": null,
+    "term_frac": 0.052083333333333336,
+    "it_per_s": 3.8302283823204797,
+    "lr": 0.0001937169414589651,
+    "completed": false,
+    "wall_time": 12895.157983541489
+  },
+  "new_transitions": 9216000,
+  "new_updates": {
+    "wm": 7200,
+    "actor": 0,
+    "critic": 0
+  },
+  "wall_s": 505.0971960640745,
+  "stairs_speed_levels": [
+    [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  ],
+  "flat_speed_level": 1,
+  "profile": {
+    "simulation": {
+      "count": 4500,
+      "mean_ms": 44.30432293892631
+    },
+    "wm_fit": {
+      "count": 7200,
+      "mean_ms": 26.348353174916056
+    }
+  },
+  "checkpoint": "/home/yifeiy/ws_go2_unilab/Uni-SuperMimic/results/stairs_omni_continuation_v2/training/last.pt"
+}

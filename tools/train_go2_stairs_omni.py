@@ -37,7 +37,8 @@ class StairsCoverage:
     def __init__(self, l):
         self.l = l
         self.last = l.sim_steps
-        self.count = torch.zeros(2, 5, 4, device=l.device, dtype=torch.long)
+        self.nlevels = l.env.command_manager.get_term("velocity").sampler.stairs_levels.shape[1]
+        self.count = torch.zeros(2, self.nlevels, 4, device=l.device, dtype=torch.long)
         self.triples = torch.zeros_like(self.count)
         self.crossing = torch.zeros_like(self.count)
         self.falls = torch.zeros_like(self.count)
@@ -67,7 +68,7 @@ class StairsCoverage:
         levels = l.env.command_manager.get_term("velocity").sampler.stairs_levels.to(b.device)[
             direction, terrain
         ]
-        idx = (direction * 5 + terrain) * 4 + levels
+        idx = (direction * self.nlevels + terrain) * 4 + levels
         for target, value in (
             (self.count, torch.ones_like(idx)),
             (self.triples, (d["g"][mask] != 0).all(-1).long()),
@@ -125,7 +126,50 @@ def run_tool(script, args, log, timeout=360):
         )
 
 
-def wm_gate(current, baseline):
+def continuation_regressions(evaluation, baseline):
+    """Stairs prioritize survival/crossing; flat keeps strict velocity guards.
+
+    Stair RMSE remains logged. Stop on persistent mean motion changes or falls,
+    not isolated contact-induced velocity oscillations.
+    """
+    flat = {k: v for k, v in evaluation.items() if not k.startswith("stairs_")}
+    regressions = physical_regressions(flat, {k: baseline[k] for k in flat})
+    for name, value in evaluation.items():
+        if not name.startswith("stairs_"):
+            continue
+        old = baseline[name]
+        for axis, threshold in (("vx", 0.15), ("vy", 0.15), ("wz", 0.30)):
+            key = f"actual_{axis}_{'rad_s' if axis == 'wz' else 'm_s'}"
+            if abs(value[key] - old[key]) > threshold:
+                regressions.append(
+                    dict(
+                        scenario=name,
+                        metric="sustained_mean_" + axis,
+                        value=value[key],
+                        baseline=old[key],
+                    )
+                )
+        if value["fall"] >= old["fall"] + 0.4:
+            regressions.append(
+                dict(scenario=name, metric="fall", value=value["fall"], baseline=old["fall"])
+            )
+        if (
+            name.endswith("_cmd0")
+            and old["crossing_passed"] >= 0.8
+            and value["crossing_passed"] < old["crossing_passed"] - 0.4
+        ):
+            regressions.append(
+                dict(
+                    scenario=name,
+                    metric="crossing_passed",
+                    value=value["crossing_passed"],
+                    baseline=old["crossing_passed"],
+                )
+            )
+    return regressions
+
+
+def wm_gate(current, baseline, nlevels=5):
     gs = [
         g
         for g in current["gradients"]
@@ -165,7 +209,7 @@ def wm_gate(current, baseline):
         and len(regressions) <= len(gs) * 0.10
         and errors
     )
-    mask, scopes = imagination_scope_admission({0: current}, [[0] * 5, [0] * 5])
+    mask, scopes = imagination_scope_admission({0: current}, [[0] * nlevels, [0] * nlevels])
     scoped_pass = any(v["admitted"] for v in scopes.values())
     return dict(
         passed=scoped_pass,
@@ -194,12 +238,17 @@ def main():
     p.add_argument("--eval-period", type=int, default=500)
     p.add_argument("--wm-adaptation", type=int, default=200)
     p.add_argument("--resume", action="store_true")
+    p.add_argument(
+        "--task",
+        default="stairs_omni_continuation",
+        choices=("stairs_omni_continuation", "stairs_omni_level7"),
+    )
     a = p.parse_args()
     if not 0 < a.seconds <= 7200 or a.iterations < 1 or a.eval_period < 100:
         raise ValueError("Invalid bounded budget")
     a.output.mkdir(parents=True, exist_ok=a.resume)
     source = torch.load(a.checkpoint, map_location="cpu", weights_only=True, mmap=True)
-    cfg = configuration("stairs_omni_continuation")
+    cfg = configuration(a.task)
     base = json.loads(a.baseline.read_text())["aggregate"]
     schedule = source["extra_state"].get("stairs_schedule") if a.resume else None
     cfg.algo.wm_only_iters = (
@@ -325,6 +374,8 @@ def main():
                         dataset,
                         "--stairs-speed",
                         speed,
+                        "--max-level",
+                        cfg.env.commands.velocity.terrain_max_level,
                     ],
                     a.output / f"collect_S{speed}.log",
                 )
@@ -366,7 +417,7 @@ def main():
             dict(level=cmd.sampler.speed_level, evidence_commands=flat_names, physics_pass=flat_ok),
         )
 
-        def evaluate_at(label, full=False):
+        def evaluate_at(label):
             policy = l.save(a.output / "evaluation_policy.pt", include_optimizers=False)
             out = a.output / f"eval_{label}"
             run_tool(
@@ -377,8 +428,14 @@ def main():
                     "--output",
                     out,
                     "--stairs-omni",
+                    "--max-level",
+                    cfg.env.commands.velocity.terrain_max_level,
                     "--seeds",
-                    *([2426, 2427, 2428, 2429, 2430] if full else [2426, 2427, 2428]),
+                    2426,
+                    2427,
+                    2428,
+                    2429,
+                    2430,
                 ],
                 a.output / f"eval_{label}.log",
             )
@@ -448,7 +505,7 @@ def main():
                 "stairs_warm_admission", {}
             ).get("passed", False):
                 diag = diagnostics_at(f"warm_{l.iteration}", 0)
-                gate = wm_gate(diag, diagnostic_cache[0])
+                gate = wm_gate(diag, diagnostic_cache[0], cmd.sampler.stairs_levels.shape[1])
                 dump(a.output / "warm_admission.json", gate)
                 warm_gate = gate["passed"]
                 l.extra_state["stairs_warm_admission"] = gate
@@ -483,24 +540,23 @@ def main():
                     if k in base
                     and ("_omni" not in k and "_S" not in k and k != "lateral_boundary")
                 }
-                regressions = physical_regressions(core, {k: base[k] for k in core})
+                regressions = continuation_regressions(core, {k: base[k] for k in core})
                 # New maneuvers have their own baseline-relative fall/tracking guard.
                 for k, v in evaluation.items():
                     if "_S0_" in k:
                         old = base[k]
-                        if (
-                            v["fall"] > old["fall"] + 0.34
-                            or v["xy_rmse_m_s"] > max(0.18, old["xy_rmse_m_s"] * 1.8)
-                            or v["yaw_rmse_rad_s"] > max(0.25, old["yaw_rmse_rad_s"] * 1.8)
-                        ):
-                            regressions.append(dict(scenario=k, metric="S0_maneuver_regression"))
+                        regressions.extend(continuation_regressions({k: v}, {k: old}))
                 strikes = strikes + 1 if regressions else 0
                 promotions = []
                 diags = {}
                 for speed in sorted(set(cmd.sampler.stairs_levels[:, 1:].flatten().tolist())):
                     diags[speed] = diagnostics_at(str(l.iteration), speed)
                 current_gate = (
-                    wm_gate(diags.get(0, diagnostic_cache[0]), diagnostic_cache[0])
+                    wm_gate(
+                        diags.get(0, diagnostic_cache[0]),
+                        diagnostic_cache[0],
+                        cmd.sampler.stairs_levels.shape[1],
+                    )
                     if 0 in diags
                     else {"passed": True}
                 )
@@ -522,7 +578,7 @@ def main():
                     if expanded_flat:
                         cmd.sampler.set_speed_level(2)
                     for direction in range(2):
-                        for level in range(1, 5):
+                        for level in range(1, cmd.sampler.stairs_levels.shape[1]):
                             speed = int(cmd.sampler.stairs_levels[direction, level])
                             gate = stairs_speed_admission(
                                 evaluation, diags[speed], direction, level, speed
@@ -557,14 +613,19 @@ def main():
                         "opt": copy.deepcopy(l.opt_pi.state_dict()),
                         "iteration": l.iteration,
                     }
-                    score = (
-                        sum(
-                            v["xy_rmse_m_s"] + v["yaw_rmse_rad_s"] + v["fall"] * 2
-                            for k, v in evaluation.items()
-                            if "_S0_" in k
-                        )
-                        / 56
-                    )
+                    traversal = [
+                        v
+                        for k, v in evaluation.items()
+                        if k.startswith("stairs_") and k.endswith("_cmd0")
+                    ]
+                    score = sum(
+                        v["fall"] * 5 + (1 - v["crossing_passed"]) * 2 for v in traversal
+                    ) / len(traversal)
+                    score += sum(
+                        v["fall"] + 0.05 * v["xy_rmse_m_s"]
+                        for k, v in evaluation.items()
+                        if "_S0_" in k
+                    ) / max(1, sum("_S0_" in k for k in evaluation))
                     if score < best_score:
                         best_score = score
                         l.save(a.output / "best.pt")
@@ -619,7 +680,11 @@ def main():
             and not l.extra_state.get("stairs_warm_admission", {}).get("passed", False)
             and l.iteration >= l.cfg.wm_only_iters
         ):
-            gate = wm_gate(diagnostics_at(f"resume_warm_{l.iteration}", 0), diagnostic_cache[0])
+            gate = wm_gate(
+                diagnostics_at(f"resume_warm_{l.iteration}", 0),
+                diagnostic_cache[0],
+                cmd.sampler.stairs_levels.shape[1],
+            )
             dump(a.output / "warm_admission.json", gate)
             l.extra_state["stairs_warm_admission"] = gate
             if gate["passed"]:

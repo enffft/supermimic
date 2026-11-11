@@ -2,7 +2,7 @@
 
 import math
 from copy import deepcopy
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 
 import numpy as np
 from unilab.terrains import SubTerrainCfg, TerrainGeneratorCfg
@@ -27,6 +27,8 @@ class ApproachTerrainCfg(SubTerrainCfg):
     discrete_levels: bool = False
     require_low_border: bool = True
     entry_quarter_turns: int = 0
+    atlas_max_level: int = 4
+    profile_max_level: int = 4
 
     def function(self, difficulty, rng):
         cfg = deepcopy(self.delegate)
@@ -36,7 +38,9 @@ class ApproachTerrainCfg(SubTerrainCfg):
         if self.discrete_levels:
             from unilab.terrains.heightfield_terrains import HfFlatTerrainCfg
 
-            level = min(4, max(0, int(difficulty * 5)))
+            level = min(
+                self.profile_max_level, max(0, int(difficulty * (self.atlas_max_level + 1)))
+            )
             if level == 0:
                 cfg = HfFlatTerrainCfg(
                     size=self.size,
@@ -82,7 +86,11 @@ class ApproachTerrainCfg(SubTerrainCfg):
         return output
 
 
-def terrain_profile(name, *, seed=2026, quarter_turns=0, levels=False, entry_quarter_turns=0):
+def terrain_profile(
+    name, *, seed=2026, quarter_turns=0, levels=False, entry_quarter_turns=0, max_level=4
+):
+    if not 0 <= max_level <= 7:
+        raise ValueError("Audited terrain level range is 0..7")
     if name == "flat":
         # Preserve the exact existing flat XML, including its plane and contact settings.
         return None
@@ -127,6 +135,8 @@ def terrain_profile(name, *, seed=2026, quarter_turns=0, levels=False, entry_qua
             discrete_levels=levels,
             require_low_border=not key.endswith("_down"),
             entry_quarter_turns=entry_quarter_turns,
+            atlas_max_level=max_level,
+            profile_max_level=max_level if "stairs" in key else min(max_level, 4),
         )
         for key, value in selected.items()
     }
@@ -134,7 +144,7 @@ def terrain_profile(name, *, seed=2026, quarter_turns=0, levels=False, entry_qua
         generator=TerrainGeneratorCfg(
             seed=seed,
             size=(8.0, 8.0),
-            num_rows=5 if levels else 1,
+            num_rows=max_level + 1 if levels else 1,
             num_cols=len(subs),
             curriculum=True,
             horizontal_scale=0.05,
@@ -146,6 +156,16 @@ def terrain_profile(name, *, seed=2026, quarter_turns=0, levels=False, entry_qua
         hfield_name="go2_heightfield",
         geom_name="go2_terrain",
     )
+
+
+def terrain_contract(cfg):
+    """Keep the original Level0..4 serialization/fingerprint unchanged."""
+    values = asdict(cfg)
+    for sub in values["generator"]["sub_terrains"].values():
+        for key in ("atlas_max_level", "profile_max_level"):
+            if sub.get(key) == 4:
+                sub.pop(key)
+    return values
 
 
 def apply_profile(cfg, name, *, backend="mujoco", seed=2026, quarter_turns=0, heading=0.0):

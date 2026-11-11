@@ -26,6 +26,7 @@ class TerrainCurriculum:
         target_progress=1.2,
         flat_probability=0.15,
         probe_probability=0.0,
+        type_max_levels=None,
     ):
         self.origins = torch.tensor(origins.copy(), device=device, dtype=torch.float32)
         if not 0 <= fixed_level <= max_level < self.origins.shape[0]:
@@ -40,6 +41,16 @@ class TerrainCurriculum:
         weights[max_level + 1 :] = 0
         self.coverage_cdf = weights.cumsum(0) / weights.sum()
         self.enabled, self.max_level, self.phase = enabled, max_level, phase
+        self.type_max_levels = torch.tensor(
+            type_max_levels if type_max_levels is not None else [max_level] * self.origins.shape[1],
+            device=device,
+        )
+        if (
+            self.type_max_levels.shape != (self.origins.shape[1],)
+            or (self.type_max_levels < 0).any()
+            or (self.type_max_levels > max_level).any()
+        ):
+            raise ValueError("Invalid per-type terrain ceiling")
         self.recycle_probability, self.flat_probability = recycle_probability, flat_probability
         self.probe_probability = probe_probability
         self.min_episodes, self.target_progress = min_episodes, target_progress
@@ -175,7 +186,7 @@ class TerrainCurriculum:
             promote = (
                 at_ceiling
                 & (self.success_streak[ids] >= self.min_episodes)
-                & (self.mastery[ids] < self.max_level)
+                & (self.mastery[ids] < self.type_max_levels[self.terrain_type[ids]])
             )
             demote = at_ceiling & (self.failure_streak[ids] >= 2) & (self.mastery[ids] > 0)
             decision = promote.long() - demote.long()
@@ -193,6 +204,9 @@ class TerrainCurriculum:
             draws = rng.random((ids.numel(),))
             self.terrain_level[ids] = torch.searchsorted(self.coverage_cdf, draws).clamp_max(
                 self.max_level
+            )
+            self.terrain_level[ids] = torch.minimum(
+                self.terrain_level[ids], self.type_max_levels[self.terrain_type[ids]]
             )
         if self.fixed_domain is not None:
             self.terrain_level[ids] = torch.where(
@@ -258,12 +272,18 @@ class TerrainCurriculum:
         )
         out["xy_rmse_m_s"] = (self.statistics["xy_sq_sum"] / steps).sqrt().cpu().tolist()
         out["yaw_rmse_rad_s"] = (self.statistics["yaw_sq_sum"] / steps).sqrt().cpu().tolist()
-        out["mastery_histogram"] = torch.bincount(self.mastery, minlength=5).cpu().tolist()
-        out["level_histogram"] = torch.bincount(self.terrain_level, minlength=5).cpu().tolist()
+        out["mastery_histogram"] = (
+            torch.bincount(self.mastery, minlength=self.max_level + 1).cpu().tolist()
+        )
+        out["level_histogram"] = (
+            torch.bincount(self.terrain_level, minlength=self.max_level + 1).cpu().tolist()
+        )
         if self.fixed_domain is not None:
             terrain_envs = self.fixed_domain != 0
             out["terrain_domain_mastery_histogram"] = (
-                torch.bincount(self.mastery[terrain_envs], minlength=5).cpu().tolist()
+                torch.bincount(self.mastery[terrain_envs], minlength=self.max_level + 1)
+                .cpu()
+                .tolist()
             )
             out["fixed_flat_envs"] = int((~terrain_envs).sum())
         out["phase"] = self.phase

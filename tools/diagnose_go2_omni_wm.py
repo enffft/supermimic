@@ -24,7 +24,7 @@ from evaluate_go2_omnidirectional import FLAT, TYPES
 from evaluate_go2_terrain_b import physical_fd
 
 
-def collect(checkpoint, out, stairs_speed=None):
+def collect(checkpoint, out, stairs_speed=None, terrain_max_level=4):
     out.mkdir(parents=True, exist_ok=False)
     source = torch.load(checkpoint, map_location="cpu", weights_only=True, mmap=True)
     pi = Policy(
@@ -39,6 +39,9 @@ def collect(checkpoint, out, stairs_speed=None):
     pi.eval()
     cfg = load_config(terrain=True)
     cmdcfg = cfg.commands["velocity"]
+    cmdcfg.terrain_max_level = terrain_max_level
+    if terrain_max_level == 7:
+        cmdcfg.terrain_coverage_weights = (0.2, 0.4, 0.3, 0.1, 0, 0, 0, 0)
     cmdcfg.terrain_profile = "mixed"
     cmdcfg.terrain_phase = "fixed"
     cmdcfg.fixed_command = (0.4, 0, 0)
@@ -54,7 +57,7 @@ def collect(checkpoint, out, stairs_speed=None):
         scenarios = [
             (f"{TYPES[t]}_L{level}_S{stairs_speed}_{i}", t, level, g)
             for t in (3, 4)
-            for level in range(1, 5)
+            for level in range(1, terrain_max_level + 1)
             for i, g in enumerate(stairs_speed_commands(stairs_speed))
         ]
         cmdcfg.spawn_offset = (1.6, 0, 0)
@@ -278,9 +281,10 @@ def main():
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--dataset", type=Path)
     p.add_argument("--stairs-speed", type=int, choices=range(4))
+    p.add_argument("--max-level", type=int, choices=(4, 7), default=4)
     a = p.parse_args()
     if a.mode == "collect":
-        collect(a.checkpoint, a.output, a.stairs_speed)
+        collect(a.checkpoint, a.output, a.stairs_speed, a.max_level)
     else:
         evaluate(a.checkpoint, a.dataset, a.output)
 

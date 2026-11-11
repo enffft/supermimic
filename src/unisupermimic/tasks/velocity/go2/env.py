@@ -17,6 +17,8 @@ from unisupermimic.rl.contracts.supermimic import SUPERMIMIC_STATE_KEY, SUPERMIM
 class Go2VelocityEnv(ManagerBasedRlEnv):
     @property
     def supermimic_contract(self):
+        from .terrain import terrain_contract
+
         contract = {
             "schema": "go2_velocity_direct_v2",
             "state": "p,quat_wxyz,v_world,w_world,q,qd",
@@ -33,7 +35,9 @@ class Go2VelocityEnv(ManagerBasedRlEnv):
             "acceleration": "control_period_finite_difference",
             "real_torque": "jointactuatorfrc_sensor",
             "imagined_torque": "pd_proxy",
-            "terrain": None if self.cfg.scene.terrain is None else asdict(self.cfg.scene.terrain),
+            "terrain": None
+            if self.cfg.scene.terrain is None
+            else terrain_contract(self.cfg.scene.terrain),
             "commands": asdict(self.cfg.commands["velocity"]),
             "actions": {name: asdict(term) for name, term in self.cfg.actions.items()},
             "max_episode_seconds": self.cfg.max_episode_seconds,
@@ -62,6 +66,7 @@ class Go2VelocityEnv(ManagerBasedRlEnv):
                 "stairs_vx_range",
                 "stairs_maneuver_hold_range",
                 "stairs_maneuver_entry_offset",
+                "terrain_level_count",
             ):
                 if json.dumps(contract["commands"]["sampler"][key]) == json.dumps(defaults[key]):
                     contract["commands"]["sampler"].pop(key)
@@ -206,6 +211,7 @@ def make_go2_env(cfg, num_envs=1, backend_type="mujoco"):
                 quarter_turns=command_cfg.terrain_quarter_turns,
                 levels=True,
                 entry_quarter_turns=entry_turns,
+                max_level=command_cfg.terrain_max_level,
             )
         command_cfg.terrain_aware = True
     if (
@@ -258,6 +264,8 @@ def make_go2_env(cfg, num_envs=1, backend_type="mujoco"):
             if cfg.scene.terrain is None:
                 command.mdp.terrain = TerrainHeightField.flat(env.device)
             else:
+                from .terrain import terrain_contract
+
                 spawn = backend.get_terrain_spawn_data()
                 origins = spawn.terrain_origins
                 command.mdp.terrain = TerrainHeightField.from_mujoco(
@@ -266,7 +274,7 @@ def make_go2_env(cfg, num_envs=1, backend_type="mujoco"):
                     metadata={
                         "seed": command_cfg.terrain_seed,
                         "origins": origins.tolist(),
-                        "generator": asdict(cfg.scene.terrain),
+                        "generator": terrain_contract(cfg.scene.terrain),
                     },
                 )
                 command.curriculum = TerrainCurriculum(
@@ -275,6 +283,11 @@ def make_go2_env(cfg, num_envs=1, backend_type="mujoco"):
                     enabled=command_cfg.terrain_curriculum,
                     fixed_level=command_cfg.terrain_fixed_level,
                     max_level=command_cfg.terrain_max_level,
+                    type_max_levels=(
+                        [4, 4, 4, command_cfg.terrain_max_level, command_cfg.terrain_max_level]
+                        if command_cfg.terrain_max_level > 4 and origins.shape[1] == 5
+                        else None
+                    ),
                     recycle_probability=command_cfg.terrain_recycle_probability,
                     phase=command_cfg.terrain_phase,
                     coverage_weights=command_cfg.terrain_coverage_weights,

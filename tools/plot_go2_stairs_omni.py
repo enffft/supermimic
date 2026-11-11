@@ -136,6 +136,7 @@ def main():
         with (a.output / "fixed_evaluation.csv").open("w") as f:
             w = csv.DictWriter(
                 f,
+                lineterminator="\n",
                 fieldnames=["scenario"] + [f"{tag}_{k}" for tag in ("old", "new") for k in fields],
             )
             w.writeheader()

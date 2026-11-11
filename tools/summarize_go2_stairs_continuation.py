@@ -98,6 +98,7 @@ def main():
     with (a.output / "paired_evaluation.csv").open("w") as f:
         w = csv.DictWriter(
             f,
+            lineterminator="\n",
             fieldnames=["scenario"]
             + [f"{tag}_{k}" for tag in ("source", "candidate") for k in metrics],
         )

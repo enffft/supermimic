@@ -214,6 +214,7 @@ def evaluate(checkpoint, dataset, out):
     model = mujoco.MjModel.from_binary_path(str(dataset / "terrain.mjb"))
     gradients = []
     calibration = []
+    rejected_oracles = []
     for probe in held["probes"]:
         i = probe["index"]
         s = unflatten_state(probe["s"][None].to(device))
@@ -223,7 +224,14 @@ def evaluate(checkpoint, dataset, out):
         real, _ = physical_fd(model, held["layout"], probe, d["a"][80, i].numpy())
         truth = unflatten_state(d["s1"][80, i][None])
         truth = torch.cat((truth[0], truth[2], truth[4], truth[5]), -1)[0].numpy()
-        calibration.append(float(np.abs(real - truth).max()))
+        oracle_error = float(np.abs(real - truth).max())
+        calibration.append(oracle_error)
+        if oracle_error > 1e-3:
+            # Public playback is [time,qpos,qvel], without solver warmstart.
+            # Contact-sensitive states may not replay accurately. Never use
+            # their FD result for admission, and never lower the tolerance.
+            rejected_oracles.append(dict(scenario=probe["scenario"], max_error=oracle_error))
+            continue
 
         def output(a):
             nxt = step(s, a[None], xi)
@@ -259,8 +267,6 @@ def evaluate(checkpoint, dataset, out):
                         normalized_error=float(np.linalg.norm(a - b) / (np.linalg.norm(b) + 1e-8)),
                     )
                 )
-    if max(calibration) > 1e-3:
-        raise ValueError(f"Uncalibrated physical oracle: {max(calibration)}")
     (out / "diagnostics.json").write_text(
         json.dumps(
             dict(
@@ -268,6 +274,10 @@ def evaluate(checkpoint, dataset, out):
                 prediction=records,
                 gradients=gradients,
                 oracle_max_error=max(calibration),
+                oracle_tolerance=1e-3,
+                rejected_oracles=rejected_oracles,
+                accepted_probe_count=len(held["probes"]) - len(rejected_oracles),
+                missing_probe_policy="no FD gradients, pair cannot pass seven-probe admission",
                 same_h32_valid_windows_for_all_horizons=True,
             ),
             indent=2,

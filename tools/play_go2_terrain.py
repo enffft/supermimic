@@ -76,6 +76,7 @@ def main():
         if args.terrain not in ("stairs", "stairs_down"):
             parser.error("Only stairs may exceed Level4")
         command.terrain_max_level = 7
+        command.sampler.stairs_safe_spawn = True
         command.terrain_coverage_weights = (0.2, 0.4, 0.3, 0.1, 0, 0, 0, 0)
     command.fixed_command = (args.vx, args.vy, args.wz)
     command.spawn_offset = (args.entry_offset, 0.0, 0.0)

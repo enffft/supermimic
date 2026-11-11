@@ -16,11 +16,18 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--run", type=Path, default=Path("results/stairs_omni_continuation_v2"))
     p.add_argument("--evaluation", type=Path)
+    p.add_argument("--baseline", type=Path)
+    p.add_argument(
+        "--segments",
+        nargs="+",
+        default=["training", "controlled", "level7_training", "extra40_training"],
+    )
+    p.add_argument("--monitor-segment", default="controlled")
     p.add_argument("--output", type=Path, required=True)
     a = p.parse_args()
     a.output.mkdir(parents=True, exist_ok=True)
     rows = []
-    for segment in ("training", "controlled"):
+    for segment in a.segments:
         path = a.run / segment / "train_log.csv"
         if path.exists():
             with path.open() as f:
@@ -81,7 +88,7 @@ def main():
         fig.tight_layout()
         fig.savefig(a.output / "wm_holdout_and_gradients.png")
         plt.close(fig)
-    prog = a.run / "controlled/progress.jsonl"
+    prog = a.run / a.monitor_segment / "progress.jsonl"
     if prog.exists():
         rs = [json.loads(s) for s in prog.read_text().splitlines()]
         fig, axes = plt.subplots(1, 3, figsize=(12, 3))
@@ -94,7 +101,7 @@ def main():
         fig.tight_layout()
         fig.savefig(a.output / "actor_monitor.png")
         plt.close(fig)
-    coverage = a.run / "controlled/stairs_coverage.json"
+    coverage = a.run / a.monitor_segment / "stairs_coverage.json"
     if coverage.exists():
         d = json.loads(coverage.read_text())
         count = np.array(d["count"]).sum((0, 1))
@@ -109,7 +116,9 @@ def main():
         fig.savefig(a.output / "speed_coverage.png")
         plt.close(fig)
     if a.evaluation:
-        old = json.loads((a.run / "baseline/evaluation.json").read_text())["aggregate"]
+        old = json.loads((a.baseline or a.run / "baseline/evaluation.json").read_text())[
+            "aggregate"
+        ]
         new = json.loads(a.evaluation.read_text())["aggregate"]
         fields = (
             "actual_vx_m_s",
@@ -131,6 +140,8 @@ def main():
             )
             w.writeheader()
             for name, r in new.items():
+                if name not in old:
+                    continue
                 w.writerow(
                     dict(
                         scenario=name,

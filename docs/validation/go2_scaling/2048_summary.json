@@ -1,0 +1,100 @@
+{
+  "completed": true,
+  "stop_reason": "completed",
+  "envs": 2048,
+  "result": {
+    "iteration": 26935,
+    "wall_h": 3.448171994752354,
+    "sim_steps": 142157824,
+    "wm_loss": 0.046425334410741925,
+    "wm_err8": 0.08167047263123095,
+    "pi_loss": -2.9774945825338364,
+    "v_loss": 0.00023257845805346733,
+    "imag_rew": 0.28603415563702583,
+    "pi_gradnorm": 1.8704016515985131,
+    "imag_survival": 0.9938326291739941,
+    "sim_rew": 0.3522398672997952,
+    "ep_len": null,
+    "ep_ret_norm": null,
+    "term_frac": 0.0,
+    "it_per_s": 1.9700826538669112,
+    "lr": 0.0001944996585956586,
+    "completed": true,
+    "wall_time": 12419.215872764587
+  },
+  "new_transitions": 1703936,
+  "updates": {
+    "wm": 512,
+    "actor": 128,
+    "critic": 2560
+  },
+  "expected_updates": {
+    "wm": 512,
+    "actor": 128,
+    "critic": 2560
+  },
+  "profile": {
+    "simulation": {
+      "count": 280,
+      "mean_ms": 46.720802307128906,
+      "median_ms": 44.29087829589844,
+      "p90_ms": 55.7020149230957
+    },
+    "wm_fit": {
+      "count": 448,
+      "mean_ms": 39.22321319580078,
+      "median_ms": 38.378231048583984,
+      "p90_ms": 57.32851791381836
+    },
+    "actor_bptt": {
+      "count": 112,
+      "mean_ms": 158.49888610839844,
+      "median_ms": 125.25756072998047,
+      "p90_ms": 236.6464385986328
+    },
+    "critic_update": {
+      "count": 112,
+      "mean_ms": 20.375879287719727,
+      "median_ms": 19.174516677856445,
+      "p90_ms": 27.635778427124023
+    }
+  },
+  "process_wall_s": 90.99057785095647,
+  "steady_iterations": 112,
+  "steady_wall_including_final_saves_s": 55.624747770954855,
+  "simulation_vector_steps_s": 21.403742029648637,
+  "simulation_transitions_s": 43834.86367672041,
+  "wm_updates_s": 25.49510655866051,
+  "peak_allocated_mib": 1929.07470703125,
+  "peak_reserved_mib": 1948.0,
+  "max_logged_rss_mib": 2057.81640625,
+  "domain_env_counts": [
+    717,
+    409,
+    205,
+    205,
+    256,
+    256
+  ],
+  "networks": {
+    "actor_input": 213,
+    "wm_input": 142,
+    "critic_input": 56,
+    "wm_hidden": [
+      2048,
+      2048,
+      2048
+    ],
+    "policy_hidden": [
+      2048,
+      1024,
+      512,
+      256
+    ],
+    "wm_batch": 256,
+    "pi_batch": 256,
+    "wm_window": 8,
+    "horizon": 32,
+    "buffer_steps": 1024
+  }
+}

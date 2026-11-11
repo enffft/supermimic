@@ -1,0 +1,134 @@
+[
+  {
+    "envs": 2048,
+    "completed": true,
+    "simulation_transitions_s": 43834.86367672041,
+    "end_to_end_transitions_s": 10754.767967601565,
+    "outer_s": 0.4760679184733557,
+    "process_gpu_peak_mib": 2178.0,
+    "host_peak_mib": 2415.34375,
+    "torch_peak_allocated_mib": 1929.07470703125,
+    "torch_peak_reserved_mib": 1948.0,
+    "process_wall_s": 90.99057785095647,
+    "new_transitions": 1703936,
+    "updates": {
+      "wm": 512,
+      "actor": 128,
+      "critic": 2560
+    },
+    "profile": {
+      "simulation": {
+        "count": 280,
+        "mean_ms": 46.720802307128906,
+        "median_ms": 44.29087829589844,
+        "p90_ms": 55.7020149230957
+      },
+      "wm_fit": {
+        "count": 448,
+        "mean_ms": 39.22321319580078,
+        "median_ms": 38.378231048583984,
+        "p90_ms": 57.32851791381836
+      },
+      "actor_bptt": {
+        "count": 112,
+        "mean_ms": 158.49888610839844,
+        "median_ms": 125.25756072998047,
+        "p90_ms": 236.6464385986328
+      },
+      "critic_update": {
+        "count": 112,
+        "mean_ms": 20.375879287719727,
+        "median_ms": 19.174516677856445,
+        "p90_ms": 27.635778427124023
+      }
+    }
+  },
+  {
+    "envs": 3072,
+    "completed": true,
+    "simulation_transitions_s": 47211.79796676053,
+    "end_to_end_transitions_s": 15173.151168232938,
+    "outer_s": 0.5061572190804456,
+    "process_gpu_peak_mib": 2742.0,
+    "host_peak_mib": 2589.28125,
+    "torch_peak_allocated_mib": 2449.9931640625,
+    "torch_peak_reserved_mib": 2512.0,
+    "process_wall_s": 125.71640787494835,
+    "new_transitions": 2555904,
+    "updates": {
+      "wm": 512,
+      "actor": 128,
+      "critic": 2560
+    },
+    "profile": {
+      "simulation": {
+        "count": 280,
+        "mean_ms": 65.0684814453125,
+        "median_ms": 62.723934173583984,
+        "p90_ms": 75.56727600097656
+      },
+      "wm_fit": {
+        "count": 448,
+        "mean_ms": 37.06654739379883,
+        "median_ms": 29.89109230041504,
+        "p90_ms": 53.21238708496094
+      },
+      "actor_bptt": {
+        "count": 112,
+        "mean_ms": 149.92506408691406,
+        "median_ms": 122.56729125976562,
+        "p90_ms": 231.89480590820312
+      },
+      "critic_update": {
+        "count": 112,
+        "mean_ms": 21.119014739990234,
+        "median_ms": 19.784074783325195,
+        "p90_ms": 29.501102447509766
+      }
+    }
+  },
+  {
+    "envs": 4096,
+    "completed": true,
+    "simulation_transitions_s": 49164.83134880661,
+    "end_to_end_transitions_s": 17919.07663275458,
+    "outer_s": 0.571458017054413,
+    "process_gpu_peak_mib": 3270.0,
+    "host_peak_mib": 2815.01953125,
+    "torch_peak_allocated_mib": 2971.07470703125,
+    "torch_peak_reserved_mib": 3040.0,
+    "process_wall_s": 167.13213896099478,
+    "new_transitions": 3407872,
+    "updates": {
+      "wm": 512,
+      "actor": 128,
+      "critic": 2560
+    },
+    "profile": {
+      "simulation": {
+        "count": 280,
+        "mean_ms": 83.31158447265625,
+        "median_ms": 82.59585571289062,
+        "p90_ms": 94.53557586669922
+      },
+      "wm_fit": {
+        "count": 448,
+        "mean_ms": 38.58414077758789,
+        "median_ms": 34.53024673461914,
+        "p90_ms": 54.015289306640625
+      },
+      "actor_bptt": {
+        "count": 112,
+        "mean_ms": 160.7639923095703,
+        "median_ms": 129.4458770751953,
+        "p90_ms": 241.3430633544922
+      },
+      "critic_update": {
+        "count": 112,
+        "mean_ms": 21.278966903686523,
+        "median_ms": 19.636791229248047,
+        "p90_ms": 30.70766258239746
+      }
+    }
+  }
+]

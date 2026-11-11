@@ -66,6 +66,7 @@ class Go2VelocityEnv(ManagerBasedRlEnv):
                 "stairs_vx_range",
                 "stairs_maneuver_hold_range",
                 "stairs_maneuver_entry_offset",
+                "stairs_safe_spawn",
                 "terrain_level_count",
             ):
                 if json.dumps(contract["commands"]["sampler"][key]) == json.dumps(defaults[key]):

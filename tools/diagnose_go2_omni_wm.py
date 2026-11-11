@@ -42,6 +42,7 @@ def collect(checkpoint, out, stairs_speed=None, terrain_max_level=4):
     cmdcfg.terrain_max_level = terrain_max_level
     if terrain_max_level == 7:
         cmdcfg.terrain_coverage_weights = (0.2, 0.4, 0.3, 0.1, 0, 0, 0, 0)
+        cmdcfg.sampler.stairs_safe_spawn = True
     cmdcfg.terrain_profile = "mixed"
     cmdcfg.terrain_phase = "fixed"
     cmdcfg.fixed_command = (0.4, 0, 0)

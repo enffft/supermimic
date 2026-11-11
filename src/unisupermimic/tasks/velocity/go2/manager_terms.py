@@ -212,6 +212,11 @@ class VelocityCommand(CommandTerm):
             angle = self.cfg.spawn_heading + self._rng.uniform(-yaw, yaw, (self.num_envs,))
             root[:, 3], root[:, 6] = torch.cos(angle / 2), torch.sin(angle / 2)
             position = position + self._rng.uniform(-joints, joints, (self.num_envs, 12))
+        if self.cfg.sampler.stairs_safe_spawn and self.mdp.terrain is not None:
+            from .reset_geometry import safe_spawn_lift
+
+            # Explicit new-atlas reset protocol, opt-in and checkpointed in sampler cfg.
+            root[:, 2] += safe_spawn_lift(root, position, self.mdp.terrain)
         if self.curriculum is not None:
             self.curriculum.start_xy[ids] = root[ids, :2]
         self.robot.write_motion_state_tensor_to_sim(

@@ -126,7 +126,7 @@ def run_tool(script, args, log, timeout=360):
         )
 
 
-def continuation_regressions(evaluation, baseline):
+def continuation_regressions(evaluation, baseline, retained_max_level=None):
     """Stairs prioritize survival/crossing; flat keeps strict velocity guards.
 
     Stair RMSE remains logged. Stop on persistent mean motion changes or falls,
@@ -137,18 +137,46 @@ def continuation_regressions(evaluation, baseline):
     for name, value in evaluation.items():
         if not name.startswith("stairs_"):
             continue
+        if (
+            retained_max_level is not None
+            and int(name.split("_L", 1)[1].split("_", 1)[0]) > retained_max_level
+        ):
+            # New, unmastered terrain is exploratory. Log its failures separately;
+            # retained skills and numerical/gradient safety still stop the run.
+            continue
         old = baseline[name]
-        for axis, threshold in (("vx", 0.15), ("vy", 0.15), ("wz", 0.30)):
-            key = f"actual_{axis}_{'rad_s' if axis == 'wz' else 'm_s'}"
-            if abs(value[key] - old[key]) > threshold:
-                regressions.append(
-                    dict(
-                        scenario=name,
-                        metric="sustained_mean_" + axis,
-                        value=value[key],
-                        baseline=old[key],
-                    )
+        import math
+
+        from evaluate_go2_omnidirectional import PERTURBATIONS, STAIRS_OMNI, stairs_speed_commands
+
+        if "_cmd" in name:
+            command = PERTURBATIONS[int(name.rsplit("_cmd", 1)[1])]
+        elif "_omni" in name:
+            command = STAIRS_OMNI[int(name.rsplit("_omni", 1)[1])]
+        else:
+            suffix = name.rsplit("_S", 1)[1].split("_")
+            command = stairs_speed_commands(int(suffix[0]))[int(suffix[1])]
+        old_bias = math.hypot(old["actual_vx_m_s"] - command[0], old["actual_vy_m_s"] - command[1])
+        new_bias = math.hypot(
+            value["actual_vx_m_s"] - command[0], value["actual_vy_m_s"] - command[1]
+        )
+        if new_bias > old_bias + 0.15:
+            regressions.append(
+                dict(
+                    scenario=name,
+                    metric="sustained_mean_xy_bias",
+                    value=new_bias,
+                    baseline=old_bias,
                 )
+            )
+        old_yaw = abs(old["actual_wz_rad_s"] - command[2])
+        new_yaw = abs(value["actual_wz_rad_s"] - command[2])
+        if new_yaw > old_yaw + 0.30:
+            regressions.append(
+                dict(
+                    scenario=name, metric="sustained_mean_yaw_bias", value=new_yaw, baseline=old_yaw
+                )
+            )
         if value["fall"] >= old["fall"] + 0.4:
             regressions.append(
                 dict(scenario=name, metric="fall", value=value["fall"], baseline=old["fall"])
@@ -237,6 +265,13 @@ def main():
     p.add_argument("--audit-steps", type=int, default=0)
     p.add_argument("--eval-period", type=int, default=500)
     p.add_argument("--wm-adaptation", type=int, default=200)
+    p.add_argument(
+        "--retained-max-level",
+        type=int,
+        default=None,
+        help="Explicit retained-skill guard ceiling; higher levels remain diagnostic",
+    )
+    p.add_argument("--actor-lr-scale", type=float, default=None)
     p.add_argument("--resume", action="store_true")
     p.add_argument(
         "--task",
@@ -250,6 +285,10 @@ def main():
     source = torch.load(a.checkpoint, map_location="cpu", weights_only=True, mmap=True)
     cfg = configuration(a.task)
     base = json.loads(a.baseline.read_text())["aggregate"]
+    if a.actor_lr_scale is not None:
+        if not 0 < a.actor_lr_scale <= 0.1:
+            raise ValueError("Continuation actor scale must be in (0,.1]")
+        cfg.algo.actor_lr_scale = a.actor_lr_scale
     schedule = source["extra_state"].get("stairs_schedule") if a.resume else None
     cfg.algo.wm_only_iters = (
         schedule["wm_only_iters"] if schedule else int(source["iteration"]) + a.wm_adaptation
@@ -290,6 +329,7 @@ def main():
                 "actual_actor_start_modes",
                 "actual_policy_start_modes",
                 "stairs_command_coverage",
+                "stairs_warm_admission",
             ):
                 l.extra_state.pop(key, None)
         l.extra_state["stairs_schedule"] = dict(
@@ -313,6 +353,9 @@ def main():
             protected_contract_equal=True,
             reward=env.supermimic_contract["reward"],
             historical_stageC_gate_unchanged=True,
+            retained_max_level=a.retained_max_level,
+            higher_levels="exploration, not retained-skill regression; all falls logged",
+            safe_spawn_change="opt-in minimal vertical lift, default legacy false; command-only migration",
             gate="S0 min qd sign .75, mean .85, paired deterioration <=5pp in <=10% probes; promotion min .80 per probe plus physics",
         )
         dump(a.output / "invocation.json", manifest)
@@ -342,6 +385,10 @@ def main():
                 ),
             )
             return
+        if l.buffer.size < l.cfg.warmup_steps:
+            l.collect(l.cfg.warmup_steps - l.buffer.size)
+            coverage.observe()
+            stairs.observe()
         start, hist = l.buffer.sample_starts(512, 5)
         fixed = l.mdp.obs(
             unflatten_state(hist["s"]), hist["a_prev"], hist["xi"], hist["f"]
@@ -540,12 +587,16 @@ def main():
                     if k in base
                     and ("_omni" not in k and "_S" not in k and k != "lateral_boundary")
                 }
-                regressions = continuation_regressions(core, {k: base[k] for k in core})
+                regressions = continuation_regressions(
+                    core, {k: base[k] for k in core}, a.retained_max_level
+                )
                 # New maneuvers have their own baseline-relative fall/tracking guard.
                 for k, v in evaluation.items():
                     if "_S0_" in k:
                         old = base[k]
-                        regressions.extend(continuation_regressions({k: v}, {k: old}))
+                        regressions.extend(
+                            continuation_regressions({k: v}, {k: old}, a.retained_max_level)
+                        )
                 strikes = strikes + 1 if regressions else 0
                 promotions = []
                 diags = {}
@@ -639,6 +690,17 @@ def main():
                     iteration=l.iteration,
                     wall_s=time.monotonic() - started,
                     regressions=regressions,
+                    exploratory_regressions=continuation_regressions(
+                        {
+                            k: v
+                            for k, v in evaluation.items()
+                            if k in base
+                            and k.startswith("stairs_")
+                            and int(k.split("_L", 1)[1].split("_", 1)[0])
+                            > (a.retained_max_level or 7)
+                        },
+                        base,
+                    ),
                     strikes=strikes,
                     promotions=promotions,
                     wm_gate=current_gate,

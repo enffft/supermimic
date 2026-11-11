@@ -21,6 +21,7 @@ class VelocitySamplerCfg:
     stairs_vx_range: tuple = (-0.30, 0.80)
     stairs_maneuver_hold_range: tuple = (2.0, 4.0)
     stairs_maneuver_entry_offset: float = 0.0
+    stairs_safe_spawn: bool = False
     domain_weights: tuple = (0.35, 0.20, 0.10, 0.10, 0.125, 0.125)
     flat_mode_weights: tuple = (0.08, 0.20, 0.18, 0.18, 0.16, 0.20)
     flat_speed_level: int = 0

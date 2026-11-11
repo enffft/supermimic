@@ -57,3 +57,30 @@ def test_speed_state_expands_without_promoting_new_levels():
     assert new.stairs_levels[0, 4] == 2 and (new.stairs_levels[:, 5:] == 0).all()
     g, *_ = new.sample(torch.full((1000,), 4), torch.full((1000,), 7))
     assert g[:, 1].abs().max() <= 0.08 and g[:, 2].abs().max() <= 0.15
+
+
+def test_safe_spawn_lifts_penetrating_feet_only():
+    from types import SimpleNamespace
+
+    from unisupermimic.tasks.velocity.go2.contract import DEFAULT_Q
+    from unisupermimic.tasks.velocity.go2.feet import GO2_FOOT_RADIUS, go2_feet_world
+    from unisupermimic.tasks.velocity.go2.reset_geometry import safe_spawn_lift
+
+    root = torch.zeros(3, 13)
+    root[:, 2] = torch.tensor([0.42, 0.25, 0.42])
+    root[:, 3] = 1
+    root[2, 3] = root[2, 6] = 2**-0.5
+    joint = torch.tensor(DEFAULT_Q).expand(3, -1)
+    terrain = SimpleNamespace(ground_height=lambda xy: (xy[..., 0] < 0).float() * 0.14)
+    lift = safe_spawn_lift(root, joint, terrain)
+    assert lift[0] > 0 and lift[1] > lift[0]
+    root[:, 2] += lift
+    state = torch.zeros(3, 37)
+    state[:, :7], state[:, 7:19] = root[:, :7], joint
+    feet, _ = go2_feet_world(state)
+    clearance = feet[..., 2] - terrain.ground_height(feet[..., :2]) - GO2_FOOT_RADIUS
+    assert clearance.min() >= 0.005 - 1e-6
+    flat = SimpleNamespace(ground_height=lambda xy: torch.zeros_like(xy[..., 0]))
+    root[:, 2] = 0.42
+    assert torch.equal(safe_spawn_lift(root, joint, flat), torch.zeros(3))
+    assert VelocitySamplerCfg().stairs_safe_spawn is False

@@ -153,6 +153,7 @@ def evaluate(
         c.terrain_max_level = terrain_max_level
         if terrain_max_level == 7:
             c.terrain_coverage_weights = (0.2, 0.4, 0.3, 0.1, 0, 0, 0, 0)
+            c.sampler.stairs_safe_spawn = True
         c.terrain_profile = "flat" if domain == "flat" else "mixed"
         c.terrain_curriculum = False
         c.terrain_phase = "fixed"
@@ -198,6 +199,20 @@ def evaluate(
                 stats = {k: torch.zeros(n) for k in keys}
                 falls = torch.zeros(n, dtype=torch.bool)
                 end = start.clone()
+                platform_reached = torch.zeros(n, dtype=torch.bool)
+                max_terrain_change = torch.zeros(n)
+                tile_entry = (
+                    cmd.curriculum.origins[
+                        cmd.curriculum.terrain_level, cmd.curriculum.terrain_type, :2
+                    ]
+                    if domain != "flat"
+                    else start[:, :2]
+                )
+                entry_ground = cmd.mdp.terrain.ground_height(tile_entry)
+                target_ground = cmd.mdp.terrain.ground_height(
+                    tile_entry + start.new_tensor([3.4, 0])
+                )
+                terrain_sign = torch.where(target_ground >= entry_ground, 1.0, -1.0)
                 for _ in range(math.ceil(episode_seconds / 0.02)):
                     info = env.current_info()
                     s = unflatten_state(info["s"])
@@ -216,6 +231,17 @@ def evaluate(
                     lw = (R.transpose(-1, -2) @ w[..., None]).squeeze(-1)
                     terrain = cmd.mdp.terrain
                     ground = terrain.ground_height(p[:, :2])
+                    local = p[:, :2] - tile_entry
+                    terrain_change = (ground - entry_ground) * terrain_sign
+                    max_terrain_change = torch.maximum(max_terrain_change, terrain_change * active)
+                    platform_reached |= (
+                        active
+                        & ~tr["term"]
+                        & (local[:, 0] >= 3.0)
+                        & (local[:, 0] <= 3.8)
+                        & (local[:, 1].abs() <= 0.6)
+                        & ((ground - target_ground).abs() < 0.025)
+                    )
                     feet, fv = go2_feet_world(cmd.mdp.source_state(nxt))
                     proxy = feet[..., 2] - terrain.ground_height(feet[..., :2]) - 0.022 < 0.025
                     vals = dict(
@@ -286,6 +312,13 @@ def evaluate(
                         expected_forward_progress_m=float(stats["expected"][i]),
                         max_lateral_m=float(stats["max_lateral"][i]),
                         outside_tile_fraction=float(stats["outside_tile"][i] / st),
+                        central_platform_reached=bool(platform_reached[i])
+                        if domain == "terrain"
+                        else False,
+                        max_terrain_change_m=float(max_terrain_change[i]),
+                        central_platform_height_change_m=float(
+                            (target_ground[i] - entry_ground[i]).abs()
+                        ),
                     )
                     rec["crossing_eligible"] = domain == "terrain" and g == (0.4, 0, 0)
                     rec["crossing_passed"] = (
@@ -317,6 +350,8 @@ def evaluate(
                 "crossing_passed",
                 "geometric_slip_m_s",
                 "outside_tile_fraction",
+                "central_platform_reached",
+                "max_terrain_change_m",
             )
         }
         for name, rs in groups.items()
@@ -328,6 +363,8 @@ def evaluate(
         seconds=seconds,
         maneuver_seconds=min(seconds, 4.0) if stairs_omni else None,
         actor_device=actor_device,
+        safe_spawn=terrain_max_level == 7,
+        platform_metric="center x within [3.0,3.8]m of entry, lateral <=.6m, collision height within 2.5cm of center, alive; distinct from full crossing",
         initial_perturbation="XY +/-2cm, yaw +/-0.03rad, joints +/-0.01rad",
         records=records,
         aggregate=aggregate,

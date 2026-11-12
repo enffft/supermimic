@@ -8,7 +8,9 @@ from unilab.managers import ActionTerm, ActionTermCfg, CommandTerm, CommandTermC
 
 from unisupermimic.rl.algos.supermimic.geometry import matvec, quat_to_mat
 from unisupermimic.tasks.velocity.go2.command_sampler import (
-    TerrainAwareVelocitySampler, VelocitySamplerCfg, fixed_domains,
+    TerrainAwareVelocitySampler,
+    VelocitySamplerCfg,
+    fixed_domains,
 )
 
 from .contract import JOINTS, LEG_JOINTS, MixedControlCfg, mixed_torque
@@ -34,13 +36,18 @@ class Go2WMixedAction(ActionTerm):
         cfg.control.validate()
         if tuple(self._entity.joint_names) != JOINTS:
             raise ValueError("Go2W Entity must declare logical leg12 + wheel4 joint order")
-        self.q_indices = torch.as_tensor(env.backend.get_joint_state_qpos_indices(LEG_JOINTS), device=env.device)
-        self.v_indices = torch.as_tensor(env.backend.get_joint_state_qvel_indices(JOINTS), device=env.device)
+        self.q_indices = torch.as_tensor(
+            env.backend.get_joint_state_qpos_indices(LEG_JOINTS), device=env.device
+        )
+        self.v_indices = torch.as_tensor(
+            env.backend.get_joint_state_qvel_indices(JOINTS), device=env.device
+        )
         self._raw = torch.zeros(self.num_envs, 16, device=env.device)
         self.executed_raw = torch.zeros_like(self._raw)
         self._target = torch.zeros_like(self._raw)
         self.collection_noise_std = 0.0
         from .contract import DEFAULT_Q, soft_limits
+
         self.default = self._raw.new_tensor(DEFAULT_Q)
         self.limits = soft_limits(env.device)
 
@@ -58,21 +65,33 @@ class Go2WMixedAction(ActionTerm):
 
     def process_actions(self, actions):
         self._raw.copy_(actions.clamp(-1, 1))
-        noise = torch.randn_like(actions) * self.collection_noise_std if self.collection_noise_std > 0 else 0.0
+        noise = (
+            torch.randn_like(actions) * self.collection_noise_std
+            if self.collection_noise_std > 0
+            else 0.0
+        )
         self.executed_raw.copy_((self._raw + noise).clamp(-1, 1))
         self._env.velocity_executed_action = self.executed_raw.detach().clone()
 
     def apply_actions(self):
-        views = self._env.backend.get_state_views(("qpos", "qvel"), device=self._device)
-        torque = mixed_torque(views["qpos"][:, self.q_indices], views["qvel"][:, self.v_indices],
-                              self.executed_raw, self.cfg.control, self.default, self.limits)
+        views = self._env.backend.get_state_views(("qpos", "qvel"), device=self._env.device)
+        torque = mixed_torque(
+            views["qpos"][:, self.q_indices],
+            views["qvel"][:, self.v_indices],
+            self.executed_raw,
+            self.cfg.control,
+            self.default,
+            self.limits,
+        )
         self._target.copy_(torque)
         # The public API maps named joints to MJCF gear=1 torque motors.
         # set_joint_velocity_target merely writes ctrl; it cannot implement speed PD.
         self._entity.set_joint_effort_target(self._target)
 
     def reset(self, env_ids=None):
-        ids = resolve_reset_env_ids(env_ids, num_envs=self.num_envs, device=self._device, owner="Go2WMixedAction")
+        ids = resolve_reset_env_ids(
+            env_ids, num_envs=self.num_envs, device=self._env.device, owner="Go2WMixedAction"
+        )
         self._raw[ids] = 0
         self.executed_raw[ids] = 0
         self._target[ids] = 0
@@ -83,19 +102,24 @@ class VelocityCommandCfg(CommandTermCfg):
     entity_name: str = "robot"
     resampling_time_range: tuple[float, float] = (5.0, 5.0)
     sampling_mode: str = "terrain_adaptive"
-    sampler: VelocitySamplerCfg = field(default_factory=VelocitySamplerCfg)
+    sampler: VelocitySamplerCfg = field(
+        default_factory=lambda: VelocitySamplerCfg(
+            terrain_level_count=8, domain_weights=(0.25, 0.20, 0.10, 0.10, 0.175, 0.175)
+        )
+    )
     reward: VelocityRewardCfg = field(default_factory=VelocityRewardCfg)
     fixed_command: tuple[float, float, float] | None = None
     terrain_profile: str = "mixed"
     terrain_curriculum: bool = True
     terrain_fixed_level: int = 0
-    terrain_max_level: int = 4
-    terrain_phase: str = "skill"
+    terrain_max_level: int = 7
+    terrain_phase: str = "wm"
     terrain_seed: int = 2026
-    terrain_coverage_weights: tuple[float, ...] = (0.2, 0.4, 0.3, 0.1, 0.0)
+    terrain_coverage_weights: tuple[float, ...] = (0.20, 0.25, 0.20, 0.15, 0.10, 0.06, 0.03, 0.01)
     terrain_min_episodes: int = 3
     terrain_recycle_probability: float = 0.15
     terrain_target_progress: float = 1.2
+    automatic_wm_skill_transition: bool = True
     spawn_height: float = 0.42
     spawn_heading: float = 0.0
 
@@ -106,12 +130,18 @@ class VelocityCommandCfg(CommandTermCfg):
 class VelocityCommand(CommandTerm):
     def __init__(self, cfg, env):
         super().__init__(cfg, env)
-        if cfg.sampling_mode != "terrain_adaptive" or cfg.sampler.stairs_omni or cfg.spawn_heading != 0:
+        if (
+            cfg.sampling_mode != "terrain_adaptive"
+            or cfg.sampler.stairs_omni
+            or cfg.spawn_heading != 0
+        ):
             raise ValueError("Go2W v1 uses the conservative six-domain sampler and heading zero")
         self.robot = env.scene[cfg.entity_name]
         if tuple(self.robot.joint_names) != JOINTS:
             raise ValueError("Go2W named joint order mismatch")
-        self.mdp = Go2WVelocityMdp(env.device, control=env.cfg.actions["mixed"].control, reward=cfg.reward)
+        self.mdp = Go2WVelocityMdp(
+            env.device, control=env.cfg.actions["mixed"].control, reward=cfg.reward
+        )
         self.g = torch.zeros(self.num_envs, 3, device=env.device)
         self.xi = torch.zeros(self.num_envs, self.mdp.context_dim, device=env.device)
         self.a_prev = torch.zeros(self.num_envs, 16, device=env.device)
@@ -123,8 +153,12 @@ class VelocityCommand(CommandTerm):
         self.command_domain = fixed_domains(self.num_envs, cfg.sampler.domain_weights, env.device)
         self.command_mode = torch.zeros_like(self.f)
         self.crossing_episode = torch.zeros(self.num_envs, dtype=torch.bool, device=env.device)
-        self.q_indices = torch.as_tensor(env.backend.get_joint_state_qpos_indices(LEG_JOINTS), device=env.device)
-        self.v_indices = torch.as_tensor(env.backend.get_joint_state_qvel_indices(JOINTS), device=env.device)
+        self.q_indices = torch.as_tensor(
+            env.backend.get_joint_state_qpos_indices(LEG_JOINTS), device=env.device
+        )
+        self.v_indices = torch.as_tensor(
+            env.backend.get_joint_state_qvel_indices(JOINTS), device=env.device
+        )
         layout = env.backend.get_root_state_layout("robot/base")
         self.root_q = torch.as_tensor(layout.qpos_indices, device=env.device)
         self.root_v = torch.as_tensor(layout.qvel_indices, device=env.device)
@@ -145,20 +179,36 @@ class VelocityCommand(CommandTerm):
         if plan is None or not plan.ready:
             p = self.g.new_zeros(self.num_envs, 3)
             p[:, 2] = self.cfg.spawn_height
-            return (p, torch.eye(3, device=self._device).expand(self.num_envs, 3, 3),
-                    torch.zeros_like(p), torch.zeros_like(p),
-                    self.mdp.default_q.expand(self.num_envs, 12), torch.zeros_like(self.a_prev))
+            return (
+                p,
+                torch.eye(3, device=self._device).expand(self.num_envs, 3, 3),
+                torch.zeros_like(p),
+                torch.zeros_like(p),
+                self.mdp.default_q.expand(self.num_envs, 12),
+                torch.zeros_like(self.a_prev),
+            )
         views = self._env.backend.get_state_views(("qpos", "qvel"), device=self._device)
         root, velocity = views["qpos"][:, self.root_q], views["qvel"][:, self.root_v]
         rotation = quat_to_mat(root[:, 3:7])
-        return (root[:, :3], rotation, velocity[:, :3], matvec(rotation, velocity[:, 3:6]),
-                views["qpos"][:, self.q_indices], views["qvel"][:, self.v_indices])
+        return (
+            root[:, :3],
+            rotation,
+            velocity[:, :3],
+            matvec(rotation, velocity[:, 3:6]),
+            views["qpos"][:, self.q_indices],
+            views["qvel"][:, self.v_indices],
+        )
 
     def _resample_command(self, mask):
-        level = self.curriculum.terrain_level if self.curriculum is not None else torch.zeros_like(self.f)
+        level = (
+            self.curriculum.terrain_level
+            if self.curriculum is not None
+            else torch.zeros_like(self.f)
+        )
         goal, mode, crossing, hold = self.sampler.sample(self.command_domain, level)
         if self.cfg.fixed_command is not None:
             from unisupermimic.tasks.velocity.go2.command_sampler import command_modes
+
             goal = goal.new_tensor(self.cfg.fixed_command).expand_as(goal)
             mode = command_modes(goal)
             crossing = (self.command_domain != 0) & (mode == 1)
@@ -170,7 +220,9 @@ class VelocityCommand(CommandTerm):
             self.curriculum.crossing_episode.copy_(self.crossing_episode)
 
     def reset(self, env_ids=None, *, publish_metrics=True):
-        ids = resolve_reset_env_ids(env_ids, num_envs=self.num_envs, device=self._device, owner="Go2WVelocity")
+        ids = resolve_reset_env_ids(
+            env_ids, num_envs=self.num_envs, device=self._device, owner="Go2WVelocity"
+        )
         mask = self._reset_mask_buffer.resolve(ids, owner="Go2WVelocity")
         if ids.numel() == 0:
             return {}
@@ -183,10 +235,15 @@ class VelocityCommand(CommandTerm):
         root[:, 2] += self.cfg.spawn_height
         root[:, 3] = 1.0
         # Full simulator state retains wheel qpos. Only the MDP projection omits it.
-        position = torch.cat((self.mdp.default_q.expand(self.num_envs, 12),
-                              self.g.new_zeros(self.num_envs, 4)), -1)
-        self.robot.write_motion_state_tensor_to_sim(root_state=root, position=position,
-                                                    velocity=torch.zeros_like(self.a_prev), reset_mask=mask)
+        position = torch.cat(
+            (self.mdp.default_q.expand(self.num_envs, 12), self.g.new_zeros(self.num_envs, 4)), -1
+        )
+        self.robot.write_motion_state_tensor_to_sim(
+            root_state=root,
+            position=position,
+            velocity=torch.zeros_like(self.a_prev),
+            reset_mask=mask,
+        )
         self.a_prev[ids] = 0
         self.ep_step[ids] = 0
         self.f[ids] = 0
@@ -221,12 +278,31 @@ def reward(env):
     pre = env.velocity_pre_action
     env.velocity_next_state = tuple(t.detach().clone() for t in c.state())
     if c.curriculum is not None:
-        c.curriculum.observe(env.velocity_next_state, pre["goal"], c.mdp.hard_termination(env.velocity_next_state), 0.0)
+        c.curriculum.observe(
+            env.velocity_next_state,
+            pre["goal"],
+            c.mdp.hard_termination(env.velocity_next_state),
+            0.0,
+        )
     views = env.scene.read_plan.sensor_tensor_views(c.robot, c.tensor_sensor_names)
     torque = torch.cat([views.values[name] for name in c.tensor_sensor_names], -1)
     env.velocity_measured_torque = torque.detach().clone()
-    return c.mdp.reward_transition(pre["state"], env.velocity_next_state, pre["goal"],
-                                  env.velocity_executed_action, pre["previous_action"], measured_torque=torque)
+    normal = c.mdp.terrain_normal(env.velocity_next_state)
+    terms = c.mdp.terms(
+        pre["state"],
+        env.velocity_next_state,
+        pre["goal"],
+        env.velocity_executed_action,
+        pre["previous_action"],
+        measured_torque=torque,
+        command_domain=env.velocity_terrain_tags["command_domain"],
+        terrain_normal=normal,
+    )
+    from .diagnostics import record_transition
+    from .reward_core import velocity_reward_total
+
+    record_transition(env, terms, env.velocity_next_state, pre["goal"], normal)
+    return c.mdp.control.dt * velocity_reward_total(terms)
 
 
 def fallen(env):

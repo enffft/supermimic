@@ -799,6 +799,8 @@ class SuperMimicLearner:
                     flatten(goals),
                     flatten(actions),
                     flatten(previous_actions),
+                    **(self.mdp.imagination_reward_kwargs(start, self.cfg.horizon)
+                       if hasattr(self.mdp, "imagination_reward_kwargs") else {}),
                 )
                 dones = self.mdp.soft_termination(all_states, flat_frames)
             else:
@@ -1033,6 +1035,9 @@ class SuperMimicLearner:
                 f"SuperMimic resume requires a full last.pt checkpoint; missing {missing} in {path}"
             )
         checkpoint_args = checkpoint.get("args", {})
+        validate_resume = getattr(self.mdp, "validate_resume_config", None)
+        if validate_resume is not None:
+            validate_resume(checkpoint_args, self.cfg)
         if checkpoint_args.get("goal_mode", "encoded") != self.cfg.goal_mode:
             raise ValueError("Cannot resume with a different goal_mode")
         if self.cfg.goal_mode == "direct":
@@ -1043,7 +1048,8 @@ class SuperMimicLearner:
                     validate_distribution_migration,
                 )
 
-                validate_distribution_migration(old_contract, new_contract)
+                validator = getattr(self.env, "validate_distribution_migration", validate_distribution_migration)
+                validator(old_contract, new_contract)
             elif old_contract != new_contract:
                 raise ValueError(
                     "Cannot resume Go2 with changed state/action/reward/model/terrain semantics"
@@ -1165,6 +1171,8 @@ class SuperMimicLearner:
         )
         logger.start(status="Warming up...")
         try:
+            if hasattr(self.env, "prepare_supermimic_iteration"):
+                self.env.prepare_supermimic_iteration(self)
             if start_iteration == 0:
                 self.collect(self.cfg.warmup_steps)
             required_steps = max(self.cfg.hist, self.cfg.wm_window)
@@ -1191,6 +1199,8 @@ class SuperMimicLearner:
                         logger.log_status("Compiling world model (one-off, slow on first run)")
                     if self.cfg.compile and iteration == self.cfg.wm_only_iters:
                         logger.log_status("Compiling policy update (one-off, slow on first run)")
+                    if hasattr(self.env, "prepare_supermimic_iteration"):
+                        self.env.prepare_supermimic_iteration(self)
                     iteration_start = time.time()
                     learning_rate = self.set_learning_rates(iteration)
                     self.step_accumulator += 1.0 / self.cfg.utd
@@ -1249,6 +1259,8 @@ class SuperMimicLearner:
                     self.wall_time = time.time() - train_start
                     iteration_time = time.time() - iteration_start
 
+                    if hasattr(self.env, "finish_supermimic_iteration"):
+                        self.env.finish_supermimic_iteration(self)
                     if self.on_iteration is not None:
                         self.on_iteration(self)
                     iter_rewards = self.stats["r"][stats_mark:]

@@ -1,3 +1,6 @@
+> 本页记录首次交付的 v1 设计。当前奖励、八级地形课程与验证结果请参阅
+> [Go2W 地形奖励与课程 v2 审计](go2w_terrain_reward_curriculum_v2_audit.md)。v1 checkpoint 不能恢复为 v2。
+
 # Go2WVelocitySuperMimic：开发交付与后续验证
 
 本任务为代码实现。此次没有启动训练、MuJoCo/MjWarp、CUDA、torch.compile，

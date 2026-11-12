@@ -15,7 +15,7 @@ from unisupermimic.tasks.velocity.go2.heightfield import TerrainHeightField
 from unisupermimic.tasks.velocity.go2.manager_terms import flat_domain_boundary
 
 from .contract import EFFORT, JOINTS, LAYOUT, LEG_JOINTS, MODEL, POLICY_SPEC, WHEEL_JOINTS
-from .terrain import Go2WTerrainCurriculum, mixed_terrain
+from .terrain import Go2WTerrainCurriculum, mixed_terrain, terrain_contract
 
 
 def validate_model(path):
@@ -28,14 +28,20 @@ def validate_model(path):
     if len(motors) != 16 or {m.get("joint") for m in motors} != set(JOINTS):
         raise ValueError("Expected exactly one torque motor per Go2W joint")
     for motor in motors:
-        if motor.tag != "motor" or motor.get("gear") != "1" or motor.get("name") != motor.get("joint"):
+        if (
+            motor.tag != "motor"
+            or motor.get("gear") != "1"
+            or motor.get("name") != motor.get("joint")
+        ):
             raise ValueError("Expected named gear=1 torque motors")
         effort = EFFORT[JOINTS.index(motor.get("joint"))]
         inherited = "-45.43 45.43" if motor.get("class") == "knee" else "-23.7 23.7"
         if tuple(map(float, motor.get("ctrlrange", inherited).split())) != (-effort, effort):
             raise ValueError("Go2W model motor effort limits changed")
     for joint in root.findall(".//worldbody//joint"):
-        if joint.get("name") in WHEEL_JOINTS and (joint.get("axis") != "0 1 0" or joint.get("limited") != "false"):
+        if joint.get("name") in WHEEL_JOINTS and (
+            joint.get("axis") != "0 1 0" or joint.get("limited") != "false"
+        ):
             raise ValueError("Go2W wheels must be continuous Y-axis hinges")
     mesh = root.find("asset/mesh")
     mesh_path = Path(path).parent / root.find("compiler").get("meshdir", "") / mesh.get("file")
@@ -51,6 +57,22 @@ class Go2WVelocityEnv(Go2VelocityEnv):
     owners are all Go2W-specific; no Go2 environment factory is invoked.
     """
 
+    @staticmethod
+    def validate_distribution_migration(old, new):
+        from .checkpoint import validate_stage_migration
+
+        validate_stage_migration(old, new)
+
+    def prepare_supermimic_iteration(self, learner):
+        from .diagnostics import begin_iteration
+
+        begin_iteration(self, learner)
+
+    def finish_supermimic_iteration(self, learner):
+        from .diagnostics import finish_iteration
+
+        finish_iteration(self, learner)
+
     def set_collection_exploration(self, standard_deviation):
         self.action_manager.get_term("mixed").collection_noise_std = float(standard_deviation)
 
@@ -59,7 +81,7 @@ class Go2WVelocityEnv(Go2VelocityEnv):
         cfg = self.cfg
         paths = (Path(cfg.scene.model_file), MODEL.parent / "assets/wheel.stl")
         contract = {
-            "schema": "go2w_velocity_supermimic_v1",
+            "schema": "go2w_velocity_supermimic_v2",
             "task": "Go2WVelocitySuperMimic",
             "state_layout": asdict(LAYOUT),
             "state": "p_world,quat_wxyz,v_world,w_world,q_leg12,qd_leg12,qd_wheel4",
@@ -69,17 +91,25 @@ class Go2WVelocityEnv(Go2VelocityEnv):
             "joints": list(JOINTS),
             "position_joints": list(LEG_JOINTS),
             "wheel_joints": list(WHEEL_JOINTS),
-            "physical_qpos_joints": [j.get("name") for j in ET.parse(paths[0]).getroot().findall(".//worldbody//joint")],
-            "physical_actuators": [m.get("name") for m in ET.parse(paths[0]).getroot().find("actuator")],
+            "physical_qpos_joints": [
+                j.get("name") for j in ET.parse(paths[0]).getroot().findall(".//worldbody//joint")
+            ],
+            "physical_actuators": [
+                m.get("name") for m in ET.parse(paths[0]).getroot().find("actuator")
+            ],
             "control_protocol": "substep_effort;leg_position_PD;wheel_velocity_PD;gear1;saturated_v1",
             "actions": {name: asdict(term) for name, term in cfg.actions.items()},
             "commands": asdict(cfg.commands["velocity"]),
             "reward": asdict(self.supermimic_mdp.reward_cfg),
+            "reward_protocol": "terrain_plane_alignment_domain_penalties_v2_no_target_detach",
+            "curriculum_protocol": "wm_coverage_then_skill_v2_episode_fixed_domain",
             "reward_manager": {name: asdict(term) for name, term in cfg.rewards.items()},
             "terminations": {name: asdict(term) for name, term in cfg.terminations.items()},
             "context": "nominal_physics_empty_context",
-            "model_assets_sha256": {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in paths},
-            "terrain": asdict(cfg.scene.terrain),
+            "model_assets_sha256": {
+                p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in paths
+            },
+            "terrain": terrain_contract(cfg.scene.terrain),
             "terrain_fingerprint": self.supermimic_mdp.terrain.fingerprint,
             "terrain_sensor": "world_collision_triangles;predicted_pose_each_step;11x7_yaw_scan",
             "real_torque": "last_substep_jointactuatorfrc_noiseless",
@@ -93,41 +123,76 @@ class Go2WVelocityEnv(Go2VelocityEnv):
         }
         # Learner additionally strictly checks structured integration,
         # terrain conditioning/gradients, history, and network sizes on resume.
-        return json.loads(json.dumps(contract, default=lambda x: (
-            f"{x.__module__}.{x.__qualname__}" if callable(x) else str(x))))
+        return json.loads(
+            json.dumps(
+                contract,
+                default=lambda x: f"{x.__module__}.{x.__qualname__}" if callable(x) else str(x),
+            )
+        )
 
 
 def make_go2w_env(cfg, num_envs=1, backend_type="mujoco"):
     c = cfg.commands["velocity"]
     if backend_type != "mujoco":
-        raise NotImplementedError("Go2W v1 supports only the MuJoCo torque-motor backend")
-    if (set(cfg.actions) != {"mixed"} or set(cfg.rewards) != {"velocity"}
-            or cfg.rewards["velocity"].weight != 1 or cfg.scale_rewards_by_dt):
+        raise NotImplementedError("Go2W v2 supports only the MuJoCo torque-motor backend")
+    if (
+        set(cfg.actions) != {"mixed"}
+        or set(cfg.rewards) != {"velocity"}
+        or cfg.rewards["velocity"].weight != 1
+        or cfg.scale_rewards_by_dt
+    ):
         raise ValueError("Go2W requires one mixed action and dt-scaled shared velocity reward")
     if cfg.sim_dt != 0.005 or cfg.ctrl_dt != 0.02 or cfg.actions["mixed"].control.dt != cfg.ctrl_dt:
-        raise ValueError("Go2W v1 requires sim_dt=.005 and control/reward dt=.02")
-    if c.terrain_profile != "mixed" or c.terrain_max_level != 4:
-        raise ValueError("Go2W curriculum uses the same conservative level0..4 mixed atlas")
+        raise ValueError("Go2W v2 requires sim_dt=.005 and control/reward dt=.02")
+    if c.terrain_profile != "mixed" or c.terrain_max_level != 7:
+        raise ValueError("Go2W curriculum uses the same eight-level level0..7 mixed atlas")
+    if c.sampler.terrain_level_count != 8:
+        raise ValueError("Go2W command sampler requires eight terrain levels")
     if c.sampler.terrain_hold_seconds < cfg.max_episode_seconds:
         raise ValueError("Terrain commands must span the whole episode")
     cfg.scene.model_file = str(MODEL.with_name("terrain_robot.xml"))
     cfg.scene.terrain = mixed_terrain(c.terrain_seed)
-    cfg.terminations["flat_domain_boundary"] = TerminationTermCfg(func=flat_domain_boundary, time_out=True)
+    cfg.terminations["flat_domain_boundary"] = TerminationTermCfg(
+        func=flat_domain_boundary, time_out=True
+    )
     validate_model(cfg.scene.model_file)
     cfg.validate()
-    backend = create_backend(backend_type, cfg.scene, num_envs, cfg.sim_dt,
-                             body_state_required=True, base_name="robot/base", **env_backend_kwargs(cfg))
+    backend = create_backend(
+        backend_type,
+        cfg.scene,
+        num_envs,
+        cfg.sim_dt,
+        body_state_required=True,
+        base_name="robot/base",
+        **env_backend_kwargs(cfg),
+    )
     try:
         env = Go2WVelocityEnv(cfg, backend, num_envs)
         command = env.command_manager.get_term("velocity")
         origins = backend.get_terrain_spawn_data().terrain_origins
-        command.mdp.terrain = TerrainHeightField.from_mujoco(env.get_playback_model(0), device=env.device,
-            metadata={"seed": c.terrain_seed, "origins": origins.tolist(), "generator": asdict(cfg.scene.terrain)})
-        command.curriculum = Go2WTerrainCurriculum(num_envs, origins, enabled=c.terrain_curriculum,
-            fixed_level=c.terrain_fixed_level, max_level=c.terrain_max_level,
-            recycle_probability=c.terrain_recycle_probability, phase=c.terrain_phase,
-            coverage_weights=c.terrain_coverage_weights, min_episodes=c.terrain_min_episodes,
-            target_progress=c.terrain_target_progress, flat_probability=0.0, device=env.device)
+        command.mdp.terrain = TerrainHeightField.from_mujoco(
+            env.get_playback_model(0),
+            device=env.device,
+            metadata={
+                "seed": c.terrain_seed,
+                "origins": origins.tolist(),
+                "generator": terrain_contract(cfg.scene.terrain),
+            },
+        )
+        command.curriculum = Go2WTerrainCurriculum(
+            num_envs,
+            origins,
+            enabled=c.terrain_curriculum,
+            fixed_level=c.terrain_fixed_level,
+            max_level=c.terrain_max_level,
+            recycle_probability=c.terrain_recycle_probability,
+            phase=c.terrain_phase,
+            coverage_weights=c.terrain_coverage_weights,
+            min_episodes=c.terrain_min_episodes,
+            target_progress=c.terrain_target_progress,
+            flat_probability=0.0,
+            device=env.device,
+        )
         command.curriculum.fixed_domain = command.command_domain
         points = torch.as_tensor(origins.copy(), device=env.device, dtype=torch.float32)
         offsets = points.new_tensor([[-0.4, -0.25], [-0.4, 0.25], [0.4, -0.25], [0.4, 0.25]])

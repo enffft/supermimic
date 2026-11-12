@@ -9,6 +9,7 @@ from unisupermimic.tasks.velocity.go2.mdp import Go2VelocityMdp
 
 from .contract import DEFAULT_Q, LAYOUT, POLICY_SPEC, MixedControlCfg, soft_limits
 from .reward_core import VelocityRewardCfg, velocity_reward_terms, velocity_reward_total
+from .terrain_plane import terrain_plane_normal
 
 
 class Go2WVelocityMdp(Go2VelocityMdp):
@@ -31,37 +32,92 @@ class Go2WVelocityMdp(Go2VelocityMdp):
         self.limits = soft_limits(device)
         # Upper bound on positive rate terms, including zero-command restoration.
         c = self.reward_cfg
-        self.max_step_reward = self.control.dt * sum(max(0, x) for x in (
-            c.track_vx, c.track_vy, c.track_yaw, c.stand_still, c.upright))
+        self.max_step_reward = self.control.dt * sum(
+            max(0, x)
+            for x in (c.track_vx, c.track_vy, c.track_yaw, c.stand_still, c.terrain_alignment)
+        )
 
     def to(self, device):
-        return type(self)(device, None if self.terrain is None else self.terrain.to(device),
-                          self.control, self.reward_cfg)
+        return type(self)(
+            device,
+            None if self.terrain is None else self.terrain.to(device),
+            self.control,
+            self.reward_cfg,
+        )
 
     @staticmethod
     def validate_learner_config(cfg):
-        required = dict(goal_mode="direct", hist=5, goal_frames=1, wm_structured=True,
-                        terrain_training=True, terrain_conditioning=True, terrain_sensor_grad=True)
+        required = dict(
+            goal_mode="direct",
+            hist=5,
+            goal_frames=1,
+            wm_structured=True,
+            terrain_training=True,
+            terrain_conditioning=True,
+            terrain_sensor_grad=True,
+            checkpoint_replay=True,
+        )
         for name, expected in required.items():
             if getattr(cfg, name) != expected:
-                raise ValueError(f"Go2W v1 requires algo.{name}={expected!r}")
+                raise ValueError(f"Go2W v2 requires algo.{name}={expected!r}")
         if cfg.driver_enabled:
             raise ValueError("Go2 collection drivers cannot control Go2W mixed actions")
 
     def obs(self, state, previous_action, context, frames):
         _, rotation, _, angular, q, qd = state
-        return torch.cat((q - self.default_q, qd[..., :12], qd[..., 12:],
-                          matvec(rotation.transpose(-1, -2), angular),
-                          -rotation[..., 2, :], previous_action), -1)
+        return torch.cat(
+            (
+                q - self.default_q,
+                qd[..., :12],
+                qd[..., 12:],
+                matvec(rotation.transpose(-1, -2), angular),
+                -rotation[..., 2, :],
+                previous_action,
+            ),
+            -1,
+        )
+
+    def terrain_normal(self, state):
+        scan = (
+            state[0].new_zeros((*state[0].shape[:-1], 77))
+            if self.terrain is None
+            else self.terrain.local_scan(state[0], state[1], sensor_grad=True)
+        )
+        return terrain_plane_normal(scan, state[1], self.reward_cfg.max_target_tilt_deg)
 
     def terms(self, previous, state, goal, action, previous_action, **measurements):
-        return velocity_reward_terms(previous, state, goal, action, previous_action,
+        normal = measurements.pop("terrain_normal", None)
+        if normal is None:
+            normal = self.terrain_normal(state)
+        return velocity_reward_terms(
+            previous,
+            state,
+            goal,
+            action,
+            previous_action,
             (self.reward_cfg, self.control, self.default_q, self.limits),
-            base_height=self.local_height(state), **measurements)
+            base_height=self.local_height(state),
+            terrain_normal=normal,
+            **measurements,
+        )
 
     def reward_transition(self, previous, state, goal, action, previous_action, **measurements):
         return self.control.dt * velocity_reward_total(
-            self.terms(previous, state, goal, action, previous_action, **measurements))
+            self.terms(previous, state, goal, action, previous_action, **measurements)
+        )
+
+    @staticmethod
+    def imagination_reward_kwargs(start, horizon):
+        # Learner flattens trajectories in time-major H,B order.
+        return {
+            "command_domain": start["command_domain"].unsqueeze(0).expand(horizon, -1).flatten()
+        }
+
+    @staticmethod
+    def validate_resume_config(previous, cfg):
+        for name in ("wm_only_iters", "wm_window", "horizon"):
+            if previous.get(name) != getattr(cfg, name):
+                raise ValueError(f"Go2W resume cannot change the coverage/imagination schedule: {name}")
 
     def normalize_context(self, context):
         return context

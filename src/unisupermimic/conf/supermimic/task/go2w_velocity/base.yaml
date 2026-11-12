@@ -16,6 +16,8 @@ algo:
   terrain_conditioning: true
   terrain_sensor_grad: true
   critic_terrain_conditioning: false
+  # Preserve the original training scale; use explicit overrides for tiny smoke tests.
+  wm_batches: 10
   wm_batch: 1024
   pi_batch: 1024
   buffer_steps: 256
@@ -25,6 +27,8 @@ algo:
   wm_opt: adam
   pi_ema: 0.0
   amp: none
+  profile: true
+  strict_finite: true
   compile: false
   no_sync: false
   checkpoint_replay: true
@@ -88,15 +92,16 @@ env:
       terrain_profile: mixed
       terrain_curriculum: true
       terrain_fixed_level: 0
-      terrain_max_level: 4
-      terrain_phase: skill
+      terrain_max_level: 7
+      terrain_phase: wm
       terrain_min_episodes: 3
       terrain_target_progress: 1.2
       terrain_recycle_probability: 0.15
-      terrain_coverage_weights: [0.2, 0.4, 0.3, 0.1, 0.0]
+      terrain_coverage_weights: [0.20, 0.25, 0.20, 0.15, 0.10, 0.06, 0.03, 0.01]
       spawn_height: 0.42
       sampler:
-        domain_weights: [0.35, 0.20, 0.10, 0.10, 0.125, 0.125]
+        terrain_level_count: 8
+        domain_weights: [0.25, 0.20, 0.10, 0.10, 0.175, 0.175]
         flat_mode_weights: [0.08, 0.20, 0.18, 0.18, 0.16, 0.20]
         flat_speed_level: 0
         flat_hold_range: [2.0, 5.0]
@@ -124,13 +129,14 @@ env:
         stand_still: 0.5
         stop_command_sigma: 0.05
         stop_velocity_sigma: 0.15
-        upright: 0.4
-        upright_sigma: 0.4
-        base_lin_vel_z: -0.5
+        terrain_alignment: 0.4
+        terrain_alignment_sigma: 0.16
+        max_target_tilt_deg: 35.0
+        base_lin_vel_z: [-0.50, -0.35, -0.15, -0.15, -0.08, -0.08]
         base_ang_vel_xy: -0.08
         base_height_low: -5.0
         min_safe_height: 0.22
-        leg_joint_deviation: -0.03
+        leg_joint_deviation: [-0.030, -0.020, -0.015, -0.015, -0.008, -0.008]
         leg_joint_limit: -1.0
         leg_action_rate: -0.01
         wheel_action_rate: -0.003

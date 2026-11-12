@@ -6,6 +6,8 @@ from typing import Any, Protocol, runtime_checkable
 
 import torch
 
+from .layout import DirectPolicySpec, StateLayout
+
 State = tuple[
     torch.Tensor,
     torch.Tensor,
@@ -87,6 +89,13 @@ class DirectGoalMdpProtocol(SuperMimicMdpProtocol, Protocol):
         action: torch.Tensor,
         previous_action: torch.Tensor,
     ) -> torch.Tensor: ...
+
+
+class CompactStateMdpProtocol(DirectGoalMdpProtocol, Protocol):
+    """Optional task extension; legacy Go2/G1 need no new attributes."""
+
+    state_layout: StateLayout
+    policy_spec: DirectPolicySpec
 
 
 def get_supermimic_mdp(env: Any) -> SuperMimicMdpProtocol:

@@ -1,0 +1,9 @@
+# @package _global_
+defaults:
+  - /task/go2w_velocity/mujoco
+# Stage B: keep flat; admit rough and both slope directions, no stairs yet.
+env:
+  commands:
+    velocity:
+      sampler:
+        domain_weights: [0.50, 0.20, 0.15, 0.15, 0.0, 0.0]

@@ -14,6 +14,12 @@ The experimental Go2 velocity task includes reward/feet mathematics adapted
 from enffft/supermimic, Copyright (c) 2026 Yuxi Liu, under the MIT license.
 The original notice and frozen source hashes are in migration/source_reference.
 
+The Go2W velocity task includes a collision-focused adaptation of Unitree's
+official MuJoCo Go2W model and wheel mesh, Copyright (c) 2016-2024 HangZhou
+YuShu TECHNOLOGY CO.,LTD. (Unitree Robotics), under the BSD 3-Clause license.
+The license and pinned source/asset hashes are in
+src/unisupermimic/assets/robots/go2w/LICENSE and provenance.json.
+
 SuperMimic paper:
 "SuperMimic: Scaling Humanoid Whole-Body Control with One Differentiable
 World Model", Qiayuan Liao et al., https://supermimic.github.io

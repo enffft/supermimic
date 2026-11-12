@@ -1,0 +1,31 @@
+{
+  "repository": "https://github.com/unitreerobotics/unitree_mujoco",
+  "revision": "1eb6642e3f3fdfb7fb13a9794fd6a2dd93ea0e7d",
+  "source": "unitree_robots/go2w/go2w.xml",
+  "source_sha256": "c8feaef4afdf360335727c80a826d1611950c562a3daaa5b5bfcf8b57f6859a6",
+  "wheel_sha256": "51c95e80dcd41c0cf1a9575d4d7c2c89855848f7fa2c4bf28f2f10c2e3d639e2",
+  "wheel_mesh_bounds_m": [
+    [
+      -0.08589178323745728,
+      0.08589178323745728
+    ],
+    [
+      -0.07667171210050583,
+      -0.024856800213456154
+    ],
+    [
+      -0.08599721640348434,
+      0.08599721640348434
+    ]
+  ],
+  "license": "BSD-3-Clause (see LICENSE)",
+  "changes": [
+    "Namespace robot names; name root and collision geoms",
+    "Preserve official bodies, joint axes, inertias and collision shapes",
+    "Remove cosmetic body meshes; keep original wheel mesh and transforms",
+    "Mark the duplicate wheel display mesh non-colliding and massless; retain foot-class wheel collision",
+    "Explicit continuous wheel hinges and gear=1 existing torque motors; no duplicate actuators",
+    "Use noiseless named torque sensors and IMU gyro; add interleaved physical-qpos init keyframe",
+    "Separate flat plane from generated-terrain scene"
+  ]
+}

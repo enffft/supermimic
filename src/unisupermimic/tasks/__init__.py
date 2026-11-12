@@ -3,4 +3,5 @@
 __unilab_registry_modules__ = (
     "unisupermimic.tasks.motion_tracking.g1.supermimic.registry",
     "unisupermimic.tasks.velocity.go2.registry",
+    "unisupermimic.tasks.velocity.go2w.registry",
 )

@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 import torch
 import torch.nn as nn
 
+from unisupermimic.rl.contracts.layout import DirectPolicySpec, StateLayout
 from unisupermimic.rl.contracts.supermimic import State
 
 from .geometry import invariant_features, matmul, matvec, so3_exp, so3_log, yaw_mat
@@ -120,19 +121,21 @@ class WorldModel(nn.Module):
         structured: bool = False,
         dt: float = 0.02,
         terrain_dim: int = 0,
+        state_layout: StateLayout | None = None,
     ):
         super().__init__()
         if dt <= 0:
             raise ValueError(f"WorldModel dt must be positive, got {dt}")
-        self.num_joints = num_joints
+        self.state_layout = state_layout or StateLayout.legacy(num_joints)
+        self.num_joints = self.state_layout.action_dim
         self.context_dim = context_dim
         self.structured = structured
         self.dt = dt
         if terrain_dim not in (0, 77):
             raise ValueError("terrain_dim must be 0 or the Go2 77-point scan")
         self.terrain_dim = terrain_dim
-        self.in_dim = 13 + 3 * num_joints + context_dim + terrain_dim
-        self.out_dim = 12 + 2 * num_joints
+        self.in_dim = self.state_layout.invariant_dim + self.state_layout.action_dim + context_dim + terrain_dim
+        self.out_dim = self.state_layout.increment_dim
         self.net = mlp(self.in_dim, hidden, self.out_dim, act=nn.SiLU, layer_norm=True)
         output = self.net[-1]
         assert isinstance(output, nn.Linear)
@@ -181,7 +184,9 @@ class WorldModel(nn.Module):
                 rotation.transpose(-1, -2),
                 old_weight * ang_vel + new_weight * next_ang_vel,
             ),
-            old_weight * joint_vel + new_weight * next_joint_vel,
+            (old_weight * joint_vel + new_weight * next_joint_vel)[
+                ..., self.state_layout.position_velocity_indices
+            ],
         )
 
     @staticmethod
@@ -212,7 +217,7 @@ class WorldModel(nn.Module):
             return increment
 
         d_position, d_rotation, d_lin_vel, d_ang_vel, d_joint_pos, d_joint_vel = increment.split(
-            (3, 3, 3, 3, self.num_joints, self.num_joints), -1
+            self.state_layout.increment_sizes, -1
         )
         position_drift, rotation_drift, joint_pos_drift = self._drift(
             state,
@@ -251,7 +256,7 @@ class WorldModel(nn.Module):
         position, rotation, lin_vel, ang_vel, joint_pos, joint_vel = state
         heading = yaw_mat(rotation)
         d_position, d_rotation, d_lin_vel, d_ang_vel, d_joint_pos, d_joint_vel = increment.split(
-            (3, 3, 3, 3, self.num_joints, self.num_joints), -1
+            self.state_layout.increment_sizes, -1
         )
         next_lin_vel = lin_vel + matvec(rotation, d_lin_vel)
         next_ang_vel = ang_vel + matvec(rotation, d_ang_vel)
@@ -297,7 +302,8 @@ class WorldModel(nn.Module):
     def initialize_from_flat(self, source: "WorldModel") -> None:
         """Exact same-UniLab protocol expansion; optimizer state is deliberately fresh."""
         if (
-            source.terrain_dim != 0
+            self.state_layout != source.state_layout
+            or source.terrain_dim != 0
             or self.terrain_dim != 77
             or (self.num_joints, self.context_dim, self.structured, self.dt)
             != (source.num_joints, source.context_dim, source.structured, source.dt)
@@ -351,13 +357,18 @@ class Policy(nn.Module):
         num_joints: int = 29,
         hidden: Sequence[int] = (2048, 1024, 512, 256),
         goal_mode: str = "encoded",
+        direct_spec: DirectPolicySpec | None = None,
     ):
         super().__init__()
         self.hist = hist
         self.goal_mode = goal_mode
         if goal_mode == "direct":
-            if obs_dim != 42 or goal_dim != 3 or num_joints != 12 or hist != 5:
-                raise ValueError("Go2 direct contract requires History5x42 + Goal3 -> Action12")
+            spec = direct_spec or DirectPolicySpec()
+            if (obs_dim, goal_dim, num_joints, hist) != (
+                sum(spec.widths), spec.goal_dim, spec.action_dim, spec.history
+            ):
+                raise ValueError("Direct policy dimensions disagree with task observation schema")
+            self.direct_spec = spec
             # Original actor: term-major history, fixed scales, SiLU, tanh.
             # No encoder, adaptive normalization, context, or reference input.
             self.dec = mlp(obs_dim * hist + goal_dim, hidden, num_joints, act=nn.SiLU)
@@ -368,7 +379,7 @@ class Policy(nn.Module):
                 torch.cat(
                     [
                         torch.full((hist * width,), scale)
-                        for width, scale in zip((12, 12, 3, 3, 12), (1.0, 0.2, 0.5, 1.0, 1.0))
+                        for width, scale in zip(spec.widths, spec.scales)
                     ]
                 ),
             )
@@ -391,7 +402,7 @@ class Policy(nn.Module):
     def forward(self, obs_hist: torch.Tensor, goal: torch.Tensor) -> torch.Tensor:
         """Consume ``(batch, hist, obs_dim)`` observations, newest last."""
         if self.goal_mode == "direct":
-            parts = obs_hist.split((12, 12, 3, 3, 12), -1)
+            parts = obs_hist.split(self.direct_spec.widths, -1)
             history = torch.cat([part.flatten(-2) for part in parts], -1)
             return torch.tanh(run_mlp(self.dec, torch.cat((history * self.obs_scale, goal), -1)))
         latent = torch.tanh(run_mlp(self.enc, self.goal_norm(goal)))

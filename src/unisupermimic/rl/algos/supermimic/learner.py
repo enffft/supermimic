@@ -16,6 +16,7 @@ import torch.nn as nn
 from torch.optim.swa_utils import AveragedModel, get_ema_multi_avg_fn
 from unilab.base.contracts.env import EnvProtocol
 
+from unisupermimic.rl.contracts.layout import StateLayout
 from unisupermimic.rl.contracts.supermimic import (
     SUPERMIMIC_STATE_KEY,
     SUPERMIMIC_TRANSITION_KEY,
@@ -164,6 +165,10 @@ class SuperMimicLearner:
         self.mdp = mdp.to(self.device) if self._bridged else mdp
         if cfg.goal_mode == "direct" and not isinstance(self.mdp, DirectGoalMdpProtocol):
             raise TypeError("direct goals require DirectGoalMdpProtocol")
+        self.state_layout = getattr(self.mdp, "state_layout", StateLayout.legacy(self.mdp.num_joints))
+        validate_config = getattr(self.mdp, "validate_learner_config", None)
+        if validate_config is not None:
+            validate_config(cfg)
         generated_terrain = (
             getattr(getattr(getattr(env, "cfg", None), "scene", None), "terrain", None) is not None
         )
@@ -196,6 +201,10 @@ class SuperMimicLearner:
         self.pi = self._make_policy().to(self.device)
         self.collection_driver = None
         self.initialization = {"actor": "fresh", "wm": "fresh", "critic": "fresh"}
+        if (cfg.init_actor_from is not None or cfg.init_wm_from is not None) and (
+            self.state_layout != StateLayout.legacy(self.mdp.num_joints)
+        ):
+            raise ValueError("Cross-layout actor/WM initialization is unsupported; use exact task resume")
         if cfg.init_actor_from is not None:
             if cfg.goal_mode != "direct":
                 raise ValueError(
@@ -256,6 +265,7 @@ class SuperMimicLearner:
             env.num_envs,
             self.device,
             num_joints=self.mdp.num_joints,
+            state_layout=self.state_layout,
             context_dim=self.mdp.context_dim,
             goal_dim=self.mdp.goal_frame_dim if cfg.goal_mode == "direct" else 0,
             command_metadata=getattr(getattr(env, "cfg", None), "commands", {}).get(
@@ -275,8 +285,8 @@ class SuperMimicLearner:
                 torch.full((3,), 5e-3),
                 torch.full((3,), 2e-2),
                 torch.full((3,), 5e-2),
-                torch.full((self.mdp.num_joints,), 3e-3),
-                torch.full((self.mdp.num_joints,), 5e-2),
+                torch.full((self.state_layout.joint_position_dim,), 3e-3),
+                torch.full((self.state_layout.joint_velocity_dim,), 5e-2),
             )
         ).to(self.device)
 
@@ -334,6 +344,7 @@ class SuperMimicLearner:
         source = WorldModel(
             hidden=self.cfg.wm_hidden,
             num_joints=self.mdp.num_joints,
+            state_layout=self.state_layout,
             context_dim=self.mdp.context_dim,
             structured=self.cfg.wm_structured,
         ).to(self.device)
@@ -386,12 +397,14 @@ class SuperMimicLearner:
             return WorldModel(
                 hidden=self.cfg.test_hidden_dims,
                 num_joints=self.mdp.num_joints,
+                state_layout=self.state_layout,
                 context_dim=self.mdp.context_dim,
                 structured=self.cfg.wm_structured,
             )
         return WorldModel(
             hidden=self.cfg.wm_hidden,
             num_joints=self.mdp.num_joints,
+            state_layout=self.state_layout,
             context_dim=self.mdp.context_dim,
             structured=self.cfg.wm_structured,
             terrain_dim=77 if self.cfg.terrain_conditioning else 0,
@@ -405,6 +418,7 @@ class SuperMimicLearner:
             hist=self.cfg.hist,
             z_dim=self.cfg.z_dim,
             num_joints=self.mdp.num_joints,
+            direct_spec=getattr(self.mdp, "policy_spec", None),
             hidden=self.cfg.policy_hidden,
             goal_mode=self.cfg.goal_mode,
         )
@@ -438,11 +452,14 @@ class SuperMimicLearner:
         info = self._state_info()
         with torch.no_grad():
             features = self.mdp.critic_features(
-                unflatten_state(info["s"]),
+                self._unflatten_state(info["s"]),
                 info["f"],
                 self.mdp.normalize_context(info["xi"]),
             )
         return int(features.shape[-1] + self.mdp.goal_frame_dim * self.cfg.goal_frames)
+
+    def _unflatten_state(self, value):
+        return unflatten_state(value, getattr(self, "state_layout", None))
 
     def _terrain_scan(self, state):
         if not self.cfg.terrain_conditioning:
@@ -458,7 +475,7 @@ class SuperMimicLearner:
     def _wm_rollout(
         self, states: torch.Tensor, actions: torch.Tensor, contexts: torch.Tensor
     ) -> State:
-        state = unflatten_state(states[:, 0])
+        state = self._unflatten_state(states[:, 0])
         predictions = []
         for index in range(self.cfg.wm_window):
             state = self._wm_step(
@@ -480,7 +497,7 @@ class SuperMimicLearner:
         self, predicted: State, next_states: torch.Tensor, mask: torch.Tensor
     ) -> tuple[torch.Tensor, torch.Tensor]:
         std = torch.maximum(self.wm.inc_norm.std(), self.err_floor)
-        error = (self.wm.state_error(predicted, unflatten_state(next_states)) / std) ** 2
+        error = (self.wm.state_error(predicted, self._unflatten_state(next_states)) / std) ** 2
         error = error.mean(-1)
         return (error * mask).sum() / next_states.shape[0], error[:, -1]
 
@@ -575,7 +592,7 @@ class SuperMimicLearner:
     def collect(self, n_steps: int) -> None:
         for _ in range(n_steps):
             info = self._state_info()
-            state = unflatten_state(info["s"])
+            state = self._unflatten_state(info["s"])
             obs = self.mdp.add_noise(self.mdp.obs(state, info["a_prev"], info["xi"], info["f"]))
             fresh = info["ep_step"] == 0
             shifted = torch.cat((self.obs_hist[:, 1:], obs.unsqueeze(1)), 1)
@@ -617,8 +634,8 @@ class SuperMimicLearner:
             if self.cfg.terrain_training:
                 self.buffer.mark_reset_boundary(transition["ep_step"] == 0)
             self.buffer.add(transition)
-            initial = unflatten_state(transition["s"])
-            next_state = unflatten_state(transition["s1"])
+            initial = self._unflatten_state(transition["s"])
+            next_state = self._unflatten_state(transition["s1"])
             self.wm.in_norm.update(
                 self.wm.inputs(
                     initial,
@@ -720,12 +737,12 @@ class SuperMimicLearner:
                             minlength=6 * scope_levels,
                         )
                     )
-        state = unflatten_state(start["s"])
+        state = self._unflatten_state(start["s"])
         context, frames, previous_action = start["xi"], start["f"], start["a_prev"]
         normalized_context = self.mdp.normalize_context(context)
         with torch.no_grad():
             obs_hist = self.mdp.obs(
-                unflatten_state(history["s"]),
+                self._unflatten_state(history["s"]),
                 history["a_prev"],
                 history["xi"],
                 history["f"],

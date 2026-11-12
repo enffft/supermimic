@@ -1,0 +1,152 @@
+# @package _global_
+# Independent Go2W owner. All parameters are initial development values.
+training:
+  task_name: Go2WVelocitySuperMimic
+  sim_backend: mujoco
+algo:
+  num_envs: 32
+  seed: 2026
+  goal_mode: direct
+  goal_frames: 1
+  hist: 5
+  wm_window: 8
+  horizon: 32
+  wm_structured: true
+  terrain_training: true
+  terrain_conditioning: true
+  terrain_sensor_grad: true
+  critic_terrain_conditioning: false
+  wm_batch: 1024
+  pi_batch: 1024
+  buffer_steps: 256
+  warmup_steps: 64
+  wm_only_iters: 500
+  pi_opt: adam
+  wm_opt: adam
+  pi_ema: 0.0
+  amp: none
+  compile: false
+  no_sync: false
+  checkpoint_replay: true
+  command_start_weights: [0.08, 0.25, 0.20, 0.15, 0.12, 0.20]
+env:
+  seed: 2026
+  sim_dt: 0.005
+  ctrl_dt: 0.02
+  max_episode_seconds: 10.0
+  auto_reset: true
+  scale_rewards_by_dt: false
+  scene:
+    model_file: src/unisupermimic/assets/robots/go2w/terrain_robot.xml
+    default_keyframe_name: init_state
+    entities:
+      robot:
+        root_body_name: robot/base
+        body_names: [robot/base]
+        joint_names: &joints
+          - robot/FL_hip_joint
+          - robot/FL_thigh_joint
+          - robot/FL_calf_joint
+          - robot/FR_hip_joint
+          - robot/FR_thigh_joint
+          - robot/FR_calf_joint
+          - robot/RL_hip_joint
+          - robot/RL_thigh_joint
+          - robot/RL_calf_joint
+          - robot/RR_hip_joint
+          - robot/RR_thigh_joint
+          - robot/RR_calf_joint
+          - robot/FL_wheel_joint
+          - robot/FR_wheel_joint
+          - robot/RL_wheel_joint
+          - robot/RR_wheel_joint
+        actuator_names: *joints
+        geom_names: [robot/FL_wheel_collision, robot/FR_wheel_collision, robot/RL_wheel_collision, robot/RR_wheel_collision]
+  observations:
+    policy:
+      enable_corruption: false
+      terms:
+        proprio:
+          func: unisupermimic.tasks.velocity.go2w.manager_terms.observation
+  actions:
+    mixed:
+      _target_: unisupermimic.tasks.velocity.go2w.manager_terms.Go2WMixedActionCfg
+      entity_name: robot
+      control:
+        dt: 0.02
+        leg_position_scale: 0.25
+        leg_kp: 40.0
+        leg_kd: 1.0
+        wheel_kp: 0.0
+        wheel_kd: 0.5
+        wheel_velocity_scale: 15.0
+        leg_effort_limits: [23.7, 23.7, 45.43, 23.7, 23.7, 45.43, 23.7, 23.7, 45.43, 23.7, 23.7, 45.43]
+        wheel_effort_limits: [15.0, 15.0, 15.0, 15.0]
+  commands:
+    velocity:
+      _target_: unisupermimic.tasks.velocity.go2w.manager_terms.VelocityCommandCfg
+      terrain_profile: mixed
+      terrain_curriculum: true
+      terrain_fixed_level: 0
+      terrain_max_level: 4
+      terrain_phase: skill
+      terrain_min_episodes: 3
+      terrain_target_progress: 1.2
+      terrain_recycle_probability: 0.15
+      terrain_coverage_weights: [0.2, 0.4, 0.3, 0.1, 0.0]
+      spawn_height: 0.42
+      sampler:
+        domain_weights: [0.35, 0.20, 0.10, 0.10, 0.125, 0.125]
+        flat_mode_weights: [0.08, 0.20, 0.18, 0.18, 0.16, 0.20]
+        flat_speed_level: 0
+        flat_hold_range: [2.0, 5.0]
+        terrain_hold_seconds: 10.02
+        seed: 2026
+        stairs_omni: false
+        flat_velocity_levels:
+          - [[-0.25, 0.60], [-0.15, 0.15], [-0.35, 0.35]]
+          - [[-0.25, 0.60], [-0.15, 0.15], [-0.35, 0.35]]
+          - [[-0.25, 0.60], [-0.15, 0.15], [-0.35, 0.35]]
+        terrain_velocity_ranges:
+          - [[-0.20, 0.70], [-0.15, 0.15], [-0.35, 0.35]]
+          - [[0.10, 0.70], [-0.10, 0.10], [-0.25, 0.25]]
+          - [[0.10, 0.70], [-0.10, 0.10], [-0.25, 0.25]]
+          - [[0.15, 0.60], [-0.06, 0.06], [-0.15, 0.15]]
+          - [[0.15, 0.60], [-0.06, 0.06], [-0.15, 0.15]]
+      reward:
+        track_vx: 2.5
+        track_vy: 1.5
+        track_yaw: 2.0
+        sigma_x: 0.25
+        sigma_y: 0.25
+        sigma_yaw: 0.30
+        zero_speed_baseline: true
+        stand_still: 0.5
+        stop_command_sigma: 0.05
+        stop_velocity_sigma: 0.15
+        upright: 0.4
+        upright_sigma: 0.4
+        base_lin_vel_z: -0.5
+        base_ang_vel_xy: -0.08
+        base_height_low: -5.0
+        min_safe_height: 0.22
+        leg_joint_deviation: -0.03
+        leg_joint_limit: -1.0
+        leg_action_rate: -0.01
+        wheel_action_rate: -0.003
+        leg_torque: -2.0e-5
+        wheel_torque: -1.0e-5
+        leg_joint_acceleration: -2.5e-7
+        wheel_joint_acceleration: -2.5e-9
+  terminations:
+    fallen:
+      func: unisupermimic.tasks.velocity.go2w.manager_terms.fallen
+    time_out:
+      func: unilab.envs.mdp.time_out
+      time_out: true
+  policy_observation_group: policy
+  critic_observation_group: null
+reward:
+  velocity:
+    func: unisupermimic.tasks.velocity.go2w.manager_terms.reward
+    weight: 1.0

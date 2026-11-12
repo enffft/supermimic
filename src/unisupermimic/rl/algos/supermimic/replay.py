@@ -4,17 +4,21 @@ from __future__ import annotations
 
 import torch
 
+from unisupermimic.rl.contracts.layout import StateLayout
+
 
 def _make_fields(
     num_joints: int,
     context_dim: int,
+    state_layout: StateLayout | None = None,
 ) -> dict[str, tuple[int | tuple[()], torch.dtype]]:
-    state_dim = 13 + 2 * num_joints
+    layout = state_layout or StateLayout.legacy(num_joints)
+    state_dim = layout.state_dim
     return {
         "s": (state_dim, torch.float32),
         "s1": (state_dim, torch.float32),
-        "a": (num_joints, torch.float32),
-        "a_prev": (num_joints, torch.float32),
+        "a": (layout.action_dim, torch.float32),
+        "a_prev": (layout.action_dim, torch.float32),
         "xi": (context_dim, torch.float32),
         "r": ((), torch.float32),
         "f": ((), torch.long),
@@ -37,11 +41,12 @@ class ReplayBuffer:
         goal_dim: int = 0,
         terrain_metadata: bool = False,
         command_metadata: bool = False,
+        state_layout: StateLayout | None = None,
     ):
         self.T = T
         self.N = N
         self.device = torch.device(device)
-        self.fields = _make_fields(num_joints, context_dim)
+        self.fields = _make_fields(num_joints, context_dim, state_layout)
         if goal_dim:
             self.fields["g"] = (goal_dim, torch.float32)
         if terrain_metadata:

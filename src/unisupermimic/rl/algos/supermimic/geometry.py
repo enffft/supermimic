@@ -5,6 +5,7 @@ from __future__ import annotations
 import torch
 import torch.nn.functional as F
 
+from unisupermimic.rl.contracts.layout import StateLayout
 from unisupermimic.rl.contracts.supermimic import State
 
 
@@ -165,14 +166,23 @@ def quat_slerp(first: torch.Tensor, second: torch.Tensor, t: torch.Tensor) -> to
     return F.normalize(first_weight * first + second_weight * second, dim=-1)
 
 
-def flatten_state(state: State) -> torch.Tensor:
+def flatten_state(state: State, layout: StateLayout | None = None) -> torch.Tensor:
     position, rotation, lin_vel, ang_vel, joint_pos, joint_vel = state
+    if layout is not None and (joint_pos.shape[-1], joint_vel.shape[-1]) != (
+        layout.joint_position_dim, layout.joint_velocity_dim
+    ):
+        raise ValueError("State does not match explicit layout")
     return torch.cat((position, mat_to_quat(rotation), lin_vel, ang_vel, joint_pos, joint_vel), -1)
 
 
-def unflatten_state(value: torch.Tensor) -> State:
-    num_joints = (value.shape[-1] - 13) // 2
-    joint_end = 13 + num_joints
+def unflatten_state(value: torch.Tensor, layout: StateLayout | None = None) -> State:
+    if layout is None:
+        if (value.shape[-1] - 13) % 2:
+            raise ValueError("Asymmetric state requires an explicit StateLayout")
+        layout = StateLayout.legacy((value.shape[-1] - 13) // 2)
+    if value.shape[-1] != layout.state_dim:
+        raise ValueError("Serialized state width does not match StateLayout")
+    joint_end = 13 + layout.joint_position_dim
     return (
         value[..., 0:3],
         quat_to_mat(value[..., 3:7]),

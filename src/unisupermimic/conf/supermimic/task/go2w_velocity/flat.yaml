@@ -1,0 +1,13 @@
+# @package _global_
+defaults:
+  - /task/go2w_velocity/mujoco
+# Stage A: only flat row0 tiles in the same immutable atlas as stages B/C.
+env:
+  commands:
+    velocity:
+      sampler:
+        domain_weights: [1.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        flat_velocity_levels:
+          - [[-0.15, 0.30], [-0.06, 0.06], [-0.20, 0.20]]
+          - [[-0.20, 0.45], [-0.10, 0.10], [-0.25, 0.25]]
+          - [[-0.25, 0.60], [-0.15, 0.15], [-0.35, 0.35]]

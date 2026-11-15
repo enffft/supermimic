@@ -1,0 +1,16 @@
+# @package _global_
+defaults:
+  - /task/go2w_velocity/persistent_lateral
+# Offset-action WM assets use incompatible control coordinates. Once this
+# full-range protocol is established, continue the same WM with --wm-from.
+# 2.5% of the mechanical interval reserved at each endpoint. Zero stays default.
+algo:
+  wm_only_iters: 500
+  actor_lr_scale: 0.1
+  actor_ramp_iters: 500
+env:
+  actions:
+    mixed:
+      control:
+        full_leg_target_range: true
+        leg_limit_fraction: 0.95

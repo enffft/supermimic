@@ -1,0 +1,12 @@
+{
+  "teacher": "/home/yifeiy/ws_go2_unilab/runs/go2w_curriculum_4096_b2048_H16_20261112_183910/training/last.pt",
+  "samples": 65536,
+  "updates": 800,
+  "validation_scope": "random held-out transitions from the same short collection",
+  "leg_target_RMSE_rad": 0.013434545136988163,
+  "leg_target_max_error_rad": 0.43419891595840454,
+  "wheel_action_RMSE": 0.028351575136184692,
+  "collection_falls": 18,
+  "elapsed_seconds": 10.904123050975613,
+  "use": "Actor initialization only; subsequent training is standard SuperMimic"
+}

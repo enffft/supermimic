@@ -1,0 +1,32 @@
+{
+  "format": "go2w_continual_dynamics_asset",
+  "architecture": {
+    "wm_hidden": [
+      2048,
+      2048,
+      2048
+    ],
+    "wm_structured": true,
+    "terrain_conditioning": true,
+    "terrain_sensor_grad": true
+  },
+  "tensor_sha256": "474ac561d26d62d8d7c51634c7ca65c342fc0956b9909b7953c86917afcdb84d",
+  "source_checkpoint": "/home/yifeiy/ws_go2_unilab/runs/go2w_omni_v3_2h_20261114/smoke/last.pt",
+  "source_iteration": 3,
+  "source_updates": {
+    "wm": 11820,
+    "actor": 0,
+    "critic": 0
+  },
+  "wm_updates": 11820,
+  "validation_status": "candidate; consult independent physics and WM assessment before skill claims",
+  "path": "/home/yifeiy/ws_go2_unilab/artifacts/world_models/go2w_conditioned.pt",
+  "frozen": false,
+  "restored": [
+    "network",
+    "all_normalizers",
+    "WM_optimizer",
+    "WM_update_count"
+  ],
+  "update_mode": "unchanged SuperMimic online world-model updates"
+}

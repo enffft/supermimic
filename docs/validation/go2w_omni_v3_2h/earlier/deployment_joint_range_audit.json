@@ -1,0 +1,442 @@
+{
+  "source_files_sha256": {
+    "/home/yifeiy/rl_sar/policy/go2w/base.yaml": "b7ab3eef1c05b19af84121c96a54e11511a7594411a287db9ee9bb1004d82776",
+    "/home/yifeiy/rl_sar/policy/go2w/robot_lab/config.yaml": "cb4c80a3f3ee1a37b7fa099e6c2581c91fafe00df7ce1ed5885ec16196f3d700",
+    "/home/yifeiy/rl_sar/src/rl_sar_zoo/go2w_description/urdf/go2w_description.urdf": "357cb88bef3bcb1f1f43c2083eddf04000855b746a9a5af96efcb98be239db40",
+    "/home/yifeiy/rl_sar/src/rl_sar/library/core/rl_sdk/rl_sdk.cpp": "094712a067a1b6753e8ca06047fcaf4fabbaf88fcb21d781089814e2a445ef4b",
+    "/home/yifeiy/rl_sar/src/rl_sar/fsm_robot/fsm_go2w.hpp": "93b450048d23a4e4c062f888a906036521c2657cbaf4682bdaf69921c844ac6a",
+    "/home/yifeiy/ws_go2_unilab/Uni-SuperMimic/src/unisupermimic/assets/robots/go2w/flat.xml": "2ae33b1635214cb1a0dd7ba32ea7550a259fefee5783a2140ab921adeb27d2b8"
+  },
+  "rows": [
+    {
+      "joint": "robot/FL_hip_joint",
+      "deployment_index": 3,
+      "mechanical_rad": [
+        -1.0472,
+        1.0472
+      ],
+      "old_training_target_rad": [
+        -0.15000000596046448,
+        0.3499999940395355
+      ],
+      "full_training_target_rad": [
+        -0.9948399662971497,
+        0.9948399662971497
+      ],
+      "deployment_default_rad": 0.0,
+      "deployment_raw_action_clip": [
+        -100.0,
+        100.0
+      ],
+      "deployment_unconstrained_target_rad": [
+        -12.5,
+        12.5
+      ],
+      "training_effort_Nm": 23.7,
+      "deployment_torque_parameter_Nm": 23.5,
+      "training_kp_kd": [
+        40.0,
+        1.0
+      ],
+      "deployment_kp_kd": [
+        20.0,
+        0.5
+      ]
+    },
+    {
+      "joint": "robot/FL_thigh_joint",
+      "deployment_index": 4,
+      "mechanical_rad": [
+        -1.5707963267948966,
+        3.4907
+      ],
+      "old_training_target_rad": [
+        0.550000011920929,
+        1.0499999523162842
+      ],
+      "full_training_target_rad": [
+        -1.4442625045776367,
+        3.3641624450683594
+      ],
+      "deployment_default_rad": 0.5,
+      "deployment_raw_action_clip": [
+        -100.0,
+        100.0
+      ],
+      "deployment_unconstrained_target_rad": [
+        -24.5,
+        25.5
+      ],
+      "training_effort_Nm": 23.7,
+      "deployment_torque_parameter_Nm": 23.5,
+      "training_kp_kd": [
+        40.0,
+        1.0
+      ],
+      "deployment_kp_kd": [
+        20.0,
+        0.5
+      ]
+    },
+    {
+      "joint": "robot/FL_calf_joint",
+      "deployment_index": 5,
+      "mechanical_rad": [
+        -2.7227,
+        -0.83776
+      ],
+      "old_training_target_rad": [
+        -1.75,
+        -1.25
+      ],
+      "full_training_target_rad": [
+        -2.675576686859131,
+        -0.884883463382721
+      ],
+      "deployment_default_rad": -1.5,
+      "deployment_raw_action_clip": [
+        -100.0,
+        100.0
+      ],
+      "deployment_unconstrained_target_rad": [
+        -26.5,
+        23.5
+      ],
+      "training_effort_Nm": 45.43,
+      "deployment_torque_parameter_Nm": 23.5,
+      "training_kp_kd": [
+        40.0,
+        1.0
+      ],
+      "deployment_kp_kd": [
+        20.0,
+        0.5
+      ]
+    },
+    {
+      "joint": "robot/FR_hip_joint",
+      "deployment_index": 0,
+      "mechanical_rad": [
+        -1.0472,
+        1.0472
+      ],
+      "old_training_target_rad": [
+        -0.3499999940395355,
+        0.15000000596046448
+      ],
+      "full_training_target_rad": [
+        -0.9948399662971497,
+        0.9948399662971497
+      ],
+      "deployment_default_rad": 0.0,
+      "deployment_raw_action_clip": [
+        -100.0,
+        100.0
+      ],
+      "deployment_unconstrained_target_rad": [
+        -12.5,
+        12.5
+      ],
+      "training_effort_Nm": 23.7,
+      "deployment_torque_parameter_Nm": 23.5,
+      "training_kp_kd": [
+        40.0,
+        1.0
+      ],
+      "deployment_kp_kd": [
+        20.0,
+        0.5
+      ]
+    },
+    {
+      "joint": "robot/FR_thigh_joint",
+      "deployment_index": 1,
+      "mechanical_rad": [
+        -1.5707963267948966,
+        3.4907
+      ],
+      "old_training_target_rad": [
+        0.550000011920929,
+        1.0499999523162842
+      ],
+      "full_training_target_rad": [
+        -1.4442625045776367,
+        3.3641624450683594
+      ],
+      "deployment_default_rad": 0.5,
+      "deployment_raw_action_clip": [
+        -100.0,
+        100.0
+      ],
+      "deployment_unconstrained_target_rad": [
+        -24.5,
+        25.5
+      ],
+      "training_effort_Nm": 23.7,
+      "deployment_torque_parameter_Nm": 23.5,
+      "training_kp_kd": [
+        40.0,
+        1.0
+      ],
+      "deployment_kp_kd": [
+        20.0,
+        0.5
+      ]
+    },
+    {
+      "joint": "robot/FR_calf_joint",
+      "deployment_index": 2,
+      "mechanical_rad": [
+        -2.7227,
+        -0.83776
+      ],
+      "old_training_target_rad": [
+        -1.75,
+        -1.25
+      ],
+      "full_training_target_rad": [
+        -2.675576686859131,
+        -0.884883463382721
+      ],
+      "deployment_default_rad": -1.5,
+      "deployment_raw_action_clip": [
+        -100.0,
+        100.0
+      ],
+      "deployment_unconstrained_target_rad": [
+        -26.5,
+        23.5
+      ],
+      "training_effort_Nm": 45.43,
+      "deployment_torque_parameter_Nm": 23.5,
+      "training_kp_kd": [
+        40.0,
+        1.0
+      ],
+      "deployment_kp_kd": [
+        20.0,
+        0.5
+      ]
+    },
+    {
+      "joint": "robot/RL_hip_joint",
+      "deployment_index": 9,
+      "mechanical_rad": [
+        -1.0472,
+        1.0472
+      ],
+      "old_training_target_rad": [
+        -0.15000000596046448,
+        0.3499999940395355
+      ],
+      "full_training_target_rad": [
+        -0.9948399662971497,
+        0.9948399662971497
+      ],
+      "deployment_default_rad": 0.0,
+      "deployment_raw_action_clip": [
+        -100.0,
+        100.0
+      ],
+      "deployment_unconstrained_target_rad": [
+        -12.5,
+        12.5
+      ],
+      "training_effort_Nm": 23.7,
+      "deployment_torque_parameter_Nm": 23.5,
+      "training_kp_kd": [
+        40.0,
+        1.0
+      ],
+      "deployment_kp_kd": [
+        20.0,
+        0.5
+      ]
+    },
+    {
+      "joint": "robot/RL_thigh_joint",
+      "deployment_index": 10,
+      "mechanical_rad": [
+        -0.5236,
+        4.5379
+      ],
+      "old_training_target_rad": [
+        0.75,
+        1.25
+      ],
+      "full_training_target_rad": [
+        -0.3970625400543213,
+        4.411362648010254
+      ],
+      "deployment_default_rad": 0.8,
+      "deployment_raw_action_clip": [
+        -100.0,
+        100.0
+      ],
+      "deployment_unconstrained_target_rad": [
+        -24.2,
+        25.8
+      ],
+      "training_effort_Nm": 23.7,
+      "deployment_torque_parameter_Nm": 23.5,
+      "training_kp_kd": [
+        40.0,
+        1.0
+      ],
+      "deployment_kp_kd": [
+        20.0,
+        0.5
+      ]
+    },
+    {
+      "joint": "robot/RL_calf_joint",
+      "deployment_index": 11,
+      "mechanical_rad": [
+        -2.7227,
+        -0.83776
+      ],
+      "old_training_target_rad": [
+        -1.75,
+        -1.25
+      ],
+      "full_training_target_rad": [
+        -2.675576686859131,
+        -0.884883463382721
+      ],
+      "deployment_default_rad": -1.5,
+      "deployment_raw_action_clip": [
+        -100.0,
+        100.0
+      ],
+      "deployment_unconstrained_target_rad": [
+        -26.5,
+        23.5
+      ],
+      "training_effort_Nm": 45.43,
+      "deployment_torque_parameter_Nm": 23.5,
+      "training_kp_kd": [
+        40.0,
+        1.0
+      ],
+      "deployment_kp_kd": [
+        20.0,
+        0.5
+      ]
+    },
+    {
+      "joint": "robot/RR_hip_joint",
+      "deployment_index": 6,
+      "mechanical_rad": [
+        -1.0472,
+        1.0472
+      ],
+      "old_training_target_rad": [
+        -0.3499999940395355,
+        0.15000000596046448
+      ],
+      "full_training_target_rad": [
+        -0.9948399662971497,
+        0.9948399662971497
+      ],
+      "deployment_default_rad": 0.0,
+      "deployment_raw_action_clip": [
+        -100.0,
+        100.0
+      ],
+      "deployment_unconstrained_target_rad": [
+        -12.5,
+        12.5
+      ],
+      "training_effort_Nm": 23.7,
+      "deployment_torque_parameter_Nm": 23.5,
+      "training_kp_kd": [
+        40.0,
+        1.0
+      ],
+      "deployment_kp_kd": [
+        20.0,
+        0.5
+      ]
+    },
+    {
+      "joint": "robot/RR_thigh_joint",
+      "deployment_index": 7,
+      "mechanical_rad": [
+        -0.5236,
+        4.5379
+      ],
+      "old_training_target_rad": [
+        0.75,
+        1.25
+      ],
+      "full_training_target_rad": [
+        -0.3970625400543213,
+        4.411362648010254
+      ],
+      "deployment_default_rad": 0.8,
+      "deployment_raw_action_clip": [
+        -100.0,
+        100.0
+      ],
+      "deployment_unconstrained_target_rad": [
+        -24.2,
+        25.8
+      ],
+      "training_effort_Nm": 23.7,
+      "deployment_torque_parameter_Nm": 23.5,
+      "training_kp_kd": [
+        40.0,
+        1.0
+      ],
+      "deployment_kp_kd": [
+        20.0,
+        0.5
+      ]
+    },
+    {
+      "joint": "robot/RR_calf_joint",
+      "deployment_index": 8,
+      "mechanical_rad": [
+        -2.7227,
+        -0.83776
+      ],
+      "old_training_target_rad": [
+        -1.75,
+        -1.25
+      ],
+      "full_training_target_rad": [
+        -2.675576686859131,
+        -0.884883463382721
+      ],
+      "deployment_default_rad": -1.5,
+      "deployment_raw_action_clip": [
+        -100.0,
+        100.0
+      ],
+      "deployment_unconstrained_target_rad": [
+        -26.5,
+        23.5
+      ],
+      "training_effort_Nm": 45.43,
+      "deployment_torque_parameter_Nm": 23.5,
+      "training_kp_kd": [
+        40.0,
+        1.0
+      ],
+      "deployment_kp_kd": [
+        20.0,
+        0.5
+      ]
+    }
+  ],
+  "confirmed_deployment_directory": "/home/yifeiy/rl_sar/policy/go2w",
+  "mapping": "Full action -1/0/+1 -> 95% mechanical lower/default/upper; 2.5% interval margin at each end",
+  "limitation": "Code/model audit; no hardware motion or encoder log measured. Raw +/-100 clip is NOT a physical joint range.",
+  "deployment_control": "Forward clips network actions; ComputeOutput scales/adds default without a joint-position clamp; torque vector is clipped separately. Firmware limits are not established by this audit.",
+  "deployment_fold_posture": [
+    0.0,
+    1.36,
+    -2.65
+  ],
+  "control_alignment": "Position ranges match, but gains, defaults, ordering, wheel scaling and effort differ; new student is not a drop-in deployment policy."
+}

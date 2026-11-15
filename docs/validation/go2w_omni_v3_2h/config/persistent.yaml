@@ -1,0 +1,9 @@
+# @package _global_
+defaults:
+  - /task/go2w_velocity/terrain
+algo:
+  horizon: 16
+env:
+  commands:
+    velocity:
+      persistent_wm_coverage: true

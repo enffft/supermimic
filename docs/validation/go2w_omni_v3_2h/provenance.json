@@ -1,0 +1,10 @@
+{
+  "base_snapshot": "runs/go2w_continual_wm_20261114/source_snapshot",
+  "overlays": [
+    "Go2W task",
+    "Go2W config",
+    "experiment, evaluation and bootstrap tools"
+  ],
+  "excluded": "unrelated dirty Go2 and shared learner/replay changes",
+  "canonical_wm": "artifacts/world_models/go2w_conditioned.pt"
+}

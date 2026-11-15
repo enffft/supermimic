@@ -1,0 +1,8 @@
+...................................                                      [100%]
+=============================== warnings summary ===============================
+../../miniconda3/envs/go2_unilab/lib/python3.12/site-packages/torch/jit/_script.py:1488: 36 warnings
+  /home/yifeiy/miniconda3/envs/go2_unilab/lib/python3.12/site-packages/torch/jit/_script.py:1488: DeprecationWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+35 passed, 36 warnings in 2.62s

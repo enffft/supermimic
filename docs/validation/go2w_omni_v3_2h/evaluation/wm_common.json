@@ -1,0 +1,1738 @@
+{
+  "checkpoint": "/home/yifeiy/ws_go2_unilab/runs/go2w_omni_v3_2h_20261114/training/last.pt",
+  "dataset": "/home/yifeiy/ws_go2_unilab/runs/go2w_joint_range_20261114/evaluation/common_holdout.pt",
+  "action_remapping": "Identical physical PD targets verified; wheel actions unchanged",
+  "horizons": {
+    "1": [
+      {
+        "domain": 0,
+        "level": 0,
+        "valid_windows": 477,
+        "RMSE": {
+          "position": 0.0018285935511812568,
+          "linear_velocity": 0.09843593090772629,
+          "angular_velocity": 0.5957759618759155,
+          "leg_position": 0.04924051836133003,
+          "leg_velocity": 1.7601394653320312,
+          "wheel_velocity": 11.747991561889648
+        }
+      },
+      {
+        "domain": 0,
+        "level": 1,
+        "valid_windows": 0,
+        "RMSE": null
+      },
+      {
+        "domain": 0,
+        "level": 2,
+        "valid_windows": 0,
+        "RMSE": null
+      },
+      {
+        "domain": 0,
+        "level": 3,
+        "valid_windows": 0,
+        "RMSE": null
+      },
+      {
+        "domain": 0,
+        "level": 4,
+        "valid_windows": 0,
+        "RMSE": null
+      },
+      {
+        "domain": 0,
+        "level": 5,
+        "valid_windows": 0,
+        "RMSE": null
+      },
+      {
+        "domain": 0,
+        "level": 6,
+        "valid_windows": 0,
+        "RMSE": null
+      },
+      {
+        "domain": 0,
+        "level": 7,
+        "valid_windows": 0,
+        "RMSE": null
+      },
+      {
+        "domain": 1,
+        "level": 0,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.0005966895259916782,
+          "linear_velocity": 0.02827673964202404,
+          "angular_velocity": 0.5375063419342041,
+          "leg_position": 0.0416402667760849,
+          "leg_velocity": 2.1601223945617676,
+          "wheel_velocity": 2.8462491035461426
+        }
+      },
+      {
+        "domain": 1,
+        "level": 1,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.0006047256174497306,
+          "linear_velocity": 0.028275804594159126,
+          "angular_velocity": 0.5103984475135803,
+          "leg_position": 0.03980446234345436,
+          "leg_velocity": 2.120352268218994,
+          "wheel_velocity": 2.8988404273986816
+        }
+      },
+      {
+        "domain": 1,
+        "level": 2,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.0006277802167460322,
+          "linear_velocity": 0.032219305634498596,
+          "angular_velocity": 0.5576169490814209,
+          "leg_position": 0.04362666234374046,
+          "leg_velocity": 2.262207508087158,
+          "wheel_velocity": 2.893911600112915
+        }
+      },
+      {
+        "domain": 1,
+        "level": 3,
+        "valid_windows": 35,
+        "RMSE": {
+          "position": 0.0005077520618215203,
+          "linear_velocity": 0.02666863054037094,
+          "angular_velocity": 0.47833895683288574,
+          "leg_position": 0.03718354552984238,
+          "leg_velocity": 2.1015031337738037,
+          "wheel_velocity": 2.5823380947113037
+        }
+      },
+      {
+        "domain": 1,
+        "level": 4,
+        "valid_windows": 15,
+        "RMSE": {
+          "position": 0.0007200856343843043,
+          "linear_velocity": 0.03788747265934944,
+          "angular_velocity": 0.5288988947868347,
+          "leg_position": 0.04118688777089119,
+          "leg_velocity": 2.3461382389068604,
+          "wheel_velocity": 5.072531700134277
+        }
+      },
+      {
+        "domain": 1,
+        "level": 5,
+        "valid_windows": 32,
+        "RMSE": {
+          "position": 0.0018471220973879099,
+          "linear_velocity": 0.10677629709243774,
+          "angular_velocity": 0.38342422246932983,
+          "leg_position": 0.03923698887228966,
+          "leg_velocity": 1.9851477146148682,
+          "wheel_velocity": 14.791855812072754
+        }
+      },
+      {
+        "domain": 1,
+        "level": 6,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.000447301659733057,
+          "linear_velocity": 0.029189065098762512,
+          "angular_velocity": 0.3477683663368225,
+          "leg_position": 0.027502961456775665,
+          "leg_velocity": 1.7223520278930664,
+          "wheel_velocity": 2.6748602390289307
+        }
+      },
+      {
+        "domain": 1,
+        "level": 7,
+        "valid_windows": 25,
+        "RMSE": {
+          "position": 0.001782321953214705,
+          "linear_velocity": 0.07566391676664352,
+          "angular_velocity": 0.6635583639144897,
+          "leg_position": 0.045005783438682556,
+          "leg_velocity": 2.2802093029022217,
+          "wheel_velocity": 9.71056079864502
+        }
+      },
+      {
+        "domain": 2,
+        "level": 0,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.0005922305281274021,
+          "linear_velocity": 0.027912048622965813,
+          "angular_velocity": 0.5112236142158508,
+          "leg_position": 0.040472161024808884,
+          "leg_velocity": 2.1253249645233154,
+          "wheel_velocity": 2.737482786178589
+        }
+      },
+      {
+        "domain": 2,
+        "level": 1,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.0007097289781086147,
+          "linear_velocity": 0.034479886293411255,
+          "angular_velocity": 0.5693736672401428,
+          "leg_position": 0.04490909352898598,
+          "leg_velocity": 2.3239634037017822,
+          "wheel_velocity": 2.793570041656494
+        }
+      },
+      {
+        "domain": 2,
+        "level": 2,
+        "valid_windows": 32,
+        "RMSE": {
+          "position": 0.0006910091615281999,
+          "linear_velocity": 0.03356600180268288,
+          "angular_velocity": 0.5275538563728333,
+          "leg_position": 0.0462506040930748,
+          "leg_velocity": 2.456402540206909,
+          "wheel_velocity": 2.4789950847625732
+        }
+      },
+      {
+        "domain": 2,
+        "level": 3,
+        "valid_windows": 31,
+        "RMSE": {
+          "position": 0.0029750606045126915,
+          "linear_velocity": 0.15059025585651398,
+          "angular_velocity": 0.8537368774414062,
+          "leg_position": 0.05625391751527786,
+          "leg_velocity": 3.156752109527588,
+          "wheel_velocity": 14.239566802978516
+        }
+      },
+      {
+        "domain": 2,
+        "level": 4,
+        "valid_windows": 29,
+        "RMSE": {
+          "position": 0.002380394609645009,
+          "linear_velocity": 0.1268165111541748,
+          "angular_velocity": 0.718244194984436,
+          "leg_position": 0.03618880733847618,
+          "leg_velocity": 2.0239505767822266,
+          "wheel_velocity": 11.00128173828125
+        }
+      },
+      {
+        "domain": 2,
+        "level": 5,
+        "valid_windows": 25,
+        "RMSE": {
+          "position": 0.0009814227232709527,
+          "linear_velocity": 0.054943595081567764,
+          "angular_velocity": 0.5664607882499695,
+          "leg_position": 0.042973581701517105,
+          "leg_velocity": 2.215505838394165,
+          "wheel_velocity": 2.4903314113616943
+        }
+      },
+      {
+        "domain": 2,
+        "level": 6,
+        "valid_windows": 23,
+        "RMSE": {
+          "position": 0.0011373850284144282,
+          "linear_velocity": 0.06347084045410156,
+          "angular_velocity": 1.0052186250686646,
+          "leg_position": 0.04502072557806969,
+          "leg_velocity": 2.3547301292419434,
+          "wheel_velocity": 4.6933512687683105
+        }
+      },
+      {
+        "domain": 2,
+        "level": 7,
+        "valid_windows": 24,
+        "RMSE": {
+          "position": 0.001229499583132565,
+          "linear_velocity": 0.07263074070215225,
+          "angular_velocity": 0.9800774455070496,
+          "leg_position": 0.0521882064640522,
+          "leg_velocity": 2.8233227729797363,
+          "wheel_velocity": 5.965324401855469
+        }
+      },
+      {
+        "domain": 3,
+        "level": 0,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.0005930659826844931,
+          "linear_velocity": 0.027975494042038918,
+          "angular_velocity": 0.5468217134475708,
+          "leg_position": 0.041945330798625946,
+          "leg_velocity": 2.1359269618988037,
+          "wheel_velocity": 2.895779609680176
+        }
+      },
+      {
+        "domain": 3,
+        "level": 1,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.0005480227409861982,
+          "linear_velocity": 0.026793472468852997,
+          "angular_velocity": 0.4911169707775116,
+          "leg_position": 0.04203572869300842,
+          "leg_velocity": 2.147404432296753,
+          "wheel_velocity": 2.9482581615448
+        }
+      },
+      {
+        "domain": 3,
+        "level": 2,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.0004593607736751437,
+          "linear_velocity": 0.023892858996987343,
+          "angular_velocity": 0.4259251654148102,
+          "leg_position": 0.037292737513780594,
+          "leg_velocity": 1.9611347913742065,
+          "wheel_velocity": 2.631150960922241
+        }
+      },
+      {
+        "domain": 3,
+        "level": 3,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.0004026370297651738,
+          "linear_velocity": 0.022966759279370308,
+          "angular_velocity": 0.3996638357639313,
+          "leg_position": 0.03234905004501343,
+          "leg_velocity": 1.7536771297454834,
+          "wheel_velocity": 2.5657763481140137
+        }
+      },
+      {
+        "domain": 3,
+        "level": 4,
+        "valid_windows": 34,
+        "RMSE": {
+          "position": 0.0003654535103123635,
+          "linear_velocity": 0.021922990679740906,
+          "angular_velocity": 0.3501473367214203,
+          "leg_position": 0.031888287514448166,
+          "leg_velocity": 1.7160732746124268,
+          "wheel_velocity": 2.52314829826355
+        }
+      },
+      {
+        "domain": 3,
+        "level": 5,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.00040184592944569886,
+          "linear_velocity": 0.024569720029830933,
+          "angular_velocity": 0.4510786533355713,
+          "leg_position": 0.037960078567266464,
+          "leg_velocity": 1.950035810470581,
+          "wheel_velocity": 2.734769105911255
+        }
+      },
+      {
+        "domain": 3,
+        "level": 6,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.0003825077728834003,
+          "linear_velocity": 0.02374475821852684,
+          "angular_velocity": 0.31344038248062134,
+          "leg_position": 0.030997944995760918,
+          "leg_velocity": 1.668473482131958,
+          "wheel_velocity": 2.666879415512085
+        }
+      },
+      {
+        "domain": 3,
+        "level": 7,
+        "valid_windows": 32,
+        "RMSE": {
+          "position": 0.0003399362612981349,
+          "linear_velocity": 0.023731736466288567,
+          "angular_velocity": 0.341256707906723,
+          "leg_position": 0.033080291002988815,
+          "leg_velocity": 1.738967776298523,
+          "wheel_velocity": 2.519404888153076
+        }
+      },
+      {
+        "domain": 4,
+        "level": 0,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.0005631725070998073,
+          "linear_velocity": 0.02882598526775837,
+          "angular_velocity": 0.48632553219795227,
+          "leg_position": 0.039851706475019455,
+          "leg_velocity": 2.1260268688201904,
+          "wheel_velocity": 2.7037458419799805
+        }
+      },
+      {
+        "domain": 4,
+        "level": 1,
+        "valid_windows": 25,
+        "RMSE": {
+          "position": 0.0007308762869797647,
+          "linear_velocity": 0.040583375841379166,
+          "angular_velocity": 0.5064340233802795,
+          "leg_position": 0.04528936743736267,
+          "leg_velocity": 2.3158812522888184,
+          "wheel_velocity": 8.496479988098145
+        }
+      },
+      {
+        "domain": 4,
+        "level": 2,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.00037265970604494214,
+          "linear_velocity": 0.018082797527313232,
+          "angular_velocity": 0.24295775592327118,
+          "leg_position": 0.018074534833431244,
+          "leg_velocity": 1.3168957233428955,
+          "wheel_velocity": 1.797513723373413
+        }
+      },
+      {
+        "domain": 4,
+        "level": 3,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.000545891176443547,
+          "linear_velocity": 0.01693830080330372,
+          "angular_velocity": 0.11773353815078735,
+          "leg_position": 0.016180668026208878,
+          "leg_velocity": 1.2339898347854614,
+          "wheel_velocity": 1.8514297008514404
+        }
+      },
+      {
+        "domain": 4,
+        "level": 4,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.0005031840410083532,
+          "linear_velocity": 0.015137891285121441,
+          "angular_velocity": 0.12125597894191742,
+          "leg_position": 0.01620064489543438,
+          "leg_velocity": 1.22927725315094,
+          "wheel_velocity": 1.9512418508529663
+        }
+      },
+      {
+        "domain": 4,
+        "level": 5,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.00047705238102935255,
+          "linear_velocity": 0.015697751194238663,
+          "angular_velocity": 0.114946149289608,
+          "leg_position": 0.016991334035992622,
+          "leg_velocity": 1.29749596118927,
+          "wheel_velocity": 2.142218828201294
+        }
+      },
+      {
+        "domain": 4,
+        "level": 6,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.0004761747259180993,
+          "linear_velocity": 0.017211468890309334,
+          "angular_velocity": 0.1226755753159523,
+          "leg_position": 0.016321321949362755,
+          "leg_velocity": 1.2449352741241455,
+          "wheel_velocity": 2.3269522190093994
+        }
+      },
+      {
+        "domain": 4,
+        "level": 7,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.0004697420808952302,
+          "linear_velocity": 0.01815800741314888,
+          "angular_velocity": 0.12762151658535004,
+          "leg_position": 0.01633664220571518,
+          "leg_velocity": 1.2493113279342651,
+          "wheel_velocity": 2.62331223487854
+        }
+      },
+      {
+        "domain": 5,
+        "level": 0,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.0005927253514528275,
+          "linear_velocity": 0.028062814846634865,
+          "angular_velocity": 0.5304707288742065,
+          "leg_position": 0.0435052216053009,
+          "leg_velocity": 2.273324966430664,
+          "wheel_velocity": 2.7624711990356445
+        }
+      },
+      {
+        "domain": 5,
+        "level": 1,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.0003176163590978831,
+          "linear_velocity": 0.02254401706159115,
+          "angular_velocity": 0.3144158720970154,
+          "leg_position": 0.026761315762996674,
+          "leg_velocity": 1.5605672597885132,
+          "wheel_velocity": 2.581470251083374
+        }
+      },
+      {
+        "domain": 5,
+        "level": 2,
+        "valid_windows": 34,
+        "RMSE": {
+          "position": 0.00039100751746445894,
+          "linear_velocity": 0.028188431635499,
+          "angular_velocity": 0.3320155441761017,
+          "leg_position": 0.029132550582289696,
+          "leg_velocity": 1.6108230352401733,
+          "wheel_velocity": 2.522045850753784
+        }
+      },
+      {
+        "domain": 5,
+        "level": 3,
+        "valid_windows": 15,
+        "RMSE": {
+          "position": 0.0017334953881800175,
+          "linear_velocity": 0.14333534240722656,
+          "angular_velocity": 1.2889273166656494,
+          "leg_position": 0.10026150941848755,
+          "leg_velocity": 4.1630330085754395,
+          "wheel_velocity": 22.70485496520996
+        }
+      },
+      {
+        "domain": 5,
+        "level": 4,
+        "valid_windows": 4,
+        "RMSE": {
+          "position": 0.00617035711184144,
+          "linear_velocity": 0.2605747580528259,
+          "angular_velocity": 1.602271556854248,
+          "leg_position": 0.11839985847473145,
+          "leg_velocity": 5.247173309326172,
+          "wheel_velocity": 35.94140625
+        }
+      },
+      {
+        "domain": 5,
+        "level": 5,
+        "valid_windows": 2,
+        "RMSE": {
+          "position": 0.004247976467013359,
+          "linear_velocity": 0.22319866716861725,
+          "angular_velocity": 0.96788489818573,
+          "leg_position": 0.10245431214570999,
+          "leg_velocity": 5.3107075691223145,
+          "wheel_velocity": 54.70301055908203
+        }
+      },
+      {
+        "domain": 5,
+        "level": 6,
+        "valid_windows": 4,
+        "RMSE": {
+          "position": 0.004252159968018532,
+          "linear_velocity": 0.24351593852043152,
+          "angular_velocity": 1.7683144807815552,
+          "leg_position": 0.11424627900123596,
+          "leg_velocity": 5.376927375793457,
+          "wheel_velocity": 56.782188415527344
+        }
+      },
+      {
+        "domain": 5,
+        "level": 7,
+        "valid_windows": 4,
+        "RMSE": {
+          "position": 0.010112070478498936,
+          "linear_velocity": 0.6061256527900696,
+          "angular_velocity": 1.1721397638320923,
+          "leg_position": 0.10222526639699936,
+          "leg_velocity": 4.16489315032959,
+          "wheel_velocity": 73.8053970336914
+        }
+      }
+    ],
+    "8": [
+      {
+        "domain": 0,
+        "level": 0,
+        "valid_windows": 474,
+        "RMSE": {
+          "position": 0.017579728737473488,
+          "linear_velocity": 0.21378448605537415,
+          "angular_velocity": 1.047960638999939,
+          "leg_position": 0.2783486545085907,
+          "leg_velocity": 3.9931576251983643,
+          "wheel_velocity": 22.51280975341797
+        }
+      },
+      {
+        "domain": 0,
+        "level": 1,
+        "valid_windows": 0,
+        "RMSE": null
+      },
+      {
+        "domain": 0,
+        "level": 2,
+        "valid_windows": 0,
+        "RMSE": null
+      },
+      {
+        "domain": 0,
+        "level": 3,
+        "valid_windows": 0,
+        "RMSE": null
+      },
+      {
+        "domain": 0,
+        "level": 4,
+        "valid_windows": 0,
+        "RMSE": null
+      },
+      {
+        "domain": 0,
+        "level": 5,
+        "valid_windows": 0,
+        "RMSE": null
+      },
+      {
+        "domain": 0,
+        "level": 6,
+        "valid_windows": 0,
+        "RMSE": null
+      },
+      {
+        "domain": 0,
+        "level": 7,
+        "valid_windows": 0,
+        "RMSE": null
+      },
+      {
+        "domain": 1,
+        "level": 0,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.024411475285887718,
+          "linear_velocity": 0.4289585053920746,
+          "angular_velocity": 0.7875646352767944,
+          "leg_position": 0.48448115587234497,
+          "leg_velocity": 6.5665974617004395,
+          "wheel_velocity": 33.84868240356445
+        }
+      },
+      {
+        "domain": 1,
+        "level": 1,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.02649599500000477,
+          "linear_velocity": 0.45286399126052856,
+          "angular_velocity": 0.6370577216148376,
+          "leg_position": 0.48275992274284363,
+          "leg_velocity": 6.810331344604492,
+          "wheel_velocity": 34.96070098876953
+        }
+      },
+      {
+        "domain": 1,
+        "level": 2,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.025687865912914276,
+          "linear_velocity": 0.4393605589866638,
+          "angular_velocity": 0.5544636249542236,
+          "leg_position": 0.48587143421173096,
+          "leg_velocity": 6.787381172180176,
+          "wheel_velocity": 35.62698745727539
+        }
+      },
+      {
+        "domain": 1,
+        "level": 3,
+        "valid_windows": 35,
+        "RMSE": {
+          "position": 0.026110894978046417,
+          "linear_velocity": 0.4490015208721161,
+          "angular_velocity": 1.0522115230560303,
+          "leg_position": 0.470995157957077,
+          "leg_velocity": 6.808887958526611,
+          "wheel_velocity": 34.466590881347656
+        }
+      },
+      {
+        "domain": 1,
+        "level": 4,
+        "valid_windows": 15,
+        "RMSE": {
+          "position": 0.028226200491189957,
+          "linear_velocity": 0.4487107992172241,
+          "angular_velocity": 1.1440682411193848,
+          "leg_position": 0.48809897899627686,
+          "leg_velocity": 6.466283798217773,
+          "wheel_velocity": 42.23797607421875
+        }
+      },
+      {
+        "domain": 1,
+        "level": 5,
+        "valid_windows": 32,
+        "RMSE": {
+          "position": 0.025843534618616104,
+          "linear_velocity": 0.4403899610042572,
+          "angular_velocity": 1.676926851272583,
+          "leg_position": 0.4458985924720764,
+          "leg_velocity": 6.958642959594727,
+          "wheel_velocity": 38.724525451660156
+        }
+      },
+      {
+        "domain": 1,
+        "level": 6,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.024977780878543854,
+          "linear_velocity": 0.4183274507522583,
+          "angular_velocity": 1.6540555953979492,
+          "leg_position": 0.43279582262039185,
+          "leg_velocity": 6.04509162902832,
+          "wheel_velocity": 28.21851921081543
+        }
+      },
+      {
+        "domain": 1,
+        "level": 7,
+        "valid_windows": 25,
+        "RMSE": {
+          "position": 0.02920958772301674,
+          "linear_velocity": 0.4699857532978058,
+          "angular_velocity": 1.2651287317276,
+          "leg_position": 0.4655679166316986,
+          "leg_velocity": 7.278495788574219,
+          "wheel_velocity": 36.267547607421875
+        }
+      },
+      {
+        "domain": 2,
+        "level": 0,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.02531200274825096,
+          "linear_velocity": 0.4442671239376068,
+          "angular_velocity": 0.5727658867835999,
+          "leg_position": 0.48446089029312134,
+          "leg_velocity": 6.698872089385986,
+          "wheel_velocity": 34.793922424316406
+        }
+      },
+      {
+        "domain": 2,
+        "level": 1,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.026099003851413727,
+          "linear_velocity": 0.4541970193386078,
+          "angular_velocity": 0.8655012845993042,
+          "leg_position": 0.48335522413253784,
+          "leg_velocity": 6.746417045593262,
+          "wheel_velocity": 34.53849792480469
+        }
+      },
+      {
+        "domain": 2,
+        "level": 2,
+        "valid_windows": 32,
+        "RMSE": {
+          "position": 0.025680899620056152,
+          "linear_velocity": 0.4464316964149475,
+          "angular_velocity": 0.78202223777771,
+          "leg_position": 0.4764372408390045,
+          "leg_velocity": 6.519403457641602,
+          "wheel_velocity": 33.21347427368164
+        }
+      },
+      {
+        "domain": 2,
+        "level": 3,
+        "valid_windows": 30,
+        "RMSE": {
+          "position": 0.02640422061085701,
+          "linear_velocity": 0.4550221562385559,
+          "angular_velocity": 1.00348699092865,
+          "leg_position": 0.5041393637657166,
+          "leg_velocity": 7.078610897064209,
+          "wheel_velocity": 37.52309799194336
+        }
+      },
+      {
+        "domain": 2,
+        "level": 4,
+        "valid_windows": 28,
+        "RMSE": {
+          "position": 0.026421017944812775,
+          "linear_velocity": 0.4728536903858185,
+          "angular_velocity": 1.2027370929718018,
+          "leg_position": 0.45275214314460754,
+          "leg_velocity": 6.402473449707031,
+          "wheel_velocity": 32.11676788330078
+        }
+      },
+      {
+        "domain": 2,
+        "level": 5,
+        "valid_windows": 25,
+        "RMSE": {
+          "position": 0.02874334342777729,
+          "linear_velocity": 0.4882054626941681,
+          "angular_velocity": 1.6874325275421143,
+          "leg_position": 0.6023058295249939,
+          "leg_velocity": 7.893080234527588,
+          "wheel_velocity": 41.1020622253418
+        }
+      },
+      {
+        "domain": 2,
+        "level": 6,
+        "valid_windows": 22,
+        "RMSE": {
+          "position": 0.033110663294792175,
+          "linear_velocity": 0.47110557556152344,
+          "angular_velocity": 2.2257630825042725,
+          "leg_position": 0.5157615542411804,
+          "leg_velocity": 7.382169246673584,
+          "wheel_velocity": 42.655704498291016
+        }
+      },
+      {
+        "domain": 2,
+        "level": 7,
+        "valid_windows": 24,
+        "RMSE": {
+          "position": 0.03053404577076435,
+          "linear_velocity": 0.45355963706970215,
+          "angular_velocity": 1.6201010942459106,
+          "leg_position": 0.4477561116218567,
+          "leg_velocity": 5.8611369132995605,
+          "wheel_velocity": 49.04762268066406
+        }
+      },
+      {
+        "domain": 3,
+        "level": 0,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.02471129037439823,
+          "linear_velocity": 0.4289267361164093,
+          "angular_velocity": 0.7835911512374878,
+          "leg_position": 0.482456773519516,
+          "leg_velocity": 6.55532169342041,
+          "wheel_velocity": 33.924800872802734
+        }
+      },
+      {
+        "domain": 3,
+        "level": 1,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.02554977685213089,
+          "linear_velocity": 0.43250951170921326,
+          "angular_velocity": 0.6705514192581177,
+          "leg_position": 0.48901283740997314,
+          "leg_velocity": 6.414393424987793,
+          "wheel_velocity": 34.545166015625
+        }
+      },
+      {
+        "domain": 3,
+        "level": 2,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.022502364590764046,
+          "linear_velocity": 0.38407498598098755,
+          "angular_velocity": 1.4140127897262573,
+          "leg_position": 0.46911561489105225,
+          "leg_velocity": 5.901021480560303,
+          "wheel_velocity": 30.6478271484375
+        }
+      },
+      {
+        "domain": 3,
+        "level": 3,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.01952471025288105,
+          "linear_velocity": 0.3310581147670746,
+          "angular_velocity": 1.7531661987304688,
+          "leg_position": 0.4521811008453369,
+          "leg_velocity": 5.180006504058838,
+          "wheel_velocity": 25.382789611816406
+        }
+      },
+      {
+        "domain": 3,
+        "level": 4,
+        "valid_windows": 34,
+        "RMSE": {
+          "position": 0.017610635608434677,
+          "linear_velocity": 0.30563831329345703,
+          "angular_velocity": 1.9476039409637451,
+          "leg_position": 0.45712995529174805,
+          "leg_velocity": 4.989396095275879,
+          "wheel_velocity": 25.15438461303711
+        }
+      },
+      {
+        "domain": 3,
+        "level": 5,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.017961779609322548,
+          "linear_velocity": 0.3077901601791382,
+          "angular_velocity": 2.0112698078155518,
+          "leg_position": 0.4564724564552307,
+          "leg_velocity": 4.985683441162109,
+          "wheel_velocity": 25.111778259277344
+        }
+      },
+      {
+        "domain": 3,
+        "level": 6,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.017116205766797066,
+          "linear_velocity": 0.28525015711784363,
+          "angular_velocity": 2.0916218757629395,
+          "leg_position": 0.45490363240242004,
+          "leg_velocity": 4.903125286102295,
+          "wheel_velocity": 25.13842010498047
+        }
+      },
+      {
+        "domain": 3,
+        "level": 7,
+        "valid_windows": 32,
+        "RMSE": {
+          "position": 0.01823715679347515,
+          "linear_velocity": 0.2918728291988373,
+          "angular_velocity": 2.0186920166015625,
+          "leg_position": 0.4535597264766693,
+          "leg_velocity": 4.850146293640137,
+          "wheel_velocity": 26.9793758392334
+        }
+      },
+      {
+        "domain": 4,
+        "level": 0,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.02425931952893734,
+          "linear_velocity": 0.4296424984931946,
+          "angular_velocity": 0.8151998519897461,
+          "leg_position": 0.48326513171195984,
+          "leg_velocity": 6.597409248352051,
+          "wheel_velocity": 33.591922760009766
+        }
+      },
+      {
+        "domain": 4,
+        "level": 1,
+        "valid_windows": 24,
+        "RMSE": {
+          "position": 0.027012236416339874,
+          "linear_velocity": 0.4615801274776459,
+          "angular_velocity": 1.1396697759628296,
+          "leg_position": 0.44612836837768555,
+          "leg_velocity": 6.576963901519775,
+          "wheel_velocity": 32.429386138916016
+        }
+      },
+      {
+        "domain": 4,
+        "level": 2,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.022110266610980034,
+          "linear_velocity": 0.27556112408638,
+          "angular_velocity": 0.5011740326881409,
+          "leg_position": 0.2988867461681366,
+          "leg_velocity": 3.89296293258667,
+          "wheel_velocity": 17.976360321044922
+        }
+      },
+      {
+        "domain": 4,
+        "level": 3,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.015094000846147537,
+          "linear_velocity": 0.19748558104038239,
+          "angular_velocity": 0.4274229109287262,
+          "leg_position": 0.28553444147109985,
+          "leg_velocity": 3.418147087097168,
+          "wheel_velocity": 12.305971145629883
+        }
+      },
+      {
+        "domain": 4,
+        "level": 4,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.015009692870080471,
+          "linear_velocity": 0.1833275407552719,
+          "angular_velocity": 0.4146430194377899,
+          "leg_position": 0.2997370660305023,
+          "leg_velocity": 3.7629594802856445,
+          "wheel_velocity": 13.216877937316895
+        }
+      },
+      {
+        "domain": 4,
+        "level": 5,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.014710357412695885,
+          "linear_velocity": 0.17091035842895508,
+          "angular_velocity": 0.5240311026573181,
+          "leg_position": 0.3088671863079071,
+          "leg_velocity": 3.8856191635131836,
+          "wheel_velocity": 12.456969261169434
+        }
+      },
+      {
+        "domain": 4,
+        "level": 6,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.012963850982487202,
+          "linear_velocity": 0.1602320373058319,
+          "angular_velocity": 0.5428319573402405,
+          "leg_position": 0.31686240434646606,
+          "leg_velocity": 4.315245628356934,
+          "wheel_velocity": 12.572541236877441
+        }
+      },
+      {
+        "domain": 4,
+        "level": 7,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.012075388804078102,
+          "linear_velocity": 0.1489947885274887,
+          "angular_velocity": 0.5737341642379761,
+          "leg_position": 0.32760706543922424,
+          "leg_velocity": 4.5564470291137695,
+          "wheel_velocity": 12.361598014831543
+        }
+      },
+      {
+        "domain": 5,
+        "level": 0,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.025049768388271332,
+          "linear_velocity": 0.4367273151874542,
+          "angular_velocity": 0.4983785152435303,
+          "leg_position": 0.4917886257171631,
+          "leg_velocity": 6.708921432495117,
+          "wheel_velocity": 34.41786193847656
+        }
+      },
+      {
+        "domain": 5,
+        "level": 1,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.02129397913813591,
+          "linear_velocity": 0.34567558765411377,
+          "angular_velocity": 1.8994977474212646,
+          "leg_position": 0.44952142238616943,
+          "leg_velocity": 5.076749801635742,
+          "wheel_velocity": 24.249143600463867
+        }
+      },
+      {
+        "domain": 5,
+        "level": 2,
+        "valid_windows": 34,
+        "RMSE": {
+          "position": 0.02138347364962101,
+          "linear_velocity": 0.3261606693267822,
+          "angular_velocity": 2.0598857402801514,
+          "leg_position": 0.465397447347641,
+          "leg_velocity": 5.037468910217285,
+          "wheel_velocity": 25.312488555908203
+        }
+      },
+      {
+        "domain": 5,
+        "level": 3,
+        "valid_windows": 12,
+        "RMSE": {
+          "position": 0.032707542181015015,
+          "linear_velocity": 0.45783212780952454,
+          "angular_velocity": 2.1693360805511475,
+          "leg_position": 0.5666773319244385,
+          "leg_velocity": 5.560878753662109,
+          "wheel_velocity": 30.580907821655273
+        }
+      },
+      {
+        "domain": 5,
+        "level": 4,
+        "valid_windows": 4,
+        "RMSE": {
+          "position": 0.05789409950375557,
+          "linear_velocity": 0.4897003769874573,
+          "angular_velocity": 2.4718334674835205,
+          "leg_position": 0.5054116249084473,
+          "leg_velocity": 6.431207656860352,
+          "wheel_velocity": 82.88803100585938
+        }
+      },
+      {
+        "domain": 5,
+        "level": 5,
+        "valid_windows": 2,
+        "RMSE": {
+          "position": 0.029849134385585785,
+          "linear_velocity": 0.32997697591781616,
+          "angular_velocity": 1.4452595710754395,
+          "leg_position": 0.4391789138317108,
+          "leg_velocity": 3.6454532146453857,
+          "wheel_velocity": 108.15203857421875
+        }
+      },
+      {
+        "domain": 5,
+        "level": 6,
+        "valid_windows": 4,
+        "RMSE": {
+          "position": 0.05322849750518799,
+          "linear_velocity": 0.5629594326019287,
+          "angular_velocity": 2.34696626663208,
+          "leg_position": 0.613633394241333,
+          "leg_velocity": 5.043910026550293,
+          "wheel_velocity": 108.1059341430664
+        }
+      },
+      {
+        "domain": 5,
+        "level": 7,
+        "valid_windows": 4,
+        "RMSE": {
+          "position": 0.047980163246393204,
+          "linear_velocity": 0.25524550676345825,
+          "angular_velocity": 2.4227499961853027,
+          "leg_position": 0.792306661605835,
+          "leg_velocity": 4.777327537536621,
+          "wheel_velocity": 106.29426574707031
+        }
+      }
+    ],
+    "16": [
+      {
+        "domain": 0,
+        "level": 0,
+        "valid_windows": 472,
+        "RMSE": {
+          "position": 0.061264898627996445,
+          "linear_velocity": 0.4371306002140045,
+          "angular_velocity": 2.5228383541107178,
+          "leg_position": 0.6496226787567139,
+          "leg_velocity": 4.947715759277344,
+          "wheel_velocity": 36.0008659362793
+        }
+      },
+      {
+        "domain": 0,
+        "level": 1,
+        "valid_windows": 0,
+        "RMSE": null
+      },
+      {
+        "domain": 0,
+        "level": 2,
+        "valid_windows": 0,
+        "RMSE": null
+      },
+      {
+        "domain": 0,
+        "level": 3,
+        "valid_windows": 0,
+        "RMSE": null
+      },
+      {
+        "domain": 0,
+        "level": 4,
+        "valid_windows": 0,
+        "RMSE": null
+      },
+      {
+        "domain": 0,
+        "level": 5,
+        "valid_windows": 0,
+        "RMSE": null
+      },
+      {
+        "domain": 0,
+        "level": 6,
+        "valid_windows": 0,
+        "RMSE": null
+      },
+      {
+        "domain": 0,
+        "level": 7,
+        "valid_windows": 0,
+        "RMSE": null
+      },
+      {
+        "domain": 1,
+        "level": 0,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.1207338348031044,
+          "linear_velocity": 0.813636839389801,
+          "angular_velocity": 3.3017513751983643,
+          "leg_position": 1.1013480424880981,
+          "leg_velocity": 7.653471946716309,
+          "wheel_velocity": 16.856067657470703
+        }
+      },
+      {
+        "domain": 1,
+        "level": 1,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.12210733443498611,
+          "linear_velocity": 0.789933979511261,
+          "angular_velocity": 3.3769843578338623,
+          "leg_position": 1.125885009765625,
+          "leg_velocity": 7.632606029510498,
+          "wheel_velocity": 15.808262825012207
+        }
+      },
+      {
+        "domain": 1,
+        "level": 2,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.12092122435569763,
+          "linear_velocity": 0.797667920589447,
+          "angular_velocity": 3.2073111534118652,
+          "leg_position": 1.0797353982925415,
+          "leg_velocity": 7.373321056365967,
+          "wheel_velocity": 16.672897338867188
+        }
+      },
+      {
+        "domain": 1,
+        "level": 3,
+        "valid_windows": 35,
+        "RMSE": {
+          "position": 0.12084870040416718,
+          "linear_velocity": 0.76140296459198,
+          "angular_velocity": 3.1345443725585938,
+          "leg_position": 1.1345481872558594,
+          "leg_velocity": 7.4666748046875,
+          "wheel_velocity": 18.056732177734375
+        }
+      },
+      {
+        "domain": 1,
+        "level": 4,
+        "valid_windows": 14,
+        "RMSE": {
+          "position": 0.12111783772706985,
+          "linear_velocity": 0.7056031823158264,
+          "angular_velocity": 3.2518796920776367,
+          "leg_position": 1.1036301851272583,
+          "leg_velocity": 7.2197184562683105,
+          "wheel_velocity": 14.943636894226074
+        }
+      },
+      {
+        "domain": 1,
+        "level": 5,
+        "valid_windows": 32,
+        "RMSE": {
+          "position": 0.11242194473743439,
+          "linear_velocity": 0.64292973279953,
+          "angular_velocity": 3.0797297954559326,
+          "leg_position": 1.2179784774780273,
+          "leg_velocity": 8.273478507995605,
+          "wheel_velocity": 34.12559509277344
+        }
+      },
+      {
+        "domain": 1,
+        "level": 6,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.11174443364143372,
+          "linear_velocity": 0.6341328620910645,
+          "angular_velocity": 2.557828664779663,
+          "leg_position": 1.069991946220398,
+          "leg_velocity": 7.769972801208496,
+          "wheel_velocity": 26.398921966552734
+        }
+      },
+      {
+        "domain": 1,
+        "level": 7,
+        "valid_windows": 25,
+        "RMSE": {
+          "position": 0.1187819391489029,
+          "linear_velocity": 0.7163994908332825,
+          "angular_velocity": 3.2565765380859375,
+          "leg_position": 1.1807676553726196,
+          "leg_velocity": 8.013764381408691,
+          "wheel_velocity": 28.69325828552246
+        }
+      },
+      {
+        "domain": 2,
+        "level": 0,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.1239856630563736,
+          "linear_velocity": 0.8248630166053772,
+          "angular_velocity": 3.4904353618621826,
+          "leg_position": 1.1255950927734375,
+          "leg_velocity": 7.719614505767822,
+          "wheel_velocity": 15.076362609863281
+        }
+      },
+      {
+        "domain": 2,
+        "level": 1,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.1258488893508911,
+          "linear_velocity": 0.8267472386360168,
+          "angular_velocity": 3.3928029537200928,
+          "leg_position": 1.141538143157959,
+          "leg_velocity": 7.593588352203369,
+          "wheel_velocity": 17.961271286010742
+        }
+      },
+      {
+        "domain": 2,
+        "level": 2,
+        "valid_windows": 32,
+        "RMSE": {
+          "position": 0.12452951073646545,
+          "linear_velocity": 0.8502684235572815,
+          "angular_velocity": 3.1050469875335693,
+          "leg_position": 1.0790655612945557,
+          "leg_velocity": 7.304165840148926,
+          "wheel_velocity": 19.6501522064209
+        }
+      },
+      {
+        "domain": 2,
+        "level": 3,
+        "valid_windows": 29,
+        "RMSE": {
+          "position": 0.1254294216632843,
+          "linear_velocity": 0.8619356751441956,
+          "angular_velocity": 3.296761989593506,
+          "leg_position": 1.1659001111984253,
+          "leg_velocity": 7.821473598480225,
+          "wheel_velocity": 28.85694122314453
+        }
+      },
+      {
+        "domain": 2,
+        "level": 4,
+        "valid_windows": 28,
+        "RMSE": {
+          "position": 0.12402801960706711,
+          "linear_velocity": 0.8245475888252258,
+          "angular_velocity": 3.1712470054626465,
+          "leg_position": 1.1414481401443481,
+          "leg_velocity": 7.672934055328369,
+          "wheel_velocity": 22.931875228881836
+        }
+      },
+      {
+        "domain": 2,
+        "level": 5,
+        "valid_windows": 25,
+        "RMSE": {
+          "position": 0.11265216767787933,
+          "linear_velocity": 0.7632715702056885,
+          "angular_velocity": 3.037689208984375,
+          "leg_position": 1.2347828149795532,
+          "leg_velocity": 8.895197868347168,
+          "wheel_velocity": 59.54835891723633
+        }
+      },
+      {
+        "domain": 2,
+        "level": 6,
+        "valid_windows": 21,
+        "RMSE": {
+          "position": 0.1124860942363739,
+          "linear_velocity": 0.7184699177742004,
+          "angular_velocity": 2.78941011428833,
+          "leg_position": 1.1703013181686401,
+          "leg_velocity": 7.880737781524658,
+          "wheel_velocity": 58.26608657836914
+        }
+      },
+      {
+        "domain": 2,
+        "level": 7,
+        "valid_windows": 22,
+        "RMSE": {
+          "position": 0.10874273627996445,
+          "linear_velocity": 0.7338463664054871,
+          "angular_velocity": 3.4461476802825928,
+          "leg_position": 1.167170763015747,
+          "leg_velocity": 9.092314720153809,
+          "wheel_velocity": 43.448486328125
+        }
+      },
+      {
+        "domain": 3,
+        "level": 0,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.12269618362188339,
+          "linear_velocity": 0.8205932378768921,
+          "angular_velocity": 3.3492212295532227,
+          "leg_position": 1.1062709093093872,
+          "leg_velocity": 7.578797340393066,
+          "wheel_velocity": 15.450881004333496
+        }
+      },
+      {
+        "domain": 3,
+        "level": 1,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.11698895692825317,
+          "linear_velocity": 0.729332447052002,
+          "angular_velocity": 2.6913251876831055,
+          "leg_position": 1.0158374309539795,
+          "leg_velocity": 6.874727249145508,
+          "wheel_velocity": 17.74881362915039
+        }
+      },
+      {
+        "domain": 3,
+        "level": 2,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.10695277154445648,
+          "linear_velocity": 0.675341784954071,
+          "angular_velocity": 2.395634174346924,
+          "leg_position": 0.9899690747261047,
+          "leg_velocity": 6.795525550842285,
+          "wheel_velocity": 21.806795120239258
+        }
+      },
+      {
+        "domain": 3,
+        "level": 3,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.09592656046152115,
+          "linear_velocity": 0.6187953948974609,
+          "angular_velocity": 1.5980782508850098,
+          "leg_position": 0.9118217825889587,
+          "leg_velocity": 6.121724605560303,
+          "wheel_velocity": 22.311447143554688
+        }
+      },
+      {
+        "domain": 3,
+        "level": 4,
+        "valid_windows": 34,
+        "RMSE": {
+          "position": 0.09400162845849991,
+          "linear_velocity": 0.627052903175354,
+          "angular_velocity": 1.6458570957183838,
+          "leg_position": 0.9186752438545227,
+          "leg_velocity": 6.959196090698242,
+          "wheel_velocity": 24.694936752319336
+        }
+      },
+      {
+        "domain": 3,
+        "level": 5,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.09415503591299057,
+          "linear_velocity": 0.6307955980300903,
+          "angular_velocity": 1.5720021724700928,
+          "leg_position": 0.9191409349441528,
+          "leg_velocity": 6.642031192779541,
+          "wheel_velocity": 24.529130935668945
+        }
+      },
+      {
+        "domain": 3,
+        "level": 6,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.09264149516820908,
+          "linear_velocity": 0.6555154323577881,
+          "angular_velocity": 1.8224512338638306,
+          "leg_position": 0.907652735710144,
+          "leg_velocity": 6.567477226257324,
+          "wheel_velocity": 29.95638084411621
+        }
+      },
+      {
+        "domain": 3,
+        "level": 7,
+        "valid_windows": 32,
+        "RMSE": {
+          "position": 0.09231023490428925,
+          "linear_velocity": 0.6276775002479553,
+          "angular_velocity": 1.6759790182113647,
+          "leg_position": 0.8817101120948792,
+          "leg_velocity": 6.418165683746338,
+          "wheel_velocity": 26.10982894897461
+        }
+      },
+      {
+        "domain": 4,
+        "level": 0,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.12170513719320297,
+          "linear_velocity": 0.8159727454185486,
+          "angular_velocity": 3.3154988288879395,
+          "leg_position": 1.1108962297439575,
+          "leg_velocity": 7.6227335929870605,
+          "wheel_velocity": 16.399316787719727
+        }
+      },
+      {
+        "domain": 4,
+        "level": 1,
+        "valid_windows": 24,
+        "RMSE": {
+          "position": 0.12645965814590454,
+          "linear_velocity": 0.8394131064414978,
+          "angular_velocity": 3.3495187759399414,
+          "leg_position": 1.1445960998535156,
+          "leg_velocity": 7.884732723236084,
+          "wheel_velocity": 16.84877586364746
+        }
+      },
+      {
+        "domain": 4,
+        "level": 2,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.06777682155370712,
+          "linear_velocity": 0.30561015009880066,
+          "angular_velocity": 1.8680981397628784,
+          "leg_position": 0.6384546756744385,
+          "leg_velocity": 6.627834796905518,
+          "wheel_velocity": 24.00009536743164
+        }
+      },
+      {
+        "domain": 4,
+        "level": 3,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.027528099715709686,
+          "linear_velocity": 0.17568710446357727,
+          "angular_velocity": 1.5666874647140503,
+          "leg_position": 0.5812272429466248,
+          "leg_velocity": 6.835755825042725,
+          "wheel_velocity": 12.340601921081543
+        }
+      },
+      {
+        "domain": 4,
+        "level": 4,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.02330229990184307,
+          "linear_velocity": 0.25299400091171265,
+          "angular_velocity": 1.1548482179641724,
+          "leg_position": 0.6308066844940186,
+          "leg_velocity": 6.771376609802246,
+          "wheel_velocity": 11.133912086486816
+        }
+      },
+      {
+        "domain": 4,
+        "level": 5,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.020556654781103134,
+          "linear_velocity": 0.3765796422958374,
+          "angular_velocity": 0.9806047677993774,
+          "leg_position": 0.7176650166511536,
+          "leg_velocity": 6.684564590454102,
+          "wheel_velocity": 8.955865859985352
+        }
+      },
+      {
+        "domain": 4,
+        "level": 6,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.02494746632874012,
+          "linear_velocity": 0.5196915864944458,
+          "angular_velocity": 0.9139403104782104,
+          "leg_position": 0.7486429214477539,
+          "leg_velocity": 6.292603969573975,
+          "wheel_velocity": 8.60552978515625
+        }
+      },
+      {
+        "domain": 4,
+        "level": 7,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.030709462240338326,
+          "linear_velocity": 0.6403699517250061,
+          "angular_velocity": 1.0344635248184204,
+          "leg_position": 0.8148750066757202,
+          "leg_velocity": 6.463475704193115,
+          "wheel_velocity": 8.856175422668457
+        }
+      },
+      {
+        "domain": 5,
+        "level": 0,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.12233199179172516,
+          "linear_velocity": 0.8231475353240967,
+          "angular_velocity": 3.3512892723083496,
+          "leg_position": 1.0944840908050537,
+          "leg_velocity": 7.337557315826416,
+          "wheel_velocity": 14.639452934265137
+        }
+      },
+      {
+        "domain": 5,
+        "level": 1,
+        "valid_windows": 36,
+        "RMSE": {
+          "position": 0.09489718824625015,
+          "linear_velocity": 0.5938194394111633,
+          "angular_velocity": 1.3089593648910522,
+          "leg_position": 0.9237255454063416,
+          "leg_velocity": 5.693589687347412,
+          "wheel_velocity": 26.389333724975586
+        }
+      },
+      {
+        "domain": 5,
+        "level": 2,
+        "valid_windows": 34,
+        "RMSE": {
+          "position": 0.0922551080584526,
+          "linear_velocity": 0.5838448405265808,
+          "angular_velocity": 1.4415183067321777,
+          "leg_position": 0.8735223412513733,
+          "leg_velocity": 5.606683731079102,
+          "wheel_velocity": 25.654348373413086
+        }
+      },
+      {
+        "domain": 5,
+        "level": 3,
+        "valid_windows": 12,
+        "RMSE": {
+          "position": 0.0956922322511673,
+          "linear_velocity": 0.5198044776916504,
+          "angular_velocity": 2.5313713550567627,
+          "leg_position": 0.9608389735221863,
+          "leg_velocity": 5.248893737792969,
+          "wheel_velocity": 47.33648681640625
+        }
+      },
+      {
+        "domain": 5,
+        "level": 4,
+        "valid_windows": 1,
+        "RMSE": {
+          "position": 0.06507229059934616,
+          "linear_velocity": 0.3874557614326477,
+          "angular_velocity": 0.763110876083374,
+          "leg_position": 0.5929793119430542,
+          "leg_velocity": 4.4180474281311035,
+          "wheel_velocity": 86.34538269042969
+        }
+      },
+      {
+        "domain": 5,
+        "level": 5,
+        "valid_windows": 2,
+        "RMSE": {
+          "position": 0.07738429307937622,
+          "linear_velocity": 0.3825031816959381,
+          "angular_velocity": 2.153569459915161,
+          "leg_position": 0.7093665599822998,
+          "leg_velocity": 2.6931509971618652,
+          "wheel_velocity": 106.19462585449219
+        }
+      },
+      {
+        "domain": 5,
+        "level": 6,
+        "valid_windows": 2,
+        "RMSE": {
+          "position": 0.11484260112047195,
+          "linear_velocity": 0.5395677089691162,
+          "angular_velocity": 1.6128746271133423,
+          "leg_position": 1.440266489982605,
+          "leg_velocity": 5.253347396850586,
+          "wheel_velocity": 121.08596801757812
+        }
+      },
+      {
+        "domain": 5,
+        "level": 7,
+        "valid_windows": 3,
+        "RMSE": {
+          "position": 0.09378298372030258,
+          "linear_velocity": 0.45908409357070923,
+          "angular_velocity": 1.9691336154937744,
+          "leg_position": 1.6022814512252808,
+          "leg_velocity": 5.637063980102539,
+          "wheel_velocity": 121.07183074951172
+        }
+      }
+    ]
+  }
+}

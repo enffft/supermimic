@@ -33,9 +33,7 @@ class Go2WApproachTerrainCfg(ApproachTerrainCfg):
 def mixed_terrain(seed=2026):
     terrain = terrain_profile("mixed", seed=seed, levels=True, max_level=7)
     terrain.generator.sub_terrains = {
-        name: Go2WApproachTerrainCfg(
-            **{f.name: getattr(cfg, f.name) for f in fields(cfg)}
-        )
+        name: Go2WApproachTerrainCfg(**{f.name: getattr(cfg, f.name) for f in fields(cfg)})
         for name, cfg in terrain.generator.sub_terrains.items()
     }
     return terrain
@@ -138,3 +136,89 @@ class Go2WTerrainCurriculum(TerrainCurriculum):
         self.fixed_domain.copy_(domains)
         for name in ("mastery", "terrain_level", "success_streak", "failure_streak"):
             getattr(self, name)[changed] = 0
+
+
+@dataclass(kw_only=True)
+class TraversalTerrainCfg(ApproachTerrainCfg):
+    """One approach, one signed obstacle direction and an extended landing platform."""
+
+    kind: str = "single_step_up"
+    generator_version: str = "go2w_unified_traversal"
+
+    def function(self, difficulty, rng):
+        import numpy as np
+        from unilab.terrains.heightfield_terrains import _make_terrain_output
+
+        from .curriculum import LEVEL_COUNT, SINGLE_HEIGHTS, STAIR_HEIGHTS
+
+        level = min(LEVEL_COUNT - 1, max(0, int(difficulty * LEVEL_COUNT)))
+        nx, ny = (int(s / self.horizontal_scale) for s in self.size)
+        x = np.arange(nx) * self.horizontal_scale
+        height = SINGLE_HEIGHTS[level] if self.kind.startswith("single") else STAIR_HEIGHTS[level]
+        if self.kind == "rough":
+            profile = rng.uniform(-0.005 * (level + 1), 0.005 * (level + 1), size=(nx, ny))
+            profile[:24] = 0
+            if level == 0:
+                profile[:] = 0
+        elif self.kind.startswith("slope"):
+            profile = np.clip(x - 1.4, 0, 3.0) * (0.03 + 0.015 * level)
+            profile = np.broadcast_to(profile[:, None], (nx, ny)).copy()
+        else:
+            steps = (
+                (x >= 1.4).astype(float)
+                if self.kind.startswith("single")
+                else np.clip(np.floor((x - 1.4) / 0.4) + 1, 0, 4)
+            )
+            profile = np.broadcast_to((steps * height)[:, None], (nx, ny)).copy()
+        if self.kind.endswith("down"):
+            profile = profile.max() - profile
+        # Stair collision uses exact vertical box faces; no triangulated hfield ramp.
+        if self.kind.startswith(("single", "multi")):
+            profile[:] = 0
+        noise = np.rint(profile / self.vertical_scale).astype(np.int16)
+        return _make_terrain_output(
+            noise,
+            size=self.size,
+            horizontal_scale=self.horizontal_scale,
+            vertical_scale=self.vertical_scale,
+            base_thickness_ratio=1.0,
+            origin=np.array([0.6, self.size[1] / 2, float(profile[12, ny // 2])]),
+            flat_patch_sampling=None,
+            rng=rng,
+        )
+
+
+def unified_terrain(seed=2026):
+    from unilab.terrains import TerrainGeneratorCfg
+    from unilab.terrains.heightfield_terrains import HfFlatTerrainCfg
+    from unisim.scene import TerrainSceneCfg
+
+    from .curriculum import DOMAINS, LEVEL_COUNT
+
+    return TerrainSceneCfg(
+        generator=TerrainGeneratorCfg(
+            seed=seed,
+            size=(8.0, 8.0),
+            num_rows=LEVEL_COUNT,
+            num_cols=7,
+            curriculum=True,
+            horizontal_scale=0.05,
+            vertical_scale=0.005,
+            border_width=2.0,
+            difficulty_range=(0.0, 1.0),
+            sub_terrains={
+                name: TraversalTerrainCfg(
+                    kind=name,
+                    delegate=HfFlatTerrainCfg(),
+                    size=(8.0, 8.0),
+                    proportion=1.0,
+                    atlas_max_level=9,
+                    profile_max_level=9,
+                    require_low_border=False,
+                )
+                for name in DOMAINS[1:]
+            },
+        ),
+        hfield_name="go2_heightfield",
+        geom_name="go2_terrain",
+    )

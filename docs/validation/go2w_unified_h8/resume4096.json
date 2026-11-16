@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "environment_count": 4096,
+  "buffer_steps": 1024,
+  "replay_size": 191,
+  "history_size": 704,
+  "before": {
+    "wm": 500,
+    "actor": 50,
+    "critic": 1000
+  },
+  "after": {
+    "wm": 501,
+    "actor": 51,
+    "critic": 1020
+  },
+  "wm_loss": 1.10561203956604,
+  "pi_loss": 1.9574939012527466,
+  "actor_gradnorm": 13.979681015014648,
+  "peak_GPU_MiB": 4049.6103515625,
+  "resume_semantics": "weights_optimizers_replay_curriculum_restored; environment_resampled; not_exact"
+}

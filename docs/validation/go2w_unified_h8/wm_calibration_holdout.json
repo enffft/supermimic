@@ -1,0 +1,1126 @@
+{
+  "model": "/home/yifeiy/ws_go2_unilab/runs/go2w_unified_audit_20261116/calibration/calibrated_candidate.pt",
+  "wm_tensor_sha256": "fc0def8d2a5e00cdcd01b3cb41f82351a4e7a7a15723ca299c7f4d936fbd95f0",
+  "holdout": "/home/yifeiy/ws_go2_unilab/runs/go2w_unified_h8_20261116/holdout.pt",
+  "holdout_file_sha256": "32a4040119cc44d7e01cf42527a2398e17135dceedbe95e8c2701c8f13666ef4",
+  "independent": true,
+  "rows": [
+    {
+      "horizon": 1,
+      "domain": 0,
+      "phase_offset": 0.0,
+      "valid": 10,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.0012436710530892015,
+        "orientation_rad": 0.005389568395912647,
+        "linear_velocity_m_s": 0.04417024552822113,
+        "angular_velocity_rad_s": 0.1651352047920227,
+        "leg_position_rad": 0.009431055746972561,
+        "leg_velocity_rad_s": 0.7135375738143921,
+        "wheel_velocity_rad_s": 1.3094886541366577
+      }
+    },
+    {
+      "horizon": 1,
+      "domain": 0,
+      "phase_offset": 0.6,
+      "valid": 10,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.0012633310398086905,
+        "orientation_rad": 0.004705116152763367,
+        "linear_velocity_m_s": 0.04404734447598457,
+        "angular_velocity_rad_s": 0.20213191211223602,
+        "leg_position_rad": 0.010343760251998901,
+        "leg_velocity_rad_s": 0.7190883159637451,
+        "wheel_velocity_rad_s": 1.3288897275924683
+      }
+    },
+    {
+      "horizon": 1,
+      "domain": 0,
+      "phase_offset": 2.8,
+      "valid": 10,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.0012617093743756413,
+        "orientation_rad": 0.004861863795667887,
+        "linear_velocity_m_s": 0.04425843060016632,
+        "angular_velocity_rad_s": 0.19648012518882751,
+        "leg_position_rad": 0.01035428699105978,
+        "leg_velocity_rad_s": 0.7342714667320251,
+        "wheel_velocity_rad_s": 1.2713313102722168
+      }
+    },
+    {
+      "horizon": 1,
+      "domain": 1,
+      "phase_offset": 0.0,
+      "valid": 10,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.0012769976165145636,
+        "orientation_rad": 0.005151727702468634,
+        "linear_velocity_m_s": 0.044873494654893875,
+        "angular_velocity_rad_s": 0.19528858363628387,
+        "leg_position_rad": 0.01017493475228548,
+        "leg_velocity_rad_s": 0.7343791723251343,
+        "wheel_velocity_rad_s": 1.398045301437378
+      }
+    },
+    {
+      "horizon": 1,
+      "domain": 1,
+      "phase_offset": 0.6,
+      "valid": 10,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.001340429880656302,
+        "orientation_rad": 0.004888162948191166,
+        "linear_velocity_m_s": 0.04930892959237099,
+        "angular_velocity_rad_s": 0.19578884541988373,
+        "leg_position_rad": 0.01102830283343792,
+        "leg_velocity_rad_s": 0.778678297996521,
+        "wheel_velocity_rad_s": 1.2712750434875488
+      }
+    },
+    {
+      "horizon": 1,
+      "domain": 1,
+      "phase_offset": 2.8,
+      "valid": 10,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.0013563120737671852,
+        "orientation_rad": 0.005096945445984602,
+        "linear_velocity_m_s": 0.04849430173635483,
+        "angular_velocity_rad_s": 0.21855944395065308,
+        "leg_position_rad": 0.011403531767427921,
+        "leg_velocity_rad_s": 0.8090749382972717,
+        "wheel_velocity_rad_s": 1.1829125881195068
+      }
+    },
+    {
+      "horizon": 1,
+      "domain": 2,
+      "phase_offset": 0.0,
+      "valid": 10,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.0012500759912654757,
+        "orientation_rad": 0.005393740255385637,
+        "linear_velocity_m_s": 0.04357241094112396,
+        "angular_velocity_rad_s": 0.1716606616973877,
+        "leg_position_rad": 0.009682033210992813,
+        "leg_velocity_rad_s": 0.722288191318512,
+        "wheel_velocity_rad_s": 1.3655532598495483
+      }
+    },
+    {
+      "horizon": 1,
+      "domain": 2,
+      "phase_offset": 0.6,
+      "valid": 10,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.0011906856670975685,
+        "orientation_rad": 0.004361081402748823,
+        "linear_velocity_m_s": 0.0387023389339447,
+        "angular_velocity_rad_s": 0.17229916155338287,
+        "leg_position_rad": 0.00999489240348339,
+        "leg_velocity_rad_s": 0.664787232875824,
+        "wheel_velocity_rad_s": 1.1507669687271118
+      }
+    },
+    {
+      "horizon": 1,
+      "domain": 2,
+      "phase_offset": 2.8,
+      "valid": 10,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.0011115496745333076,
+        "orientation_rad": 0.003765456611290574,
+        "linear_velocity_m_s": 0.03661482036113739,
+        "angular_velocity_rad_s": 0.12440358847379684,
+        "leg_position_rad": 0.00960778258740902,
+        "leg_velocity_rad_s": 0.6921721696853638,
+        "wheel_velocity_rad_s": 1.4301351308822632
+      }
+    },
+    {
+      "horizon": 1,
+      "domain": 3,
+      "phase_offset": 0.0,
+      "valid": 10,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.0012049117358401418,
+        "orientation_rad": 0.00507246283814311,
+        "linear_velocity_m_s": 0.042351093143224716,
+        "angular_velocity_rad_s": 0.15375564992427826,
+        "leg_position_rad": 0.010274456813931465,
+        "leg_velocity_rad_s": 0.8113734722137451,
+        "wheel_velocity_rad_s": 1.345948576927185
+      }
+    },
+    {
+      "horizon": 1,
+      "domain": 3,
+      "phase_offset": 0.6,
+      "valid": 10,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.0012725748820230365,
+        "orientation_rad": 0.005852521397173405,
+        "linear_velocity_m_s": 0.04632744565606117,
+        "angular_velocity_rad_s": 0.16075554490089417,
+        "leg_position_rad": 0.011067316867411137,
+        "leg_velocity_rad_s": 0.913505494594574,
+        "wheel_velocity_rad_s": 1.5399622917175293
+      }
+    },
+    {
+      "horizon": 1,
+      "domain": 3,
+      "phase_offset": 2.8,
+      "valid": 10,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.0013506176183000207,
+        "orientation_rad": 0.0070712994784116745,
+        "linear_velocity_m_s": 0.05289657041430473,
+        "angular_velocity_rad_s": 0.28037381172180176,
+        "leg_position_rad": 0.013154564425349236,
+        "leg_velocity_rad_s": 1.0260416269302368,
+        "wheel_velocity_rad_s": 1.4931482076644897
+      }
+    },
+    {
+      "horizon": 1,
+      "domain": 4,
+      "phase_offset": 0.0,
+      "valid": 10,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.0012827522587031126,
+        "orientation_rad": 0.004921754356473684,
+        "linear_velocity_m_s": 0.04484375938773155,
+        "angular_velocity_rad_s": 0.18877317011356354,
+        "leg_position_rad": 0.00992297288030386,
+        "leg_velocity_rad_s": 0.7064952850341797,
+        "wheel_velocity_rad_s": 1.347023367881775
+      }
+    },
+    {
+      "horizon": 1,
+      "domain": 4,
+      "phase_offset": 0.6,
+      "valid": 10,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.0014431248418986797,
+        "orientation_rad": 0.004118091892451048,
+        "linear_velocity_m_s": 0.07634430378675461,
+        "angular_velocity_rad_s": 0.19089922308921814,
+        "leg_position_rad": 0.031409770250320435,
+        "leg_velocity_rad_s": 1.7949191331863403,
+        "wheel_velocity_rad_s": 1.8094885349273682
+      }
+    },
+    {
+      "horizon": 1,
+      "domain": 4,
+      "phase_offset": 2.8,
+      "valid": 10,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.0012578039895743132,
+        "orientation_rad": 0.005129076074808836,
+        "linear_velocity_m_s": 0.0446816124022007,
+        "angular_velocity_rad_s": 0.16370587050914764,
+        "leg_position_rad": 0.010054399259388447,
+        "leg_velocity_rad_s": 0.747442364692688,
+        "wheel_velocity_rad_s": 1.3699663877487183
+      }
+    },
+    {
+      "horizon": 1,
+      "domain": 5,
+      "phase_offset": 0.0,
+      "valid": 10,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.0012588152894750237,
+        "orientation_rad": 0.005121488124132156,
+        "linear_velocity_m_s": 0.04466772824525833,
+        "angular_velocity_rad_s": 0.1797381490468979,
+        "leg_position_rad": 0.00993665773421526,
+        "leg_velocity_rad_s": 0.7497790455818176,
+        "wheel_velocity_rad_s": 1.3556604385375977
+      }
+    },
+    {
+      "horizon": 1,
+      "domain": 5,
+      "phase_offset": 0.6,
+      "valid": 10,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.001373387174680829,
+        "orientation_rad": 0.009087231010198593,
+        "linear_velocity_m_s": 0.051282938569784164,
+        "angular_velocity_rad_s": 0.2651798725128174,
+        "leg_position_rad": 0.013267720118165016,
+        "leg_velocity_rad_s": 1.1627657413482666,
+        "wheel_velocity_rad_s": 1.7144430875778198
+      }
+    },
+    {
+      "horizon": 1,
+      "domain": 5,
+      "phase_offset": 2.8,
+      "valid": 10,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.0012571333209052682,
+        "orientation_rad": 0.004695354029536247,
+        "linear_velocity_m_s": 0.043866582214832306,
+        "angular_velocity_rad_s": 0.19995179772377014,
+        "leg_position_rad": 0.0100083127617836,
+        "leg_velocity_rad_s": 0.7173019647598267,
+        "wheel_velocity_rad_s": 1.2877428531646729
+      }
+    },
+    {
+      "horizon": 1,
+      "domain": 6,
+      "phase_offset": 0.0,
+      "valid": 10,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.0012574357679113746,
+        "orientation_rad": 0.005402838345617056,
+        "linear_velocity_m_s": 0.044284671545028687,
+        "angular_velocity_rad_s": 0.15073008835315704,
+        "leg_position_rad": 0.009083839133381844,
+        "leg_velocity_rad_s": 0.6984401941299438,
+        "wheel_velocity_rad_s": 1.2899614572525024
+      }
+    },
+    {
+      "horizon": 1,
+      "domain": 6,
+      "phase_offset": 0.6,
+      "valid": 10,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.0015652173897251487,
+        "orientation_rad": 0.0041711837984621525,
+        "linear_velocity_m_s": 0.0795949175953865,
+        "angular_velocity_rad_s": 0.1943359225988388,
+        "leg_position_rad": 0.030001958832144737,
+        "leg_velocity_rad_s": 1.7235382795333862,
+        "wheel_velocity_rad_s": 1.4103814363479614
+      }
+    },
+    {
+      "horizon": 1,
+      "domain": 6,
+      "phase_offset": 2.8,
+      "valid": 10,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.001218588906340301,
+        "orientation_rad": 0.004946994129568338,
+        "linear_velocity_m_s": 0.042917314916849136,
+        "angular_velocity_rad_s": 0.15110896527767181,
+        "leg_position_rad": 0.009627233259379864,
+        "leg_velocity_rad_s": 0.7712435126304626,
+        "wheel_velocity_rad_s": 1.4301817417144775
+      }
+    },
+    {
+      "horizon": 1,
+      "domain": 7,
+      "phase_offset": 0.0,
+      "valid": 10,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.0012213580776005983,
+        "orientation_rad": 0.005135116167366505,
+        "linear_velocity_m_s": 0.04240664467215538,
+        "angular_velocity_rad_s": 0.15870654582977295,
+        "leg_position_rad": 0.01018449105322361,
+        "leg_velocity_rad_s": 0.8114973902702332,
+        "wheel_velocity_rad_s": 1.357330322265625
+      }
+    },
+    {
+      "horizon": 1,
+      "domain": 7,
+      "phase_offset": 0.6,
+      "valid": 9,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.001386586227454245,
+        "orientation_rad": 0.0074416943825781345,
+        "linear_velocity_m_s": 0.05257118493318558,
+        "angular_velocity_rad_s": 0.22879479825496674,
+        "leg_position_rad": 0.012574288062751293,
+        "leg_velocity_rad_s": 1.0756803750991821,
+        "wheel_velocity_rad_s": 1.7419326305389404
+      }
+    },
+    {
+      "horizon": 1,
+      "domain": 7,
+      "phase_offset": 2.8,
+      "valid": 10,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.001266751205548644,
+        "orientation_rad": 0.005030123982578516,
+        "linear_velocity_m_s": 0.04524040222167969,
+        "angular_velocity_rad_s": 0.18569344282150269,
+        "leg_position_rad": 0.009803139604628086,
+        "leg_velocity_rad_s": 0.7192100882530212,
+        "wheel_velocity_rad_s": 1.2650370597839355
+      }
+    },
+    {
+      "horizon": 8,
+      "domain": 0,
+      "phase_offset": 0.0,
+      "valid": 9,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.010821416042745113,
+        "orientation_rad": 0.12983547151088715,
+        "linear_velocity_m_s": 0.20971252024173737,
+        "angular_velocity_rad_s": 2.3381502628326416,
+        "leg_position_rad": 0.3600727915763855,
+        "leg_velocity_rad_s": 9.416149139404297,
+        "wheel_velocity_rad_s": 20.2180118560791
+      }
+    },
+    {
+      "horizon": 8,
+      "domain": 0,
+      "phase_offset": 0.6,
+      "valid": 8,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.019374974071979523,
+        "orientation_rad": 0.2305162400007248,
+        "linear_velocity_m_s": 0.3712392747402191,
+        "angular_velocity_rad_s": 4.249669551849365,
+        "leg_position_rad": 0.5937204957008362,
+        "leg_velocity_rad_s": 14.798356056213379,
+        "wheel_velocity_rad_s": 28.445783615112305
+      }
+    },
+    {
+      "horizon": 8,
+      "domain": 0,
+      "phase_offset": 2.8,
+      "valid": 10,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.03129062429070473,
+        "orientation_rad": 0.3223448097705841,
+        "linear_velocity_m_s": 0.6243466734886169,
+        "angular_velocity_rad_s": 6.275343418121338,
+        "leg_position_rad": 0.7805113792419434,
+        "leg_velocity_rad_s": 18.64254379272461,
+        "wheel_velocity_rad_s": 29.557558059692383
+      }
+    },
+    {
+      "horizon": 8,
+      "domain": 1,
+      "phase_offset": 0.0,
+      "valid": 10,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.022409765049815178,
+        "orientation_rad": 0.23154610395431519,
+        "linear_velocity_m_s": 0.37904998660087585,
+        "angular_velocity_rad_s": 4.89599609375,
+        "leg_position_rad": 0.540693998336792,
+        "leg_velocity_rad_s": 13.980881690979004,
+        "wheel_velocity_rad_s": 29.749874114990234
+      }
+    },
+    {
+      "horizon": 8,
+      "domain": 1,
+      "phase_offset": 0.6,
+      "valid": 10,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.02921251766383648,
+        "orientation_rad": 0.2566421329975128,
+        "linear_velocity_m_s": 0.5601690411567688,
+        "angular_velocity_rad_s": 4.644674301147461,
+        "leg_position_rad": 0.7204705476760864,
+        "leg_velocity_rad_s": 17.84044647216797,
+        "wheel_velocity_rad_s": 31.635501861572266
+      }
+    },
+    {
+      "horizon": 8,
+      "domain": 1,
+      "phase_offset": 2.8,
+      "valid": 8,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.033572014421224594,
+        "orientation_rad": 0.33643069863319397,
+        "linear_velocity_m_s": 0.7746992111206055,
+        "angular_velocity_rad_s": 6.770556449890137,
+        "leg_position_rad": 0.7702077627182007,
+        "leg_velocity_rad_s": 20.127016067504883,
+        "wheel_velocity_rad_s": 30.314451217651367
+      }
+    },
+    {
+      "horizon": 8,
+      "domain": 2,
+      "phase_offset": 0.0,
+      "valid": 9,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.019615836441516876,
+        "orientation_rad": 0.21137583255767822,
+        "linear_velocity_m_s": 0.2902863323688507,
+        "angular_velocity_rad_s": 2.699026584625244,
+        "leg_position_rad": 0.5086000561714172,
+        "leg_velocity_rad_s": 13.968791961669922,
+        "wheel_velocity_rad_s": 28.363121032714844
+      }
+    },
+    {
+      "horizon": 8,
+      "domain": 2,
+      "phase_offset": 0.6,
+      "valid": 8,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.024768797680735588,
+        "orientation_rad": 0.26602455973625183,
+        "linear_velocity_m_s": 0.4808642864227295,
+        "angular_velocity_rad_s": 5.661764621734619,
+        "leg_position_rad": 0.7161217927932739,
+        "leg_velocity_rad_s": 18.650390625,
+        "wheel_velocity_rad_s": 26.76610565185547
+      }
+    },
+    {
+      "horizon": 8,
+      "domain": 2,
+      "phase_offset": 2.8,
+      "valid": 9,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.02604660950601101,
+        "orientation_rad": 0.235402911901474,
+        "linear_velocity_m_s": 0.5042724609375,
+        "angular_velocity_rad_s": 3.6630020141601562,
+        "leg_position_rad": 0.5630676746368408,
+        "leg_velocity_rad_s": 12.594222068786621,
+        "wheel_velocity_rad_s": 23.958057403564453
+      }
+    },
+    {
+      "horizon": 8,
+      "domain": 3,
+      "phase_offset": 0.0,
+      "valid": 10,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.05349407345056534,
+        "orientation_rad": 0.5308254361152649,
+        "linear_velocity_m_s": 0.9757016897201538,
+        "angular_velocity_rad_s": 8.952815055847168,
+        "leg_position_rad": 0.9052544236183167,
+        "leg_velocity_rad_s": 17.055320739746094,
+        "wheel_velocity_rad_s": 24.013408660888672
+      }
+    },
+    {
+      "horizon": 8,
+      "domain": 3,
+      "phase_offset": 0.6,
+      "valid": 9,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.037485625594854355,
+        "orientation_rad": 0.37420791387557983,
+        "linear_velocity_m_s": 0.768782377243042,
+        "angular_velocity_rad_s": 6.232838153839111,
+        "leg_position_rad": 0.6326569318771362,
+        "leg_velocity_rad_s": 15.750494956970215,
+        "wheel_velocity_rad_s": 16.485797882080078
+      }
+    },
+    {
+      "horizon": 8,
+      "domain": 3,
+      "phase_offset": 2.8,
+      "valid": 10,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.036164622753858566,
+        "orientation_rad": 0.30971816182136536,
+        "linear_velocity_m_s": 0.5990118980407715,
+        "angular_velocity_rad_s": 5.741203308105469,
+        "leg_position_rad": 0.7918639183044434,
+        "leg_velocity_rad_s": 16.18359375,
+        "wheel_velocity_rad_s": 24.481130599975586
+      }
+    },
+    {
+      "horizon": 8,
+      "domain": 4,
+      "phase_offset": 0.0,
+      "valid": 8,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.029235655441880226,
+        "orientation_rad": 0.3204405605792999,
+        "linear_velocity_m_s": 0.6694179177284241,
+        "angular_velocity_rad_s": 6.3608293533325195,
+        "leg_position_rad": 0.7846548557281494,
+        "leg_velocity_rad_s": 18.856727600097656,
+        "wheel_velocity_rad_s": 35.71037292480469
+      }
+    },
+    {
+      "horizon": 8,
+      "domain": 4,
+      "phase_offset": 0.6,
+      "valid": 10,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.04919712617993355,
+        "orientation_rad": 0.39563581347465515,
+        "linear_velocity_m_s": 0.9201563000679016,
+        "angular_velocity_rad_s": 7.338430404663086,
+        "leg_position_rad": 0.965761125087738,
+        "leg_velocity_rad_s": 20.899002075195312,
+        "wheel_velocity_rad_s": 18.6531982421875
+      }
+    },
+    {
+      "horizon": 8,
+      "domain": 4,
+      "phase_offset": 2.8,
+      "valid": 8,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.02297976240515709,
+        "orientation_rad": 0.2216452807188034,
+        "linear_velocity_m_s": 0.46814846992492676,
+        "angular_velocity_rad_s": 3.987400770187378,
+        "leg_position_rad": 0.4202878773212433,
+        "leg_velocity_rad_s": 12.739702224731445,
+        "wheel_velocity_rad_s": 25.345632553100586
+      }
+    },
+    {
+      "horizon": 8,
+      "domain": 5,
+      "phase_offset": 0.0,
+      "valid": 8,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.021662650629878044,
+        "orientation_rad": 0.19815051555633545,
+        "linear_velocity_m_s": 0.43163082003593445,
+        "angular_velocity_rad_s": 3.421250820159912,
+        "leg_position_rad": 0.49653521180152893,
+        "leg_velocity_rad_s": 11.72478199005127,
+        "wheel_velocity_rad_s": 28.644643783569336
+      }
+    },
+    {
+      "horizon": 8,
+      "domain": 5,
+      "phase_offset": 0.6,
+      "valid": 8,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.041353803128004074,
+        "orientation_rad": 0.45224401354789734,
+        "linear_velocity_m_s": 0.7807720899581909,
+        "angular_velocity_rad_s": 7.1004438400268555,
+        "leg_position_rad": 0.6981803178787231,
+        "leg_velocity_rad_s": 16.40875816345215,
+        "wheel_velocity_rad_s": 15.178935050964355
+      }
+    },
+    {
+      "horizon": 8,
+      "domain": 5,
+      "phase_offset": 2.8,
+      "valid": 8,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.021268252283334732,
+        "orientation_rad": 0.21521733701229095,
+        "linear_velocity_m_s": 0.43036869168281555,
+        "angular_velocity_rad_s": 4.127169609069824,
+        "leg_position_rad": 0.528511106967926,
+        "leg_velocity_rad_s": 13.834161758422852,
+        "wheel_velocity_rad_s": 19.945688247680664
+      }
+    },
+    {
+      "horizon": 8,
+      "domain": 6,
+      "phase_offset": 0.0,
+      "valid": 10,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.016775134950876236,
+        "orientation_rad": 0.19262099266052246,
+        "linear_velocity_m_s": 0.36469095945358276,
+        "angular_velocity_rad_s": 3.4577910900115967,
+        "leg_position_rad": 0.48611605167388916,
+        "leg_velocity_rad_s": 13.120136260986328,
+        "wheel_velocity_rad_s": 26.040693283081055
+      }
+    },
+    {
+      "horizon": 8,
+      "domain": 6,
+      "phase_offset": 0.6,
+      "valid": 10,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.04743540659546852,
+        "orientation_rad": 0.3438193202018738,
+        "linear_velocity_m_s": 0.8222364187240601,
+        "angular_velocity_rad_s": 6.824739456176758,
+        "leg_position_rad": 0.9243231415748596,
+        "leg_velocity_rad_s": 20.081388473510742,
+        "wheel_velocity_rad_s": 26.71491050720215
+      }
+    },
+    {
+      "horizon": 8,
+      "domain": 6,
+      "phase_offset": 2.8,
+      "valid": 10,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.04198814183473587,
+        "orientation_rad": 0.39365527033805847,
+        "linear_velocity_m_s": 0.8145278692245483,
+        "angular_velocity_rad_s": 6.432178974151611,
+        "leg_position_rad": 0.6772236227989197,
+        "leg_velocity_rad_s": 16.72514533996582,
+        "wheel_velocity_rad_s": 19.263925552368164
+      }
+    },
+    {
+      "horizon": 8,
+      "domain": 7,
+      "phase_offset": 0.0,
+      "valid": 9,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.033656857907772064,
+        "orientation_rad": 0.3547651767730713,
+        "linear_velocity_m_s": 0.6675047874450684,
+        "angular_velocity_rad_s": 5.685565948486328,
+        "leg_position_rad": 0.6323367953300476,
+        "leg_velocity_rad_s": 16.102941513061523,
+        "wheel_velocity_rad_s": 28.83358383178711
+      }
+    },
+    {
+      "horizon": 8,
+      "domain": 7,
+      "phase_offset": 0.6,
+      "valid": 8,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.036824241280555725,
+        "orientation_rad": 0.44874250888824463,
+        "linear_velocity_m_s": 0.5965800881385803,
+        "angular_velocity_rad_s": 4.726961135864258,
+        "leg_position_rad": 0.7538324594497681,
+        "leg_velocity_rad_s": 13.991189956665039,
+        "wheel_velocity_rad_s": 20.878929138183594
+      }
+    },
+    {
+      "horizon": 8,
+      "domain": 7,
+      "phase_offset": 2.8,
+      "valid": 10,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.020210646092891693,
+        "orientation_rad": 0.22495920956134796,
+        "linear_velocity_m_s": 0.3784732222557068,
+        "angular_velocity_rad_s": 4.453460693359375,
+        "leg_position_rad": 0.6024077534675598,
+        "leg_velocity_rad_s": 14.974977493286133,
+        "wheel_velocity_rad_s": 25.770462036132812
+      }
+    },
+    {
+      "horizon": 16,
+      "domain": 0,
+      "phase_offset": 0.0,
+      "valid": 1,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.09402160346508026,
+        "orientation_rad": 0.6052757501602173,
+        "linear_velocity_m_s": 1.4064539670944214,
+        "angular_velocity_rad_s": 5.275664806365967,
+        "leg_position_rad": 2.1356024742126465,
+        "leg_velocity_rad_s": 28.34272003173828,
+        "wheel_velocity_rad_s": 96.50404357910156
+      }
+    },
+    {
+      "horizon": 16,
+      "domain": 0,
+      "phase_offset": 0.6,
+      "valid": 0,
+      "total": 10
+    },
+    {
+      "horizon": 16,
+      "domain": 0,
+      "phase_offset": 2.8,
+      "valid": 2,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.09922198951244354,
+        "orientation_rad": 0.7617931962013245,
+        "linear_velocity_m_s": 1.000563383102417,
+        "angular_velocity_rad_s": 8.858420372009277,
+        "leg_position_rad": 2.185574769973755,
+        "leg_velocity_rad_s": 16.29610824584961,
+        "wheel_velocity_rad_s": 151.81768798828125
+      }
+    },
+    {
+      "horizon": 16,
+      "domain": 1,
+      "phase_offset": 0.0,
+      "valid": 3,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.13979822397232056,
+        "orientation_rad": 0.9655856490135193,
+        "linear_velocity_m_s": 0.8630015850067139,
+        "angular_velocity_rad_s": 3.867530345916748,
+        "leg_position_rad": 2.0402064323425293,
+        "leg_velocity_rad_s": 9.923256874084473,
+        "wheel_velocity_rad_s": 107.0595474243164
+      }
+    },
+    {
+      "horizon": 16,
+      "domain": 1,
+      "phase_offset": 0.6,
+      "valid": 2,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.18933075666427612,
+        "orientation_rad": 1.180167317390442,
+        "linear_velocity_m_s": 1.014760136604309,
+        "angular_velocity_rad_s": 6.172600269317627,
+        "leg_position_rad": 1.9701842069625854,
+        "leg_velocity_rad_s": 6.358976364135742,
+        "wheel_velocity_rad_s": 145.8372039794922
+      }
+    },
+    {
+      "horizon": 16,
+      "domain": 1,
+      "phase_offset": 2.8,
+      "valid": 2,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.18068602681159973,
+        "orientation_rad": 1.187744140625,
+        "linear_velocity_m_s": 0.896813690662384,
+        "angular_velocity_rad_s": 6.436707019805908,
+        "leg_position_rad": 2.2789299488067627,
+        "leg_velocity_rad_s": 8.695184707641602,
+        "wheel_velocity_rad_s": 119.302734375
+      }
+    },
+    {
+      "horizon": 16,
+      "domain": 2,
+      "phase_offset": 0.0,
+      "valid": 2,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.04350729286670685,
+        "orientation_rad": 0.272410124540329,
+        "linear_velocity_m_s": 0.474141001701355,
+        "angular_velocity_rad_s": 3.344273567199707,
+        "leg_position_rad": 1.0917541980743408,
+        "leg_velocity_rad_s": 2.943288803100586,
+        "wheel_velocity_rad_s": 109.43583679199219
+      }
+    },
+    {
+      "horizon": 16,
+      "domain": 2,
+      "phase_offset": 0.6,
+      "valid": 1,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.16041989624500275,
+        "orientation_rad": 0.9970991015434265,
+        "linear_velocity_m_s": 1.178167700767517,
+        "angular_velocity_rad_s": 3.9756155014038086,
+        "leg_position_rad": 2.5699923038482666,
+        "leg_velocity_rad_s": 22.327829360961914,
+        "wheel_velocity_rad_s": 140.63201904296875
+      }
+    },
+    {
+      "horizon": 16,
+      "domain": 2,
+      "phase_offset": 2.8,
+      "valid": 3,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.1273438036441803,
+        "orientation_rad": 0.7710763216018677,
+        "linear_velocity_m_s": 0.8602510094642639,
+        "angular_velocity_rad_s": 5.9444990158081055,
+        "leg_position_rad": 1.7871570587158203,
+        "leg_velocity_rad_s": 20.636037826538086,
+        "wheel_velocity_rad_s": 101.16520690917969
+      }
+    },
+    {
+      "horizon": 16,
+      "domain": 3,
+      "phase_offset": 0.0,
+      "valid": 1,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.14057320356369019,
+        "orientation_rad": 0.7392061948776245,
+        "linear_velocity_m_s": 0.6552185416221619,
+        "angular_velocity_rad_s": 2.090744972229004,
+        "leg_position_rad": 0.5678632259368896,
+        "leg_velocity_rad_s": 5.362947463989258,
+        "wheel_velocity_rad_s": 38.861045837402344
+      }
+    },
+    {
+      "horizon": 16,
+      "domain": 3,
+      "phase_offset": 0.6,
+      "valid": 2,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.1774103194475174,
+        "orientation_rad": 0.9884040355682373,
+        "linear_velocity_m_s": 1.0745922327041626,
+        "angular_velocity_rad_s": 6.086158275604248,
+        "leg_position_rad": 2.3284151554107666,
+        "leg_velocity_rad_s": 10.278491973876953,
+        "wheel_velocity_rad_s": 44.31178665161133
+      }
+    },
+    {
+      "horizon": 16,
+      "domain": 3,
+      "phase_offset": 2.8,
+      "valid": 4,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.11519917100667953,
+        "orientation_rad": 0.5714895129203796,
+        "linear_velocity_m_s": 0.7765781879425049,
+        "angular_velocity_rad_s": 6.846012592315674,
+        "leg_position_rad": 1.3021740913391113,
+        "leg_velocity_rad_s": 17.259958267211914,
+        "wheel_velocity_rad_s": 89.20075988769531
+      }
+    },
+    {
+      "horizon": 16,
+      "domain": 4,
+      "phase_offset": 0.0,
+      "valid": 2,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.16428373754024506,
+        "orientation_rad": 1.1046929359436035,
+        "linear_velocity_m_s": 1.1763783693313599,
+        "angular_velocity_rad_s": 6.347311973571777,
+        "leg_position_rad": 2.3157799243927,
+        "leg_velocity_rad_s": 13.793213844299316,
+        "wheel_velocity_rad_s": 125.16967010498047
+      }
+    },
+    {
+      "horizon": 16,
+      "domain": 4,
+      "phase_offset": 0.6,
+      "valid": 1,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.20031581819057465,
+        "orientation_rad": 1.2042373418807983,
+        "linear_velocity_m_s": 1.0499156713485718,
+        "angular_velocity_rad_s": 2.3837273120880127,
+        "leg_position_rad": 3.101436138153076,
+        "leg_velocity_rad_s": 28.665538787841797,
+        "wheel_velocity_rad_s": 144.14048767089844
+      }
+    },
+    {
+      "horizon": 16,
+      "domain": 4,
+      "phase_offset": 2.8,
+      "valid": 1,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.07080540060997009,
+        "orientation_rad": 0.16113650798797607,
+        "linear_velocity_m_s": 0.41641539335250854,
+        "angular_velocity_rad_s": 5.49143123626709,
+        "leg_position_rad": 1.250028371810913,
+        "leg_velocity_rad_s": 8.339937210083008,
+        "wheel_velocity_rad_s": 169.82693481445312
+      }
+    },
+    {
+      "horizon": 16,
+      "domain": 5,
+      "phase_offset": 0.0,
+      "valid": 3,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.17595301568508148,
+        "orientation_rad": 0.9615248441696167,
+        "linear_velocity_m_s": 1.033490777015686,
+        "angular_velocity_rad_s": 4.4203057289123535,
+        "leg_position_rad": 2.1362040042877197,
+        "leg_velocity_rad_s": 14.740924835205078,
+        "wheel_velocity_rad_s": 95.38786315917969
+      }
+    },
+    {
+      "horizon": 16,
+      "domain": 5,
+      "phase_offset": 0.6,
+      "valid": 2,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.19846603274345398,
+        "orientation_rad": 1.0991872549057007,
+        "linear_velocity_m_s": 0.9037973880767822,
+        "angular_velocity_rad_s": 3.6516201496124268,
+        "leg_position_rad": 2.2963790893554688,
+        "leg_velocity_rad_s": 12.054786682128906,
+        "wheel_velocity_rad_s": 84.73574829101562
+      }
+    },
+    {
+      "horizon": 16,
+      "domain": 5,
+      "phase_offset": 2.8,
+      "valid": 2,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.1647205799818039,
+        "orientation_rad": 1.2136967182159424,
+        "linear_velocity_m_s": 1.1451984643936157,
+        "angular_velocity_rad_s": 7.015347003936768,
+        "leg_position_rad": 2.244755744934082,
+        "leg_velocity_rad_s": 10.333480834960938,
+        "wheel_velocity_rad_s": 39.510868072509766
+      }
+    },
+    {
+      "horizon": 16,
+      "domain": 6,
+      "phase_offset": 0.0,
+      "valid": 3,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.08123597502708435,
+        "orientation_rad": 0.41467803716659546,
+        "linear_velocity_m_s": 0.788669764995575,
+        "angular_velocity_rad_s": 3.7156686782836914,
+        "leg_position_rad": 1.5316433906555176,
+        "leg_velocity_rad_s": 14.575496673583984,
+        "wheel_velocity_rad_s": 82.3897476196289
+      }
+    },
+    {
+      "horizon": 16,
+      "domain": 6,
+      "phase_offset": 0.6,
+      "valid": 0,
+      "total": 10
+    },
+    {
+      "horizon": 16,
+      "domain": 6,
+      "phase_offset": 2.8,
+      "valid": 0,
+      "total": 10
+    },
+    {
+      "horizon": 16,
+      "domain": 7,
+      "phase_offset": 0.0,
+      "valid": 3,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.07336892932653427,
+        "orientation_rad": 0.4744408130645752,
+        "linear_velocity_m_s": 0.6524790525436401,
+        "angular_velocity_rad_s": 6.788570404052734,
+        "leg_position_rad": 1.7317475080490112,
+        "leg_velocity_rad_s": 7.557974338531494,
+        "wheel_velocity_rad_s": 127.35458374023438
+      }
+    },
+    {
+      "horizon": 16,
+      "domain": 7,
+      "phase_offset": 0.6,
+      "valid": 3,
+      "total": 10,
+      "rmse": {
+        "position_m": 0.10860894620418549,
+        "orientation_rad": 0.5197476148605347,
+        "linear_velocity_m_s": 0.654286801815033,
+        "angular_velocity_rad_s": 5.112627029418945,
+        "leg_position_rad": 1.0314830541610718,
+        "leg_velocity_rad_s": 8.586716651916504,
+        "wheel_velocity_rad_s": 79.24970245361328
+      }
+    },
+    {
+      "horizon": 16,
+      "domain": 7,
+      "phase_offset": 2.8,
+      "valid": 0,
+      "total": 10
+    }
+  ],
+  "censored": "episodes terminated before requested horizon are excluded and counted"
+}

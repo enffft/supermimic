@@ -39,14 +39,17 @@ def record_transition(env, terms, state, goal, normal):
         ).mean(-1),
     )
     if not hasattr(env, "go2w_metrics"):
-        env.go2w_metrics = {k: p.new_zeros(6, 8) for k in values}
+        domains = getattr(c.curriculum, "num_domains", 6)
+        levels = c.curriculum.origins.shape[0]
+        env.go2w_metrics = {k: p.new_zeros(domains, levels) for k in values}
     tags = env.velocity_terrain_tags
-    scope = tags["command_domain"] * 8 + tags["terrain_level"]
+    levels = c.curriculum.origins.shape[0]
+    scope = tags["command_domain"] * levels + tags["terrain_level"]
     for key, value in values.items():
         env.go2w_metrics[key].view(-1).scatter_add_(0, scope, value)
     # Cumulative WM data coverage includes warmup and partial episodes and is
     # checkpointed with the existing curriculum statistics (type x level).
-    atlas_scope = c.curriculum.terrain_type * 8 + tags["terrain_level"]
+    atlas_scope = c.curriculum.terrain_type * levels + tags["terrain_level"]
     for name in ("transitions", "valid_transitions", "falls"):
         target = c.curriculum.statistics["real_" + name]
         target.view(-1).scatter_add_(0, atlas_scope, values[name].double())
@@ -55,6 +58,14 @@ def record_transition(env, terms, state, goal, normal):
 def begin_iteration(env, learner):
     c = env.command_manager.get_term("velocity")
     curriculum = c.curriculum
+    if getattr(c.cfg, "unified_curriculum", False):
+        learner.buffer.start_scope_mask = curriculum.start_scope_mask().to(learner.device)
+        env.go2w_iteration_started = time.perf_counter()
+        env.go2w_update_mark = {k: len(v) for k, v in learner.profile_ms.items()}
+        if hasattr(env, "go2w_metrics"):
+            for value in env.go2w_metrics.values():
+                value.zero_()
+        return
     phase = "wm" if learner.iteration < learner.cfg.wm_only_iters else "skill"
     if c.cfg.automatic_wm_skill_transition and curriculum.phase != phase:
         curriculum.phase = phase
@@ -66,7 +77,9 @@ def begin_iteration(env, learner):
     for domain in range(1, 6):
         selected = curriculum.mastery[c.command_domain == domain]
         if selected.numel():
-            ceilings[domain] = (selected.max() + getattr(c.cfg, "actor_level_lookahead", 0)).clamp(max=7)
+            ceilings[domain] = (selected.max() + getattr(c.cfg, "actor_level_lookahead", 0)).clamp(
+                max=7
+            )
     learner.buffer.start_scope_mask = (
         torch.arange(8, device=env.device)[None] <= ceilings[:, None]
     ).to(learner.device)

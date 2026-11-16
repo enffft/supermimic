@@ -42,10 +42,26 @@ class ReplayBuffer:
         terrain_metadata: bool = False,
         command_metadata: bool = False,
         state_layout: StateLayout | None = None,
+        level_count: int = 8,
+        domain_count: int = 6,
+        extra_fields=None,
+        history_capacity: int = 0,
+        history_fraction: float = 0.5,
+        history_window: int = 8,
     ):
         self.T = T
         self.N = N
         self.device = torch.device(device)
+        self.level_count, self.domain_count = level_count, domain_count
+        if not 0 <= history_fraction <= 1:
+            raise ValueError("History fraction must lie in [0,1]")
+        self.history_fraction = history_fraction
+        self.history = None
+        self.history_actual = [0, 0]
+        if history_capacity:
+            from .history import HistoricalWindowBank
+
+            self.history = HistoricalWindowBank(history_capacity, history_window)
         self.fields = _make_fields(num_joints, context_dim, state_layout)
         if goal_dim:
             self.fields["g"] = (goal_dim, torch.float32)
@@ -63,6 +79,8 @@ class ReplayBuffer:
                 term=((), torch.bool),
                 command_speed_level=((), torch.long),
             )
+        if extra_fields:
+            self.fields.update(extra_fields)
         self.sampling_counts = {
             k: torch.zeros(6, dtype=torch.long, device=self.device)
             for k in ("wm_modes", "actor_modes")
@@ -79,7 +97,7 @@ class ReplayBuffer:
         self.wm_rare_fraction = 0.0
         self.wm_rare_min_level = 5
         self.wm_rare_balance_levels = False
-        self.wm_level_counts = torch.zeros(8, device=self.device, dtype=torch.long)
+        self.wm_level_counts = torch.zeros(self.level_count, device=self.device, dtype=torch.long)
 
     def mark_reset_boundary(self, reset_mask: torch.Tensor) -> None:
         """Close prior transitions after an explicit reset outside env.step().
@@ -98,9 +116,13 @@ class ReplayBuffer:
                 self.data[key][self.ptr] = transition[key]
         self.ptr = (self.ptr + 1) % self.T
         self.size = min(self.size + 1, self.T)
+        if self.history is not None and self.size >= self.history.k and self.ptr % 16 == 0:
+            self.history.add(self._sample_recent_windows(256, self.history.k, record=False))
 
     def state_dict(self):
         return {
+            "history": None if self.history is None else self.history.state_dict(),
+            "history_actual": self.history_actual,
             "T": self.T,
             "N": self.N,
             "ptr": self.ptr,
@@ -115,6 +137,11 @@ class ReplayBuffer:
         }
 
     def load_state_dict(self, values, *, infer_command_metadata=False):
+        if self.history is not None:
+            if values.get("history") is None:
+                raise ValueError("Missing historical bank")
+            self.history.load_state_dict(values["history"])
+            self.history_actual = list(values.get("history_actual", [0, 0]))
         values = dict(values)
         values["data"] = dict(values["data"])
         if "command_speed_level" in self.fields and "command_speed_level" not in values["data"]:
@@ -152,8 +179,8 @@ class ReplayBuffer:
         if scope is not None:
             if (
                 scope.ndim != 2
-                or scope.shape[0] != 6
-                or not 5 <= scope.shape[1] <= 8
+                or scope.shape[0] != self.domain_count
+                or not 5 <= scope.shape[1] <= self.level_count
                 or scope.dtype != torch.bool
             ):
                 raise ValueError("Invalid imagination domain/terrain-level admission")
@@ -165,7 +192,7 @@ class ReplayBuffer:
         """Map age-ordered time indices (zero is oldest) to storage rows."""
         return (self.ptr - self.size + age) % self.T
 
-    def sample_windows(self, B: int, k: int) -> dict[str, torch.Tensor]:
+    def _sample_recent_windows(self, B: int, k: int, *, record=True) -> dict[str, torch.Tensor]:
         """Sample ``k``-step windows and mask transitions after episode ends."""
         if not 1 <= k <= self.size:
             raise ValueError(f"window length must be in [1, {self.size}], got {k}")
@@ -187,7 +214,7 @@ class ReplayBuffer:
             if len(rare_age):
                 if self.wm_rare_balance_levels:
                     scopes = levels[rare_mask]
-                    counts = torch.bincount(scopes, minlength=8)
+                    counts = torch.bincount(scopes, minlength=self.level_count)
                     weights = (counts > 0).float()
                     targets = torch.multinomial(weights, rare_n, replacement=True)
                     offsets = counts.cumsum(0) - counts
@@ -201,13 +228,15 @@ class ReplayBuffer:
         ages = start.unsqueeze(-1) + torch.arange(k, device=self.device)
         rows = self._row(ages)
         envs = env.unsqueeze(-1).expand_as(rows)
-        out = {key: self.data[key][rows, envs] for key in ("s", "s1", "a", "xi", "done")}
+        out = {key: self.data[key][rows, envs] for key in self.fields}
         for key in ("g", "command_mode", "command_domain"):
             if key in self.fields:
                 out[key] = self.data[key][rows, envs]
-        if "terrain_level" in self.fields:
+        if record and "terrain_level" in self.fields:
             self.wm_level_counts.add_(
-                torch.bincount(self.data["terrain_level"][rows[:, 0], env], minlength=8)
+                torch.bincount(
+                    self.data["terrain_level"][rows[:, 0], env], minlength=self.level_count
+                )
             )
         done = out["done"].float()
         mask = torch.cumprod(
@@ -215,11 +244,43 @@ class ReplayBuffer:
             -1,
         )
         out["mask"] = mask
-        if "command_mode" in out:
+        if record and "command_mode" in out:
             self.sampling_counts["wm_modes"].scatter_add_(
                 0, out["command_mode"].flatten(), mask.long().flatten()
             )
         return out
+
+    def sample_windows(self, B: int, k: int):
+        if self.history is None:
+            return self._sample_recent_windows(B, k)
+        # Reject full windows crossing reset rather than merely masking their suffix.
+        pool = self._sample_recent_windows(max(B * 4, 1024), k, record=False)
+        valid = (pool["mask"] == 1).all(-1)
+        valid &= (pool["ep_step"][:, 1:] - pool["ep_step"][:, :-1] == 1).all(-1)
+        if "target_id" in pool:
+            valid &= (pool["target_id"] == pool["target_id"][:, :1]).all(-1)
+        ids = valid.nonzero().flatten()
+        if not len(ids):
+            raise ValueError("No continuous WM windows available")
+        historical = int(B * self.history_fraction) if self.history.size else 0
+        recent = B - historical
+        buckets = self.history.bucket({key: v[ids] for key, v in pool.items()})
+        counts = torch.bincount(buckets)
+        selected = ids[torch.multinomial(1 / counts[buckets].float(), recent, replacement=True)]
+        result = {key: value[selected] for key, value in pool.items()}
+        if historical:
+            old = self.history.sample(historical, self.device)
+            result = {key: torch.cat((value, old[key]), 0) for key, value in result.items()}
+        self.wm_level_counts.add_(
+            torch.bincount(result["terrain_level"][:, 0], minlength=self.level_count)
+        )
+        self.sampling_counts["wm_modes"].add_(
+            torch.bincount(result["command_mode"].flatten(), minlength=6)
+        )
+        self.history_actual[0] += recent
+        self.history_actual[1] += historical
+        self.last_history_split = recent
+        return result
 
     def sample_starts(
         self,
@@ -282,7 +343,15 @@ class ReplayBuffer:
         start = {key: self.data[key][row, env] for key in ("s", "a_prev", "xi", "f")}
         if "g" in self.fields:
             start["g"] = self.data["g"][row, env]
-        for key in ("command_mode", "command_domain", "terrain_level", "command_speed_level"):
+        for key in (
+            "command_mode",
+            "command_domain",
+            "terrain_level",
+            "command_speed_level",
+            "traversal",
+            "target_id",
+            "success_peak",
+        ):
             if key in self.fields:
                 start[key] = self.data[key][row, env]
         if "command_mode" in start:

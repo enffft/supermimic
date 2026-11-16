@@ -139,3 +139,15 @@ Initial-state descriptions below deliberately preserve the pre-change audit.
 - Original worktree status and original WM file SHA256 were verified unchanged.
   No 4096-env smoke or four-hour run was launched. Complete stopping report:
   `go2w_unified_curriculum_4h_report.md`.
+
+## 2026-11-16 H8 unified implementation update
+
+The user approved H8 (wm_window8, env4096, replay1024, batches2048 unchanged), then explicitly
+allowed training once implementation checks pass despite direction-gate diagnostics. The authoritative
+standalone profile is `go2w_velocity/train.yaml`; `tools/train_go2w.py` pins the original WM file/tensor
+hashes, fresh Actor/Critic, monotonic 14400-second loop budget and complete snapshots. The original
+calibrated candidate is retained exclusively for analysis. Ten-level/four-mode/8-domain curriculum,
+static vertical single/multi stair boxes, collision-aligned scans, shared traversal reward and bounded
+CPU Historical Window Bank are now integrated. Current validation, resource measurements, known H8
+failures and actual run status are recorded in `go2w_unified_curriculum_4h_report.md`; earlier audit
+sections describe the historical baseline, not the effective H8 formal configuration.

@@ -14,6 +14,7 @@ from unisupermimic.tasks.velocity.go2.command_sampler import (
 )
 
 from .contract import JOINTS, LEG_JOINTS, MixedControlCfg, mixed_torque
+from .curriculum import UnifiedCurriculumCfg
 from .mdp import Go2WVelocityMdp
 from .reward_core import VelocityRewardCfg
 
@@ -123,6 +124,8 @@ class VelocityCommandCfg(CommandTermCfg):
     persistent_wm_coverage: bool = False
     actor_level_lookahead: int = 0
     terrain_mode_conditioning: bool = False
+    unified_curriculum: bool = False
+    curriculum: UnifiedCurriculumCfg = field(default_factory=UnifiedCurriculumCfg)
     spawn_height: float = 0.42
     spawn_heading: float = 0.0
 
@@ -143,8 +146,11 @@ class VelocityCommand(CommandTerm):
         if tuple(self.robot.joint_names) != JOINTS:
             raise ValueError("Go2W named joint order mismatch")
         self.mdp = Go2WVelocityMdp(
-            env.device, control=env.cfg.actions["mixed"].control, reward=cfg.reward,
+            env.device,
+            control=env.cfg.actions["mixed"].control,
+            reward=cfg.reward,
             terrain_modes=cfg.terrain_mode_conditioning,
+            unified=cfg.unified_curriculum,
         )
         self.g = torch.zeros(self.num_envs, self.mdp.goal_frame_dim, device=env.device)
         self.xi = torch.zeros(self.num_envs, self.mdp.context_dim, device=env.device)
@@ -153,8 +159,21 @@ class VelocityCommand(CommandTerm):
         self.f = torch.zeros(self.num_envs, dtype=torch.long, device=env.device)
         self._origins = env.scene.env_origins(env.device).clone()
         self.curriculum = None
-        self.sampler = TerrainAwareVelocitySampler(cfg.sampler, env.device)
-        self.command_domain = fixed_domains(self.num_envs, cfg.sampler.domain_weights, env.device)
+        if cfg.unified_curriculum:
+            from .curriculum import UnifiedSampler
+
+            self.sampler = UnifiedSampler(cfg.curriculum, env.device)
+            self.command_domain = torch.zeros(self.num_envs, dtype=torch.long, device=env.device)
+        else:
+            self.sampler = TerrainAwareVelocitySampler(cfg.sampler, env.device)
+            self.command_domain = fixed_domains(
+                self.num_envs, cfg.sampler.domain_weights, env.device
+            )
+        self.traversal = self.g.new_zeros(self.num_envs, 10)
+        self.target_id = torch.zeros(self.num_envs, dtype=torch.long, device=env.device)
+        self.success_peak = self.g.new_zeros(self.num_envs)
+        self.success_hold = torch.zeros_like(self.target_id)
+        self.success_event = torch.zeros(self.num_envs, dtype=torch.bool, device=env.device)
         self.command_mode = torch.zeros_like(self.f)
         self.crossing_episode = torch.zeros(self.num_envs, dtype=torch.bool, device=env.device)
         self.q_indices = torch.as_tensor(
@@ -210,6 +229,28 @@ class VelocityCommand(CommandTerm):
             else torch.zeros_like(self.f)
         )
         goal, mode, crossing, hold = self.sampler.sample(self.command_domain, level)
+        if getattr(self.cfg, "unified_curriculum", False) and self.curriculum is not None:
+            # Each signed flat skill uses its own command difficulty, including mixtures.
+            axes = torch.arange(3, device=goal.device)[None]
+            skills = 1 + axes * 2 + (goal < 0).long()
+            ceilings = self.curriculum.skill_levels[skills]
+            ceilings = torch.where(goal.abs() > 0.05, ceilings, 9).amin(-1)
+            ceilings = torch.where(
+                goal.norm(dim=-1) < 0.05, self.curriculum.skill_levels[0], ceilings
+            )
+            flat = (self.command_domain == 0) & mask
+            if self.curriculum.enabled:
+                review = (
+                    torch.rand(len(goal), device=goal.device, generator=self.sampler.rng)
+                    < self.cfg.curriculum.review_fraction
+                )
+                lower = (
+                    torch.rand(len(goal), device=goal.device, generator=self.sampler.rng)
+                    * (ceilings + 1)
+                ).long()
+                ceilings = torch.where(review, lower, ceilings)
+                self.curriculum.terrain_level[flat] = ceilings[flat]
+                goal[flat] *= 1 + 0.12 * ceilings[flat, None]
         if self.cfg.fixed_command is not None:
             from unisupermimic.tasks.velocity.go2.command_sampler import command_modes
 
@@ -220,7 +261,12 @@ class VelocityCommand(CommandTerm):
         if self.cfg.terrain_mode_conditioning:
             # Task manager supplies this label. No terrain sensor, target, level,
             # contact or future information is used to infer the Actor's mode.
-            modes = self.command_domain.new_tensor((0, 1, 2, 2, 3, 3))[self.command_domain]
+            mapping = (
+                (0, 1, 2, 2, 3, 3, 3, 3)
+                if getattr(self.cfg, "unified_curriculum", False)
+                else (0, 1, 2, 2, 3, 3)
+            )
+            modes = self.command_domain.new_tensor(mapping)[self.command_domain]
             onehot = torch.nn.functional.one_hot(modes, num_classes=4).to(self.g)
             self.g[:, 3:].copy_(torch.where(mask[:, None], onehot, self.g[:, 3:]))
         self.command_mode.copy_(torch.where(mask, mode, self.command_mode))
@@ -258,6 +304,10 @@ class VelocityCommand(CommandTerm):
         self.ep_step[ids] = 0
         self.f[ids] = 0
         self._resample_command(mask)
+        if self.cfg.unified_curriculum:
+            from .traversal import reset_targets
+
+            reset_targets(self, ids)
         self.command_counter[ids] += 1
         return {}
 
@@ -304,17 +354,33 @@ def reward(env):
         pre["goal"],
         env.velocity_executed_action,
         pre["previous_action"],
-        measured_torque=torque,
+        measured_torque=None if c.cfg.unified_curriculum else torque,
         command_domain=env.velocity_terrain_tags["command_domain"],
         terrain_normal=normal,
+        **(
+            {
+                "traversal": env.velocity_terrain_tags["traversal"],
+                "success_peak": env.velocity_terrain_tags["success_peak"],
+            }
+            if c.cfg.unified_curriculum
+            else {}
+        ),
     )
     from .diagnostics import record_transition
     from .reward_core import velocity_reward_total
 
     record_transition(env, terms, env.velocity_next_state, pre["goal"], normal)
+    if c.cfg.unified_curriculum:
+        from .traversal import observe_success
+
+        observe_success(c, env.velocity_next_state)
     return c.mdp.control.dt * velocity_reward_total(terms)
 
 
 def fallen(env):
     c = env.command_manager.get_term("velocity")
     return c.mdp.hard_termination(c.state())
+
+
+def traversal_finished(env):
+    return env.command_manager.get_term("velocity").success_event

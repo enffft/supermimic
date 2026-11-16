@@ -87,6 +87,9 @@ class SuperMimicConfig:
     checkpoint_replay: bool = False
     strict_finite: bool = False
     command_start_weights: tuple[float, ...] | None = None
+    history_capacity: int = 0
+    history_fraction: float = 0.5
+    wm_lr_scale: float = 1.0
 
 
 _LOG_FIELDS = (
@@ -165,7 +168,9 @@ class SuperMimicLearner:
         self.mdp = mdp.to(self.device) if self._bridged else mdp
         if cfg.goal_mode == "direct" and not isinstance(self.mdp, DirectGoalMdpProtocol):
             raise TypeError("direct goals require DirectGoalMdpProtocol")
-        self.state_layout = getattr(self.mdp, "state_layout", StateLayout.legacy(self.mdp.num_joints))
+        self.state_layout = getattr(
+            self.mdp, "state_layout", StateLayout.legacy(self.mdp.num_joints)
+        )
         validate_config = getattr(self.mdp, "validate_learner_config", None)
         if validate_config is not None:
             validate_config(cfg)
@@ -175,7 +180,9 @@ class SuperMimicLearner:
         if cfg.critic_terrain_conditioning and (
             cfg.goal_mode != "direct" or getattr(self.mdp, "terrain", None) is None
         ):
-            raise ValueError("Terrain critic requires direct goals and a collision-aligned heightfield")
+            raise ValueError(
+                "Terrain critic requires direct goals and a collision-aligned heightfield"
+            )
         if generated_terrain and cfg.goal_mode == "direct":
             if not cfg.terrain_training or getattr(self.mdp, "terrain", None) is None:
                 raise ValueError(
@@ -204,7 +211,9 @@ class SuperMimicLearner:
         if (cfg.init_actor_from is not None or cfg.init_wm_from is not None) and (
             self.state_layout != StateLayout.legacy(self.mdp.num_joints)
         ):
-            raise ValueError("Cross-layout actor/WM initialization is unsupported; use exact task resume")
+            raise ValueError(
+                "Cross-layout actor/WM initialization is unsupported; use exact task resume"
+            )
         if cfg.init_actor_from is not None:
             if cfg.goal_mode != "direct":
                 raise ValueError(
@@ -277,7 +286,36 @@ class SuperMimicLearner:
             terrain_metadata=cfg.checkpoint_replay
             and generated_terrain
             and cfg.goal_mode == "direct",
+            level_count=getattr(
+                getattr(env, "command_manager", None).get_term("velocity").cfg,
+                "terrain_max_level",
+                7,
+            )
+            + 1
+            if getattr(env, "command_manager", None) is not None
+            else 8,
+            domain_count=8 if getattr(self.mdp, "unified", False) else 6,
+            extra_fields=(
+                {
+                    "traversal": (10, torch.float32),
+                    "target_id": ((), torch.long),
+                    "success_peak": ((), torch.float32),
+                }
+                if getattr(self.mdp, "unified", False)
+                else None
+            ),
+            history_capacity=cfg.history_capacity,
+            history_fraction=cfg.history_fraction,
+            history_window=cfg.wm_window,
         )
+        if self.buffer.history is not None:
+            import hashlib
+
+            from unisupermimic.tasks.velocity.go2w.world_model import dynamics_contract
+
+            self.buffer.history.protocol = hashlib.sha256(
+                json.dumps(dynamics_contract(env.supermimic_contract), sort_keys=True).encode()
+            ).hexdigest()
         self.obs_hist = torch.zeros(env.num_envs, cfg.hist, self.mdp.obs_dim, device=self.device)
         self.err_floor = torch.cat(
             (
@@ -456,8 +494,11 @@ class SuperMimicLearner:
                 info["f"],
                 self.mdp.normalize_context(info["xi"]),
             )
-        return int(features.shape[-1] + self.mdp.goal_frame_dim * self.cfg.goal_frames
-                   + (77 if self.cfg.critic_terrain_conditioning else 0))
+        return int(
+            features.shape[-1]
+            + self.mdp.goal_frame_dim * self.cfg.goal_frames
+            + (77 if self.cfg.critic_terrain_conditioning else 0)
+        )
 
     def _unflatten_state(self, value):
         return unflatten_state(value, getattr(self, "state_layout", None))
@@ -677,6 +718,33 @@ class SuperMimicLearner:
         )
         self.opt_wm.step()
         self.update_counts["wm"] += 1
+        if self.buffer.history is not None:
+            split = self.buffer.last_history_split
+            with torch.no_grad():
+                std = torch.maximum(self.wm.inc_norm.std(), self.err_floor)
+                per_window = (
+                    (
+                        self.wm.state_error(
+                            tuple(v.detach() for v in predicted),
+                            self._unflatten_state(window["s1"]),
+                        )
+                        / std
+                    )
+                    ** 2
+                ).mean(-1)
+                per_window = (per_window * window["mask"]).sum(-1) / self.cfg.wm_window
+                self.extra_state["wm_recent_loss"] = (
+                    float(per_window[:split].mean()) if split else None
+                )
+                self.extra_state["wm_historical_loss"] = (
+                    float(per_window[split:].mean()) if split < len(per_window) else None
+                )
+            self.extra_state["wm_recent_error8"] = (
+                float(last_error[:split].detach().mean()) if split else None
+            )
+            self.extra_state["wm_historical_error8"] = (
+                float(last_error[split:].detach().mean()) if split < len(last_error) else None
+            )
         mask = window["mask"][:, -1]
         mean_last_error = (last_error.detach() * mask).sum() / mask.sum().clamp(min=1)
         timing.__exit__(None, None, None)
@@ -736,11 +804,16 @@ class SuperMimicLearner:
                     )
                     self.extra_state.setdefault(
                         "actual_actor_start_scopes",
-                        torch.zeros(6, scope_levels, device=self.device, dtype=torch.long),
+                        torch.zeros(
+                            self.buffer.domain_count,
+                            scope_levels,
+                            device=self.device,
+                            dtype=torch.long,
+                        ),
                     ).view(-1).add_(
                         torch.bincount(
                             start["command_domain"] * scope_levels + start["terrain_level"],
-                            minlength=6 * scope_levels,
+                            minlength=self.buffer.domain_count * scope_levels,
                         )
                     )
         if update_actor and "command_speed_level" in start:
@@ -749,11 +822,13 @@ class SuperMimicLearner:
             speed = torch.where(start["command_speed_level"] < 0, 4, start["command_speed_level"])
             self.extra_state.setdefault(
                 "actor_starts_domain_terrain_speed",
-                torch.zeros(6, levels, 5, device=self.device, dtype=torch.long),
+                torch.zeros(
+                    self.buffer.domain_count, levels, 5, device=self.device, dtype=torch.long
+                ),
             ).view(-1).add_(
                 torch.bincount(
                     (start["command_domain"] * levels + start["terrain_level"]) * 5 + speed,
-                    minlength=6 * levels * 5,
+                    minlength=self.buffer.domain_count * levels * 5,
                 )
             )
         state = self._unflatten_state(start["s"])
@@ -818,8 +893,11 @@ class SuperMimicLearner:
                     flatten(goals),
                     flatten(actions),
                     flatten(previous_actions),
-                    **(self.mdp.imagination_reward_kwargs(start, self.cfg.horizon)
-                       if hasattr(self.mdp, "imagination_reward_kwargs") else {}),
+                    **(
+                        self.mdp.imagination_reward_kwargs(start, self.cfg.horizon)
+                        if hasattr(self.mdp, "imagination_reward_kwargs")
+                        else {}
+                    ),
                 )
                 dones = self.mdp.soft_termination(all_states, flat_frames)
             else:
@@ -977,7 +1055,7 @@ class SuperMimicLearner:
     def set_learning_rates(self, iteration: int) -> float:
         rate = self.lr_at(iteration)
         for optimizer, scale in (
-            (self.opt_wm, 1.0),
+            (self.opt_wm, self.cfg.wm_lr_scale),
             (self.opt_v, 1.0),
             (self.opt_pi, self.actor_scale_at(iteration)),
         ):
@@ -1035,6 +1113,8 @@ class SuperMimicLearner:
             term = command.get_term("velocity") if command else None
             if getattr(term, "sampler", None) is not None:
                 checkpoint["command_sampler"] = term.sampler.state_dict()
+                if hasattr(term, "command_counter"):
+                    checkpoint["command_counter"] = term.command_counter.clone()
         return checkpoint
 
     def save(self, path: str | Path | None = None, include_optimizers: bool = True) -> Path:
@@ -1046,7 +1126,7 @@ class SuperMimicLearner:
         return destination
 
     def load(self, path: str | Path, *, allow_command_distribution_change=False) -> None:
-        checkpoint = torch.load(path, map_location=self.device, weights_only=True)
+        checkpoint = torch.load(path, map_location="cpu", weights_only=True, mmap=True)
         required = {"critic", "opt_wm", "opt_pi", "opt_v"}
         missing = sorted(required - checkpoint.keys())
         if missing:
@@ -1067,7 +1147,9 @@ class SuperMimicLearner:
                     validate_distribution_migration,
                 )
 
-                validator = getattr(self.env, "validate_distribution_migration", validate_distribution_migration)
+                validator = getattr(
+                    self.env, "validate_distribution_migration", validate_distribution_migration
+                )
                 validator(old_contract, new_contract)
             elif old_contract != new_contract:
                 raise ValueError(
@@ -1111,14 +1193,24 @@ class SuperMimicLearner:
         self.iteration = checkpoint["iteration"]
         self.wall_time = checkpoint["wall_time"]
         self.sim_steps = checkpoint["sim_steps"]
-        self.extra_state = checkpoint.get("extra_state", {})
+
+        def restore_device(value):
+            if isinstance(value, torch.Tensor):
+                return value.to(self.device)
+            if isinstance(value, dict):
+                return {k: restore_device(v) for k, v in value.items()}
+            if isinstance(value, list):
+                return [restore_device(v) for v in value]
+            return value
+
+        self.extra_state = restore_device(checkpoint.get("extra_state", {}))
         self.update_counts = checkpoint.get("update_counts", {"wm": 0, "actor": 0, "critic": 0})
         self.step_accumulator = checkpoint.get("step_accumulator", 0.0)
         if "value_normalization" in checkpoint:
             values = checkpoint["value_normalization"]
             self._v_mean, self._v_std, self._v_init = (
-                values["mean"],
-                values["std"],
+                values["mean"].to(self.device),
+                values["std"].to(self.device),
                 values["initialized"],
             )
         if "replay" in checkpoint:
@@ -1143,6 +1235,8 @@ class SuperMimicLearner:
                     checkpoint["command_sampler"],
                     allow_distribution_change=allow_command_distribution_change,
                 )
+            if term is not None and "command_counter" in checkpoint:
+                term.command_counter.copy_(checkpoint["command_counter"])
             self.env.reset()
             self.obs_hist.zero_()
             torch.set_rng_state(checkpoint["torch_rng"].cpu())
@@ -1206,7 +1300,6 @@ class SuperMimicLearner:
             with log_path.open("a", encoding="utf-8", newline="") as log_file:
                 if log_file.tell() == 0:
                     log_file.write(",".join(_LOG_FIELDS) + "\n")
-                train_start = time.time() - self.wall_time
                 log_start = time.time()
 
                 aggregate: dict[str, list[torch.Tensor]] = {
@@ -1220,14 +1313,14 @@ class SuperMimicLearner:
                         logger.log_status("Compiling policy update (one-off, slow on first run)")
                     if hasattr(self.env, "prepare_supermimic_iteration"):
                         self.env.prepare_supermimic_iteration(self)
-                    iteration_start = time.time()
+                    iteration_start = time.monotonic()
                     learning_rate = self.set_learning_rates(iteration)
                     self.step_accumulator += 1.0 / self.cfg.utd
                     collect_steps = int(self.step_accumulator)
                     self.step_accumulator -= collect_steps
                     stats_mark = len(self.stats["r"])
                     self.collect(collect_steps)
-                    train_phase_start = time.time()
+                    train_phase_start = time.monotonic()
                     wm_loss = torch.zeros((), device=self.device)
                     wm_error = torch.zeros((), device=self.device)
                     for _ in range(self.cfg.wm_batches):
@@ -1273,13 +1366,15 @@ class SuperMimicLearner:
                         imag_rew = float(imagined_reward)
                         pi_gradnorm = float(grad_norm)
                         imag_survival = float(survival)
-                    train_time = time.time() - train_phase_start
+                    train_time = time.monotonic() - train_phase_start
                     self.iteration = iteration + 1
-                    self.wall_time = time.time() - train_start
-                    iteration_time = time.time() - iteration_start
+                    iteration_time = time.monotonic() - iteration_start
 
                     if hasattr(self.env, "finish_supermimic_iteration"):
                         self.env.finish_supermimic_iteration(self)
+                    if self.device.type == "cuda":
+                        torch.cuda.synchronize(self.device)
+                    self.wall_time += time.monotonic() - iteration_start
                     if self.on_iteration is not None:
                         self.on_iteration(self)
                     iter_rewards = self.stats["r"][stats_mark:]
@@ -1350,7 +1445,6 @@ class SuperMimicLearner:
                         or self.iteration == self.cfg.iterations
                         or self.stop_requested
                     ):
-                        self.wall_time = time.time() - train_start
                         self.save()
                         if (
                             not self.cfg.numbered_ckpt_every
@@ -1366,7 +1460,6 @@ class SuperMimicLearner:
                     if self.stop_requested:
                         break
 
-            self.wall_time = time.time() - train_start
             logger.finish()
             return {
                 **last_metrics,

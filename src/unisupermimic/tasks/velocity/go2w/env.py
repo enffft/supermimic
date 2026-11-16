@@ -57,6 +57,17 @@ class Go2WVelocityEnv(Go2VelocityEnv):
     owners are all Go2W-specific; no Go2 environment factory is invoked.
     """
 
+    def apply_action(self, actions, state):
+        result = super().apply_action(actions, state)
+        c = self.command_manager.get_term("velocity")
+        if c.cfg.unified_curriculum:
+            self.velocity_terrain_tags.update(
+                traversal=c.traversal.clone(),
+                target_id=c.target_id.clone(),
+                success_peak=c.success_peak.clone(),
+            )
+        return result
+
     @staticmethod
     def validate_distribution_migration(old, new):
         from .checkpoint import validate_stage_migration
@@ -129,6 +140,16 @@ class Go2WVelocityEnv(Go2VelocityEnv):
         else:
             contract["curriculum_protocol"] = "persistent_wm_eighth_domain_level_quotas"
         for reward in (contract["reward"], contract["commands"]["reward"]):
+            if not cfg.commands["velocity"].unified_curriculum:
+                for key in (
+                    "wheel_radius",
+                    "wheel_consistency",
+                    "side_drift",
+                    "stair_progress",
+                    "stair_success",
+                    "progress_gamma",
+                ):
+                    reward.pop(key)
             if reward["stop_reward_command_sigma"] == reward["stop_command_sigma"]:
                 reward.pop("stop_reward_command_sigma")
             if not any(reward["tracking_error_cost"]):
@@ -146,12 +167,23 @@ class Go2WVelocityEnv(Go2VelocityEnv):
                 "source": "environment_task_manager; deployment_requires_explicit_mode",
                 "goal": "velocity3_then_mode_onehot4",
             }
+        if not cfg.commands["velocity"].unified_curriculum:
+            contract["commands"].pop("unified_curriculum")
+            contract["commands"].pop("curriculum")
+        else:
+            contract["curriculum_protocol"] = "ten_level_per_skill_hysteresis_review_and_coverage"
+            contract["reward_protocol"] = "shared_endpoint_PD_traversal_potential_once_budget"
+            contract["traversal_protocol"] = (
+                "target10;immutable_episode;success_hold10;no_actor_target"
+            )
         control = contract["actions"]["mixed"]["control"]
-        if not control["full_leg_target_range"] and control["leg_limit_fraction"] == .90:
+        if not control["full_leg_target_range"] and control["leg_limit_fraction"] == 0.90:
             control.pop("full_leg_target_range")
             control.pop("leg_limit_fraction")
         if cfg.actions["mixed"].control.full_leg_target_range:
-            contract["control_protocol"] = "substep_effort;leg_default_centered_joint_range_PD;wheel_velocity_PD;gear1;saturated"
+            contract["control_protocol"] = (
+                "substep_effort;leg_default_centered_joint_range_PD;wheel_velocity_PD;gear1;saturated"
+            )
         return json.loads(
             json.dumps(
                 contract,
@@ -175,14 +207,23 @@ def make_go2w_env(cfg, num_envs=1, backend_type="mujoco"):
         raise ValueError("Go2W requires one mixed action and dt-scaled shared velocity reward")
     if cfg.sim_dt != 0.005 or cfg.ctrl_dt != 0.02 or cfg.actions["mixed"].control.dt != cfg.ctrl_dt:
         raise ValueError("Go2W v2 requires sim_dt=.005 and control/reward dt=.02")
-    if c.terrain_profile != "mixed" or c.terrain_max_level != 7:
+    unified = c.unified_curriculum
+    if c.terrain_profile != "mixed" or c.terrain_max_level != (9 if unified else 7):
         raise ValueError("Go2W curriculum uses the same eight-level level0..7 mixed atlas")
-    if c.sampler.terrain_level_count != 8:
+    if c.sampler.terrain_level_count != (10 if unified else 8):
         raise ValueError("Go2W command sampler requires eight terrain levels")
     if c.sampler.terrain_hold_seconds < cfg.max_episode_seconds:
         raise ValueError("Terrain commands must span the whole episode")
     cfg.scene.model_file = str(MODEL.with_name("terrain_robot.xml"))
-    cfg.scene.terrain = mixed_terrain(c.terrain_seed)
+    if unified:
+        from .manager_terms import traversal_finished
+        from .terrain import unified_terrain
+
+        cfg.scene.terrain = unified_terrain(c.terrain_seed)
+        cfg.scene.fragment_files.append(str(MODEL.parents[2] / "terrains/go2w_traversal.xml"))
+        cfg.terminations["traversal_finished"] = TerminationTermCfg(func=traversal_finished)
+    else:
+        cfg.scene.terrain = mixed_terrain(c.terrain_seed)
     cfg.terminations["flat_domain_boundary"] = TerminationTermCfg(
         func=flat_domain_boundary, time_out=True
     )
@@ -210,22 +251,34 @@ def make_go2w_env(cfg, num_envs=1, backend_type="mujoco"):
                 "generator": terrain_contract(cfg.scene.terrain),
             },
         )
-        command.curriculum = Go2WTerrainCurriculum(
-            num_envs,
-            origins,
-            enabled=c.terrain_curriculum,
-            fixed_level=c.terrain_fixed_level,
-            max_level=c.terrain_max_level,
-            recycle_probability=c.terrain_recycle_probability,
-            phase=c.terrain_phase,
-            coverage_weights=c.terrain_coverage_weights,
-            min_episodes=c.terrain_min_episodes,
-            target_progress=c.terrain_target_progress,
-            flat_probability=0.0,
-            device=env.device,
-        )
+        if unified:
+            from .heightfield import TraversalHeightField
+
+            command.mdp.terrain = TraversalHeightField.from_field(
+                command.mdp.terrain, env.get_playback_model(0)
+            )
+            from .curriculum import UnifiedCurriculum
+
+            command.curriculum = UnifiedCurriculum(
+                num_envs, origins, c.curriculum, command.command_domain, env.device
+            )
+        else:
+            command.curriculum = Go2WTerrainCurriculum(
+                num_envs,
+                origins,
+                enabled=c.terrain_curriculum,
+                fixed_level=c.terrain_fixed_level,
+                max_level=c.terrain_max_level,
+                recycle_probability=c.terrain_recycle_probability,
+                phase=c.terrain_phase,
+                coverage_weights=c.terrain_coverage_weights,
+                min_episodes=c.terrain_min_episodes,
+                target_progress=c.terrain_target_progress,
+                flat_probability=0.0,
+                device=env.device,
+            )
         command.curriculum.fixed_domain = command.command_domain
-        if c.persistent_wm_coverage:
+        if c.persistent_wm_coverage and not unified:
             command.curriculum.configure_persistent_coverage()
         points = torch.as_tensor(origins.copy(), device=env.device, dtype=torch.float32)
         offsets = points.new_tensor([[-0.4, -0.25], [-0.4, 0.25], [0.4, -0.25], [0.4, 0.25]])

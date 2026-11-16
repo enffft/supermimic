@@ -1,0 +1,6862 @@
+{
+  "passed": true,
+  "collision_scan_max_abs_m": 4.912077407936977e-06,
+  "wheel_fk_max_abs_m": 7.397534886877111e-07,
+  "reward_parity_max_abs": 0.0,
+  "vertical_faces": [
+    {
+      "level": 1,
+      "height": 0.03,
+      "horizontal_ray_distance": 0.20000000000000018,
+      "geom": 1,
+      "expected_geom": 1
+    },
+    {
+      "level": 2,
+      "height": 0.04,
+      "horizontal_ray_distance": 0.20000000000000018,
+      "geom": 11,
+      "expected_geom": 11
+    },
+    {
+      "level": 3,
+      "height": 0.05,
+      "horizontal_ray_distance": 0.20000000000000018,
+      "geom": 21,
+      "expected_geom": 21
+    },
+    {
+      "level": 4,
+      "height": 0.07,
+      "horizontal_ray_distance": 0.20000000000000018,
+      "geom": 31,
+      "expected_geom": 31
+    },
+    {
+      "level": 5,
+      "height": 0.09,
+      "horizontal_ray_distance": 0.20000000000000018,
+      "geom": 41,
+      "expected_geom": 41
+    },
+    {
+      "level": 6,
+      "height": 0.12,
+      "horizontal_ray_distance": 0.20000000000000018,
+      "geom": 51,
+      "expected_geom": 51
+    },
+    {
+      "level": 7,
+      "height": 0.15,
+      "horizontal_ray_distance": 0.20000000000000018,
+      "geom": 61,
+      "expected_geom": 61
+    },
+    {
+      "level": 8,
+      "height": 0.18,
+      "horizontal_ray_distance": 0.20000000000000018,
+      "geom": 71,
+      "expected_geom": 71
+    },
+    {
+      "level": 9,
+      "height": 0.2,
+      "horizontal_ray_distance": 0.20000000000000018,
+      "geom": 81,
+      "expected_geom": 81
+    },
+    {
+      "level": 10,
+      "height": 0.22,
+      "horizontal_ray_distance": 0.20000000000000018,
+      "geom": 91,
+      "expected_geom": 91
+    }
+  ],
+  "wheels": [
+    {
+      "leg": "FL",
+      "radius_m": 0.08600000942519495,
+      "axis_world": [
+        0.0,
+        0.9950041651292624,
+        0.09983341812949989
+      ],
+      "positive_rolling_direction": [
+        0.9950041651292624,
+        0.0,
+        0.0
+      ],
+      "forward_sign": 1
+    },
+    {
+      "leg": "FR",
+      "radius_m": 0.08600000942520263,
+      "axis_world": [
+        0.0,
+        0.9950041651292624,
+        -0.09983341812949989
+      ],
+      "positive_rolling_direction": [
+        0.9950041651292624,
+        -0.0,
+        0.0
+      ],
+      "forward_sign": 1
+    },
+    {
+      "leg": "RL",
+      "radius_m": 0.08600000942519635,
+      "axis_world": [
+        -6.938893903907228e-18,
+        0.9950041651292624,
+        0.09983341812949989
+      ],
+      "positive_rolling_direction": [
+        0.9950041651292624,
+        6.938893903907228e-18,
+        -0.0
+      ],
+      "forward_sign": 1
+    },
+    {
+      "leg": "RR",
+      "radius_m": 0.08600000942519839,
+      "axis_world": [
+        6.938893903907228e-18,
+        0.9950041651292624,
+        -0.09983341812949989
+      ],
+      "positive_rolling_direction": [
+        0.9950041651292624,
+        -6.938893903907228e-18,
+        0.0
+      ],
+      "forward_sign": 1
+    }
+  ],
+  "terrain_rays": [
+    {
+      "level": 1,
+      "domain": 1,
+      "offset": 0.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 1,
+      "domain": 1,
+      "offset": 0.65,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 1,
+      "domain": 1,
+      "offset": 0.79,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 1,
+      "domain": 1,
+      "offset": 0.81,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 1,
+      "domain": 1,
+      "offset": 1.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 1,
+      "domain": 1,
+      "offset": 1.19,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 1,
+      "domain": 1,
+      "offset": 1.21,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 1,
+      "domain": 1,
+      "offset": 1.59,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 1,
+      "domain": 1,
+      "offset": 1.61,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 1,
+      "domain": 1,
+      "offset": 1.99,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 1,
+      "domain": 1,
+      "offset": 2.01,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 1,
+      "domain": 1,
+      "offset": 2.8,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 1,
+      "domain": 2,
+      "offset": 0.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 1,
+      "domain": 2,
+      "offset": 0.65,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 1,
+      "domain": 2,
+      "offset": 0.79,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 1,
+      "domain": 2,
+      "offset": 0.81,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 1,
+      "domain": 2,
+      "offset": 1.0,
+      "height": 0.0038823531707752323,
+      "scan_height": 0.0038823531940579414,
+      "error": 2.3282709094019083e-11
+    },
+    {
+      "level": 1,
+      "domain": 2,
+      "offset": 1.19,
+      "height": 0.009705882696434465,
+      "scan_height": 0.009705882519483566,
+      "error": 1.7695089837843625e-10
+    },
+    {
+      "level": 1,
+      "domain": 2,
+      "offset": 1.21,
+      "height": 0.01030607135674444,
+      "scan_height": 0.010306042619049549,
+      "error": 2.873769489042388e-08
+    },
+    {
+      "level": 1,
+      "domain": 2,
+      "offset": 1.59,
+      "height": 0.022323885541513988,
+      "scan_height": 0.022323796525597572,
+      "error": 8.901591641574669e-08
+    },
+    {
+      "level": 1,
+      "domain": 2,
+      "offset": 1.61,
+      "height": 0.023294118102639594,
+      "scan_height": 0.0232941173017025,
+      "error": 8.009370944250804e-10
+    },
+    {
+      "level": 1,
+      "domain": 2,
+      "offset": 1.99,
+      "height": 0.03494117807596897,
+      "scan_height": 0.0349411778151989,
+      "error": 2.6077007220237647e-10
+    },
+    {
+      "level": 1,
+      "domain": 2,
+      "offset": 2.01,
+      "height": 0.03550433274382847,
+      "scan_height": 0.03550434112548828,
+      "error": 8.381659810652309e-09
+    },
+    {
+      "level": 1,
+      "domain": 2,
+      "offset": 2.8,
+      "height": 0.06017647068947518,
+      "scan_height": 0.06017646938562393,
+      "error": 1.303851249190302e-09
+    },
+    {
+      "level": 1,
+      "domain": 3,
+      "offset": 0.0,
+      "height": 0.08929411970078949,
+      "scan_height": 0.08929412066936493,
+      "error": 9.685754420729609e-10
+    },
+    {
+      "level": 1,
+      "domain": 3,
+      "offset": 0.65,
+      "height": 0.08929411970078949,
+      "scan_height": 0.08929412066936493,
+      "error": 9.685754420729609e-10
+    },
+    {
+      "level": 1,
+      "domain": 3,
+      "offset": 0.79,
+      "height": 0.08929411970078949,
+      "scan_height": 0.08929412066936493,
+      "error": 9.685754420729609e-10
+    },
+    {
+      "level": 1,
+      "domain": 3,
+      "offset": 0.81,
+      "height": 0.08929411970078949,
+      "scan_height": 0.08929412066936493,
+      "error": 9.685754420729609e-10
+    },
+    {
+      "level": 1,
+      "domain": 3,
+      "offset": 1.0,
+      "height": 0.08347059063613393,
+      "scan_height": 0.08347059041261673,
+      "error": 2.2351720474489412e-10
+    },
+    {
+      "level": 1,
+      "domain": 3,
+      "offset": 1.19,
+      "height": 0.07958823792636416,
+      "scan_height": 0.07958823442459106,
+      "error": 3.50177309371702e-09
+    },
+    {
+      "level": 1,
+      "domain": 3,
+      "offset": 1.21,
+      "height": 0.07868795493590053,
+      "scan_height": 0.07868799567222595,
+      "error": 4.0736325424006736e-08
+    },
+    {
+      "level": 1,
+      "domain": 3,
+      "offset": 1.59,
+      "height": 0.0655141759289739,
+      "scan_height": 0.06551431119441986,
+      "error": 1.3526544595521273e-07
+    },
+    {
+      "level": 1,
+      "domain": 3,
+      "offset": 1.61,
+      "height": 0.06405882708728328,
+      "scan_height": 0.0640588253736496,
+      "error": 1.7136336794010276e-09
+    },
+    {
+      "level": 1,
+      "domain": 3,
+      "offset": 1.99,
+      "height": 0.05435294162482052,
+      "scan_height": 0.05435294285416603,
+      "error": 1.2293455142753373e-09
+    },
+    {
+      "level": 1,
+      "domain": 3,
+      "offset": 2.01,
+      "height": 0.05350820962303171,
+      "scan_height": 0.05350819602608681,
+      "error": 1.3596944903326857e-08
+    },
+    {
+      "level": 1,
+      "domain": 3,
+      "offset": 2.8,
+      "height": 0.029117647167295146,
+      "scan_height": 0.0291176475584507,
+      "error": 3.9115555239277455e-10
+    },
+    {
+      "level": 1,
+      "domain": 4,
+      "offset": 0.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 1,
+      "domain": 4,
+      "offset": 0.65,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 1,
+      "domain": 4,
+      "offset": 0.79,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 1,
+      "domain": 4,
+      "offset": 0.81,
+      "height": 0.02999999999999936,
+      "scan_height": 0.029999999329447746,
+      "error": 6.705516142346823e-10
+    },
+    {
+      "level": 1,
+      "domain": 4,
+      "offset": 1.0,
+      "height": 0.02999999999999936,
+      "scan_height": 0.029999999329447746,
+      "error": 6.705516142346823e-10
+    },
+    {
+      "level": 1,
+      "domain": 4,
+      "offset": 1.19,
+      "height": 0.02999999999999936,
+      "scan_height": 0.029999999329447746,
+      "error": 6.705516142346823e-10
+    },
+    {
+      "level": 1,
+      "domain": 4,
+      "offset": 1.21,
+      "height": 0.02999999999999936,
+      "scan_height": 0.029999999329447746,
+      "error": 6.705516142346823e-10
+    },
+    {
+      "level": 1,
+      "domain": 4,
+      "offset": 1.59,
+      "height": 0.02999999999999936,
+      "scan_height": 0.029999999329447746,
+      "error": 6.705516142346823e-10
+    },
+    {
+      "level": 1,
+      "domain": 4,
+      "offset": 1.61,
+      "height": 0.02999999999999936,
+      "scan_height": 0.029999999329447746,
+      "error": 6.705516142346823e-10
+    },
+    {
+      "level": 1,
+      "domain": 4,
+      "offset": 1.99,
+      "height": 0.02999999999999936,
+      "scan_height": 0.029999999329447746,
+      "error": 6.705516142346823e-10
+    },
+    {
+      "level": 1,
+      "domain": 4,
+      "offset": 2.01,
+      "height": 0.02999999999999936,
+      "scan_height": 0.029999999329447746,
+      "error": 6.705516142346823e-10
+    },
+    {
+      "level": 1,
+      "domain": 4,
+      "offset": 2.8,
+      "height": 0.02999999999999936,
+      "scan_height": 0.029999999329447746,
+      "error": 6.705516142346823e-10
+    },
+    {
+      "level": 1,
+      "domain": 5,
+      "offset": 0.0,
+      "height": 0.02999999999999936,
+      "scan_height": 0.029999999329447746,
+      "error": 6.705516142346823e-10
+    },
+    {
+      "level": 1,
+      "domain": 5,
+      "offset": 0.65,
+      "height": 0.02999999999999936,
+      "scan_height": 0.029999999329447746,
+      "error": 6.705516142346823e-10
+    },
+    {
+      "level": 1,
+      "domain": 5,
+      "offset": 0.79,
+      "height": 0.02999999999999936,
+      "scan_height": 0.029999999329447746,
+      "error": 6.705516142346823e-10
+    },
+    {
+      "level": 1,
+      "domain": 5,
+      "offset": 0.81,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 1,
+      "domain": 5,
+      "offset": 1.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 1,
+      "domain": 5,
+      "offset": 1.19,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 1,
+      "domain": 5,
+      "offset": 1.21,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 1,
+      "domain": 5,
+      "offset": 1.59,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 1,
+      "domain": 5,
+      "offset": 1.61,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 1,
+      "domain": 5,
+      "offset": 1.99,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 1,
+      "domain": 5,
+      "offset": 2.01,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 1,
+      "domain": 5,
+      "offset": 2.8,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 1,
+      "domain": 6,
+      "offset": 0.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 1,
+      "domain": 6,
+      "offset": 0.65,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 1,
+      "domain": 6,
+      "offset": 0.79,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 1,
+      "domain": 6,
+      "offset": 0.81,
+      "height": 0.02999999999999936,
+      "scan_height": 0.029999999329447746,
+      "error": 6.705516142346823e-10
+    },
+    {
+      "level": 1,
+      "domain": 6,
+      "offset": 1.0,
+      "height": 0.02999999999999936,
+      "scan_height": 0.029999999329447746,
+      "error": 6.705516142346823e-10
+    },
+    {
+      "level": 1,
+      "domain": 6,
+      "offset": 1.19,
+      "height": 0.02999999999999936,
+      "scan_height": 0.029999999329447746,
+      "error": 6.705516142346823e-10
+    },
+    {
+      "level": 1,
+      "domain": 6,
+      "offset": 1.21,
+      "height": 0.05999999999999961,
+      "scan_height": 0.05999999865889549,
+      "error": 1.3411041166477844e-09
+    },
+    {
+      "level": 1,
+      "domain": 6,
+      "offset": 1.59,
+      "height": 0.05999999999999961,
+      "scan_height": 0.05999999865889549,
+      "error": 1.3411041166477844e-09
+    },
+    {
+      "level": 1,
+      "domain": 6,
+      "offset": 1.61,
+      "height": 0.08999999999999986,
+      "scan_height": 0.08999999612569809,
+      "error": 3.8743017682918435e-09
+    },
+    {
+      "level": 1,
+      "domain": 6,
+      "offset": 1.99,
+      "height": 0.08999999999999986,
+      "scan_height": 0.08999999612569809,
+      "error": 3.8743017682918435e-09
+    },
+    {
+      "level": 1,
+      "domain": 6,
+      "offset": 2.01,
+      "height": 0.1200000000000001,
+      "scan_height": 0.11999999731779099,
+      "error": 2.6822091214739885e-09
+    },
+    {
+      "level": 1,
+      "domain": 6,
+      "offset": 2.8,
+      "height": 0.1200000000000001,
+      "scan_height": 0.11999999731779099,
+      "error": 2.6822091214739885e-09
+    },
+    {
+      "level": 1,
+      "domain": 7,
+      "offset": 0.0,
+      "height": 0.1200000000000001,
+      "scan_height": 0.11999999731779099,
+      "error": 2.6822091214739885e-09
+    },
+    {
+      "level": 1,
+      "domain": 7,
+      "offset": 0.65,
+      "height": 0.1200000000000001,
+      "scan_height": 0.11999999731779099,
+      "error": 2.6822091214739885e-09
+    },
+    {
+      "level": 1,
+      "domain": 7,
+      "offset": 0.79,
+      "height": 0.1200000000000001,
+      "scan_height": 0.11999999731779099,
+      "error": 2.6822091214739885e-09
+    },
+    {
+      "level": 1,
+      "domain": 7,
+      "offset": 0.81,
+      "height": 0.08999999999999986,
+      "scan_height": 0.08999999612569809,
+      "error": 3.8743017682918435e-09
+    },
+    {
+      "level": 1,
+      "domain": 7,
+      "offset": 1.0,
+      "height": 0.08999999999999986,
+      "scan_height": 0.08999999612569809,
+      "error": 3.8743017682918435e-09
+    },
+    {
+      "level": 1,
+      "domain": 7,
+      "offset": 1.19,
+      "height": 0.08999999999999986,
+      "scan_height": 0.08999999612569809,
+      "error": 3.8743017682918435e-09
+    },
+    {
+      "level": 1,
+      "domain": 7,
+      "offset": 1.21,
+      "height": 0.05999999999999961,
+      "scan_height": 0.05999999865889549,
+      "error": 1.3411041166477844e-09
+    },
+    {
+      "level": 1,
+      "domain": 7,
+      "offset": 1.59,
+      "height": 0.05999999999999961,
+      "scan_height": 0.05999999865889549,
+      "error": 1.3411041166477844e-09
+    },
+    {
+      "level": 1,
+      "domain": 7,
+      "offset": 1.61,
+      "height": 0.02999999999999936,
+      "scan_height": 0.030000001192092896,
+      "error": 1.1920935349962747e-09
+    },
+    {
+      "level": 1,
+      "domain": 7,
+      "offset": 1.99,
+      "height": 0.02999999999999936,
+      "scan_height": 0.030000001192092896,
+      "error": 1.1920935349962747e-09
+    },
+    {
+      "level": 1,
+      "domain": 7,
+      "offset": 2.01,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 1,
+      "domain": 7,
+      "offset": 2.8,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 2,
+      "domain": 1,
+      "offset": 0.0,
+      "height": 0.009705882696434465,
+      "scan_height": 0.009705882519483566,
+      "error": 1.7695089837843625e-10
+    },
+    {
+      "level": 2,
+      "domain": 1,
+      "offset": 0.65,
+      "height": 0.0022704832736302194,
+      "scan_height": 0.002270669676363468,
+      "error": 1.8640273324876944e-07
+    },
+    {
+      "level": 2,
+      "domain": 1,
+      "offset": 0.79,
+      "height": 0.010038092906840212,
+      "scan_height": 0.010037981905043125,
+      "error": 1.1100179708734004e-07
+    },
+    {
+      "level": 2,
+      "domain": 1,
+      "offset": 0.81,
+      "height": 0.009332223979961363,
+      "scan_height": 0.009332315064966679,
+      "error": 9.108500531596064e-08
+    },
+    {
+      "level": 2,
+      "domain": 1,
+      "offset": 1.0,
+      "height": 0.001118457835681319,
+      "scan_height": 0.0011185698676854372,
+      "error": 1.1203200411813441e-07
+    },
+    {
+      "level": 2,
+      "domain": 1,
+      "offset": 1.19,
+      "height": 0.007614674139954758,
+      "scan_height": 0.0076142363250255585,
+      "error": 4.3781492919947596e-07
+    },
+    {
+      "level": 2,
+      "domain": 1,
+      "offset": 1.21,
+      "height": 0.004228458408500835,
+      "scan_height": 0.004228462930768728,
+      "error": 4.522267893491971e-09
+    },
+    {
+      "level": 2,
+      "domain": 1,
+      "offset": 1.59,
+      "height": 0.0058921019694713195,
+      "scan_height": 0.0058921887539327145,
+      "error": 8.678446139498419e-08
+    },
+    {
+      "level": 2,
+      "domain": 1,
+      "offset": 1.61,
+      "height": 0.005383490946165637,
+      "scan_height": 0.005383643321692944,
+      "error": 1.5237552730695825e-07
+    },
+    {
+      "level": 2,
+      "domain": 1,
+      "offset": 1.99,
+      "height": 0.008250711353767315,
+      "scan_height": 0.00825062207877636,
+      "error": 8.927499095534586e-08
+    },
+    {
+      "level": 2,
+      "domain": 1,
+      "offset": 2.01,
+      "height": 0.010287820781845092,
+      "scan_height": 0.010287915356457233,
+      "error": 9.457461214168461e-08
+    },
+    {
+      "level": 2,
+      "domain": 1,
+      "offset": 2.8,
+      "height": 0.017516688938613356,
+      "scan_height": 0.017516974359750748,
+      "error": 2.85421137391495e-07
+    },
+    {
+      "level": 2,
+      "domain": 2,
+      "offset": 0.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 2,
+      "domain": 2,
+      "offset": 0.65,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 2,
+      "domain": 2,
+      "offset": 0.79,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 2,
+      "domain": 2,
+      "offset": 0.81,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 2,
+      "domain": 2,
+      "offset": 1.0,
+      "height": 0.008901725403591243,
+      "scan_height": 0.008901610970497131,
+      "error": 1.1443309411163227e-07
+    },
+    {
+      "level": 2,
+      "domain": 2,
+      "offset": 1.19,
+      "height": 0.017429791933812666,
+      "scan_height": 0.01742991991341114,
+      "error": 1.2797959847432594e-07
+    },
+    {
+      "level": 2,
+      "domain": 2,
+      "offset": 1.21,
+      "height": 0.019411765392869818,
+      "scan_height": 0.019411765038967133,
+      "error": 3.539026849352922e-10
+    },
+    {
+      "level": 2,
+      "domain": 2,
+      "offset": 1.59,
+      "height": 0.03494117807596897,
+      "scan_height": 0.0349411778151989,
+      "error": 2.6077007220237647e-10
+    },
+    {
+      "level": 2,
+      "domain": 2,
+      "offset": 1.61,
+      "height": 0.03515339788662786,
+      "scan_height": 0.03515343368053436,
+      "error": 3.579390650543246e-08
+    },
+    {
+      "level": 2,
+      "domain": 2,
+      "offset": 1.99,
+      "height": 0.05231541749088198,
+      "scan_height": 0.05231529474258423,
+      "error": 1.2274829774838736e-07
+    },
+    {
+      "level": 2,
+      "domain": 2,
+      "offset": 2.01,
+      "height": 0.05435294162482052,
+      "scan_height": 0.05435294285416603,
+      "error": 1.2293455142753373e-09
+    },
+    {
+      "level": 2,
+      "domain": 2,
+      "offset": 2.8,
+      "height": 0.08929411970078949,
+      "scan_height": 0.08929412066936493,
+      "error": 9.685754420729609e-10
+    },
+    {
+      "level": 2,
+      "domain": 3,
+      "offset": 0.0,
+      "height": 0.13394118323922122,
+      "scan_height": 0.133941188454628,
+      "error": 5.2154067731180476e-09
+    },
+    {
+      "level": 2,
+      "domain": 3,
+      "offset": 0.65,
+      "height": 0.13394118323922122,
+      "scan_height": 0.133941188454628,
+      "error": 5.2154067731180476e-09
+    },
+    {
+      "level": 2,
+      "domain": 3,
+      "offset": 0.79,
+      "height": 0.13394118323922122,
+      "scan_height": 0.133941188454628,
+      "error": 5.2154067731180476e-09
+    },
+    {
+      "level": 2,
+      "domain": 3,
+      "offset": 0.81,
+      "height": 0.13394118323922122,
+      "scan_height": 0.133941188454628,
+      "error": 5.2154067731180476e-09
+    },
+    {
+      "level": 2,
+      "domain": 3,
+      "offset": 1.0,
+      "height": 0.12503945869397892,
+      "scan_height": 0.12503957748413086,
+      "error": 1.1879015193727582e-07
+    },
+    {
+      "level": 2,
+      "domain": 3,
+      "offset": 1.19,
+      "height": 0.11651138545955675,
+      "scan_height": 0.1165112555027008,
+      "error": 1.2995685594319184e-07
+    },
+    {
+      "level": 2,
+      "domain": 3,
+      "offset": 1.21,
+      "height": 0.1145294123142957,
+      "scan_height": 0.11452941596508026,
+      "error": 3.6507845635469494e-09
+    },
+    {
+      "level": 2,
+      "domain": 3,
+      "offset": 1.59,
+      "height": 0.09900000147521482,
+      "scan_height": 0.0989999994635582,
+      "error": 2.0116566190608864e-09
+    },
+    {
+      "level": 2,
+      "domain": 3,
+      "offset": 1.61,
+      "height": 0.09878778166455593,
+      "scan_height": 0.09878773987293243,
+      "error": 4.179162349515764e-08
+    },
+    {
+      "level": 2,
+      "domain": 3,
+      "offset": 1.99,
+      "height": 0.08094658734898985,
+      "scan_height": 0.0809466689825058,
+      "error": 8.163351594703272e-08
+    },
+    {
+      "level": 2,
+      "domain": 3,
+      "offset": 2.01,
+      "height": 0.07958823792636416,
+      "scan_height": 0.07958823442459106,
+      "error": 3.50177309371702e-09
+    },
+    {
+      "level": 2,
+      "domain": 3,
+      "offset": 2.8,
+      "height": 0.0446470598503943,
+      "scan_height": 0.044647060334682465,
+      "error": 4.842881651256903e-10
+    },
+    {
+      "level": 2,
+      "domain": 4,
+      "offset": 0.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 2,
+      "domain": 4,
+      "offset": 0.65,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 2,
+      "domain": 4,
+      "offset": 0.79,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 2,
+      "domain": 4,
+      "offset": 0.81,
+      "height": 0.03999999999999915,
+      "scan_height": 0.03999999910593033,
+      "error": 8.940688189795765e-10
+    },
+    {
+      "level": 2,
+      "domain": 4,
+      "offset": 1.0,
+      "height": 0.03999999999999915,
+      "scan_height": 0.03999999910593033,
+      "error": 8.940688189795765e-10
+    },
+    {
+      "level": 2,
+      "domain": 4,
+      "offset": 1.19,
+      "height": 0.03999999999999915,
+      "scan_height": 0.03999999910593033,
+      "error": 8.940688189795765e-10
+    },
+    {
+      "level": 2,
+      "domain": 4,
+      "offset": 1.21,
+      "height": 0.03999999999999915,
+      "scan_height": 0.03999999910593033,
+      "error": 8.940688189795765e-10
+    },
+    {
+      "level": 2,
+      "domain": 4,
+      "offset": 1.59,
+      "height": 0.03999999999999915,
+      "scan_height": 0.03999999910593033,
+      "error": 8.940688189795765e-10
+    },
+    {
+      "level": 2,
+      "domain": 4,
+      "offset": 1.61,
+      "height": 0.03999999999999915,
+      "scan_height": 0.03999999910593033,
+      "error": 8.940688189795765e-10
+    },
+    {
+      "level": 2,
+      "domain": 4,
+      "offset": 1.99,
+      "height": 0.03999999999999915,
+      "scan_height": 0.03999999910593033,
+      "error": 8.940688189795765e-10
+    },
+    {
+      "level": 2,
+      "domain": 4,
+      "offset": 2.01,
+      "height": 0.03999999999999915,
+      "scan_height": 0.03999999910593033,
+      "error": 8.940688189795765e-10
+    },
+    {
+      "level": 2,
+      "domain": 4,
+      "offset": 2.8,
+      "height": 0.03999999999999915,
+      "scan_height": 0.03999999910593033,
+      "error": 8.940688189795765e-10
+    },
+    {
+      "level": 2,
+      "domain": 5,
+      "offset": 0.0,
+      "height": 0.03999999999999915,
+      "scan_height": 0.03999999910593033,
+      "error": 8.940688189795765e-10
+    },
+    {
+      "level": 2,
+      "domain": 5,
+      "offset": 0.65,
+      "height": 0.03999999999999915,
+      "scan_height": 0.03999999910593033,
+      "error": 8.940688189795765e-10
+    },
+    {
+      "level": 2,
+      "domain": 5,
+      "offset": 0.79,
+      "height": 0.03999999999999915,
+      "scan_height": 0.03999999910593033,
+      "error": 8.940688189795765e-10
+    },
+    {
+      "level": 2,
+      "domain": 5,
+      "offset": 0.81,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 2,
+      "domain": 5,
+      "offset": 1.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 2,
+      "domain": 5,
+      "offset": 1.19,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 2,
+      "domain": 5,
+      "offset": 1.21,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 2,
+      "domain": 5,
+      "offset": 1.59,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 2,
+      "domain": 5,
+      "offset": 1.61,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 2,
+      "domain": 5,
+      "offset": 1.99,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 2,
+      "domain": 5,
+      "offset": 2.01,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 2,
+      "domain": 5,
+      "offset": 2.8,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 2,
+      "domain": 6,
+      "offset": 0.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 2,
+      "domain": 6,
+      "offset": 0.65,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 2,
+      "domain": 6,
+      "offset": 0.79,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 2,
+      "domain": 6,
+      "offset": 0.81,
+      "height": 0.02999999999999936,
+      "scan_height": 0.029999999329447746,
+      "error": 6.705516142346823e-10
+    },
+    {
+      "level": 2,
+      "domain": 6,
+      "offset": 1.0,
+      "height": 0.02999999999999936,
+      "scan_height": 0.029999999329447746,
+      "error": 6.705516142346823e-10
+    },
+    {
+      "level": 2,
+      "domain": 6,
+      "offset": 1.19,
+      "height": 0.02999999999999936,
+      "scan_height": 0.029999999329447746,
+      "error": 6.705516142346823e-10
+    },
+    {
+      "level": 2,
+      "domain": 6,
+      "offset": 1.21,
+      "height": 0.05999999999999961,
+      "scan_height": 0.05999999865889549,
+      "error": 1.3411041166477844e-09
+    },
+    {
+      "level": 2,
+      "domain": 6,
+      "offset": 1.59,
+      "height": 0.05999999999999961,
+      "scan_height": 0.05999999865889549,
+      "error": 1.3411041166477844e-09
+    },
+    {
+      "level": 2,
+      "domain": 6,
+      "offset": 1.61,
+      "height": 0.08999999999999986,
+      "scan_height": 0.08999999612569809,
+      "error": 3.8743017682918435e-09
+    },
+    {
+      "level": 2,
+      "domain": 6,
+      "offset": 1.99,
+      "height": 0.08999999999999986,
+      "scan_height": 0.08999999612569809,
+      "error": 3.8743017682918435e-09
+    },
+    {
+      "level": 2,
+      "domain": 6,
+      "offset": 2.01,
+      "height": 0.1200000000000001,
+      "scan_height": 0.11999999731779099,
+      "error": 2.6822091214739885e-09
+    },
+    {
+      "level": 2,
+      "domain": 6,
+      "offset": 2.8,
+      "height": 0.1200000000000001,
+      "scan_height": 0.11999999731779099,
+      "error": 2.6822091214739885e-09
+    },
+    {
+      "level": 2,
+      "domain": 7,
+      "offset": 0.0,
+      "height": 0.1200000000000001,
+      "scan_height": 0.11999999731779099,
+      "error": 2.6822091214739885e-09
+    },
+    {
+      "level": 2,
+      "domain": 7,
+      "offset": 0.65,
+      "height": 0.1200000000000001,
+      "scan_height": 0.11999999731779099,
+      "error": 2.6822091214739885e-09
+    },
+    {
+      "level": 2,
+      "domain": 7,
+      "offset": 0.79,
+      "height": 0.1200000000000001,
+      "scan_height": 0.11999999731779099,
+      "error": 2.6822091214739885e-09
+    },
+    {
+      "level": 2,
+      "domain": 7,
+      "offset": 0.81,
+      "height": 0.08999999999999986,
+      "scan_height": 0.08999999612569809,
+      "error": 3.8743017682918435e-09
+    },
+    {
+      "level": 2,
+      "domain": 7,
+      "offset": 1.0,
+      "height": 0.08999999999999986,
+      "scan_height": 0.08999999612569809,
+      "error": 3.8743017682918435e-09
+    },
+    {
+      "level": 2,
+      "domain": 7,
+      "offset": 1.19,
+      "height": 0.08999999999999986,
+      "scan_height": 0.08999999612569809,
+      "error": 3.8743017682918435e-09
+    },
+    {
+      "level": 2,
+      "domain": 7,
+      "offset": 1.21,
+      "height": 0.05999999999999961,
+      "scan_height": 0.05999999865889549,
+      "error": 1.3411041166477844e-09
+    },
+    {
+      "level": 2,
+      "domain": 7,
+      "offset": 1.59,
+      "height": 0.05999999999999961,
+      "scan_height": 0.05999999865889549,
+      "error": 1.3411041166477844e-09
+    },
+    {
+      "level": 2,
+      "domain": 7,
+      "offset": 1.61,
+      "height": 0.02999999999999936,
+      "scan_height": 0.030000001192092896,
+      "error": 1.1920935349962747e-09
+    },
+    {
+      "level": 2,
+      "domain": 7,
+      "offset": 1.99,
+      "height": 0.02999999999999936,
+      "scan_height": 0.030000001192092896,
+      "error": 1.1920935349962747e-09
+    },
+    {
+      "level": 2,
+      "domain": 7,
+      "offset": 2.01,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 2,
+      "domain": 7,
+      "offset": 2.8,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 3,
+      "domain": 1,
+      "offset": 0.0,
+      "height": 0.01358823540620513,
+      "scan_height": 0.013588235713541508,
+      "error": 3.0733637856883433e-10
+    },
+    {
+      "level": 3,
+      "domain": 1,
+      "offset": 0.65,
+      "height": 0.010975735410175602,
+      "scan_height": 0.01097551453858614,
+      "error": 2.208715894624902e-07
+    },
+    {
+      "level": 3,
+      "domain": 1,
+      "offset": 0.79,
+      "height": 0.00449508894533146,
+      "scan_height": 0.004495131317526102,
+      "error": 4.237219464187092e-08
+    },
+    {
+      "level": 3,
+      "domain": 1,
+      "offset": 0.81,
+      "height": 0.0009365762114637022,
+      "scan_height": 0.0009363479912281036,
+      "error": 2.2822023559854188e-07
+    },
+    {
+      "level": 3,
+      "domain": 1,
+      "offset": 1.0,
+      "height": 0.01973544252060666,
+      "scan_height": 0.01973586715757847,
+      "error": 4.246369718075016e-07
+    },
+    {
+      "level": 3,
+      "domain": 1,
+      "offset": 1.19,
+      "height": 0.01233767030965982,
+      "scan_height": 0.012337678112089634,
+      "error": 7.802429813352774e-09
+    },
+    {
+      "level": 3,
+      "domain": 1,
+      "offset": 1.21,
+      "height": 0.005823529663961935,
+      "scan_height": 0.005823647603392601,
+      "error": 1.1793943066606971e-07
+    },
+    {
+      "level": 3,
+      "domain": 1,
+      "offset": 1.59,
+      "height": 0.018485380579205568,
+      "scan_height": 0.018485132604837418,
+      "error": 2.4797436815049423e-07
+    },
+    {
+      "level": 3,
+      "domain": 1,
+      "offset": 1.61,
+      "height": 0.013776768201305245,
+      "scan_height": 0.013776974752545357,
+      "error": 2.0655124011170756e-07
+    },
+    {
+      "level": 3,
+      "domain": 1,
+      "offset": 1.99,
+      "height": 0.01790847906597115,
+      "scan_height": 0.0179086085408926,
+      "error": 1.2947492145087836e-07
+    },
+    {
+      "level": 3,
+      "domain": 1,
+      "offset": 2.01,
+      "height": 0.014028348104731414,
+      "scan_height": 0.014028389006853104,
+      "error": 4.090212168961216e-08
+    },
+    {
+      "level": 3,
+      "domain": 1,
+      "offset": 2.8,
+      "height": 0.019042047025917164,
+      "scan_height": 0.01904192753136158,
+      "error": 1.1949455558379896e-07
+    },
+    {
+      "level": 3,
+      "domain": 2,
+      "offset": 0.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 3,
+      "domain": 2,
+      "offset": 0.65,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 3,
+      "domain": 2,
+      "offset": 0.79,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 3,
+      "domain": 2,
+      "offset": 0.81,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 3,
+      "domain": 2,
+      "offset": 1.0,
+      "height": 0.009705882696434465,
+      "scan_height": 0.009705882519483566,
+      "error": 1.7695089837843625e-10
+    },
+    {
+      "level": 3,
+      "domain": 2,
+      "offset": 1.19,
+      "height": 0.021603054795344967,
+      "scan_height": 0.0216030515730381,
+      "error": 3.222306865779956e-09
+    },
+    {
+      "level": 3,
+      "domain": 2,
+      "offset": 1.21,
+      "height": 0.02315510703240342,
+      "scan_height": 0.02315513975918293,
+      "error": 3.272677950860725e-08
+    },
+    {
+      "level": 3,
+      "domain": 2,
+      "offset": 1.59,
+      "height": 0.04681983225664421,
+      "scan_height": 0.046819865703582764,
+      "error": 3.3446938552117444e-08
+    },
+    {
+      "level": 3,
+      "domain": 2,
+      "offset": 1.61,
+      "height": 0.048371884493702666,
+      "scan_height": 0.04837195202708244,
+      "error": 6.75333797772737e-08
+    },
+    {
+      "level": 3,
+      "domain": 2,
+      "offset": 1.99,
+      "height": 0.06988235615193883,
+      "scan_height": 0.0698823556303978,
+      "error": 5.215410325831726e-10
+    },
+    {
+      "level": 3,
+      "domain": 2,
+      "offset": 2.01,
+      "height": 0.06988235615193883,
+      "scan_height": 0.0698823556303978,
+      "error": 5.215410325831726e-10
+    },
+    {
+      "level": 3,
+      "domain": 2,
+      "offset": 2.8,
+      "height": 0.11886928361844884,
+      "scan_height": 0.11886933445930481,
+      "error": 5.0840855969624954e-08
+    },
+    {
+      "level": 3,
+      "domain": 3,
+      "offset": 0.0,
+      "height": 0.18052941575646386,
+      "scan_height": 0.1805294156074524,
+      "error": 1.490114698299294e-10
+    },
+    {
+      "level": 3,
+      "domain": 3,
+      "offset": 0.65,
+      "height": 0.18052941575646386,
+      "scan_height": 0.1805294156074524,
+      "error": 1.490114698299294e-10
+    },
+    {
+      "level": 3,
+      "domain": 3,
+      "offset": 0.79,
+      "height": 0.18052941575646386,
+      "scan_height": 0.1805294156074524,
+      "error": 1.490114698299294e-10
+    },
+    {
+      "level": 3,
+      "domain": 3,
+      "offset": 0.81,
+      "height": 0.18052941575646386,
+      "scan_height": 0.1805294156074524,
+      "error": 1.490114698299294e-10
+    },
+    {
+      "level": 3,
+      "domain": 3,
+      "offset": 1.0,
+      "height": 0.16888235762715365,
+      "scan_height": 0.168882355093956,
+      "error": 2.533197651644059e-09
+    },
+    {
+      "level": 3,
+      "domain": 3,
+      "offset": 1.19,
+      "height": 0.15698518645025317,
+      "scan_height": 0.15698517858982086,
+      "error": 7.86043230505129e-09
+    },
+    {
+      "level": 3,
+      "domain": 3,
+      "offset": 1.21,
+      "height": 0.15543313421319382,
+      "scan_height": 0.15543310344219208,
+      "error": 3.077100174664338e-08
+    },
+    {
+      "level": 3,
+      "domain": 3,
+      "offset": 1.59,
+      "height": 0.1317684108329713,
+      "scan_height": 0.1317683756351471,
+      "error": 3.5197824210797535e-08
+    },
+    {
+      "level": 3,
+      "domain": 3,
+      "offset": 1.61,
+      "height": 0.13021635859591285,
+      "scan_height": 0.13021628558635712,
+      "error": 7.30095557344157e-08
+    },
+    {
+      "level": 3,
+      "domain": 3,
+      "offset": 1.99,
+      "height": 0.10870588324964015,
+      "scan_height": 0.10870588570833206,
+      "error": 2.4586919167290944e-09
+    },
+    {
+      "level": 3,
+      "domain": 3,
+      "offset": 2.01,
+      "height": 0.10870588324964015,
+      "scan_height": 0.10870588570833206,
+      "error": 2.4586919167290944e-09
+    },
+    {
+      "level": 3,
+      "domain": 3,
+      "offset": 2.8,
+      "height": 0.06116557680274326,
+      "scan_height": 0.06116554141044617,
+      "error": 3.5392297093039815e-08
+    },
+    {
+      "level": 3,
+      "domain": 4,
+      "offset": 0.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 3,
+      "domain": 4,
+      "offset": 0.65,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 3,
+      "domain": 4,
+      "offset": 0.79,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 3,
+      "domain": 4,
+      "offset": 0.81,
+      "height": 0.05000000000000071,
+      "scan_height": 0.05000000074505806,
+      "error": 7.450573491496471e-10
+    },
+    {
+      "level": 3,
+      "domain": 4,
+      "offset": 1.0,
+      "height": 0.05000000000000071,
+      "scan_height": 0.05000000074505806,
+      "error": 7.450573491496471e-10
+    },
+    {
+      "level": 3,
+      "domain": 4,
+      "offset": 1.19,
+      "height": 0.05000000000000071,
+      "scan_height": 0.05000000074505806,
+      "error": 7.450573491496471e-10
+    },
+    {
+      "level": 3,
+      "domain": 4,
+      "offset": 1.21,
+      "height": 0.05000000000000071,
+      "scan_height": 0.05000000074505806,
+      "error": 7.450573491496471e-10
+    },
+    {
+      "level": 3,
+      "domain": 4,
+      "offset": 1.59,
+      "height": 0.05000000000000071,
+      "scan_height": 0.05000000074505806,
+      "error": 7.450573491496471e-10
+    },
+    {
+      "level": 3,
+      "domain": 4,
+      "offset": 1.61,
+      "height": 0.05000000000000071,
+      "scan_height": 0.05000000074505806,
+      "error": 7.450573491496471e-10
+    },
+    {
+      "level": 3,
+      "domain": 4,
+      "offset": 1.99,
+      "height": 0.05000000000000071,
+      "scan_height": 0.05000000074505806,
+      "error": 7.450573491496471e-10
+    },
+    {
+      "level": 3,
+      "domain": 4,
+      "offset": 2.01,
+      "height": 0.05000000000000071,
+      "scan_height": 0.05000000074505806,
+      "error": 7.450573491496471e-10
+    },
+    {
+      "level": 3,
+      "domain": 4,
+      "offset": 2.8,
+      "height": 0.05000000000000071,
+      "scan_height": 0.05000000074505806,
+      "error": 7.450573491496471e-10
+    },
+    {
+      "level": 3,
+      "domain": 5,
+      "offset": 0.0,
+      "height": 0.05000000000000071,
+      "scan_height": 0.05000000074505806,
+      "error": 7.450573491496471e-10
+    },
+    {
+      "level": 3,
+      "domain": 5,
+      "offset": 0.65,
+      "height": 0.05000000000000071,
+      "scan_height": 0.05000000074505806,
+      "error": 7.450573491496471e-10
+    },
+    {
+      "level": 3,
+      "domain": 5,
+      "offset": 0.79,
+      "height": 0.05000000000000071,
+      "scan_height": 0.05000000074505806,
+      "error": 7.450573491496471e-10
+    },
+    {
+      "level": 3,
+      "domain": 5,
+      "offset": 0.81,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 3,
+      "domain": 5,
+      "offset": 1.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 3,
+      "domain": 5,
+      "offset": 1.19,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 3,
+      "domain": 5,
+      "offset": 1.21,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 3,
+      "domain": 5,
+      "offset": 1.59,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 3,
+      "domain": 5,
+      "offset": 1.61,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 3,
+      "domain": 5,
+      "offset": 1.99,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 3,
+      "domain": 5,
+      "offset": 2.01,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 3,
+      "domain": 5,
+      "offset": 2.8,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 3,
+      "domain": 6,
+      "offset": 0.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 3,
+      "domain": 6,
+      "offset": 0.65,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 3,
+      "domain": 6,
+      "offset": 0.79,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 3,
+      "domain": 6,
+      "offset": 0.81,
+      "height": 0.02999999999999936,
+      "scan_height": 0.029999999329447746,
+      "error": 6.705516142346823e-10
+    },
+    {
+      "level": 3,
+      "domain": 6,
+      "offset": 1.0,
+      "height": 0.02999999999999936,
+      "scan_height": 0.029999999329447746,
+      "error": 6.705516142346823e-10
+    },
+    {
+      "level": 3,
+      "domain": 6,
+      "offset": 1.19,
+      "height": 0.02999999999999936,
+      "scan_height": 0.029999999329447746,
+      "error": 6.705516142346823e-10
+    },
+    {
+      "level": 3,
+      "domain": 6,
+      "offset": 1.21,
+      "height": 0.05999999999999961,
+      "scan_height": 0.05999999865889549,
+      "error": 1.3411041166477844e-09
+    },
+    {
+      "level": 3,
+      "domain": 6,
+      "offset": 1.59,
+      "height": 0.05999999999999961,
+      "scan_height": 0.05999999865889549,
+      "error": 1.3411041166477844e-09
+    },
+    {
+      "level": 3,
+      "domain": 6,
+      "offset": 1.61,
+      "height": 0.08999999999999986,
+      "scan_height": 0.08999999612569809,
+      "error": 3.8743017682918435e-09
+    },
+    {
+      "level": 3,
+      "domain": 6,
+      "offset": 1.99,
+      "height": 0.08999999999999986,
+      "scan_height": 0.08999999612569809,
+      "error": 3.8743017682918435e-09
+    },
+    {
+      "level": 3,
+      "domain": 6,
+      "offset": 2.01,
+      "height": 0.1200000000000001,
+      "scan_height": 0.11999999731779099,
+      "error": 2.6822091214739885e-09
+    },
+    {
+      "level": 3,
+      "domain": 6,
+      "offset": 2.8,
+      "height": 0.1200000000000001,
+      "scan_height": 0.11999999731779099,
+      "error": 2.6822091214739885e-09
+    },
+    {
+      "level": 3,
+      "domain": 7,
+      "offset": 0.0,
+      "height": 0.1200000000000001,
+      "scan_height": 0.11999999731779099,
+      "error": 2.6822091214739885e-09
+    },
+    {
+      "level": 3,
+      "domain": 7,
+      "offset": 0.65,
+      "height": 0.1200000000000001,
+      "scan_height": 0.11999999731779099,
+      "error": 2.6822091214739885e-09
+    },
+    {
+      "level": 3,
+      "domain": 7,
+      "offset": 0.79,
+      "height": 0.1200000000000001,
+      "scan_height": 0.11999999731779099,
+      "error": 2.6822091214739885e-09
+    },
+    {
+      "level": 3,
+      "domain": 7,
+      "offset": 0.81,
+      "height": 0.08999999999999986,
+      "scan_height": 0.08999999612569809,
+      "error": 3.8743017682918435e-09
+    },
+    {
+      "level": 3,
+      "domain": 7,
+      "offset": 1.0,
+      "height": 0.08999999999999986,
+      "scan_height": 0.08999999612569809,
+      "error": 3.8743017682918435e-09
+    },
+    {
+      "level": 3,
+      "domain": 7,
+      "offset": 1.19,
+      "height": 0.08999999999999986,
+      "scan_height": 0.08999999612569809,
+      "error": 3.8743017682918435e-09
+    },
+    {
+      "level": 3,
+      "domain": 7,
+      "offset": 1.21,
+      "height": 0.05999999999999961,
+      "scan_height": 0.05999999865889549,
+      "error": 1.3411041166477844e-09
+    },
+    {
+      "level": 3,
+      "domain": 7,
+      "offset": 1.59,
+      "height": 0.05999999999999961,
+      "scan_height": 0.05999999865889549,
+      "error": 1.3411041166477844e-09
+    },
+    {
+      "level": 3,
+      "domain": 7,
+      "offset": 1.61,
+      "height": 0.02999999999999936,
+      "scan_height": 0.030000001192092896,
+      "error": 1.1920935349962747e-09
+    },
+    {
+      "level": 3,
+      "domain": 7,
+      "offset": 1.99,
+      "height": 0.02999999999999936,
+      "scan_height": 0.030000001192092896,
+      "error": 1.1920935349962747e-09
+    },
+    {
+      "level": 3,
+      "domain": 7,
+      "offset": 2.01,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 3,
+      "domain": 7,
+      "offset": 2.8,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 4,
+      "domain": 1,
+      "offset": 0.0,
+      "height": 0.019411765392869818,
+      "scan_height": 0.019411765038967133,
+      "error": 3.539026849352922e-10
+    },
+    {
+      "level": 4,
+      "domain": 1,
+      "offset": 0.65,
+      "height": 0.015766281701774076,
+      "scan_height": 0.015766195952892303,
+      "error": 8.574888177292905e-08
+    },
+    {
+      "level": 4,
+      "domain": 1,
+      "offset": 0.79,
+      "height": 0.021715379438424165,
+      "scan_height": 0.021715134382247925,
+      "error": 2.4505617624015485e-07
+    },
+    {
+      "level": 4,
+      "domain": 1,
+      "offset": 0.81,
+      "height": 0.013179091028822754,
+      "scan_height": 0.013178648427128792,
+      "error": 4.4260169396181936e-07
+    },
+    {
+      "level": 4,
+      "domain": 1,
+      "offset": 1.0,
+      "height": 0.009372991190951474,
+      "scan_height": 0.009372835047543049,
+      "error": 1.5614340842518004e-07
+    },
+    {
+      "level": 4,
+      "domain": 1,
+      "offset": 1.19,
+      "height": 0.01254432014522422,
+      "scan_height": 0.012544367462396622,
+      "error": 4.731717240247235e-08
+    },
+    {
+      "level": 4,
+      "domain": 1,
+      "offset": 1.21,
+      "height": 0.0009044826745627788,
+      "scan_height": 0.0009037069976329803,
+      "error": 7.756769297984079e-07
+    },
+    {
+      "level": 4,
+      "domain": 1,
+      "offset": 1.59,
+      "height": 0.012867730766183527,
+      "scan_height": 0.012867817655205727,
+      "error": 8.688902219944339e-08
+    },
+    {
+      "level": 4,
+      "domain": 1,
+      "offset": 1.61,
+      "height": 0.014419708997317926,
+      "scan_height": 0.014419905841350555,
+      "error": 1.968440326294285e-07
+    },
+    {
+      "level": 4,
+      "domain": 1,
+      "offset": 1.99,
+      "height": 0.03237676240511256,
+      "scan_height": 0.032376501709222794,
+      "error": 2.606958897644063e-07
+    },
+    {
+      "level": 4,
+      "domain": 1,
+      "offset": 2.01,
+      "height": 0.03470484149788611,
+      "scan_height": 0.034704990684986115,
+      "error": 1.4918710000699775e-07
+    },
+    {
+      "level": 4,
+      "domain": 1,
+      "offset": 2.8,
+      "height": 0.02232335267976282,
+      "scan_height": 0.022322997450828552,
+      "error": 3.552289342678705e-07
+    },
+    {
+      "level": 4,
+      "domain": 2,
+      "offset": 0.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 4,
+      "domain": 2,
+      "offset": 0.65,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 4,
+      "domain": 2,
+      "offset": 0.79,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 4,
+      "domain": 2,
+      "offset": 0.81,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 4,
+      "domain": 2,
+      "offset": 1.0,
+      "height": 0.012312634832507108,
+      "scan_height": 0.012312679551541805,
+      "error": 4.47190346974935e-08
+    },
+    {
+      "level": 4,
+      "domain": 2,
+      "offset": 1.19,
+      "height": 0.02602643039067054,
+      "scan_height": 0.02602638490498066,
+      "error": 4.548568988127499e-08
+    },
+    {
+      "level": 4,
+      "domain": 2,
+      "offset": 1.21,
+      "height": 0.028354397737373915,
+      "scan_height": 0.028354518115520477,
+      "error": 1.2037814656196133e-07
+    },
+    {
+      "level": 4,
+      "domain": 2,
+      "offset": 1.59,
+      "height": 0.05705747841851316,
+      "scan_height": 0.05705748498439789,
+      "error": 6.565884724807347e-09
+    },
+    {
+      "level": 4,
+      "domain": 2,
+      "offset": 1.61,
+      "height": 0.05938544576521476,
+      "scan_height": 0.05938561633229256,
+      "error": 1.7056707779516955e-07
+    },
+    {
+      "level": 4,
+      "domain": 2,
+      "offset": 1.99,
+      "height": 0.08614735193548828,
+      "scan_height": 0.08614705502986908,
+      "error": 2.9690561920148184e-07
+    },
+    {
+      "level": 4,
+      "domain": 2,
+      "offset": 2.01,
+      "height": 0.0884754302910764,
+      "scan_height": 0.0884755402803421,
+      "error": 1.0998926569527612e-07
+    },
+    {
+      "level": 4,
+      "domain": 2,
+      "offset": 2.8,
+      "height": 0.14743242551100533,
+      "scan_height": 0.14743250608444214,
+      "error": 8.057343681144857e-08
+    },
+    {
+      "level": 4,
+      "domain": 3,
+      "offset": 0.0,
+      "height": 0.22517647191882162,
+      "scan_height": 0.22517646849155426,
+      "error": 3.4272673588020552e-09
+    },
+    {
+      "level": 4,
+      "domain": 3,
+      "offset": 0.65,
+      "height": 0.22517647191882162,
+      "scan_height": 0.22517646849155426,
+      "error": 3.4272673588020552e-09
+    },
+    {
+      "level": 4,
+      "domain": 3,
+      "offset": 0.79,
+      "height": 0.22517647191882162,
+      "scan_height": 0.22517646849155426,
+      "error": 3.4272673588020552e-09
+    },
+    {
+      "level": 4,
+      "domain": 3,
+      "offset": 0.81,
+      "height": 0.22517647191882162,
+      "scan_height": 0.22517646849155426,
+      "error": 3.4272673588020552e-09
+    },
+    {
+      "level": 4,
+      "domain": 3,
+      "offset": 1.0,
+      "height": 0.21156046194028733,
+      "scan_height": 0.21156039834022522,
+      "error": 6.360006210570646e-08
+    },
+    {
+      "level": 4,
+      "domain": 3,
+      "offset": 1.19,
+      "height": 0.19720886701728446,
+      "scan_height": 0.19720891118049622,
+      "error": 4.416321175426674e-08
+    },
+    {
+      "level": 4,
+      "domain": 3,
+      "offset": 1.21,
+      "height": 0.1948808996705811,
+      "scan_height": 0.19488078355789185,
+      "error": 1.1611268924127671e-07
+    },
+    {
+      "level": 4,
+      "domain": 3,
+      "offset": 1.59,
+      "height": 0.16707933309802492,
+      "scan_height": 0.16707932949066162,
+      "error": 3.6073632969646496e-09
+    },
+    {
+      "level": 4,
+      "domain": 3,
+      "offset": 1.61,
+      "height": 0.16552735486689052,
+      "scan_height": 0.16552723944187164,
+      "error": 1.1542501887618073e-07
+    },
+    {
+      "level": 4,
+      "domain": 3,
+      "offset": 1.99,
+      "height": 0.1370879510045233,
+      "scan_height": 0.13708825409412384,
+      "error": 3.0308960052849443e-07
+    },
+    {
+      "level": 4,
+      "domain": 3,
+      "offset": 2.01,
+      "height": 0.1347598726489343,
+      "scan_height": 0.13475976884365082,
+      "error": 1.0380528348008511e-07
+    },
+    {
+      "level": 4,
+      "domain": 3,
+      "offset": 2.8,
+      "height": 0.07580287742900715,
+      "scan_height": 0.07580280303955078,
+      "error": 7.43894563726144e-08
+    },
+    {
+      "level": 4,
+      "domain": 4,
+      "offset": 0.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 4,
+      "domain": 4,
+      "offset": 0.65,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 4,
+      "domain": 4,
+      "offset": 0.79,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 4,
+      "domain": 4,
+      "offset": 0.81,
+      "height": 0.07000000000000028,
+      "scan_height": 0.07000000029802322,
+      "error": 2.980229396598588e-10
+    },
+    {
+      "level": 4,
+      "domain": 4,
+      "offset": 1.0,
+      "height": 0.07000000000000028,
+      "scan_height": 0.07000000029802322,
+      "error": 2.980229396598588e-10
+    },
+    {
+      "level": 4,
+      "domain": 4,
+      "offset": 1.19,
+      "height": 0.07000000000000028,
+      "scan_height": 0.07000000029802322,
+      "error": 2.980229396598588e-10
+    },
+    {
+      "level": 4,
+      "domain": 4,
+      "offset": 1.21,
+      "height": 0.07000000000000028,
+      "scan_height": 0.07000000029802322,
+      "error": 2.980229396598588e-10
+    },
+    {
+      "level": 4,
+      "domain": 4,
+      "offset": 1.59,
+      "height": 0.07000000000000028,
+      "scan_height": 0.07000000029802322,
+      "error": 2.980229396598588e-10
+    },
+    {
+      "level": 4,
+      "domain": 4,
+      "offset": 1.61,
+      "height": 0.07000000000000028,
+      "scan_height": 0.07000000029802322,
+      "error": 2.980229396598588e-10
+    },
+    {
+      "level": 4,
+      "domain": 4,
+      "offset": 1.99,
+      "height": 0.07000000000000028,
+      "scan_height": 0.07000000029802322,
+      "error": 2.980229396598588e-10
+    },
+    {
+      "level": 4,
+      "domain": 4,
+      "offset": 2.01,
+      "height": 0.07000000000000028,
+      "scan_height": 0.07000000029802322,
+      "error": 2.980229396598588e-10
+    },
+    {
+      "level": 4,
+      "domain": 4,
+      "offset": 2.8,
+      "height": 0.07000000000000028,
+      "scan_height": 0.07000000029802322,
+      "error": 2.980229396598588e-10
+    },
+    {
+      "level": 4,
+      "domain": 5,
+      "offset": 0.0,
+      "height": 0.07000000000000028,
+      "scan_height": 0.07000000029802322,
+      "error": 2.980229396598588e-10
+    },
+    {
+      "level": 4,
+      "domain": 5,
+      "offset": 0.65,
+      "height": 0.07000000000000028,
+      "scan_height": 0.07000000029802322,
+      "error": 2.980229396598588e-10
+    },
+    {
+      "level": 4,
+      "domain": 5,
+      "offset": 0.79,
+      "height": 0.07000000000000028,
+      "scan_height": 0.07000000029802322,
+      "error": 2.980229396598588e-10
+    },
+    {
+      "level": 4,
+      "domain": 5,
+      "offset": 0.81,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 4,
+      "domain": 5,
+      "offset": 1.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 4,
+      "domain": 5,
+      "offset": 1.19,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 4,
+      "domain": 5,
+      "offset": 1.21,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 4,
+      "domain": 5,
+      "offset": 1.59,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 4,
+      "domain": 5,
+      "offset": 1.61,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 4,
+      "domain": 5,
+      "offset": 1.99,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 4,
+      "domain": 5,
+      "offset": 2.01,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 4,
+      "domain": 5,
+      "offset": 2.8,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 4,
+      "domain": 6,
+      "offset": 0.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 4,
+      "domain": 6,
+      "offset": 0.65,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 4,
+      "domain": 6,
+      "offset": 0.79,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 4,
+      "domain": 6,
+      "offset": 0.81,
+      "height": 0.02999999999999936,
+      "scan_height": 0.029999999329447746,
+      "error": 6.705516142346823e-10
+    },
+    {
+      "level": 4,
+      "domain": 6,
+      "offset": 1.0,
+      "height": 0.02999999999999936,
+      "scan_height": 0.029999999329447746,
+      "error": 6.705516142346823e-10
+    },
+    {
+      "level": 4,
+      "domain": 6,
+      "offset": 1.19,
+      "height": 0.02999999999999936,
+      "scan_height": 0.029999999329447746,
+      "error": 6.705516142346823e-10
+    },
+    {
+      "level": 4,
+      "domain": 6,
+      "offset": 1.21,
+      "height": 0.05999999999999961,
+      "scan_height": 0.05999999865889549,
+      "error": 1.3411041166477844e-09
+    },
+    {
+      "level": 4,
+      "domain": 6,
+      "offset": 1.59,
+      "height": 0.05999999999999961,
+      "scan_height": 0.05999999865889549,
+      "error": 1.3411041166477844e-09
+    },
+    {
+      "level": 4,
+      "domain": 6,
+      "offset": 1.61,
+      "height": 0.08999999999999986,
+      "scan_height": 0.08999999612569809,
+      "error": 3.8743017682918435e-09
+    },
+    {
+      "level": 4,
+      "domain": 6,
+      "offset": 1.99,
+      "height": 0.08999999999999986,
+      "scan_height": 0.08999999612569809,
+      "error": 3.8743017682918435e-09
+    },
+    {
+      "level": 4,
+      "domain": 6,
+      "offset": 2.01,
+      "height": 0.1200000000000001,
+      "scan_height": 0.11999999731779099,
+      "error": 2.6822091214739885e-09
+    },
+    {
+      "level": 4,
+      "domain": 6,
+      "offset": 2.8,
+      "height": 0.1200000000000001,
+      "scan_height": 0.11999999731779099,
+      "error": 2.6822091214739885e-09
+    },
+    {
+      "level": 4,
+      "domain": 7,
+      "offset": 0.0,
+      "height": 0.1200000000000001,
+      "scan_height": 0.11999999731779099,
+      "error": 2.6822091214739885e-09
+    },
+    {
+      "level": 4,
+      "domain": 7,
+      "offset": 0.65,
+      "height": 0.1200000000000001,
+      "scan_height": 0.11999999731779099,
+      "error": 2.6822091214739885e-09
+    },
+    {
+      "level": 4,
+      "domain": 7,
+      "offset": 0.79,
+      "height": 0.1200000000000001,
+      "scan_height": 0.11999999731779099,
+      "error": 2.6822091214739885e-09
+    },
+    {
+      "level": 4,
+      "domain": 7,
+      "offset": 0.81,
+      "height": 0.08999999999999986,
+      "scan_height": 0.08999999612569809,
+      "error": 3.8743017682918435e-09
+    },
+    {
+      "level": 4,
+      "domain": 7,
+      "offset": 1.0,
+      "height": 0.08999999999999986,
+      "scan_height": 0.08999999612569809,
+      "error": 3.8743017682918435e-09
+    },
+    {
+      "level": 4,
+      "domain": 7,
+      "offset": 1.19,
+      "height": 0.08999999999999986,
+      "scan_height": 0.08999999612569809,
+      "error": 3.8743017682918435e-09
+    },
+    {
+      "level": 4,
+      "domain": 7,
+      "offset": 1.21,
+      "height": 0.05999999999999961,
+      "scan_height": 0.05999999865889549,
+      "error": 1.3411041166477844e-09
+    },
+    {
+      "level": 4,
+      "domain": 7,
+      "offset": 1.59,
+      "height": 0.05999999999999961,
+      "scan_height": 0.05999999865889549,
+      "error": 1.3411041166477844e-09
+    },
+    {
+      "level": 4,
+      "domain": 7,
+      "offset": 1.61,
+      "height": 0.02999999999999936,
+      "scan_height": 0.030000001192092896,
+      "error": 1.1920935349962747e-09
+    },
+    {
+      "level": 4,
+      "domain": 7,
+      "offset": 1.99,
+      "height": 0.02999999999999936,
+      "scan_height": 0.030000001192092896,
+      "error": 1.1920935349962747e-09
+    },
+    {
+      "level": 4,
+      "domain": 7,
+      "offset": 2.01,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 4,
+      "domain": 7,
+      "offset": 2.8,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 5,
+      "domain": 1,
+      "offset": 0.0,
+      "height": 0.023294118102639594,
+      "scan_height": 0.0232941173017025,
+      "error": 8.009370944250804e-10
+    },
+    {
+      "level": 5,
+      "domain": 1,
+      "offset": 0.65,
+      "height": 0.014350840844015167,
+      "scan_height": 0.014349708333611488,
+      "error": 1.132510403678566e-06
+    },
+    {
+      "level": 5,
+      "domain": 1,
+      "offset": 0.79,
+      "height": 0.017903357264666298,
+      "scan_height": 0.017904523760080338,
+      "error": 1.1664954140400141e-06
+    },
+    {
+      "level": 5,
+      "domain": 1,
+      "offset": 0.81,
+      "height": 0.027991456839171924,
+      "scan_height": 0.027991555631160736,
+      "error": 9.879198881179718e-08
+    },
+    {
+      "level": 5,
+      "domain": 1,
+      "offset": 1.0,
+      "height": 0.019411765392869818,
+      "scan_height": 0.019411765038967133,
+      "error": 3.539026849352922e-10
+    },
+    {
+      "level": 5,
+      "domain": 1,
+      "offset": 1.19,
+      "height": 0.022189007558945484,
+      "scan_height": 0.02219017967581749,
+      "error": 1.1721168720058017e-06
+    },
+    {
+      "level": 5,
+      "domain": 1,
+      "offset": 1.21,
+      "height": 0.036157145771569255,
+      "scan_height": 0.03615684062242508,
+      "error": 3.0514914417523187e-07
+    },
+    {
+      "level": 5,
+      "domain": 1,
+      "offset": 1.59,
+      "height": 0.023700096539824855,
+      "scan_height": 0.023698311299085617,
+      "error": 1.7852407392382474e-06
+    },
+    {
+      "level": 5,
+      "domain": 1,
+      "offset": 1.61,
+      "height": 0.00585191987337641,
+      "scan_height": 0.005852021276950836,
+      "error": 1.0140357442622872e-07
+    },
+    {
+      "level": 5,
+      "domain": 1,
+      "offset": 1.99,
+      "height": 0.03371721686715379,
+      "scan_height": 0.03371620923280716,
+      "error": 1.0076343466280946e-06
+    },
+    {
+      "level": 5,
+      "domain": 1,
+      "offset": 2.01,
+      "height": 0.021301389912349755,
+      "scan_height": 0.021301399916410446,
+      "error": 1.000406069096016e-08
+    },
+    {
+      "level": 5,
+      "domain": 1,
+      "offset": 2.8,
+      "height": 0.031308315739506654,
+      "scan_height": 0.03130834177136421,
+      "error": 2.603185755845061e-08
+    },
+    {
+      "level": 5,
+      "domain": 2,
+      "offset": 0.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 5,
+      "domain": 2,
+      "offset": 0.65,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 5,
+      "domain": 2,
+      "offset": 0.79,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 5,
+      "domain": 2,
+      "offset": 0.81,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 5,
+      "domain": 2,
+      "offset": 1.0,
+      "height": 0.016943686821440096,
+      "scan_height": 0.016943588852882385,
+      "error": 9.796855771071478e-08
+    },
+    {
+      "level": 5,
+      "domain": 2,
+      "offset": 1.19,
+      "height": 0.03129522732028889,
+      "scan_height": 0.03129542991518974,
+      "error": 2.025949008555017e-07
+    },
+    {
+      "level": 5,
+      "domain": 2,
+      "offset": 1.21,
+      "height": 0.033623250908601854,
+      "scan_height": 0.03362320736050606,
+      "error": 4.354809579609764e-08
+    },
+    {
+      "level": 5,
+      "domain": 2,
+      "offset": 1.59,
+      "height": 0.06988235615193883,
+      "scan_height": 0.0698823556303978,
+      "error": 5.215410325831726e-10
+    },
+    {
+      "level": 5,
+      "domain": 2,
+      "offset": 1.61,
+      "height": 0.06988235615193883,
+      "scan_height": 0.0698823556303978,
+      "error": 5.215410325831726e-10
+    },
+    {
+      "level": 5,
+      "domain": 2,
+      "offset": 1.99,
+      "height": 0.10623829019565179,
+      "scan_height": 0.10623841732740402,
+      "error": 1.271317522366644e-07
+    },
+    {
+      "level": 5,
+      "domain": 2,
+      "offset": 2.01,
+      "height": 0.10779026842678707,
+      "scan_height": 0.1077902689576149,
+      "error": 5.308278261395571e-10
+    },
+    {
+      "level": 5,
+      "domain": 2,
+      "offset": 2.8,
+      "height": 0.1779365143645979,
+      "scan_height": 0.17793647944927216,
+      "error": 3.4915325741735614e-08
+    },
+    {
+      "level": 5,
+      "domain": 3,
+      "offset": 0.0,
+      "height": 0.2698235428333282,
+      "scan_height": 0.2698235511779785,
+      "error": 8.344650304081824e-09
+    },
+    {
+      "level": 5,
+      "domain": 3,
+      "offset": 0.65,
+      "height": 0.2698235428333282,
+      "scan_height": 0.2698235511779785,
+      "error": 8.344650304081824e-09
+    },
+    {
+      "level": 5,
+      "domain": 3,
+      "offset": 0.79,
+      "height": 0.2698235428333282,
+      "scan_height": 0.2698235511779785,
+      "error": 8.344650304081824e-09
+    },
+    {
+      "level": 5,
+      "domain": 3,
+      "offset": 0.81,
+      "height": 0.2698235428333282,
+      "scan_height": 0.2698235511779785,
+      "error": 8.344650304081824e-09
+    },
+    {
+      "level": 5,
+      "domain": 3,
+      "offset": 1.0,
+      "height": 0.25205716473825746,
+      "scan_height": 0.2520572245121002,
+      "error": 5.97738427643435e-08
+    },
+    {
+      "level": 5,
+      "domain": 3,
+      "offset": 1.19,
+      "height": 0.23852830329443897,
+      "scan_height": 0.23852810263633728,
+      "error": 2.0065810169000997e-07
+    },
+    {
+      "level": 5,
+      "domain": 3,
+      "offset": 1.21,
+      "height": 0.23620028044329278,
+      "scan_height": 0.23620031774044037,
+      "error": 3.72971475925965e-08
+    },
+    {
+      "level": 5,
+      "domain": 3,
+      "offset": 1.59,
+      "height": 0.1999411793053154,
+      "scan_height": 0.19994117319583893,
+      "error": 6.109476480276044e-09
+    },
+    {
+      "level": 5,
+      "domain": 3,
+      "offset": 1.61,
+      "height": 0.1999411793053154,
+      "scan_height": 0.19994117319583893,
+      "error": 6.109476480276044e-09
+    },
+    {
+      "level": 5,
+      "domain": 3,
+      "offset": 1.99,
+      "height": 0.1628778654337104,
+      "scan_height": 0.1628776639699936,
+      "error": 2.014637168201716e-07
+    },
+    {
+      "level": 5,
+      "domain": 3,
+      "offset": 2.01,
+      "height": 0.1605498980870088,
+      "scan_height": 0.16054989397525787,
+      "error": 4.111750939728154e-09
+    },
+    {
+      "level": 5,
+      "domain": 3,
+      "offset": 2.8,
+      "height": 0.09188702109265545,
+      "scan_height": 0.09188705682754517,
+      "error": 3.5734889713978646e-08
+    },
+    {
+      "level": 5,
+      "domain": 4,
+      "offset": 0.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 5,
+      "domain": 4,
+      "offset": 0.65,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 5,
+      "domain": 4,
+      "offset": 0.79,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 5,
+      "domain": 4,
+      "offset": 0.81,
+      "height": 0.08999999999999986,
+      "scan_height": 0.09000000357627869,
+      "error": 3.5762788286319847e-09
+    },
+    {
+      "level": 5,
+      "domain": 4,
+      "offset": 1.0,
+      "height": 0.08999999999999986,
+      "scan_height": 0.09000000357627869,
+      "error": 3.5762788286319847e-09
+    },
+    {
+      "level": 5,
+      "domain": 4,
+      "offset": 1.19,
+      "height": 0.08999999999999986,
+      "scan_height": 0.09000000357627869,
+      "error": 3.5762788286319847e-09
+    },
+    {
+      "level": 5,
+      "domain": 4,
+      "offset": 1.21,
+      "height": 0.08999999999999986,
+      "scan_height": 0.09000000357627869,
+      "error": 3.5762788286319847e-09
+    },
+    {
+      "level": 5,
+      "domain": 4,
+      "offset": 1.59,
+      "height": 0.08999999999999986,
+      "scan_height": 0.09000000357627869,
+      "error": 3.5762788286319847e-09
+    },
+    {
+      "level": 5,
+      "domain": 4,
+      "offset": 1.61,
+      "height": 0.08999999999999986,
+      "scan_height": 0.09000000357627869,
+      "error": 3.5762788286319847e-09
+    },
+    {
+      "level": 5,
+      "domain": 4,
+      "offset": 1.99,
+      "height": 0.08999999999999986,
+      "scan_height": 0.09000000357627869,
+      "error": 3.5762788286319847e-09
+    },
+    {
+      "level": 5,
+      "domain": 4,
+      "offset": 2.01,
+      "height": 0.08999999999999986,
+      "scan_height": 0.09000000357627869,
+      "error": 3.5762788286319847e-09
+    },
+    {
+      "level": 5,
+      "domain": 4,
+      "offset": 2.8,
+      "height": 0.08999999999999986,
+      "scan_height": 0.09000000357627869,
+      "error": 3.5762788286319847e-09
+    },
+    {
+      "level": 5,
+      "domain": 5,
+      "offset": 0.0,
+      "height": 0.08999999999999986,
+      "scan_height": 0.09000000357627869,
+      "error": 3.5762788286319847e-09
+    },
+    {
+      "level": 5,
+      "domain": 5,
+      "offset": 0.65,
+      "height": 0.08999999999999986,
+      "scan_height": 0.09000000357627869,
+      "error": 3.5762788286319847e-09
+    },
+    {
+      "level": 5,
+      "domain": 5,
+      "offset": 0.79,
+      "height": 0.08999999999999986,
+      "scan_height": 0.09000000357627869,
+      "error": 3.5762788286319847e-09
+    },
+    {
+      "level": 5,
+      "domain": 5,
+      "offset": 0.81,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 5,
+      "domain": 5,
+      "offset": 1.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 5,
+      "domain": 5,
+      "offset": 1.19,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 5,
+      "domain": 5,
+      "offset": 1.21,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 5,
+      "domain": 5,
+      "offset": 1.59,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 5,
+      "domain": 5,
+      "offset": 1.61,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 5,
+      "domain": 5,
+      "offset": 1.99,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 5,
+      "domain": 5,
+      "offset": 2.01,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 5,
+      "domain": 5,
+      "offset": 2.8,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 5,
+      "domain": 6,
+      "offset": 0.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 5,
+      "domain": 6,
+      "offset": 0.65,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 5,
+      "domain": 6,
+      "offset": 0.79,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 5,
+      "domain": 6,
+      "offset": 0.81,
+      "height": 0.05000000000000071,
+      "scan_height": 0.05000000074505806,
+      "error": 7.450573491496471e-10
+    },
+    {
+      "level": 5,
+      "domain": 6,
+      "offset": 1.0,
+      "height": 0.05000000000000071,
+      "scan_height": 0.05000000074505806,
+      "error": 7.450573491496471e-10
+    },
+    {
+      "level": 5,
+      "domain": 6,
+      "offset": 1.19,
+      "height": 0.05000000000000071,
+      "scan_height": 0.05000000074505806,
+      "error": 7.450573491496471e-10
+    },
+    {
+      "level": 5,
+      "domain": 6,
+      "offset": 1.21,
+      "height": 0.10000000000000053,
+      "scan_height": 0.10000000149011612,
+      "error": 1.4901155864777138e-09
+    },
+    {
+      "level": 5,
+      "domain": 6,
+      "offset": 1.59,
+      "height": 0.10000000000000053,
+      "scan_height": 0.10000000149011612,
+      "error": 1.4901155864777138e-09
+    },
+    {
+      "level": 5,
+      "domain": 6,
+      "offset": 1.61,
+      "height": 0.15000000000000036,
+      "scan_height": 0.15000000596046448,
+      "error": 5.960464122267695e-09
+    },
+    {
+      "level": 5,
+      "domain": 6,
+      "offset": 1.99,
+      "height": 0.15000000000000036,
+      "scan_height": 0.15000000596046448,
+      "error": 5.960464122267695e-09
+    },
+    {
+      "level": 5,
+      "domain": 6,
+      "offset": 2.01,
+      "height": 0.20000000000000018,
+      "scan_height": 0.20000000298023224,
+      "error": 2.9802320611338473e-09
+    },
+    {
+      "level": 5,
+      "domain": 6,
+      "offset": 2.8,
+      "height": 0.20000000000000018,
+      "scan_height": 0.20000000298023224,
+      "error": 2.9802320611338473e-09
+    },
+    {
+      "level": 5,
+      "domain": 7,
+      "offset": 0.0,
+      "height": 0.20000000000000018,
+      "scan_height": 0.20000000298023224,
+      "error": 2.9802320611338473e-09
+    },
+    {
+      "level": 5,
+      "domain": 7,
+      "offset": 0.65,
+      "height": 0.20000000000000018,
+      "scan_height": 0.20000000298023224,
+      "error": 2.9802320611338473e-09
+    },
+    {
+      "level": 5,
+      "domain": 7,
+      "offset": 0.79,
+      "height": 0.20000000000000018,
+      "scan_height": 0.20000000298023224,
+      "error": 2.9802320611338473e-09
+    },
+    {
+      "level": 5,
+      "domain": 7,
+      "offset": 0.81,
+      "height": 0.15000000000000036,
+      "scan_height": 0.15000000596046448,
+      "error": 5.960464122267695e-09
+    },
+    {
+      "level": 5,
+      "domain": 7,
+      "offset": 1.0,
+      "height": 0.15000000000000036,
+      "scan_height": 0.15000000596046448,
+      "error": 5.960464122267695e-09
+    },
+    {
+      "level": 5,
+      "domain": 7,
+      "offset": 1.19,
+      "height": 0.15000000000000036,
+      "scan_height": 0.15000000596046448,
+      "error": 5.960464122267695e-09
+    },
+    {
+      "level": 5,
+      "domain": 7,
+      "offset": 1.21,
+      "height": 0.10000000000000053,
+      "scan_height": 0.10000000149011612,
+      "error": 1.4901155864777138e-09
+    },
+    {
+      "level": 5,
+      "domain": 7,
+      "offset": 1.59,
+      "height": 0.10000000000000053,
+      "scan_height": 0.10000000149011612,
+      "error": 1.4901155864777138e-09
+    },
+    {
+      "level": 5,
+      "domain": 7,
+      "offset": 1.61,
+      "height": 0.05000000000000071,
+      "scan_height": 0.04999999701976776,
+      "error": 2.980232949312267e-09
+    },
+    {
+      "level": 5,
+      "domain": 7,
+      "offset": 1.99,
+      "height": 0.05000000000000071,
+      "scan_height": 0.04999999701976776,
+      "error": 2.980232949312267e-09
+    },
+    {
+      "level": 5,
+      "domain": 7,
+      "offset": 2.01,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 5,
+      "domain": 7,
+      "offset": 2.8,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 6,
+      "domain": 1,
+      "offset": 0.0,
+      "height": 0.029117647167295146,
+      "scan_height": 0.0291176475584507,
+      "error": 3.9115555239277455e-10
+    },
+    {
+      "level": 6,
+      "domain": 1,
+      "offset": 0.65,
+      "height": 0.03935619849851335,
+      "scan_height": 0.039356037974357605,
+      "error": 1.6052415574563383e-07
+    },
+    {
+      "level": 6,
+      "domain": 1,
+      "offset": 0.79,
+      "height": 0.005435294392984957,
+      "scan_height": 0.005435389466583729,
+      "error": 9.507359877147792e-08
+    },
+    {
+      "level": 6,
+      "domain": 1,
+      "offset": 0.81,
+      "height": 0.005435294392984957,
+      "scan_height": 0.005435389466583729,
+      "error": 9.507359877147792e-08
+    },
+    {
+      "level": 6,
+      "domain": 1,
+      "offset": 1.0,
+      "height": 0.029681484072857423,
+      "scan_height": 0.029681136831641197,
+      "error": 3.4724121622531356e-07
+    },
+    {
+      "level": 6,
+      "domain": 1,
+      "offset": 1.19,
+      "height": 0.03891566956483761,
+      "scan_height": 0.038918137550354004,
+      "error": 2.467985516396709e-06
+    },
+    {
+      "level": 6,
+      "domain": 1,
+      "offset": 1.21,
+      "height": 0.022619508501070307,
+      "scan_height": 0.022618722170591354,
+      "error": 7.863304789523795e-07
+    },
+    {
+      "level": 6,
+      "domain": 1,
+      "offset": 1.59,
+      "height": 0.015141176582313953,
+      "scan_height": 0.015141271986067295,
+      "error": 9.540375334182727e-08
+    },
+    {
+      "level": 6,
+      "domain": 1,
+      "offset": 1.61,
+      "height": 0.015141176582313953,
+      "scan_height": 0.015141271986067295,
+      "error": 9.540375334182727e-08
+    },
+    {
+      "level": 6,
+      "domain": 1,
+      "offset": 1.99,
+      "height": 0.009497188444974825,
+      "scan_height": 0.009496943093836308,
+      "error": 2.4535113851698043e-07
+    },
+    {
+      "level": 6,
+      "domain": 1,
+      "offset": 2.01,
+      "height": 0.0071691654095378254,
+      "scan_height": 0.0071691665798425674,
+      "error": 1.1703047420041912e-09
+    },
+    {
+      "level": 6,
+      "domain": 1,
+      "offset": 2.8,
+      "height": 0.024130587717084317,
+      "scan_height": 0.024130232632160187,
+      "error": 3.550849241307219e-07
+    },
+    {
+      "level": 6,
+      "domain": 2,
+      "offset": 0.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 6,
+      "domain": 2,
+      "offset": 0.65,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 6,
+      "domain": 2,
+      "offset": 0.79,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 6,
+      "domain": 2,
+      "offset": 0.81,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 6,
+      "domain": 2,
+      "offset": 1.0,
+      "height": 0.016389078794061263,
+      "scan_height": 0.01638910360634327,
+      "error": 2.4812282006791975e-08
+    },
+    {
+      "level": 6,
+      "domain": 2,
+      "offset": 1.19,
+      "height": 0.036023159091898016,
+      "scan_height": 0.03602290153503418,
+      "error": 2.575568638363279e-07
+    },
+    {
+      "level": 6,
+      "domain": 2,
+      "offset": 1.21,
+      "height": 0.037575174325994,
+      "scan_height": 0.03757522627711296,
+      "error": 5.1951118962279e-08
+    },
+    {
+      "level": 6,
+      "domain": 2,
+      "offset": 1.59,
+      "height": 0.08065172969828893,
+      "scan_height": 0.08065171539783478,
+      "error": 1.4300454154181352e-08
+    },
+    {
+      "level": 6,
+      "domain": 2,
+      "offset": 1.61,
+      "height": 0.0822037449323858,
+      "scan_height": 0.08220379799604416,
+      "error": 5.306365835622273e-08
+    },
+    {
+      "level": 6,
+      "domain": 2,
+      "offset": 1.99,
+      "height": 0.12139795514302776,
+      "scan_height": 0.12139817327260971,
+      "error": 2.1812958195255305e-07
+    },
+    {
+      "level": 6,
+      "domain": 2,
+      "offset": 2.01,
+      "height": 0.12294997332579616,
+      "scan_height": 0.12295002490282059,
+      "error": 5.157702442915024e-08
+    },
+    {
+      "level": 6,
+      "domain": 2,
+      "offset": 2.8,
+      "height": 0.20754874927767109,
+      "scan_height": 0.20754878222942352,
+      "error": 3.2951752437782034e-08
+    },
+    {
+      "level": 6,
+      "domain": 3,
+      "offset": 0.0,
+      "height": 0.31447059899568597,
+      "scan_height": 0.3144705891609192,
+      "error": 9.834766778737958e-09
+    },
+    {
+      "level": 6,
+      "domain": 3,
+      "offset": 0.65,
+      "height": 0.31447059899568597,
+      "scan_height": 0.3144705891609192,
+      "error": 9.834766778737958e-09
+    },
+    {
+      "level": 6,
+      "domain": 3,
+      "offset": 0.79,
+      "height": 0.31447059899568597,
+      "scan_height": 0.3144705891609192,
+      "error": 9.834766778737958e-09
+    },
+    {
+      "level": 6,
+      "domain": 3,
+      "offset": 0.81,
+      "height": 0.31447059899568597,
+      "scan_height": 0.3144705891609192,
+      "error": 9.834766778737958e-09
+    },
+    {
+      "level": 6,
+      "domain": 3,
+      "offset": 1.0,
+      "height": 0.29808152156707646,
+      "scan_height": 0.29808151721954346,
+      "error": 4.347533000270687e-09
+    },
+    {
+      "level": 6,
+      "domain": 3,
+      "offset": 1.19,
+      "height": 0.2784474435918254,
+      "scan_height": 0.278447687625885,
+      "error": 2.4403405962658553e-07
+    },
+    {
+      "level": 6,
+      "domain": 3,
+      "offset": 1.21,
+      "height": 0.2768954283577276,
+      "scan_height": 0.2768953740596771,
+      "error": 5.4298050500278805e-08
+    },
+    {
+      "level": 6,
+      "domain": 3,
+      "offset": 1.59,
+      "height": 0.2332871160353598,
+      "scan_height": 0.23328714072704315,
+      "error": 2.4691683364608252e-08
+    },
+    {
+      "level": 6,
+      "domain": 3,
+      "offset": 1.61,
+      "height": 0.23095909318421537,
+      "scan_height": 0.23095901310443878,
+      "error": 8.007977658763821e-08
+    },
+    {
+      "level": 6,
+      "domain": 3,
+      "offset": 1.99,
+      "height": 0.19307263846199874,
+      "scan_height": 0.19307242333889008,
+      "error": 2.1512310866000917e-07
+    },
+    {
+      "level": 6,
+      "domain": 3,
+      "offset": 2.01,
+      "height": 0.19152062322790186,
+      "scan_height": 0.1915205717086792,
+      "error": 5.151922266577458e-08
+    },
+    {
+      "level": 6,
+      "domain": 3,
+      "offset": 2.8,
+      "height": 0.10692184234193913,
+      "scan_height": 0.10692181438207626,
+      "error": 2.795986286940888e-08
+    },
+    {
+      "level": 6,
+      "domain": 4,
+      "offset": 0.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 6,
+      "domain": 4,
+      "offset": 0.65,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 6,
+      "domain": 4,
+      "offset": 0.79,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 6,
+      "domain": 4,
+      "offset": 0.81,
+      "height": 0.11999999999999922,
+      "scan_height": 0.11999999731779099,
+      "error": 2.6822082332955688e-09
+    },
+    {
+      "level": 6,
+      "domain": 4,
+      "offset": 1.0,
+      "height": 0.11999999999999922,
+      "scan_height": 0.11999999731779099,
+      "error": 2.6822082332955688e-09
+    },
+    {
+      "level": 6,
+      "domain": 4,
+      "offset": 1.19,
+      "height": 0.11999999999999922,
+      "scan_height": 0.11999999731779099,
+      "error": 2.6822082332955688e-09
+    },
+    {
+      "level": 6,
+      "domain": 4,
+      "offset": 1.21,
+      "height": 0.11999999999999922,
+      "scan_height": 0.11999999731779099,
+      "error": 2.6822082332955688e-09
+    },
+    {
+      "level": 6,
+      "domain": 4,
+      "offset": 1.59,
+      "height": 0.11999999999999922,
+      "scan_height": 0.11999999731779099,
+      "error": 2.6822082332955688e-09
+    },
+    {
+      "level": 6,
+      "domain": 4,
+      "offset": 1.61,
+      "height": 0.11999999999999922,
+      "scan_height": 0.11999999731779099,
+      "error": 2.6822082332955688e-09
+    },
+    {
+      "level": 6,
+      "domain": 4,
+      "offset": 1.99,
+      "height": 0.11999999999999922,
+      "scan_height": 0.11999999731779099,
+      "error": 2.6822082332955688e-09
+    },
+    {
+      "level": 6,
+      "domain": 4,
+      "offset": 2.01,
+      "height": 0.11999999999999922,
+      "scan_height": 0.11999999731779099,
+      "error": 2.6822082332955688e-09
+    },
+    {
+      "level": 6,
+      "domain": 4,
+      "offset": 2.8,
+      "height": 0.11999999999999922,
+      "scan_height": 0.11999999731779099,
+      "error": 2.6822082332955688e-09
+    },
+    {
+      "level": 6,
+      "domain": 5,
+      "offset": 0.0,
+      "height": 0.11999999999999922,
+      "scan_height": 0.11999999731779099,
+      "error": 2.6822082332955688e-09
+    },
+    {
+      "level": 6,
+      "domain": 5,
+      "offset": 0.65,
+      "height": 0.11999999999999922,
+      "scan_height": 0.11999999731779099,
+      "error": 2.6822082332955688e-09
+    },
+    {
+      "level": 6,
+      "domain": 5,
+      "offset": 0.79,
+      "height": 0.11999999999999922,
+      "scan_height": 0.11999999731779099,
+      "error": 2.6822082332955688e-09
+    },
+    {
+      "level": 6,
+      "domain": 5,
+      "offset": 0.81,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 6,
+      "domain": 5,
+      "offset": 1.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 6,
+      "domain": 5,
+      "offset": 1.19,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 6,
+      "domain": 5,
+      "offset": 1.21,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 6,
+      "domain": 5,
+      "offset": 1.59,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 6,
+      "domain": 5,
+      "offset": 1.61,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 6,
+      "domain": 5,
+      "offset": 1.99,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 6,
+      "domain": 5,
+      "offset": 2.01,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 6,
+      "domain": 5,
+      "offset": 2.8,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 6,
+      "domain": 6,
+      "offset": 0.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 6,
+      "domain": 6,
+      "offset": 0.65,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 6,
+      "domain": 6,
+      "offset": 0.79,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 6,
+      "domain": 6,
+      "offset": 0.81,
+      "height": 0.0600000000000005,
+      "scan_height": 0.05999999865889549,
+      "error": 1.341105004826204e-09
+    },
+    {
+      "level": 6,
+      "domain": 6,
+      "offset": 1.0,
+      "height": 0.0600000000000005,
+      "scan_height": 0.05999999865889549,
+      "error": 1.341105004826204e-09
+    },
+    {
+      "level": 6,
+      "domain": 6,
+      "offset": 1.19,
+      "height": 0.0600000000000005,
+      "scan_height": 0.05999999865889549,
+      "error": 1.341105004826204e-09
+    },
+    {
+      "level": 6,
+      "domain": 6,
+      "offset": 1.21,
+      "height": 0.1200000000000001,
+      "scan_height": 0.11999999731779099,
+      "error": 2.6822091214739885e-09
+    },
+    {
+      "level": 6,
+      "domain": 6,
+      "offset": 1.59,
+      "height": 0.1200000000000001,
+      "scan_height": 0.11999999731779099,
+      "error": 2.6822091214739885e-09
+    },
+    {
+      "level": 6,
+      "domain": 6,
+      "offset": 1.61,
+      "height": 0.1800000000000006,
+      "scan_height": 0.17999999225139618,
+      "error": 7.748604424762107e-09
+    },
+    {
+      "level": 6,
+      "domain": 6,
+      "offset": 1.99,
+      "height": 0.1800000000000006,
+      "scan_height": 0.17999999225139618,
+      "error": 7.748604424762107e-09
+    },
+    {
+      "level": 6,
+      "domain": 6,
+      "offset": 2.01,
+      "height": 0.2400000000000002,
+      "scan_height": 0.23999999463558197,
+      "error": 5.364418242947977e-09
+    },
+    {
+      "level": 6,
+      "domain": 6,
+      "offset": 2.8,
+      "height": 0.2400000000000002,
+      "scan_height": 0.23999999463558197,
+      "error": 5.364418242947977e-09
+    },
+    {
+      "level": 6,
+      "domain": 7,
+      "offset": 0.0,
+      "height": 0.2400000000000002,
+      "scan_height": 0.23999999463558197,
+      "error": 5.364418242947977e-09
+    },
+    {
+      "level": 6,
+      "domain": 7,
+      "offset": 0.65,
+      "height": 0.2400000000000002,
+      "scan_height": 0.23999999463558197,
+      "error": 5.364418242947977e-09
+    },
+    {
+      "level": 6,
+      "domain": 7,
+      "offset": 0.79,
+      "height": 0.2400000000000002,
+      "scan_height": 0.23999999463558197,
+      "error": 5.364418242947977e-09
+    },
+    {
+      "level": 6,
+      "domain": 7,
+      "offset": 0.81,
+      "height": 0.1800000000000006,
+      "scan_height": 0.17999999225139618,
+      "error": 7.748604424762107e-09
+    },
+    {
+      "level": 6,
+      "domain": 7,
+      "offset": 1.0,
+      "height": 0.1800000000000006,
+      "scan_height": 0.17999999225139618,
+      "error": 7.748604424762107e-09
+    },
+    {
+      "level": 6,
+      "domain": 7,
+      "offset": 1.19,
+      "height": 0.1800000000000006,
+      "scan_height": 0.17999999225139618,
+      "error": 7.748604424762107e-09
+    },
+    {
+      "level": 6,
+      "domain": 7,
+      "offset": 1.21,
+      "height": 0.1200000000000001,
+      "scan_height": 0.11999999731779099,
+      "error": 2.6822091214739885e-09
+    },
+    {
+      "level": 6,
+      "domain": 7,
+      "offset": 1.59,
+      "height": 0.1200000000000001,
+      "scan_height": 0.11999999731779099,
+      "error": 2.6822091214739885e-09
+    },
+    {
+      "level": 6,
+      "domain": 7,
+      "offset": 1.61,
+      "height": 0.0600000000000005,
+      "scan_height": 0.06000000238418579,
+      "error": 2.38418529363571e-09
+    },
+    {
+      "level": 6,
+      "domain": 7,
+      "offset": 1.99,
+      "height": 0.0600000000000005,
+      "scan_height": 0.06000000238418579,
+      "error": 2.38418529363571e-09
+    },
+    {
+      "level": 6,
+      "domain": 7,
+      "offset": 2.01,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 6,
+      "domain": 7,
+      "offset": 2.8,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 7,
+      "domain": 1,
+      "offset": 0.0,
+      "height": 0.03494117807596897,
+      "scan_height": 0.0349411778151989,
+      "error": 2.6077007220237647e-10
+    },
+    {
+      "level": 7,
+      "domain": 1,
+      "offset": 0.65,
+      "height": 0.04280409759096848,
+      "scan_height": 0.04280386492609978,
+      "error": 2.3266486870454628e-07
+    },
+    {
+      "level": 7,
+      "domain": 1,
+      "offset": 0.79,
+      "height": 0.022049618624831346,
+      "scan_height": 0.022049544379115105,
+      "error": 7.42457162417054e-08
+    },
+    {
+      "level": 7,
+      "domain": 1,
+      "offset": 0.81,
+      "height": 0.01816948766359161,
+      "scan_height": 0.018169324845075607,
+      "error": 1.628185160029716e-07
+    },
+    {
+      "level": 7,
+      "domain": 1,
+      "offset": 1.0,
+      "height": 0.037603703508305664,
+      "scan_height": 0.037604667246341705,
+      "error": 9.637380360416614e-07
+    },
+    {
+      "level": 7,
+      "domain": 1,
+      "offset": 1.19,
+      "height": 0.013557749035186362,
+      "scan_height": 0.01355784572660923,
+      "error": 9.669142286838905e-08
+    },
+    {
+      "level": 7,
+      "domain": 1,
+      "offset": 1.21,
+      "height": 0.018989673212733038,
+      "scan_height": 0.018990153446793556,
+      "error": 4.802340605181143e-07
+    },
+    {
+      "level": 7,
+      "domain": 1,
+      "offset": 1.59,
+      "height": 0.05661227008147662,
+      "scan_height": 0.056612059473991394,
+      "error": 2.1060748522927497e-07
+    },
+    {
+      "level": 7,
+      "domain": 1,
+      "offset": 1.61,
+      "height": 0.05428430273477414,
+      "scan_height": 0.054283928126096725,
+      "error": 3.7460867741145876e-07
+    },
+    {
+      "level": 7,
+      "domain": 1,
+      "offset": 1.99,
+      "height": 0.006035067851925646,
+      "scan_height": 0.006035668309777975,
+      "error": 6.004578523288728e-07
+    },
+    {
+      "level": 7,
+      "domain": 1,
+      "offset": 2.01,
+      "height": 0.01767546036705081,
+      "scan_height": 0.017676331102848053,
+      "error": 8.707357972426166e-07
+    },
+    {
+      "level": 7,
+      "domain": 1,
+      "offset": 2.8,
+      "height": 0.044577442828562575,
+      "scan_height": 0.04457839950919151,
+      "error": 9.566806289385e-07
+    },
+    {
+      "level": 7,
+      "domain": 2,
+      "offset": 0.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 7,
+      "domain": 2,
+      "offset": 0.65,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 7,
+      "domain": 2,
+      "offset": 0.79,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 7,
+      "domain": 2,
+      "offset": 0.81,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 7,
+      "domain": 2,
+      "offset": 1.0,
+      "height": 0.020909273897578906,
+      "scan_height": 0.020909352228045464,
+      "error": 7.833046655747467e-08
+    },
+    {
+      "level": 7,
+      "domain": 2,
+      "offset": 1.19,
+      "height": 0.04060427552071744,
+      "scan_height": 0.04060428589582443,
+      "error": 1.0375106995752503e-08
+    },
+    {
+      "level": 7,
+      "domain": 2,
+      "offset": 1.21,
+      "height": 0.04448422109855521,
+      "scan_height": 0.04448450356721878,
+      "error": 2.8246866357051204e-07
+    },
+    {
+      "level": 7,
+      "domain": 2,
+      "offset": 1.59,
+      "height": 0.09033479104743769,
+      "scan_height": 0.09033484756946564,
+      "error": 5.6522027946925846e-08
+    },
+    {
+      "level": 7,
+      "domain": 2,
+      "offset": 1.61,
+      "height": 0.09266275839414018,
+      "scan_height": 0.0926629826426506,
+      "error": 2.2424851042757155e-07
+    },
+    {
+      "level": 7,
+      "domain": 2,
+      "offset": 1.99,
+      "height": 0.14043997620541582,
+      "scan_height": 0.14044004678726196,
+      "error": 7.0581846145501e-08
+    },
+    {
+      "level": 7,
+      "domain": 2,
+      "offset": 2.01,
+      "height": 0.14199202844247516,
+      "scan_height": 0.14199213683605194,
+      "error": 1.0839357678094075e-07
+    },
+    {
+      "level": 7,
+      "domain": 2,
+      "offset": 2.8,
+      "height": 0.23700384874355862,
+      "scan_height": 0.2370036244392395,
+      "error": 2.243043191185734e-07
+    },
+    {
+      "level": 7,
+      "domain": 3,
+      "offset": 0.0,
+      "height": 0.3610588315129277,
+      "scan_height": 0.3610588312149048,
+      "error": 2.980229396598588e-10
+    },
+    {
+      "level": 7,
+      "domain": 3,
+      "offset": 0.65,
+      "height": 0.3610588315129277,
+      "scan_height": 0.3610588312149048,
+      "error": 2.980229396598588e-10
+    },
+    {
+      "level": 7,
+      "domain": 3,
+      "offset": 0.79,
+      "height": 0.3610588315129277,
+      "scan_height": 0.3610588312149048,
+      "error": 2.980229396598588e-10
+    },
+    {
+      "level": 7,
+      "domain": 3,
+      "offset": 0.81,
+      "height": 0.3610588315129277,
+      "scan_height": 0.3610588312149048,
+      "error": 2.980229396598588e-10
+    },
+    {
+      "level": 7,
+      "domain": 3,
+      "offset": 1.0,
+      "height": 0.3382083831044831,
+      "scan_height": 0.33820828795433044,
+      "error": 9.515015264582871e-08
+    },
+    {
+      "level": 7,
+      "domain": 3,
+      "offset": 1.19,
+      "height": 0.31851338332536283,
+      "scan_height": 0.3185133934020996,
+      "error": 1.0076736778330542e-08
+    },
+    {
+      "level": 7,
+      "domain": 3,
+      "offset": 1.21,
+      "height": 0.31463343774752506,
+      "scan_height": 0.31463316082954407,
+      "error": 2.7691798099027665e-07
+    },
+    {
+      "level": 7,
+      "domain": 3,
+      "offset": 1.59,
+      "height": 0.26912976193556304,
+      "scan_height": 0.2691297233104706,
+      "error": 3.862509245777801e-08
+    },
+    {
+      "level": 7,
+      "domain": 3,
+      "offset": 1.61,
+      "height": 0.26757778370442864,
+      "scan_height": 0.2675776481628418,
+      "error": 1.3554158684314643e-07
+    },
+    {
+      "level": 7,
+      "domain": 3,
+      "offset": 1.99,
+      "height": 0.21867767895262613,
+      "scan_height": 0.2186776101589203,
+      "error": 6.879370584300659e-08
+    },
+    {
+      "level": 7,
+      "domain": 3,
+      "offset": 2.01,
+      "height": 0.2171256267155668,
+      "scan_height": 0.2171255201101303,
+      "error": 1.0660543647844634e-07
+    },
+    {
+      "level": 7,
+      "domain": 3,
+      "offset": 2.8,
+      "height": 0.12282096874417103,
+      "scan_height": 0.12282112240791321,
+      "error": 1.5366374217506973e-07
+    },
+    {
+      "level": 7,
+      "domain": 4,
+      "offset": 0.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 7,
+      "domain": 4,
+      "offset": 0.65,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 7,
+      "domain": 4,
+      "offset": 0.79,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 7,
+      "domain": 4,
+      "offset": 0.81,
+      "height": 0.15000000000000036,
+      "scan_height": 0.15000000596046448,
+      "error": 5.960464122267695e-09
+    },
+    {
+      "level": 7,
+      "domain": 4,
+      "offset": 1.0,
+      "height": 0.15000000000000036,
+      "scan_height": 0.15000000596046448,
+      "error": 5.960464122267695e-09
+    },
+    {
+      "level": 7,
+      "domain": 4,
+      "offset": 1.19,
+      "height": 0.15000000000000036,
+      "scan_height": 0.15000000596046448,
+      "error": 5.960464122267695e-09
+    },
+    {
+      "level": 7,
+      "domain": 4,
+      "offset": 1.21,
+      "height": 0.15000000000000036,
+      "scan_height": 0.15000000596046448,
+      "error": 5.960464122267695e-09
+    },
+    {
+      "level": 7,
+      "domain": 4,
+      "offset": 1.59,
+      "height": 0.15000000000000036,
+      "scan_height": 0.15000000596046448,
+      "error": 5.960464122267695e-09
+    },
+    {
+      "level": 7,
+      "domain": 4,
+      "offset": 1.61,
+      "height": 0.15000000000000036,
+      "scan_height": 0.15000000596046448,
+      "error": 5.960464122267695e-09
+    },
+    {
+      "level": 7,
+      "domain": 4,
+      "offset": 1.99,
+      "height": 0.15000000000000036,
+      "scan_height": 0.15000000596046448,
+      "error": 5.960464122267695e-09
+    },
+    {
+      "level": 7,
+      "domain": 4,
+      "offset": 2.01,
+      "height": 0.15000000000000036,
+      "scan_height": 0.15000000596046448,
+      "error": 5.960464122267695e-09
+    },
+    {
+      "level": 7,
+      "domain": 4,
+      "offset": 2.8,
+      "height": 0.15000000000000036,
+      "scan_height": 0.15000000596046448,
+      "error": 5.960464122267695e-09
+    },
+    {
+      "level": 7,
+      "domain": 5,
+      "offset": 0.0,
+      "height": 0.15000000000000036,
+      "scan_height": 0.15000000596046448,
+      "error": 5.960464122267695e-09
+    },
+    {
+      "level": 7,
+      "domain": 5,
+      "offset": 0.65,
+      "height": 0.15000000000000036,
+      "scan_height": 0.15000000596046448,
+      "error": 5.960464122267695e-09
+    },
+    {
+      "level": 7,
+      "domain": 5,
+      "offset": 0.79,
+      "height": 0.15000000000000036,
+      "scan_height": 0.15000000596046448,
+      "error": 5.960464122267695e-09
+    },
+    {
+      "level": 7,
+      "domain": 5,
+      "offset": 0.81,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 7,
+      "domain": 5,
+      "offset": 1.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 7,
+      "domain": 5,
+      "offset": 1.19,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 7,
+      "domain": 5,
+      "offset": 1.21,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 7,
+      "domain": 5,
+      "offset": 1.59,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 7,
+      "domain": 5,
+      "offset": 1.61,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 7,
+      "domain": 5,
+      "offset": 1.99,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 7,
+      "domain": 5,
+      "offset": 2.01,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 7,
+      "domain": 5,
+      "offset": 2.8,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 7,
+      "domain": 6,
+      "offset": 0.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 7,
+      "domain": 6,
+      "offset": 0.65,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 7,
+      "domain": 6,
+      "offset": 0.79,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 7,
+      "domain": 6,
+      "offset": 0.81,
+      "height": 0.08000000000000007,
+      "scan_height": 0.07999999821186066,
+      "error": 1.7881394143159923e-09
+    },
+    {
+      "level": 7,
+      "domain": 6,
+      "offset": 1.0,
+      "height": 0.08000000000000007,
+      "scan_height": 0.07999999821186066,
+      "error": 1.7881394143159923e-09
+    },
+    {
+      "level": 7,
+      "domain": 6,
+      "offset": 1.19,
+      "height": 0.08000000000000007,
+      "scan_height": 0.07999999821186066,
+      "error": 1.7881394143159923e-09
+    },
+    {
+      "level": 7,
+      "domain": 6,
+      "offset": 1.21,
+      "height": 0.16000000000000014,
+      "scan_height": 0.1599999964237213,
+      "error": 3.5762788286319847e-09
+    },
+    {
+      "level": 7,
+      "domain": 6,
+      "offset": 1.59,
+      "height": 0.16000000000000014,
+      "scan_height": 0.1599999964237213,
+      "error": 3.5762788286319847e-09
+    },
+    {
+      "level": 7,
+      "domain": 6,
+      "offset": 1.61,
+      "height": 0.2400000000000002,
+      "scan_height": 0.23999999463558197,
+      "error": 5.364418242947977e-09
+    },
+    {
+      "level": 7,
+      "domain": 6,
+      "offset": 1.99,
+      "height": 0.2400000000000002,
+      "scan_height": 0.23999999463558197,
+      "error": 5.364418242947977e-09
+    },
+    {
+      "level": 7,
+      "domain": 6,
+      "offset": 2.01,
+      "height": 0.3200000000000003,
+      "scan_height": 0.3199999928474426,
+      "error": 7.152557657263969e-09
+    },
+    {
+      "level": 7,
+      "domain": 6,
+      "offset": 2.8,
+      "height": 0.3200000000000003,
+      "scan_height": 0.3199999928474426,
+      "error": 7.152557657263969e-09
+    },
+    {
+      "level": 7,
+      "domain": 7,
+      "offset": 0.0,
+      "height": 0.3200000000000003,
+      "scan_height": 0.3199999928474426,
+      "error": 7.152557657263969e-09
+    },
+    {
+      "level": 7,
+      "domain": 7,
+      "offset": 0.65,
+      "height": 0.3200000000000003,
+      "scan_height": 0.3199999928474426,
+      "error": 7.152557657263969e-09
+    },
+    {
+      "level": 7,
+      "domain": 7,
+      "offset": 0.79,
+      "height": 0.3200000000000003,
+      "scan_height": 0.3199999928474426,
+      "error": 7.152557657263969e-09
+    },
+    {
+      "level": 7,
+      "domain": 7,
+      "offset": 0.81,
+      "height": 0.2400000000000002,
+      "scan_height": 0.23999999463558197,
+      "error": 5.364418242947977e-09
+    },
+    {
+      "level": 7,
+      "domain": 7,
+      "offset": 1.0,
+      "height": 0.2400000000000002,
+      "scan_height": 0.23999999463558197,
+      "error": 5.364418242947977e-09
+    },
+    {
+      "level": 7,
+      "domain": 7,
+      "offset": 1.19,
+      "height": 0.2400000000000002,
+      "scan_height": 0.23999999463558197,
+      "error": 5.364418242947977e-09
+    },
+    {
+      "level": 7,
+      "domain": 7,
+      "offset": 1.21,
+      "height": 0.16000000000000014,
+      "scan_height": 0.1599999964237213,
+      "error": 3.5762788286319847e-09
+    },
+    {
+      "level": 7,
+      "domain": 7,
+      "offset": 1.59,
+      "height": 0.16000000000000014,
+      "scan_height": 0.1599999964237213,
+      "error": 3.5762788286319847e-09
+    },
+    {
+      "level": 7,
+      "domain": 7,
+      "offset": 1.61,
+      "height": 0.08000000000000007,
+      "scan_height": 0.07999999821186066,
+      "error": 1.7881394143159923e-09
+    },
+    {
+      "level": 7,
+      "domain": 7,
+      "offset": 1.99,
+      "height": 0.08000000000000007,
+      "scan_height": 0.07999999821186066,
+      "error": 1.7881394143159923e-09
+    },
+    {
+      "level": 7,
+      "domain": 7,
+      "offset": 2.01,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 7,
+      "domain": 7,
+      "offset": 2.8,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 8,
+      "domain": 1,
+      "offset": 0.0,
+      "height": 0.038823530785739635,
+      "scan_height": 0.038823530077934265,
+      "error": 7.078053698705844e-10
+    },
+    {
+      "level": 8,
+      "domain": 1,
+      "offset": 0.65,
+      "height": 0.0250342446198335,
+      "scan_height": 0.02503281459212303,
+      "error": 1.430027710469517e-06
+    },
+    {
+      "level": 8,
+      "domain": 1,
+      "offset": 0.79,
+      "height": 0.028981805957185358,
+      "scan_height": 0.02898198738694191,
+      "error": 1.8142975655166538e-07
+    },
+    {
+      "level": 8,
+      "domain": 1,
+      "offset": 0.81,
+      "height": 0.036741327820354996,
+      "scan_height": 0.036742426455020905,
+      "error": 1.0986346659080937e-06
+    },
+    {
+      "level": 8,
+      "domain": 1,
+      "offset": 1.0,
+      "height": 0.03532941334694595,
+      "scan_height": 0.035329435020685196,
+      "error": 2.1673739247773938e-08
+    },
+    {
+      "level": 8,
+      "domain": 1,
+      "offset": 1.19,
+      "height": 0.031081577476208544,
+      "scan_height": 0.0310826376080513,
+      "error": 1.0601318427561068e-06
+    },
+    {
+      "level": 8,
+      "domain": 1,
+      "offset": 1.21,
+      "height": 0.04349799610986427,
+      "scan_height": 0.04349934309720993,
+      "error": 1.3469873456628534e-06
+    },
+    {
+      "level": 8,
+      "domain": 1,
+      "offset": 1.59,
+      "height": 0.015560002201414846,
+      "scan_height": 0.015561401844024658,
+      "error": 1.3996426098117354e-06
+    },
+    {
+      "level": 8,
+      "domain": 1,
+      "offset": 1.61,
+      "height": 0.010127819003115768,
+      "scan_height": 0.010127434507012367,
+      "error": 3.844961034005223e-07
+    },
+    {
+      "level": 8,
+      "domain": 1,
+      "offset": 1.99,
+      "height": 0.0028036845612700034,
+      "scan_height": 0.0028047182131558657,
+      "error": 1.0336518858622412e-06
+    },
+    {
+      "level": 8,
+      "domain": 1,
+      "offset": 2.01,
+      "height": 0.01211599872080793,
+      "scan_height": 0.012114402838051319,
+      "error": 1.5958827566109335e-06
+    },
+    {
+      "level": 8,
+      "domain": 1,
+      "offset": 2.8,
+      "height": 0.059589304511372454,
+      "scan_height": 0.059589285403490067,
+      "error": 1.9107882387459085e-08
+    },
+    {
+      "level": 8,
+      "domain": 2,
+      "offset": 0.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 8,
+      "domain": 2,
+      "offset": 0.65,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 8,
+      "domain": 2,
+      "offset": 0.79,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 8,
+      "domain": 2,
+      "offset": 0.81,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 8,
+      "domain": 2,
+      "offset": 1.0,
+      "height": 0.02053952602045861,
+      "scan_height": 0.020539220422506332,
+      "error": 3.055979522770258e-07
+    },
+    {
+      "level": 8,
+      "domain": 2,
+      "offset": 1.19,
+      "height": 0.04550343489256914,
+      "scan_height": 0.04550367221236229,
+      "error": 2.3731979315044782e-07
+    },
+    {
+      "level": 8,
+      "domain": 2,
+      "offset": 1.21,
+      "height": 0.04938356548521661,
+      "scan_height": 0.04938388988375664,
+      "error": 3.243985400303018e-07
+    },
+    {
+      "level": 8,
+      "domain": 2,
+      "offset": 1.59,
+      "height": 0.09981008402682612,
+      "scan_height": 0.09980922192335129,
+      "error": 8.621034748301781e-07
+    },
+    {
+      "level": 8,
+      "domain": 2,
+      "offset": 1.61,
+      "height": 0.10369021461947359,
+      "scan_height": 0.10369062423706055,
+      "error": 4.096175869605645e-07
+    },
+    {
+      "level": 8,
+      "domain": 2,
+      "offset": 1.99,
+      "height": 0.1555996391673773,
+      "scan_height": 0.15559980273246765,
+      "error": 1.6356509036086209e-07
+    },
+    {
+      "level": 8,
+      "domain": 2,
+      "offset": 2.01,
+      "height": 0.15715169140443574,
+      "scan_height": 0.15715141594409943,
+      "error": 2.7546033631864475e-07
+    },
+    {
+      "level": 8,
+      "domain": 2,
+      "offset": 2.8,
+      "height": 0.2669856982740555,
+      "scan_height": 0.2669857144355774,
+      "error": 1.6161521898538922e-08
+    },
+    {
+      "level": 8,
+      "domain": 3,
+      "offset": 0.0,
+      "height": 0.4057058876752855,
+      "scan_height": 0.40570589900016785,
+      "error": 1.1324882365215672e-08
+    },
+    {
+      "level": 8,
+      "domain": 3,
+      "offset": 0.65,
+      "height": 0.4057058876752855,
+      "scan_height": 0.40570589900016785,
+      "error": 1.1324882365215672e-08
+    },
+    {
+      "level": 8,
+      "domain": 3,
+      "offset": 0.79,
+      "height": 0.4057058876752855,
+      "scan_height": 0.40570589900016785,
+      "error": 1.1324882365215672e-08
+    },
+    {
+      "level": 8,
+      "domain": 3,
+      "offset": 0.81,
+      "height": 0.4057058876752855,
+      "scan_height": 0.40570589900016785,
+      "error": 1.1324882365215672e-08
+    },
+    {
+      "level": 8,
+      "domain": 3,
+      "offset": 1.0,
+      "height": 0.3846024831850512,
+      "scan_height": 0.38460293412208557,
+      "error": 4.509370343797059e-07
+    },
+    {
+      "level": 8,
+      "domain": 3,
+      "offset": 1.19,
+      "height": 0.3602024564707529,
+      "scan_height": 0.36020222306251526,
+      "error": 2.3340823762652008e-07
+    },
+    {
+      "level": 8,
+      "domain": 3,
+      "offset": 1.21,
+      "height": 0.3563223258781063,
+      "scan_height": 0.3563220202922821,
+      "error": 3.055858242007048e-07
+    },
+    {
+      "level": 8,
+      "domain": 3,
+      "offset": 1.59,
+      "height": 0.30395463466964845,
+      "scan_height": 0.3039554953575134,
+      "error": 8.606878649786154e-07
+    },
+    {
+      "level": 8,
+      "domain": 3,
+      "offset": 1.61,
+      "height": 0.300074504077001,
+      "scan_height": 0.30007410049438477,
+      "error": 4.035826162152034e-07
+    },
+    {
+      "level": 8,
+      "domain": 3,
+      "offset": 1.99,
+      "height": 0.2499535040869496,
+      "scan_height": 0.2499532550573349,
+      "error": 2.490296147072968e-07
+    },
+    {
+      "level": 8,
+      "domain": 3,
+      "offset": 2.01,
+      "height": 0.24762541983387987,
+      "scan_height": 0.24762584269046783,
+      "error": 4.228565879671464e-07
+    },
+    {
+      "level": 8,
+      "domain": 3,
+      "offset": 2.8,
+      "height": 0.13819795007813074,
+      "scan_height": 0.13819792866706848,
+      "error": 2.1411062256504465e-08
+    },
+    {
+      "level": 8,
+      "domain": 4,
+      "offset": 0.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 8,
+      "domain": 4,
+      "offset": 0.65,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 8,
+      "domain": 4,
+      "offset": 0.79,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 8,
+      "domain": 4,
+      "offset": 0.81,
+      "height": 0.17999999999999972,
+      "scan_height": 0.18000000715255737,
+      "error": 7.152557657263969e-09
+    },
+    {
+      "level": 8,
+      "domain": 4,
+      "offset": 1.0,
+      "height": 0.17999999999999972,
+      "scan_height": 0.18000000715255737,
+      "error": 7.152557657263969e-09
+    },
+    {
+      "level": 8,
+      "domain": 4,
+      "offset": 1.19,
+      "height": 0.17999999999999972,
+      "scan_height": 0.18000000715255737,
+      "error": 7.152557657263969e-09
+    },
+    {
+      "level": 8,
+      "domain": 4,
+      "offset": 1.21,
+      "height": 0.17999999999999972,
+      "scan_height": 0.18000000715255737,
+      "error": 7.152557657263969e-09
+    },
+    {
+      "level": 8,
+      "domain": 4,
+      "offset": 1.59,
+      "height": 0.17999999999999972,
+      "scan_height": 0.18000000715255737,
+      "error": 7.152557657263969e-09
+    },
+    {
+      "level": 8,
+      "domain": 4,
+      "offset": 1.61,
+      "height": 0.17999999999999972,
+      "scan_height": 0.18000000715255737,
+      "error": 7.152557657263969e-09
+    },
+    {
+      "level": 8,
+      "domain": 4,
+      "offset": 1.99,
+      "height": 0.17999999999999972,
+      "scan_height": 0.18000000715255737,
+      "error": 7.152557657263969e-09
+    },
+    {
+      "level": 8,
+      "domain": 4,
+      "offset": 2.01,
+      "height": 0.17999999999999972,
+      "scan_height": 0.18000000715255737,
+      "error": 7.152557657263969e-09
+    },
+    {
+      "level": 8,
+      "domain": 4,
+      "offset": 2.8,
+      "height": 0.17999999999999972,
+      "scan_height": 0.18000000715255737,
+      "error": 7.152557657263969e-09
+    },
+    {
+      "level": 8,
+      "domain": 5,
+      "offset": 0.0,
+      "height": 0.17999999999999972,
+      "scan_height": 0.18000000715255737,
+      "error": 7.152557657263969e-09
+    },
+    {
+      "level": 8,
+      "domain": 5,
+      "offset": 0.65,
+      "height": 0.17999999999999972,
+      "scan_height": 0.18000000715255737,
+      "error": 7.152557657263969e-09
+    },
+    {
+      "level": 8,
+      "domain": 5,
+      "offset": 0.79,
+      "height": 0.17999999999999972,
+      "scan_height": 0.18000000715255737,
+      "error": 7.152557657263969e-09
+    },
+    {
+      "level": 8,
+      "domain": 5,
+      "offset": 0.81,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 8,
+      "domain": 5,
+      "offset": 1.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 8,
+      "domain": 5,
+      "offset": 1.19,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 8,
+      "domain": 5,
+      "offset": 1.21,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 8,
+      "domain": 5,
+      "offset": 1.59,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 8,
+      "domain": 5,
+      "offset": 1.61,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 8,
+      "domain": 5,
+      "offset": 1.99,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 8,
+      "domain": 5,
+      "offset": 2.01,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 8,
+      "domain": 5,
+      "offset": 2.8,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 8,
+      "domain": 6,
+      "offset": 0.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 8,
+      "domain": 6,
+      "offset": 0.65,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 8,
+      "domain": 6,
+      "offset": 0.79,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 8,
+      "domain": 6,
+      "offset": 0.81,
+      "height": 0.09999999999999964,
+      "scan_height": 0.10000000149011612,
+      "error": 1.4901164746561335e-09
+    },
+    {
+      "level": 8,
+      "domain": 6,
+      "offset": 1.0,
+      "height": 0.09999999999999964,
+      "scan_height": 0.10000000149011612,
+      "error": 1.4901164746561335e-09
+    },
+    {
+      "level": 8,
+      "domain": 6,
+      "offset": 1.19,
+      "height": 0.09999999999999964,
+      "scan_height": 0.10000000149011612,
+      "error": 1.4901164746561335e-09
+    },
+    {
+      "level": 8,
+      "domain": 6,
+      "offset": 1.21,
+      "height": 0.20000000000000018,
+      "scan_height": 0.20000000298023224,
+      "error": 2.9802320611338473e-09
+    },
+    {
+      "level": 8,
+      "domain": 6,
+      "offset": 1.59,
+      "height": 0.20000000000000018,
+      "scan_height": 0.20000000298023224,
+      "error": 2.9802320611338473e-09
+    },
+    {
+      "level": 8,
+      "domain": 6,
+      "offset": 1.61,
+      "height": 0.2999999999999998,
+      "scan_height": 0.30000001192092896,
+      "error": 1.1920929132713809e-08
+    },
+    {
+      "level": 8,
+      "domain": 6,
+      "offset": 1.99,
+      "height": 0.2999999999999998,
+      "scan_height": 0.30000001192092896,
+      "error": 1.1920929132713809e-08
+    },
+    {
+      "level": 8,
+      "domain": 6,
+      "offset": 2.01,
+      "height": 0.39999999999999947,
+      "scan_height": 0.4000000059604645,
+      "error": 5.960465010446114e-09
+    },
+    {
+      "level": 8,
+      "domain": 6,
+      "offset": 2.8,
+      "height": 0.39999999999999947,
+      "scan_height": 0.4000000059604645,
+      "error": 5.960465010446114e-09
+    },
+    {
+      "level": 8,
+      "domain": 7,
+      "offset": 0.0,
+      "height": 0.39999999999999947,
+      "scan_height": 0.4000000059604645,
+      "error": 5.960465010446114e-09
+    },
+    {
+      "level": 8,
+      "domain": 7,
+      "offset": 0.65,
+      "height": 0.39999999999999947,
+      "scan_height": 0.4000000059604645,
+      "error": 5.960465010446114e-09
+    },
+    {
+      "level": 8,
+      "domain": 7,
+      "offset": 0.79,
+      "height": 0.39999999999999947,
+      "scan_height": 0.4000000059604645,
+      "error": 5.960465010446114e-09
+    },
+    {
+      "level": 8,
+      "domain": 7,
+      "offset": 0.81,
+      "height": 0.2999999999999998,
+      "scan_height": 0.30000001192092896,
+      "error": 1.1920929132713809e-08
+    },
+    {
+      "level": 8,
+      "domain": 7,
+      "offset": 1.0,
+      "height": 0.2999999999999998,
+      "scan_height": 0.30000001192092896,
+      "error": 1.1920929132713809e-08
+    },
+    {
+      "level": 8,
+      "domain": 7,
+      "offset": 1.19,
+      "height": 0.2999999999999998,
+      "scan_height": 0.30000001192092896,
+      "error": 1.1920929132713809e-08
+    },
+    {
+      "level": 8,
+      "domain": 7,
+      "offset": 1.21,
+      "height": 0.20000000000000018,
+      "scan_height": 0.20000000298023224,
+      "error": 2.9802320611338473e-09
+    },
+    {
+      "level": 8,
+      "domain": 7,
+      "offset": 1.59,
+      "height": 0.20000000000000018,
+      "scan_height": 0.20000000298023224,
+      "error": 2.9802320611338473e-09
+    },
+    {
+      "level": 8,
+      "domain": 7,
+      "offset": 1.61,
+      "height": 0.09999999999999964,
+      "scan_height": 0.09999999403953552,
+      "error": 5.960464122267695e-09
+    },
+    {
+      "level": 8,
+      "domain": 7,
+      "offset": 1.99,
+      "height": 0.09999999999999964,
+      "scan_height": 0.09999999403953552,
+      "error": 5.960464122267695e-09
+    },
+    {
+      "level": 8,
+      "domain": 7,
+      "offset": 2.01,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 8,
+      "domain": 7,
+      "offset": 2.8,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 9,
+      "domain": 1,
+      "offset": 0.0,
+      "height": 0.0446470598503943,
+      "scan_height": 0.044647060334682465,
+      "error": 4.842881651256903e-10
+    },
+    {
+      "level": 9,
+      "domain": 1,
+      "offset": 0.65,
+      "height": 0.06390399350796905,
+      "scan_height": 0.06390805542469025,
+      "error": 4.0619167211986e-06
+    },
+    {
+      "level": 9,
+      "domain": 1,
+      "offset": 0.79,
+      "height": 0.04195979634644864,
+      "scan_height": 0.041959457099437714,
+      "error": 3.3924701092757914e-07
+    },
+    {
+      "level": 9,
+      "domain": 1,
+      "offset": 0.81,
+      "height": 0.031898460375167303,
+      "scan_height": 0.03189955651760101,
+      "error": 1.0961424337097014e-06
+    },
+    {
+      "level": 9,
+      "domain": 1,
+      "offset": 1.0,
+      "height": 0.02494919902760806,
+      "scan_height": 0.024945847690105438,
+      "error": 3.351337502621732e-06
+    },
+    {
+      "level": 9,
+      "domain": 1,
+      "offset": 1.19,
+      "height": 0.037648958459095994,
+      "scan_height": 0.03765028342604637,
+      "error": 1.3249669503778705e-06
+    },
+    {
+      "level": 9,
+      "domain": 1,
+      "offset": 1.21,
+      "height": 0.04776449732168064,
+      "scan_height": 0.04776586964726448,
+      "error": 1.3723255838371529e-06
+    },
+    {
+      "level": 9,
+      "domain": 1,
+      "offset": 1.59,
+      "height": 0.0696309243978881,
+      "scan_height": 0.06962952017784119,
+      "error": 1.404220046907767e-06
+    },
+    {
+      "level": 9,
+      "domain": 1,
+      "offset": 1.61,
+      "height": 0.07515453698397678,
+      "scan_height": 0.07515376806259155,
+      "error": 7.689213852302146e-07
+    },
+    {
+      "level": 9,
+      "domain": 1,
+      "offset": 1.99,
+      "height": 0.03251968352086099,
+      "scan_height": 0.03252258524298668,
+      "error": 2.9017221256921744e-06
+    },
+    {
+      "level": 9,
+      "domain": 1,
+      "offset": 2.01,
+      "height": 0.04509668184728888,
+      "scan_height": 0.045095447450876236,
+      "error": 1.2343964126415585e-06
+    },
+    {
+      "level": 9,
+      "domain": 1,
+      "offset": 2.8,
+      "height": 0.03472411389925867,
+      "scan_height": 0.03472376614809036,
+      "error": 3.477511683058765e-07
+    },
+    {
+      "level": 9,
+      "domain": 2,
+      "offset": 0.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 9,
+      "domain": 2,
+      "offset": 0.65,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 9,
+      "domain": 2,
+      "offset": 0.79,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 9,
+      "domain": 2,
+      "offset": 0.81,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 9,
+      "domain": 2,
+      "offset": 1.0,
+      "height": 0.02443113722834145,
+      "scan_height": 0.024430815130472183,
+      "error": 3.2209786926529205e-07
+    },
+    {
+      "level": 9,
+      "domain": 2,
+      "offset": 1.19,
+      "height": 0.05428494697419328,
+      "scan_height": 0.054285407066345215,
+      "error": 4.600921519326562e-07
+    },
+    {
+      "level": 9,
+      "domain": 2,
+      "offset": 1.21,
+      "height": 0.05664022319003248,
+      "scan_height": 0.05664055421948433,
+      "error": 3.3102945184992905e-07
+    },
+    {
+      "level": 9,
+      "domain": 2,
+      "offset": 1.59,
+      "height": 0.10866016839316295,
+      "scan_height": 0.10865991562604904,
+      "error": 2.527671139063159e-07
+    },
+    {
+      "level": 9,
+      "domain": 2,
+      "offset": 1.61,
+      "height": 0.11322489539138658,
+      "scan_height": 0.11322423815727234,
+      "error": 6.572341142430105e-07
+    },
+    {
+      "level": 9,
+      "domain": 2,
+      "offset": 1.99,
+      "height": 0.1745453070600531,
+      "scan_height": 0.17454594373703003,
+      "error": 6.36676976917272e-07
+    },
+    {
+      "level": 9,
+      "domain": 2,
+      "offset": 2.01,
+      "height": 0.17693761726834367,
+      "scan_height": 0.17693734169006348,
+      "error": 2.75578280195532e-07
+    },
+    {
+      "level": 9,
+      "domain": 2,
+      "offset": 2.8,
+      "height": 0.2960709758568987,
+      "scan_height": 0.2960711419582367,
+      "error": 1.661013380171994e-07
+    },
+    {
+      "level": 9,
+      "domain": 3,
+      "offset": 0.0,
+      "height": 0.45035294383764235,
+      "scan_height": 0.4503529369831085,
+      "error": 6.854533829425691e-09
+    },
+    {
+      "level": 9,
+      "domain": 3,
+      "offset": 0.65,
+      "height": 0.45035294383764235,
+      "scan_height": 0.4503529369831085,
+      "error": 6.854533829425691e-09
+    },
+    {
+      "level": 9,
+      "domain": 3,
+      "offset": 0.79,
+      "height": 0.45035294383764235,
+      "scan_height": 0.4503529369831085,
+      "error": 6.854533829425691e-09
+    },
+    {
+      "level": 9,
+      "domain": 3,
+      "offset": 0.81,
+      "height": 0.45035294383764235,
+      "scan_height": 0.4503529369831085,
+      "error": 6.854533829425691e-09
+    },
+    {
+      "level": 9,
+      "domain": 3,
+      "offset": 1.0,
+      "height": 0.42435963847366853,
+      "scan_height": 0.42435985803604126,
+      "error": 2.1956237272746648e-07
+    },
+    {
+      "level": 9,
+      "domain": 3,
+      "offset": 1.19,
+      "height": 0.3960680005514874,
+      "scan_height": 0.3960675299167633,
+      "error": 4.706347240812647e-07
+    },
+    {
+      "level": 9,
+      "domain": 3,
+      "offset": 1.21,
+      "height": 0.3937127243356482,
+      "scan_height": 0.3937124013900757,
+      "error": 3.22945572506228e-07
+    },
+    {
+      "level": 9,
+      "domain": 3,
+      "offset": 1.59,
+      "height": 0.33593782604061406,
+      "scan_height": 0.3359384536743164,
+      "error": 6.27633702343644e-07
+    },
+    {
+      "level": 9,
+      "domain": 3,
+      "offset": 1.61,
+      "height": 0.33356403282854785,
+      "scan_height": 0.3335643708705902,
+      "error": 3.380420423582109e-07
+    },
+    {
+      "level": 9,
+      "domain": 3,
+      "offset": 1.99,
+      "height": 0.27580765152973896,
+      "scan_height": 0.2758070230484009,
+      "error": 6.284813380830201e-07
+    },
+    {
+      "level": 9,
+      "domain": 3,
+      "offset": 2.01,
+      "height": 0.2734153413214484,
+      "scan_height": 0.27341562509536743,
+      "error": 2.837739190297839e-07
+    },
+    {
+      "level": 9,
+      "domain": 3,
+      "offset": 2.8,
+      "height": 0.15428198273289428,
+      "scan_height": 0.1542818248271942,
+      "error": 1.5790570007112592e-07
+    },
+    {
+      "level": 9,
+      "domain": 4,
+      "offset": 0.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 9,
+      "domain": 4,
+      "offset": 0.65,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 9,
+      "domain": 4,
+      "offset": 0.79,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 9,
+      "domain": 4,
+      "offset": 0.81,
+      "height": 0.1999999999999993,
+      "scan_height": 0.20000000298023224,
+      "error": 2.980232949312267e-09
+    },
+    {
+      "level": 9,
+      "domain": 4,
+      "offset": 1.0,
+      "height": 0.1999999999999993,
+      "scan_height": 0.20000000298023224,
+      "error": 2.980232949312267e-09
+    },
+    {
+      "level": 9,
+      "domain": 4,
+      "offset": 1.19,
+      "height": 0.1999999999999993,
+      "scan_height": 0.20000000298023224,
+      "error": 2.980232949312267e-09
+    },
+    {
+      "level": 9,
+      "domain": 4,
+      "offset": 1.21,
+      "height": 0.1999999999999993,
+      "scan_height": 0.20000000298023224,
+      "error": 2.980232949312267e-09
+    },
+    {
+      "level": 9,
+      "domain": 4,
+      "offset": 1.59,
+      "height": 0.1999999999999993,
+      "scan_height": 0.20000000298023224,
+      "error": 2.980232949312267e-09
+    },
+    {
+      "level": 9,
+      "domain": 4,
+      "offset": 1.61,
+      "height": 0.1999999999999993,
+      "scan_height": 0.20000000298023224,
+      "error": 2.980232949312267e-09
+    },
+    {
+      "level": 9,
+      "domain": 4,
+      "offset": 1.99,
+      "height": 0.1999999999999993,
+      "scan_height": 0.20000000298023224,
+      "error": 2.980232949312267e-09
+    },
+    {
+      "level": 9,
+      "domain": 4,
+      "offset": 2.01,
+      "height": 0.1999999999999993,
+      "scan_height": 0.20000000298023224,
+      "error": 2.980232949312267e-09
+    },
+    {
+      "level": 9,
+      "domain": 4,
+      "offset": 2.8,
+      "height": 0.1999999999999993,
+      "scan_height": 0.20000000298023224,
+      "error": 2.980232949312267e-09
+    },
+    {
+      "level": 9,
+      "domain": 5,
+      "offset": 0.0,
+      "height": 0.1999999999999993,
+      "scan_height": 0.20000000298023224,
+      "error": 2.980232949312267e-09
+    },
+    {
+      "level": 9,
+      "domain": 5,
+      "offset": 0.65,
+      "height": 0.1999999999999993,
+      "scan_height": 0.20000000298023224,
+      "error": 2.980232949312267e-09
+    },
+    {
+      "level": 9,
+      "domain": 5,
+      "offset": 0.79,
+      "height": 0.1999999999999993,
+      "scan_height": 0.20000000298023224,
+      "error": 2.980232949312267e-09
+    },
+    {
+      "level": 9,
+      "domain": 5,
+      "offset": 0.81,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 9,
+      "domain": 5,
+      "offset": 1.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 9,
+      "domain": 5,
+      "offset": 1.19,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 9,
+      "domain": 5,
+      "offset": 1.21,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 9,
+      "domain": 5,
+      "offset": 1.59,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 9,
+      "domain": 5,
+      "offset": 1.61,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 9,
+      "domain": 5,
+      "offset": 1.99,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 9,
+      "domain": 5,
+      "offset": 2.01,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 9,
+      "domain": 5,
+      "offset": 2.8,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 9,
+      "domain": 6,
+      "offset": 0.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 9,
+      "domain": 6,
+      "offset": 0.65,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 9,
+      "domain": 6,
+      "offset": 0.79,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 9,
+      "domain": 6,
+      "offset": 0.81,
+      "height": 0.11999999999999922,
+      "scan_height": 0.11999999731779099,
+      "error": 2.6822082332955688e-09
+    },
+    {
+      "level": 9,
+      "domain": 6,
+      "offset": 1.0,
+      "height": 0.11999999999999922,
+      "scan_height": 0.11999999731779099,
+      "error": 2.6822082332955688e-09
+    },
+    {
+      "level": 9,
+      "domain": 6,
+      "offset": 1.19,
+      "height": 0.11999999999999922,
+      "scan_height": 0.11999999731779099,
+      "error": 2.6822082332955688e-09
+    },
+    {
+      "level": 9,
+      "domain": 6,
+      "offset": 1.21,
+      "height": 0.23999999999999932,
+      "scan_height": 0.23999999463558197,
+      "error": 5.364417354769557e-09
+    },
+    {
+      "level": 9,
+      "domain": 6,
+      "offset": 1.59,
+      "height": 0.23999999999999932,
+      "scan_height": 0.23999999463558197,
+      "error": 5.364417354769557e-09
+    },
+    {
+      "level": 9,
+      "domain": 6,
+      "offset": 1.61,
+      "height": 0.35999999999999943,
+      "scan_height": 0.35999998450279236,
+      "error": 1.5497207073167374e-08
+    },
+    {
+      "level": 9,
+      "domain": 6,
+      "offset": 1.99,
+      "height": 0.35999999999999943,
+      "scan_height": 0.35999998450279236,
+      "error": 1.5497207073167374e-08
+    },
+    {
+      "level": 9,
+      "domain": 6,
+      "offset": 2.01,
+      "height": 0.47999999999999954,
+      "scan_height": 0.47999998927116394,
+      "error": 1.0728835597717534e-08
+    },
+    {
+      "level": 9,
+      "domain": 6,
+      "offset": 2.8,
+      "height": 0.47999999999999954,
+      "scan_height": 0.47999998927116394,
+      "error": 1.0728835597717534e-08
+    },
+    {
+      "level": 9,
+      "domain": 7,
+      "offset": 0.0,
+      "height": 0.47999999999999954,
+      "scan_height": 0.47999998927116394,
+      "error": 1.0728835597717534e-08
+    },
+    {
+      "level": 9,
+      "domain": 7,
+      "offset": 0.65,
+      "height": 0.47999999999999954,
+      "scan_height": 0.47999998927116394,
+      "error": 1.0728835597717534e-08
+    },
+    {
+      "level": 9,
+      "domain": 7,
+      "offset": 0.79,
+      "height": 0.47999999999999954,
+      "scan_height": 0.47999998927116394,
+      "error": 1.0728835597717534e-08
+    },
+    {
+      "level": 9,
+      "domain": 7,
+      "offset": 0.81,
+      "height": 0.35999999999999943,
+      "scan_height": 0.35999998450279236,
+      "error": 1.5497207073167374e-08
+    },
+    {
+      "level": 9,
+      "domain": 7,
+      "offset": 1.0,
+      "height": 0.35999999999999943,
+      "scan_height": 0.35999998450279236,
+      "error": 1.5497207073167374e-08
+    },
+    {
+      "level": 9,
+      "domain": 7,
+      "offset": 1.19,
+      "height": 0.35999999999999943,
+      "scan_height": 0.35999998450279236,
+      "error": 1.5497207073167374e-08
+    },
+    {
+      "level": 9,
+      "domain": 7,
+      "offset": 1.21,
+      "height": 0.23999999999999932,
+      "scan_height": 0.23999999463558197,
+      "error": 5.364417354769557e-09
+    },
+    {
+      "level": 9,
+      "domain": 7,
+      "offset": 1.59,
+      "height": 0.23999999999999932,
+      "scan_height": 0.23999999463558197,
+      "error": 5.364417354769557e-09
+    },
+    {
+      "level": 9,
+      "domain": 7,
+      "offset": 1.61,
+      "height": 0.11999999999999922,
+      "scan_height": 0.12000000476837158,
+      "error": 4.768372363628259e-09
+    },
+    {
+      "level": 9,
+      "domain": 7,
+      "offset": 1.99,
+      "height": 0.11999999999999922,
+      "scan_height": 0.12000000476837158,
+      "error": 4.768372363628259e-09
+    },
+    {
+      "level": 9,
+      "domain": 7,
+      "offset": 2.01,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 9,
+      "domain": 7,
+      "offset": 2.8,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 10,
+      "domain": 1,
+      "offset": 0.0,
+      "height": 0.048529412560164964,
+      "scan_height": 0.04852941259741783,
+      "error": 3.725286745748235e-11
+    },
+    {
+      "level": 10,
+      "domain": 1,
+      "offset": 0.65,
+      "height": 0.06352500301343511,
+      "scan_height": 0.0635223463177681,
+      "error": 2.6566956670137643e-06
+    },
+    {
+      "level": 10,
+      "domain": 1,
+      "offset": 0.79,
+      "height": 0.05763457201959277,
+      "scan_height": 0.05763614922761917,
+      "error": 1.5772080264042643e-06
+    },
+    {
+      "level": 10,
+      "domain": 1,
+      "offset": 0.81,
+      "height": 0.04343850535909333,
+      "scan_height": 0.043438445776700974,
+      "error": 5.958239235326346e-08
+    },
+    {
+      "level": 10,
+      "domain": 1,
+      "offset": 1.0,
+      "height": 0.05454871948263751,
+      "scan_height": 0.05454813688993454,
+      "error": 5.825927029690092e-07
+    },
+    {
+      "level": 10,
+      "domain": 1,
+      "offset": 1.19,
+      "height": 0.004523248312136019,
+      "scan_height": 0.004522498697042465,
+      "error": 7.496150935537571e-07
+    },
+    {
+      "level": 10,
+      "domain": 1,
+      "offset": 1.21,
+      "height": 0.00929290889753176,
+      "scan_height": 0.009293393231928349,
+      "error": 4.843343965887925e-07
+    },
+    {
+      "level": 10,
+      "domain": 1,
+      "offset": 1.59,
+      "height": 0.07162070503200102,
+      "scan_height": 0.07162033766508102,
+      "error": 3.673669199955043e-07
+    },
+    {
+      "level": 10,
+      "domain": 1,
+      "offset": 1.61,
+      "height": 0.06042045210311198,
+      "scan_height": 0.060420066118240356,
+      "error": 3.8598487162033734e-07
+    },
+    {
+      "level": 10,
+      "domain": 1,
+      "offset": 1.99,
+      "height": 0.07169684585632652,
+      "scan_height": 0.07169510424137115,
+      "error": 1.741614955363957e-06
+    },
+    {
+      "level": 10,
+      "domain": 1,
+      "offset": 2.01,
+      "height": 0.06149903109475474,
+      "scan_height": 0.061497293412685394,
+      "error": 1.7376820693471018e-06
+    },
+    {
+      "level": 10,
+      "domain": 1,
+      "offset": 2.8,
+      "height": 0.06697307741544734,
+      "scan_height": 0.0669681653380394,
+      "error": 4.912077407936977e-06
+    },
+    {
+      "level": 10,
+      "domain": 2,
+      "offset": 0.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 10,
+      "domain": 2,
+      "offset": 0.65,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 10,
+      "domain": 2,
+      "offset": 0.79,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 10,
+      "domain": 2,
+      "offset": 0.81,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 10,
+      "domain": 2,
+      "offset": 1.0,
+      "height": 0.02445846887147951,
+      "scan_height": 0.024458538740873337,
+      "error": 6.986939382613855e-08
+    },
+    {
+      "level": 10,
+      "domain": 2,
+      "offset": 1.19,
+      "height": 0.0589847454062733,
+      "scan_height": 0.05898503586649895,
+      "error": 2.9046022564926943e-07
+    },
+    {
+      "level": 10,
+      "domain": 2,
+      "offset": 1.21,
+      "height": 0.061331282262477416,
+      "scan_height": 0.06133141368627548,
+      "error": 1.3142379806652116e-07
+    },
+    {
+      "level": 10,
+      "domain": 2,
+      "offset": 1.59,
+      "height": 0.12319627381156284,
+      "scan_height": 0.12319622933864594,
+      "error": 4.4472916904680915e-08
+    },
+    {
+      "level": 10,
+      "domain": 2,
+      "offset": 1.61,
+      "height": 0.12593996370221472,
+      "scan_height": 0.1259399950504303,
+      "error": 3.1348215578930194e-08
+    },
+    {
+      "level": 10,
+      "domain": 2,
+      "offset": 1.99,
+      "height": 0.18915034820633192,
+      "scan_height": 0.18915002048015594,
+      "error": 3.2772617597487397e-07
+    },
+    {
+      "level": 10,
+      "domain": 2,
+      "offset": 2.01,
+      "height": 0.19302973873973883,
+      "scan_height": 0.1930302381515503,
+      "error": 4.994118114609591e-07
+    },
+    {
+      "level": 10,
+      "domain": 2,
+      "offset": 2.8,
+      "height": 0.3210562890213584,
+      "scan_height": 0.32105714082717896,
+      "error": 8.518058205453372e-07
+    },
+    {
+      "level": 10,
+      "domain": 3,
+      "offset": 0.0,
+      "height": 0.4950000000000001,
+      "scan_height": 0.4950000047683716,
+      "error": 4.76837147544984e-09
+    },
+    {
+      "level": 10,
+      "domain": 3,
+      "offset": 0.65,
+      "height": 0.4950000000000001,
+      "scan_height": 0.4950000047683716,
+      "error": 4.76837147544984e-09
+    },
+    {
+      "level": 10,
+      "domain": 3,
+      "offset": 0.79,
+      "height": 0.4950000000000001,
+      "scan_height": 0.4950000047683716,
+      "error": 4.76837147544984e-09
+    },
+    {
+      "level": 10,
+      "domain": 3,
+      "offset": 0.81,
+      "height": 0.4950000000000001,
+      "scan_height": 0.4950000047683716,
+      "error": 4.76837147544984e-09
+    },
+    {
+      "level": 10,
+      "domain": 3,
+      "offset": 1.0,
+      "height": 0.47054153315688474,
+      "scan_height": 0.47054147720336914,
+      "error": 5.595351559861683e-08
+    },
+    {
+      "level": 10,
+      "domain": 3,
+      "offset": 1.19,
+      "height": 0.43601525828176335,
+      "scan_height": 0.43601498007774353,
+      "error": 2.7820401982125986e-07
+    },
+    {
+      "level": 10,
+      "domain": 3,
+      "offset": 1.21,
+      "height": 0.4336687225225697,
+      "scan_height": 0.4336686134338379,
+      "error": 1.0908873182557954e-07
+    },
+    {
+      "level": 10,
+      "domain": 3,
+      "offset": 1.59,
+      "height": 0.37180374015096884,
+      "scan_height": 0.37180376052856445,
+      "error": 2.0377595610909793e-08
+    },
+    {
+      "level": 10,
+      "domain": 3,
+      "offset": 1.61,
+      "height": 0.3690600510499351,
+      "scan_height": 0.3690600097179413,
+      "error": 4.133199382749808e-08
+    },
+    {
+      "level": 10,
+      "domain": 3,
+      "offset": 1.99,
+      "height": 0.305849666545817,
+      "scan_height": 0.30584999918937683,
+      "error": 3.3264355980833216e-07
+    },
+    {
+      "level": 10,
+      "domain": 3,
+      "offset": 2.01,
+      "height": 0.3019702760124101,
+      "scan_height": 0.3019697666168213,
+      "error": 5.093955888213486e-07
+    },
+    {
+      "level": 10,
+      "domain": 3,
+      "offset": 2.8,
+      "height": 0.17394372573079142,
+      "scan_height": 0.17394287884235382,
+      "error": 8.468884376000574e-07
+    },
+    {
+      "level": 10,
+      "domain": 4,
+      "offset": 0.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 10,
+      "domain": 4,
+      "offset": 0.65,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 10,
+      "domain": 4,
+      "offset": 0.79,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 10,
+      "domain": 4,
+      "offset": 0.81,
+      "height": 0.22000000000000064,
+      "scan_height": 0.2199999988079071,
+      "error": 1.1920935349962747e-09
+    },
+    {
+      "level": 10,
+      "domain": 4,
+      "offset": 1.0,
+      "height": 0.22000000000000064,
+      "scan_height": 0.2199999988079071,
+      "error": 1.1920935349962747e-09
+    },
+    {
+      "level": 10,
+      "domain": 4,
+      "offset": 1.19,
+      "height": 0.22000000000000064,
+      "scan_height": 0.2199999988079071,
+      "error": 1.1920935349962747e-09
+    },
+    {
+      "level": 10,
+      "domain": 4,
+      "offset": 1.21,
+      "height": 0.22000000000000064,
+      "scan_height": 0.2199999988079071,
+      "error": 1.1920935349962747e-09
+    },
+    {
+      "level": 10,
+      "domain": 4,
+      "offset": 1.59,
+      "height": 0.22000000000000064,
+      "scan_height": 0.2199999988079071,
+      "error": 1.1920935349962747e-09
+    },
+    {
+      "level": 10,
+      "domain": 4,
+      "offset": 1.61,
+      "height": 0.22000000000000064,
+      "scan_height": 0.2199999988079071,
+      "error": 1.1920935349962747e-09
+    },
+    {
+      "level": 10,
+      "domain": 4,
+      "offset": 1.99,
+      "height": 0.22000000000000064,
+      "scan_height": 0.2199999988079071,
+      "error": 1.1920935349962747e-09
+    },
+    {
+      "level": 10,
+      "domain": 4,
+      "offset": 2.01,
+      "height": 0.22000000000000064,
+      "scan_height": 0.2199999988079071,
+      "error": 1.1920935349962747e-09
+    },
+    {
+      "level": 10,
+      "domain": 4,
+      "offset": 2.8,
+      "height": 0.22000000000000064,
+      "scan_height": 0.2199999988079071,
+      "error": 1.1920935349962747e-09
+    },
+    {
+      "level": 10,
+      "domain": 5,
+      "offset": 0.0,
+      "height": 0.22000000000000064,
+      "scan_height": 0.2199999988079071,
+      "error": 1.1920935349962747e-09
+    },
+    {
+      "level": 10,
+      "domain": 5,
+      "offset": 0.65,
+      "height": 0.22000000000000064,
+      "scan_height": 0.2199999988079071,
+      "error": 1.1920935349962747e-09
+    },
+    {
+      "level": 10,
+      "domain": 5,
+      "offset": 0.79,
+      "height": 0.22000000000000064,
+      "scan_height": 0.2199999988079071,
+      "error": 1.1920935349962747e-09
+    },
+    {
+      "level": 10,
+      "domain": 5,
+      "offset": 0.81,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 10,
+      "domain": 5,
+      "offset": 1.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 10,
+      "domain": 5,
+      "offset": 1.19,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 10,
+      "domain": 5,
+      "offset": 1.21,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 10,
+      "domain": 5,
+      "offset": 1.59,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 10,
+      "domain": 5,
+      "offset": 1.61,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 10,
+      "domain": 5,
+      "offset": 1.99,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 10,
+      "domain": 5,
+      "offset": 2.01,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 10,
+      "domain": 5,
+      "offset": 2.8,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 10,
+      "domain": 6,
+      "offset": 0.0,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 10,
+      "domain": 6,
+      "offset": 0.65,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 10,
+      "domain": 6,
+      "offset": 0.79,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 10,
+      "domain": 6,
+      "offset": 0.81,
+      "height": 0.15000000000000036,
+      "scan_height": 0.15000000596046448,
+      "error": 5.960464122267695e-09
+    },
+    {
+      "level": 10,
+      "domain": 6,
+      "offset": 1.0,
+      "height": 0.15000000000000036,
+      "scan_height": 0.15000000596046448,
+      "error": 5.960464122267695e-09
+    },
+    {
+      "level": 10,
+      "domain": 6,
+      "offset": 1.19,
+      "height": 0.15000000000000036,
+      "scan_height": 0.15000000596046448,
+      "error": 5.960464122267695e-09
+    },
+    {
+      "level": 10,
+      "domain": 6,
+      "offset": 1.21,
+      "height": 0.2999999999999998,
+      "scan_height": 0.30000001192092896,
+      "error": 1.1920929132713809e-08
+    },
+    {
+      "level": 10,
+      "domain": 6,
+      "offset": 1.59,
+      "height": 0.2999999999999998,
+      "scan_height": 0.30000001192092896,
+      "error": 1.1920929132713809e-08
+    },
+    {
+      "level": 10,
+      "domain": 6,
+      "offset": 1.61,
+      "height": 0.4500000000000002,
+      "scan_height": 0.45000001788139343,
+      "error": 1.7881393254981504e-08
+    },
+    {
+      "level": 10,
+      "domain": 6,
+      "offset": 1.99,
+      "height": 0.4500000000000002,
+      "scan_height": 0.45000001788139343,
+      "error": 1.7881393254981504e-08
+    },
+    {
+      "level": 10,
+      "domain": 6,
+      "offset": 2.01,
+      "height": 0.6000000000000005,
+      "scan_height": 0.6000000238418579,
+      "error": 2.3841857377249198e-08
+    },
+    {
+      "level": 10,
+      "domain": 6,
+      "offset": 2.8,
+      "height": 0.6000000000000005,
+      "scan_height": 0.6000000238418579,
+      "error": 2.3841857377249198e-08
+    },
+    {
+      "level": 10,
+      "domain": 7,
+      "offset": 0.0,
+      "height": 0.6000000000000005,
+      "scan_height": 0.6000000238418579,
+      "error": 2.3841857377249198e-08
+    },
+    {
+      "level": 10,
+      "domain": 7,
+      "offset": 0.65,
+      "height": 0.6000000000000005,
+      "scan_height": 0.6000000238418579,
+      "error": 2.3841857377249198e-08
+    },
+    {
+      "level": 10,
+      "domain": 7,
+      "offset": 0.79,
+      "height": 0.6000000000000005,
+      "scan_height": 0.6000000238418579,
+      "error": 2.3841857377249198e-08
+    },
+    {
+      "level": 10,
+      "domain": 7,
+      "offset": 0.81,
+      "height": 0.4500000000000002,
+      "scan_height": 0.45000001788139343,
+      "error": 1.7881393254981504e-08
+    },
+    {
+      "level": 10,
+      "domain": 7,
+      "offset": 1.0,
+      "height": 0.4500000000000002,
+      "scan_height": 0.45000001788139343,
+      "error": 1.7881393254981504e-08
+    },
+    {
+      "level": 10,
+      "domain": 7,
+      "offset": 1.19,
+      "height": 0.4500000000000002,
+      "scan_height": 0.45000001788139343,
+      "error": 1.7881393254981504e-08
+    },
+    {
+      "level": 10,
+      "domain": 7,
+      "offset": 1.21,
+      "height": 0.2999999999999998,
+      "scan_height": 0.30000001192092896,
+      "error": 1.1920929132713809e-08
+    },
+    {
+      "level": 10,
+      "domain": 7,
+      "offset": 1.59,
+      "height": 0.2999999999999998,
+      "scan_height": 0.30000001192092896,
+      "error": 1.1920929132713809e-08
+    },
+    {
+      "level": 10,
+      "domain": 7,
+      "offset": 1.61,
+      "height": 0.15000000000000036,
+      "scan_height": 0.15000000596046448,
+      "error": 5.960464122267695e-09
+    },
+    {
+      "level": 10,
+      "domain": 7,
+      "offset": 1.99,
+      "height": 0.15000000000000036,
+      "scan_height": 0.15000000596046448,
+      "error": 5.960464122267695e-09
+    },
+    {
+      "level": 10,
+      "domain": 7,
+      "offset": 2.01,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    },
+    {
+      "level": 10,
+      "domain": 7,
+      "offset": 2.8,
+      "height": 0.0,
+      "scan_height": 0.0,
+      "error": 0.0
+    }
+  ]
+}

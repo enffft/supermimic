@@ -46,6 +46,12 @@ class VelocityRewardCfg:
     # Smooth absolute-error cost supplies gradients outside the Gaussian peak.
     tracking_error_cost: tuple[float, ...] = (0.0, 0.0, 0.0)
     physical_leg_action_rate: bool = False
+    wheel_radius: float = 0.086
+    wheel_consistency: float = 0.0
+    side_drift: float = 0.0
+    stair_progress: float = 0.0
+    stair_success: float = 0.0
+    progress_gamma: float = 0.99
 
     def validate(self):
         import math
@@ -78,6 +84,13 @@ class VelocityRewardCfg:
                 raise ValueError("Expected six nonpositive domain penalty weights")
         if len(self.tracking_error_cost) != 3 or any(x < 0 for x in self.tracking_error_cost):
             raise ValueError("Expected three nonnegative tracking error cost weights")
+        if (
+            self.wheel_radius <= 0
+            or not 0 < self.progress_gamma <= 1
+            or min(self.wheel_consistency, self.side_drift, self.stair_progress, self.stair_success)
+            < 0
+        ):
+            raise ValueError("Invalid wheel/traversal reward protocol")
 
 
 def velocity_reward_terms(
@@ -130,7 +143,7 @@ def velocity_reward_terms(
         leg_rate = (
             leg_position_target(a, control, default, limits)
             - leg_position_target(previous_action, control, default, limits)
-        ) / .25
+        ) / 0.25
     stop_gate = torch.exp(-(command / cfg.stop_reward_command_sigma).square().sum(-1))
     stop = stop_gate * torch.exp(
         -velocity_body[..., :2].square().sum(-1) / cfg.stop_velocity_sigma**2

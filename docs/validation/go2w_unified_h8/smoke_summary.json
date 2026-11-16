@@ -1,0 +1,31 @@
+{
+  "iteration": 50,
+  "wall_h": 0.0159006960412565,
+  "sim_steps": 774144,
+  "wm_loss": 1.3867415189743042,
+  "wm_err8": 3.8854188919067383,
+  "pi_loss": 1.9416613578796387,
+  "v_loss": 0.09028482437133789,
+  "imag_rew": -0.8893581628799438,
+  "pi_gradnorm": 11.027865409851074,
+  "imag_survival": 0.41454219818115234,
+  "sim_rew": -1.1440037886301677,
+  "ep_len": null,
+  "ep_ret_norm": null,
+  "term_frac": 1.0,
+  "it_per_s": 0.7338666457638895,
+  "lr": 0.0003999999632223811,
+  "completed": true,
+  "wall_time": 57.2425057485234,
+  "mode": "smoke",
+  "stop_reason": "iteration_budget",
+  "updates": {
+    "wm": 500,
+    "actor": 50,
+    "critic": 1000
+  },
+  "peak_CPU_MiB": 2491.55078125,
+  "peak_GPU_MiB": 4062.3330078125,
+  "formal_budget_complete": false,
+  "ended_utc": "2026-11-16T12:52:06Z"
+}

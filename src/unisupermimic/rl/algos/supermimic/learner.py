@@ -80,7 +80,7 @@ class SuperMimicConfig:
     terrain_training: bool = False  # explicit opt-in, including no-scan ablation
     terrain_conditioning: bool = False
     terrain_sensor_grad: bool = True
-    critic_terrain_conditioning: bool = False  # reserved, not silently enabled
+    critic_terrain_conditioning: bool = False  # privileged scan at each predicted pose
     actor_lr_scale: float = 1.0
     actor_ramp_iters: int = 0
     critic_warmup_iters: int = 0
@@ -172,10 +172,10 @@ class SuperMimicLearner:
         generated_terrain = (
             getattr(getattr(getattr(env, "cfg", None), "scene", None), "terrain", None) is not None
         )
-        if cfg.critic_terrain_conditioning:
-            raise NotImplementedError(
-                "Privileged terrain critic is not implemented; use the original critic"
-            )
+        if cfg.critic_terrain_conditioning and (
+            cfg.goal_mode != "direct" or getattr(self.mdp, "terrain", None) is None
+        ):
+            raise ValueError("Terrain critic requires direct goals and a collision-aligned heightfield")
         if generated_terrain and cfg.goal_mode == "direct":
             if not cfg.terrain_training or getattr(self.mdp, "terrain", None) is None:
                 raise ValueError(
@@ -456,7 +456,8 @@ class SuperMimicLearner:
                 info["f"],
                 self.mdp.normalize_context(info["xi"]),
             )
-        return int(features.shape[-1] + self.mdp.goal_frame_dim * self.cfg.goal_frames)
+        return int(features.shape[-1] + self.mdp.goal_frame_dim * self.cfg.goal_frames
+                   + (77 if self.cfg.critic_terrain_conditioning else 0))
 
     def _unflatten_state(self, value):
         return unflatten_state(value, getattr(self, "state_layout", None))
@@ -541,7 +542,12 @@ class SuperMimicLearner:
         normalized_context: torch.Tensor,
         goal: torch.Tensor,
     ) -> torch.Tensor:
-        return torch.cat((self.mdp.critic_features(state, frames, normalized_context), goal), -1)
+        parts = (self.mdp.critic_features(state, frames, normalized_context), goal)
+        if self.cfg.critic_terrain_conditioning:
+            # Keep pose derivatives for Actor BPTT through the frozen Critic.
+            # Query this state's pose, never a scan cached at the rollout start.
+            parts += (self.mdp.terrain.local_scan(state[0], state[1], sensor_grad=True),)
+        return torch.cat(parts, -1)
 
     def _batched_reward_term(
         self,

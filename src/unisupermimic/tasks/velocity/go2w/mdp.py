@@ -1,6 +1,7 @@
 """Task-owned proprioception, compact state semantics, and shared reward heads."""
 
 from copy import deepcopy
+from dataclasses import replace
 
 import torch
 
@@ -21,8 +22,13 @@ class Go2WVelocityMdp(Go2VelocityMdp):
     obs_dim = 50
     goal_frame_dim = 3
 
-    def __init__(self, device="cpu", terrain=None, control=None, reward=None):
+    def __init__(self, device="cpu", terrain=None, control=None, reward=None, terrain_modes=False):
         self.device = torch.device(device)
+        if not isinstance(terrain_modes, bool):
+            raise ValueError("terrain_modes must be a boolean")
+        self.terrain_modes = terrain_modes
+        self.goal_frame_dim = 7 if terrain_modes else 3
+        self.policy_spec = replace(POLICY_SPEC, goal_dim=self.goal_frame_dim)
         self.terrain = terrain
         self.control = deepcopy(control) if control is not None else MixedControlCfg()
         self.reward_cfg = deepcopy(reward) if reward is not None else VelocityRewardCfg()
@@ -43,6 +49,7 @@ class Go2WVelocityMdp(Go2VelocityMdp):
             None if self.terrain is None else self.terrain.to(device),
             self.control,
             self.reward_cfg,
+            self.terrain_modes,
         )
 
     @staticmethod
@@ -86,13 +93,15 @@ class Go2WVelocityMdp(Go2VelocityMdp):
         return terrain_plane_normal(scan, state[1], self.reward_cfg.max_target_tilt_deg)
 
     def terms(self, previous, state, goal, action, previous_action, **measurements):
+        if goal.shape[-1] != self.goal_frame_dim:
+            raise ValueError("Go2W goal width differs from task mode protocol")
         normal = measurements.pop("terrain_normal", None)
         if normal is None:
             normal = self.terrain_normal(state)
         return velocity_reward_terms(
             previous,
             state,
-            goal,
+            goal[..., :3],
             action,
             previous_action,
             (self.reward_cfg, self.control, self.default_q, self.limits),

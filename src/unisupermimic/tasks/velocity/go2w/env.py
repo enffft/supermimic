@@ -86,7 +86,7 @@ class Go2WVelocityEnv(Go2VelocityEnv):
             "state_layout": asdict(LAYOUT),
             "state": "p_world,quat_wxyz,v_world,w_world,q_leg12,qd_leg12,qd_wheel4",
             "state_coordinates": "world",
-            "actor": asdict(POLICY_SPEC),
+            "actor": asdict(self.supermimic_mdp.policy_spec),
             "actor_observations": "q_leg-default,qd_leg,qd_wheel,imu_omega,projected_gravity,executed_action",
             "joints": list(JOINTS),
             "position_joints": list(LEG_JOINTS),
@@ -137,6 +137,15 @@ class Go2WVelocityEnv(Go2VelocityEnv):
                 reward.pop("physical_leg_action_rate")
         if cfg.commands["velocity"].actor_level_lookahead == 0:
             contract["commands"].pop("actor_level_lookahead")
+        if not cfg.commands["velocity"].terrain_mode_conditioning:
+            contract["commands"].pop("terrain_mode_conditioning")
+        else:
+            contract["terrain_mode"] = {
+                "names": ["flat", "rough", "slope", "stair"],
+                "domain_to_mode": [0, 1, 2, 2, 3, 3],
+                "source": "environment_task_manager; deployment_requires_explicit_mode",
+                "goal": "velocity3_then_mode_onehot4",
+            }
         control = contract["actions"]["mixed"]["control"]
         if not control["full_leg_target_range"] and control["leg_limit_fraction"] == .90:
             control.pop("full_leg_target_range")

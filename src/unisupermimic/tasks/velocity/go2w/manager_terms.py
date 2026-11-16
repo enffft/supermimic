@@ -122,6 +122,7 @@ class VelocityCommandCfg(CommandTermCfg):
     automatic_wm_skill_transition: bool = True
     persistent_wm_coverage: bool = False
     actor_level_lookahead: int = 0
+    terrain_mode_conditioning: bool = False
     spawn_height: float = 0.42
     spawn_heading: float = 0.0
 
@@ -142,9 +143,10 @@ class VelocityCommand(CommandTerm):
         if tuple(self.robot.joint_names) != JOINTS:
             raise ValueError("Go2W named joint order mismatch")
         self.mdp = Go2WVelocityMdp(
-            env.device, control=env.cfg.actions["mixed"].control, reward=cfg.reward
+            env.device, control=env.cfg.actions["mixed"].control, reward=cfg.reward,
+            terrain_modes=cfg.terrain_mode_conditioning,
         )
-        self.g = torch.zeros(self.num_envs, 3, device=env.device)
+        self.g = torch.zeros(self.num_envs, self.mdp.goal_frame_dim, device=env.device)
         self.xi = torch.zeros(self.num_envs, self.mdp.context_dim, device=env.device)
         self.a_prev = torch.zeros(self.num_envs, 16, device=env.device)
         self.ep_step = torch.zeros(self.num_envs, dtype=torch.int32, device=env.device)
@@ -214,7 +216,13 @@ class VelocityCommand(CommandTerm):
             goal = goal.new_tensor(self.cfg.fixed_command).expand_as(goal)
             mode = command_modes(goal)
             crossing = (self.command_domain != 0) & (mode == 1)
-        self.g.copy_(torch.where(mask[:, None], goal, self.g))
+        self.g[:, :3].copy_(torch.where(mask[:, None], goal, self.g[:, :3]))
+        if self.cfg.terrain_mode_conditioning:
+            # Task manager supplies this label. No terrain sensor, target, level,
+            # contact or future information is used to infer the Actor's mode.
+            modes = self.command_domain.new_tensor((0, 1, 2, 2, 3, 3))[self.command_domain]
+            onehot = torch.nn.functional.one_hot(modes, num_classes=4).to(self.g)
+            self.g[:, 3:].copy_(torch.where(mask[:, None], onehot, self.g[:, 3:]))
         self.command_mode.copy_(torch.where(mask, mode, self.command_mode))
         self.crossing_episode.copy_(torch.where(mask, crossing, self.crossing_episode))
         self.time_left.copy_(torch.where(mask, hold, self.time_left))

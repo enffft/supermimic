@@ -1,0 +1,38 @@
+{
+  "path": "/home/yifeiy/ws_go2_unilab/runs/go2w_unified_audit_20261116/calibration/calibrated_candidate.pt",
+  "file_sha256": "7987820a19d088e985be3bc1d1aade8c3145679e708e8b87103ed7f2b20c0da9",
+  "tensor_sha256": "fc0def8d2a5e00cdcd01b3cb41f82351a4e7a7a15723ca299c7f4d936fbd95f0",
+  "source_checkpoint": "/home/yifeiy/ws_go2_unilab/runs/go2w_unified_audit_20261116/calibration/last.pt",
+  "source_iteration": 0,
+  "source_wm_updates": 200,
+  "run_wm_updates": 0,
+  "restored": [
+    "WM_network",
+    "input_normalizer",
+    "output_normalizer",
+    "increment_normalizer"
+  ],
+  "optimizer_initialization": "fresh Adam; empty state; step zero",
+  "normalizer_counts": {
+    "in_norm.count": 61685760.0,
+    "out_norm.count": 61685760.0,
+    "inc_norm.count": 61685760.0
+  },
+  "actor_critic_before": {
+    "actor": "8f2700f369f8293e5e25b0708795c7ee3b76d60db1a39223b43300e4aacad87a",
+    "critic": "3de046887a42b5b293f93888e7df2152eec41de1f04eaf49f22638d55a31ded7"
+  },
+  "actor_critic_after": {
+    "actor": "8f2700f369f8293e5e25b0708795c7ee3b76d60db1a39223b43300e4aacad87a",
+    "critic": "3de046887a42b5b293f93888e7df2152eec41de1f04eaf49f22638d55a31ded7"
+  },
+  "replay_size": 0,
+  "iteration": 0,
+  "update_counts": {
+    "wm": 0,
+    "actor": 0,
+    "critic": 0
+  },
+  "frozen": false,
+  "old_replay_loaded": false
+}

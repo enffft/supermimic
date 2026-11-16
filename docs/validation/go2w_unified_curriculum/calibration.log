@@ -1,0 +1,20 @@
+WARNING: Attach conflict when attaching 'Go2WVelocitySuperMimic', policy is 'warning'
+timestep: parent has 0.002 (default), child has 0.005, keeping parent value
+impratio: parent has 1 (default), child has 100, keeping parent value
+cone: parent has 0 (default), child has 1, keeping parent value
+
+/home/yifeiy/miniconda3/envs/go2_unilab/lib/python3.12/site-packages/unisim/backend/mujoco/xml.py:490: UserWarning: Attach conflict when attaching 'Go2WVelocitySuperMimic', policy is 'warning'
+timestep: parent has 0.002 (default), child has 0.005, keeping parent value
+impratio: parent has 1 (default), child has 100, keeping parent value
+cone: parent has 0 (default), child has 1, keeping parent value
+  root = ET.fromstring(spec.to_xml())
+{"updates": 20, "loss": 6.320732116699219, "seconds": 0.6826616139151156}
+{"updates": 40, "loss": 2.1225714683532715, "seconds": 1.1517199520021677}
+{"updates": 60, "loss": 4.294571876525879, "seconds": 1.6218436458148062}
+{"updates": 80, "loss": 2.4254543781280518, "seconds": 2.0874703750014305}
+{"updates": 100, "loss": 2.7117717266082764, "seconds": 2.55173127586022}
+{"updates": 120, "loss": 1.7203391790390015, "seconds": 3.0186056608799845}
+{"updates": 140, "loss": 2.899686098098755, "seconds": 3.485417334828526}
+{"updates": 160, "loss": 1.3124539852142334, "seconds": 4.056448592804372}
+{"updates": 180, "loss": 1.1363511085510254, "seconds": 4.800569261889905}
+{"updates": 200, "loss": 2.488476514816284, "seconds": 5.264704139903188}

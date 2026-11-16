@@ -1,0 +1,366 @@
+{
+  "base_head": "bc4d172d5c93239b0e50e32e3481cd83601dff76",
+  "baseline_commit": "6784ac8ed6f0f6f377063fa6b32633529b5f678f",
+  "file_sha256": "3c3c4d1c5e70bb12c8cc68274fda39003e465c6ec1fbe745c0729f9f7d028610",
+  "tensor_sha256": "ed04040096a0b0254fb58ef18ffa65ef7bf2c1f07e15fa7a2e6df36c7428c490",
+  "stored_tensor_sha256": "ed04040096a0b0254fb58ef18ffa65ef7bf2c1f07e15fa7a2e6df36c7428c490",
+  "source_checkpoint": "/home/yifeiy/ws_go2_unilab/runs/go2w_omni_v3_2h_20261114/training/last.pt",
+  "source_tensor_sha256": "ed04040096a0b0254fb58ef18ffa65ef7bf2c1f07e15fa7a2e6df36c7428c490",
+  "source_iteration": 4765,
+  "dynamics_contract": {
+    "schema": "go2w_velocity_supermimic_v2",
+    "state_layout": {
+      "joint_position_dim": 12,
+      "joint_velocity_dim": 16,
+      "action_dim": 16,
+      "position_velocity_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "version": "go2w_compact_state_v1"
+    },
+    "state": "p_world,quat_wxyz,v_world,w_world,q_leg12,qd_leg12,qd_wheel4",
+    "state_coordinates": "world",
+    "joints": [
+      "robot/FL_hip_joint",
+      "robot/FL_thigh_joint",
+      "robot/FL_calf_joint",
+      "robot/FR_hip_joint",
+      "robot/FR_thigh_joint",
+      "robot/FR_calf_joint",
+      "robot/RL_hip_joint",
+      "robot/RL_thigh_joint",
+      "robot/RL_calf_joint",
+      "robot/RR_hip_joint",
+      "robot/RR_thigh_joint",
+      "robot/RR_calf_joint",
+      "robot/FL_wheel_joint",
+      "robot/FR_wheel_joint",
+      "robot/RL_wheel_joint",
+      "robot/RR_wheel_joint"
+    ],
+    "position_joints": [
+      "robot/FL_hip_joint",
+      "robot/FL_thigh_joint",
+      "robot/FL_calf_joint",
+      "robot/FR_hip_joint",
+      "robot/FR_thigh_joint",
+      "robot/FR_calf_joint",
+      "robot/RL_hip_joint",
+      "robot/RL_thigh_joint",
+      "robot/RL_calf_joint",
+      "robot/RR_hip_joint",
+      "robot/RR_thigh_joint",
+      "robot/RR_calf_joint"
+    ],
+    "wheel_joints": [
+      "robot/FL_wheel_joint",
+      "robot/FR_wheel_joint",
+      "robot/RL_wheel_joint",
+      "robot/RR_wheel_joint"
+    ],
+    "physical_qpos_joints": [
+      "robot/FL_hip_joint",
+      "robot/FL_thigh_joint",
+      "robot/FL_calf_joint",
+      "robot/FL_wheel_joint",
+      "robot/FR_hip_joint",
+      "robot/FR_thigh_joint",
+      "robot/FR_calf_joint",
+      "robot/FR_wheel_joint",
+      "robot/RL_hip_joint",
+      "robot/RL_thigh_joint",
+      "robot/RL_calf_joint",
+      "robot/RL_wheel_joint",
+      "robot/RR_hip_joint",
+      "robot/RR_thigh_joint",
+      "robot/RR_calf_joint",
+      "robot/RR_wheel_joint"
+    ],
+    "physical_actuators": [
+      "robot/FR_hip_joint",
+      "robot/FR_thigh_joint",
+      "robot/FR_calf_joint",
+      "robot/FL_hip_joint",
+      "robot/FL_thigh_joint",
+      "robot/FL_calf_joint",
+      "robot/RR_hip_joint",
+      "robot/RR_thigh_joint",
+      "robot/RR_calf_joint",
+      "robot/RL_hip_joint",
+      "robot/RL_thigh_joint",
+      "robot/RL_calf_joint",
+      "robot/FR_wheel_joint",
+      "robot/FL_wheel_joint",
+      "robot/RR_wheel_joint",
+      "robot/RL_wheel_joint"
+    ],
+    "control_protocol": "substep_effort;leg_default_centered_joint_range_PD;wheel_velocity_PD;gear1;saturated",
+    "actions": {
+      "mixed": {
+        "entity_name": "robot",
+        "clip": null,
+        "control": {
+          "dt": 0.02,
+          "leg_position_scale": 0.25,
+          "full_leg_target_range": true,
+          "leg_limit_fraction": 0.95,
+          "leg_kp": 40.0,
+          "leg_kd": 1.0,
+          "wheel_kp": 0.0,
+          "wheel_kd": 0.5,
+          "wheel_velocity_scale": 15.0,
+          "leg_effort_limits": [
+            23.7,
+            23.7,
+            45.43,
+            23.7,
+            23.7,
+            45.43,
+            23.7,
+            23.7,
+            45.43,
+            23.7,
+            23.7,
+            45.43
+          ],
+          "wheel_effort_limits": [
+            15.0,
+            15.0,
+            15.0,
+            15.0
+          ]
+        }
+      }
+    },
+    "context": "nominal_physics_empty_context",
+    "model_assets_sha256": {
+      "terrain_robot.xml": "7425da3e392362dd44999c6835c571e76c3f1e2bd552c8fd29dfb00f2df2fc38",
+      "wheel.stl": "51c95e80dcd41c0cf1a9575d4d7c2c89855848f7fa2c4bf28f2f10c2e3d639e2"
+    },
+    "terrain_sensor": "world_collision_triangles;predicted_pose_each_step;11x7_yaw_scan",
+    "sim_dt": 0.005,
+    "ctrl_dt": 0.02
+  },
+  "architecture": {
+    "wm_hidden": [
+      2048,
+      2048,
+      2048
+    ],
+    "wm_structured": true,
+    "terrain_conditioning": true,
+    "terrain_sensor_grad": true
+  },
+  "normalizers": {
+    "in_norm.count": 61677568.0,
+    "out_norm.count": 61677568.0,
+    "inc_norm.count": 61677568.0
+  },
+  "all_tensors_finite": true,
+  "source_comparisons": {
+    "tasks/velocity/go2w/contract.py": {
+      "working_baseline": "0dd4396644c476496d11c3046ead62fa99d05bd6ac0a3389c36d27d21592c57b",
+      "actual_wm_snapshot": "0dd4396644c476496d11c3046ead62fa99d05bd6ac0a3389c36d27d21592c57b",
+      "continual_snapshot": "0dd4396644c476496d11c3046ead62fa99d05bd6ac0a3389c36d27d21592c57b"
+    },
+    "tasks/velocity/go2w/manager_terms.py": {
+      "working_baseline": "5856a83f7dabb0166fa30a51b1ccec58f07a3766127fd85e7fd00d4889d3a854",
+      "actual_wm_snapshot": "5856a83f7dabb0166fa30a51b1ccec58f07a3766127fd85e7fd00d4889d3a854",
+      "continual_snapshot": "badb822bb054120af24b30c7a31d4b2c4ab10c79ab5878c36fe3685ab5b0da24"
+    },
+    "tasks/velocity/go2w/mdp.py": {
+      "working_baseline": "3e667c19dfd54842589eb8acef263ec679d313f9759409715a46f4e889312175",
+      "actual_wm_snapshot": "3e667c19dfd54842589eb8acef263ec679d313f9759409715a46f4e889312175",
+      "continual_snapshot": "3e667c19dfd54842589eb8acef263ec679d313f9759409715a46f4e889312175"
+    },
+    "tasks/velocity/go2w/env.py": {
+      "working_baseline": "aed69801a6fd5f22de7272c03c0cb17029ce0122b49f196cb6e7d5b8c95243f4",
+      "actual_wm_snapshot": "aed69801a6fd5f22de7272c03c0cb17029ce0122b49f196cb6e7d5b8c95243f4",
+      "continual_snapshot": "42fbd57711f0cedfa71bd0035bd557a9c150eb040675740c3488964919340491"
+    },
+    "tasks/velocity/go2/env.py": {
+      "working_baseline": "24d38a2b316c5921c0a4b65bdd297928d0878e6eb124fc6c29b92198094f91fc",
+      "actual_wm_snapshot": "2ddc5608fb245bc8de2f710e6dc3fc5c1fe2734baedd5aac7f5ff6e9d2a692e1",
+      "continual_snapshot": "2ddc5608fb245bc8de2f710e6dc3fc5c1fe2734baedd5aac7f5ff6e9d2a692e1"
+    },
+    "rl/algos/supermimic/networks.py": {
+      "working_baseline": "1a87010c8bf4c530e2f86a10618681e7219fb8a716295a9270c3ebde3c928608",
+      "actual_wm_snapshot": "1a87010c8bf4c530e2f86a10618681e7219fb8a716295a9270c3ebde3c928608",
+      "continual_snapshot": "1a87010c8bf4c530e2f86a10618681e7219fb8a716295a9270c3ebde3c928608"
+    },
+    "rl/algos/supermimic/learner.py": {
+      "working_baseline": "9d20662f05eba52ed5c19faf2c6fd3cb3d43555dbad01f2e14cf20ce4e907d84",
+      "actual_wm_snapshot": "ca44d114f15185a6e28c7c884cb40388d882939eafb961a84dcacb29bda634b3",
+      "continual_snapshot": "ca44d114f15185a6e28c7c884cb40388d882939eafb961a84dcacb29bda634b3"
+    },
+    "rl/algos/supermimic/replay.py": {
+      "working_baseline": "617508c5e99c1bd0ae3542fab60bf4702733c5333565e0beab6c22cfcbcec66a",
+      "actual_wm_snapshot": "93d38ab26531ebf8c5168ac2713741d60640e160a5edcb248c333ab6f31d1805",
+      "continual_snapshot": "93d38ab26531ebf8c5168ac2713741d60640e160a5edcb248c333ab6f31d1805"
+    }
+  },
+  "replay_fields": {
+    "s": {
+      "dtype": "torch.float32",
+      "shape": [
+        1024,
+        4096,
+        41
+      ],
+      "bytes": 687865856
+    },
+    "s1": {
+      "dtype": "torch.float32",
+      "shape": [
+        1024,
+        4096,
+        41
+      ],
+      "bytes": 687865856
+    },
+    "a": {
+      "dtype": "torch.float32",
+      "shape": [
+        1024,
+        4096,
+        16
+      ],
+      "bytes": 268435456
+    },
+    "a_prev": {
+      "dtype": "torch.float32",
+      "shape": [
+        1024,
+        4096,
+        16
+      ],
+      "bytes": 268435456
+    },
+    "xi": {
+      "dtype": "torch.float32",
+      "shape": [
+        1024,
+        4096,
+        0
+      ],
+      "bytes": 0
+    },
+    "r": {
+      "dtype": "torch.float32",
+      "shape": [
+        1024,
+        4096
+      ],
+      "bytes": 16777216
+    },
+    "f": {
+      "dtype": "torch.int64",
+      "shape": [
+        1024,
+        4096
+      ],
+      "bytes": 33554432
+    },
+    "ep_step": {
+      "dtype": "torch.int32",
+      "shape": [
+        1024,
+        4096
+      ],
+      "bytes": 16777216
+    },
+    "done": {
+      "dtype": "torch.bool",
+      "shape": [
+        1024,
+        4096
+      ],
+      "bytes": 4194304
+    },
+    "g": {
+      "dtype": "torch.float32",
+      "shape": [
+        1024,
+        4096,
+        7
+      ],
+      "bytes": 117440512
+    },
+    "terrain_type": {
+      "dtype": "torch.int64",
+      "shape": [
+        1024,
+        4096
+      ],
+      "bytes": 33554432
+    },
+    "terrain_level": {
+      "dtype": "torch.int64",
+      "shape": [
+        1024,
+        4096
+      ],
+      "bytes": 33554432
+    },
+    "terrain_probe": {
+      "dtype": "torch.bool",
+      "shape": [
+        1024,
+        4096
+      ],
+      "bytes": 4194304
+    },
+    "command_domain": {
+      "dtype": "torch.int64",
+      "shape": [
+        1024,
+        4096
+      ],
+      "bytes": 33554432
+    },
+    "command_mode": {
+      "dtype": "torch.int64",
+      "shape": [
+        1024,
+        4096
+      ],
+      "bytes": 33554432
+    },
+    "crossing_episode": {
+      "dtype": "torch.bool",
+      "shape": [
+        1024,
+        4096
+      ],
+      "bytes": 4194304
+    },
+    "term": {
+      "dtype": "torch.bool",
+      "shape": [
+        1024,
+        4096
+      ],
+      "bytes": 4194304
+    },
+    "command_speed_level": {
+      "dtype": "torch.int64",
+      "shape": [
+        1024,
+        4096
+      ],
+      "bytes": 33554432
+    }
+  },
+  "replay_total_bytes": 2281701376
+}

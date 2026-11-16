@@ -1,0 +1,38 @@
+{
+  "original_worktree_status_unchanged": true,
+  "original_wm_file_sha256": "3c3c4d1c5e70bb12c8cc68274fda39003e465c6ec1fbe745c0729f9f7d028610",
+  "formal_training_started": false,
+  "formal_training_seconds": 0,
+  "formal_updates": {
+    "wm": 0,
+    "actor": 0,
+    "critic": 0
+  },
+  "calibration_updates": {
+    "wm": 200,
+    "actor": 0,
+    "critic": 0
+  },
+  "source_direction_failures": 9,
+  "calibrated_direction_failures": 17,
+  "unit_regression": {
+    "passed": 116,
+    "skipped": 2
+  },
+  "physical_regression": {
+    "passed": 1
+  },
+  "replay_target_bytes_existing_metadata": 2281701376,
+  "calibration_GPU_peak_bytes": 281617408,
+  "blocked_gate": "H16 physical action-direction consistency",
+  "unimplemented": [
+    "ten_level_curriculum",
+    "single_step_target_reward",
+    "wheel_consistency_reward",
+    "historical_window_bank",
+    "4096x1024_smoke",
+    "fixed_full_physical_evaluation_matrix",
+    "formal_14400s_runner",
+    "new_mode_play_export"
+  ]
+}

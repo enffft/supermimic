@@ -1,0 +1,1457 @@
+{
+  "collect_time": 6.839047193527222,
+  "learn_time": 1.1880388259887695,
+  "loss_dict": {
+    "value": 1.4463345338900884,
+    "surrogate": 0.17208140041523923,
+    "entropy": -39.8780132929484
+  },
+  "learning_rate": 1e-05,
+  "records": [
+    {
+      "minibatch": 1,
+      "KL_mean": 0.0,
+      "learning_rate_before_schedule": 0.0002,
+      "learning_rate_after_schedule": 0.0002
+    },
+    {
+      "minibatch": 2,
+      "KL_mean": 13.878283500671387,
+      "learning_rate_before_schedule": 0.0002,
+      "learning_rate_after_schedule": 0.00013333333333333334
+    },
+    {
+      "minibatch": 3,
+      "KL_mean": 30.927433013916016,
+      "learning_rate_before_schedule": 0.00013333333333333334,
+      "learning_rate_after_schedule": 8.888888888888889e-05
+    },
+    {
+      "minibatch": 4,
+      "KL_mean": 27.9395809173584,
+      "learning_rate_before_schedule": 8.888888888888889e-05,
+      "learning_rate_after_schedule": 5.925925925925926e-05
+    },
+    {
+      "minibatch": 5,
+      "KL_mean": 26.590831756591797,
+      "learning_rate_before_schedule": 5.925925925925926e-05,
+      "learning_rate_after_schedule": 3.950617283950617e-05
+    },
+    {
+      "minibatch": 6,
+      "KL_mean": 25.573089599609375,
+      "learning_rate_before_schedule": 3.950617283950617e-05,
+      "learning_rate_after_schedule": 2.6337448559670783e-05
+    },
+    {
+      "minibatch": 7,
+      "KL_mean": 27.126964569091797,
+      "learning_rate_before_schedule": 2.6337448559670783e-05,
+      "learning_rate_after_schedule": 1.755829903978052e-05
+    },
+    {
+      "minibatch": 8,
+      "KL_mean": 28.767780303955078,
+      "learning_rate_before_schedule": 1.755829903978052e-05,
+      "learning_rate_after_schedule": 1.1705532693187015e-05
+    },
+    {
+      "minibatch": 9,
+      "KL_mean": 28.7115535736084,
+      "learning_rate_before_schedule": 1.1705532693187015e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 10,
+      "KL_mean": 30.265090942382812,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 11,
+      "KL_mean": 30.68878936767578,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 12,
+      "KL_mean": 29.572128295898438,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 13,
+      "KL_mean": 30.298994064331055,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 14,
+      "KL_mean": 30.911598205566406,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 15,
+      "KL_mean": 31.568401336669922,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 16,
+      "KL_mean": 30.80552101135254,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 17,
+      "KL_mean": 30.646484375,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 18,
+      "KL_mean": 31.33401107788086,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 19,
+      "KL_mean": 31.056812286376953,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 20,
+      "KL_mean": 29.882061004638672,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 21,
+      "KL_mean": 29.08083724975586,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 22,
+      "KL_mean": 31.001401901245117,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 23,
+      "KL_mean": 29.57908058166504,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 24,
+      "KL_mean": 29.74036407470703,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 25,
+      "KL_mean": 29.94853973388672,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 26,
+      "KL_mean": 29.90719223022461,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 27,
+      "KL_mean": 30.02567481994629,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 28,
+      "KL_mean": 30.66424560546875,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 29,
+      "KL_mean": 29.11526870727539,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 30,
+      "KL_mean": 31.59478187561035,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 31,
+      "KL_mean": 30.466938018798828,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 32,
+      "KL_mean": 30.700899124145508,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 33,
+      "KL_mean": 29.738117218017578,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 34,
+      "KL_mean": 30.600662231445312,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 35,
+      "KL_mean": 30.525022506713867,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 36,
+      "KL_mean": 29.02711296081543,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 37,
+      "KL_mean": 30.83136558532715,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 38,
+      "KL_mean": 28.806777954101562,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 39,
+      "KL_mean": 28.355628967285156,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 40,
+      "KL_mean": 29.76134490966797,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 41,
+      "KL_mean": 29.673051834106445,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 42,
+      "KL_mean": 28.87089729309082,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 43,
+      "KL_mean": 27.987607955932617,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 44,
+      "KL_mean": 28.364192962646484,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 45,
+      "KL_mean": 27.34280776977539,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 46,
+      "KL_mean": 28.129470825195312,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 47,
+      "KL_mean": 27.674571990966797,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 48,
+      "KL_mean": 27.11733627319336,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 49,
+      "KL_mean": 28.60703468322754,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 50,
+      "KL_mean": 27.731204986572266,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 51,
+      "KL_mean": 27.849124908447266,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 52,
+      "KL_mean": 28.12537384033203,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 53,
+      "KL_mean": 27.44042205810547,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 54,
+      "KL_mean": 25.446462631225586,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 55,
+      "KL_mean": 25.816822052001953,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 56,
+      "KL_mean": 27.179460525512695,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 57,
+      "KL_mean": 26.058515548706055,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 58,
+      "KL_mean": 26.79595947265625,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 59,
+      "KL_mean": 26.355369567871094,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 60,
+      "KL_mean": 25.285839080810547,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 61,
+      "KL_mean": 25.740230560302734,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 62,
+      "KL_mean": 25.78411293029785,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 63,
+      "KL_mean": 25.631193161010742,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 64,
+      "KL_mean": 24.73490333557129,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 65,
+      "KL_mean": 24.088756561279297,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 66,
+      "KL_mean": 24.626134872436523,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 67,
+      "KL_mean": 24.1383056640625,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 68,
+      "KL_mean": 23.127182006835938,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 69,
+      "KL_mean": 22.238300323486328,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 70,
+      "KL_mean": 23.83828353881836,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 71,
+      "KL_mean": 22.414215087890625,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 72,
+      "KL_mean": 22.351255416870117,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 73,
+      "KL_mean": 21.977468490600586,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 74,
+      "KL_mean": 21.66735076904297,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 75,
+      "KL_mean": 21.38009262084961,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 76,
+      "KL_mean": 21.250898361206055,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 77,
+      "KL_mean": 19.75513458251953,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 78,
+      "KL_mean": 21.892108917236328,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 79,
+      "KL_mean": 19.288244247436523,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 80,
+      "KL_mean": 19.5899658203125,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 81,
+      "KL_mean": 18.60572052001953,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 82,
+      "KL_mean": 18.868295669555664,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 83,
+      "KL_mean": 18.949825286865234,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 84,
+      "KL_mean": 17.559040069580078,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 85,
+      "KL_mean": 19.358919143676758,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 86,
+      "KL_mean": 17.665260314941406,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 87,
+      "KL_mean": 17.779672622680664,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 88,
+      "KL_mean": 19.231346130371094,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 89,
+      "KL_mean": 19.04582977294922,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 90,
+      "KL_mean": 18.448394775390625,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 91,
+      "KL_mean": 18.214771270751953,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 92,
+      "KL_mean": 18.8270206451416,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 93,
+      "KL_mean": 18.001220703125,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 94,
+      "KL_mean": 18.800907135009766,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 95,
+      "KL_mean": 18.62323760986328,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 96,
+      "KL_mean": 18.107606887817383,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 97,
+      "KL_mean": 19.31905746459961,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 98,
+      "KL_mean": 18.618804931640625,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 99,
+      "KL_mean": 18.530662536621094,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 100,
+      "KL_mean": 18.758773803710938,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 101,
+      "KL_mean": 17.909610748291016,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 102,
+      "KL_mean": 15.832840919494629,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 103,
+      "KL_mean": 16.42427635192871,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 104,
+      "KL_mean": 17.744747161865234,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 105,
+      "KL_mean": 16.90575408935547,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 106,
+      "KL_mean": 17.86334800720215,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 107,
+      "KL_mean": 17.62661361694336,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 108,
+      "KL_mean": 16.98333740234375,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 109,
+      "KL_mean": 17.903440475463867,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 110,
+      "KL_mean": 17.878421783447266,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 111,
+      "KL_mean": 18.230487823486328,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 112,
+      "KL_mean": 17.31863021850586,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 113,
+      "KL_mean": 16.979944229125977,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 114,
+      "KL_mean": 17.866235733032227,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 115,
+      "KL_mean": 17.424579620361328,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 116,
+      "KL_mean": 16.76723861694336,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 117,
+      "KL_mean": 15.956169128417969,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 118,
+      "KL_mean": 17.54998016357422,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 119,
+      "KL_mean": 16.492435455322266,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 120,
+      "KL_mean": 16.700733184814453,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 121,
+      "KL_mean": 16.32624053955078,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 122,
+      "KL_mean": 16.15352439880371,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 123,
+      "KL_mean": 16.17999267578125,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 124,
+      "KL_mean": 16.163724899291992,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 125,
+      "KL_mean": 15.48301887512207,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 126,
+      "KL_mean": 17.763132095336914,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 127,
+      "KL_mean": 14.890360832214355,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 128,
+      "KL_mean": 15.662877082824707,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 129,
+      "KL_mean": 14.532041549682617,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 130,
+      "KL_mean": 14.914510726928711,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 131,
+      "KL_mean": 15.063404083251953,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 132,
+      "KL_mean": 13.880341529846191,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 133,
+      "KL_mean": 15.722450256347656,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 134,
+      "KL_mean": 13.961313247680664,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 135,
+      "KL_mean": 13.945480346679688,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 136,
+      "KL_mean": 15.208284378051758,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 137,
+      "KL_mean": 14.547119140625,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 138,
+      "KL_mean": 14.191798210144043,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 139,
+      "KL_mean": 13.787802696228027,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 140,
+      "KL_mean": 14.30212688446045,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 141,
+      "KL_mean": 13.464064598083496,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 142,
+      "KL_mean": 14.228259086608887,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 143,
+      "KL_mean": 13.95926570892334,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 144,
+      "KL_mean": 13.632390975952148,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 145,
+      "KL_mean": 14.657624244689941,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 146,
+      "KL_mean": 13.98772144317627,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 147,
+      "KL_mean": 13.727664947509766,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 148,
+      "KL_mean": 14.266016006469727,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 149,
+      "KL_mean": 13.434895515441895,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 150,
+      "KL_mean": 11.78577709197998,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 151,
+      "KL_mean": 12.595699310302734,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 152,
+      "KL_mean": 13.859685897827148,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 153,
+      "KL_mean": 13.300209045410156,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 154,
+      "KL_mean": 14.148564338684082,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 155,
+      "KL_mean": 14.023456573486328,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 156,
+      "KL_mean": 13.338863372802734,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 157,
+      "KL_mean": 14.195096969604492,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 158,
+      "KL_mean": 13.997652053833008,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 159,
+      "KL_mean": 14.155778884887695,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 160,
+      "KL_mean": 13.027083396911621,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 161,
+      "KL_mean": 12.55362319946289,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 162,
+      "KL_mean": 13.572515487670898,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 163,
+      "KL_mean": 13.43559455871582,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 164,
+      "KL_mean": 13.14399528503418,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 165,
+      "KL_mean": 12.792800903320312,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 166,
+      "KL_mean": 14.504484176635742,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 167,
+      "KL_mean": 13.569571495056152,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 168,
+      "KL_mean": 14.028284072875977,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 169,
+      "KL_mean": 13.776596069335938,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 170,
+      "KL_mean": 13.379560470581055,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 171,
+      "KL_mean": 13.20747184753418,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 172,
+      "KL_mean": 13.065347671508789,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 173,
+      "KL_mean": 12.610538482666016,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 174,
+      "KL_mean": 14.906854629516602,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 175,
+      "KL_mean": 12.052334785461426,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 176,
+      "KL_mean": 13.089683532714844,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 177,
+      "KL_mean": 12.188569068908691,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 178,
+      "KL_mean": 12.67869758605957,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 179,
+      "KL_mean": 13.144603729248047,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 180,
+      "KL_mean": 12.308113098144531,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 181,
+      "KL_mean": 14.03177261352539,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 182,
+      "KL_mean": 12.252606391906738,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 183,
+      "KL_mean": 12.169599533081055,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 184,
+      "KL_mean": 13.311729431152344,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 185,
+      "KL_mean": 12.486588478088379,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 186,
+      "KL_mean": 12.268875122070312,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 187,
+      "KL_mean": 12.01325798034668,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 188,
+      "KL_mean": 12.632997512817383,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 189,
+      "KL_mean": 11.912912368774414,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 190,
+      "KL_mean": 12.857522010803223,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 191,
+      "KL_mean": 12.62806224822998,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 192,
+      "KL_mean": 12.368809700012207,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 193,
+      "KL_mean": 13.29925537109375,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 194,
+      "KL_mean": 12.703399658203125,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 195,
+      "KL_mean": 12.40300178527832,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 196,
+      "KL_mean": 12.911331176757812,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 197,
+      "KL_mean": 12.166631698608398,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 198,
+      "KL_mean": 10.838804244995117,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 199,
+      "KL_mean": 11.63052749633789,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 200,
+      "KL_mean": 13.001407623291016,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 201,
+      "KL_mean": 12.553979873657227,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 202,
+      "KL_mean": 13.337259292602539,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 203,
+      "KL_mean": 13.307924270629883,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 204,
+      "KL_mean": 12.613778114318848,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 205,
+      "KL_mean": 13.323540687561035,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 206,
+      "KL_mean": 12.9978609085083,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 207,
+      "KL_mean": 13.070394515991211,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 208,
+      "KL_mean": 12.054043769836426,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 209,
+      "KL_mean": 11.700727462768555,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 210,
+      "KL_mean": 12.805536270141602,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 211,
+      "KL_mean": 12.72956371307373,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 212,
+      "KL_mean": 12.531045913696289,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 213,
+      "KL_mean": 12.182971954345703,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 214,
+      "KL_mean": 13.813753128051758,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 215,
+      "KL_mean": 12.83830451965332,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 216,
+      "KL_mean": 13.102734565734863,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 217,
+      "KL_mean": 12.681575775146484,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 218,
+      "KL_mean": 12.030075073242188,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 219,
+      "KL_mean": 11.843013763427734,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 220,
+      "KL_mean": 11.548356056213379,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 221,
+      "KL_mean": 11.30862045288086,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 222,
+      "KL_mean": 13.80251693725586,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 223,
+      "KL_mean": 11.239256858825684,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 224,
+      "KL_mean": 12.524662017822266,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 225,
+      "KL_mean": 11.840246200561523,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 226,
+      "KL_mean": 12.190383911132812,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 227,
+      "KL_mean": 12.400400161743164,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 228,
+      "KL_mean": 11.518464088439941,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 229,
+      "KL_mean": 12.809836387634277,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 230,
+      "KL_mean": 11.22294807434082,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 231,
+      "KL_mean": 11.152901649475098,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 232,
+      "KL_mean": 12.424555778503418,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 233,
+      "KL_mean": 11.613533973693848,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 234,
+      "KL_mean": 11.656771659851074,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 235,
+      "KL_mean": 11.509415626525879,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 236,
+      "KL_mean": 12.034059524536133,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 237,
+      "KL_mean": 11.325756072998047,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 238,
+      "KL_mean": 12.15307331085205,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 239,
+      "KL_mean": 11.83010482788086,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "minibatch": 240,
+      "KL_mean": 11.5575590133667,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    }
+  ],
+  "initial_std": 0.02,
+  "initial_learning_rate": 0.0002,
+  "transitions": 98304,
+  "native_optimizer_steps": 240,
+  "note": "One diagnostic native PPO update, in-memory Actor/Critic only; no saved weights or WM mutated"
+}

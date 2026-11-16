@@ -132,6 +132,7 @@ def velocity_reward_terms(
     measured_joint_acceleration: torch.Tensor | None = None,
     base_height: torch.Tensor | None = None,
     foot_ground: torch.Tensor | None = None,
+    clearance_weight: torch.Tensor | None = None,
 ) -> dict[str, torch.Tensor]:
     """Return weighted reward-rate terms, without multiplying by control ``dt``.
 
@@ -208,7 +209,15 @@ def velocity_reward_terms(
             params.cfg.min_safe_height - (s_next[..., 2] if base_height is None else base_height)
         ).square(),
     }
-    terms.update(go2_gait_reward_terms(s_next, goal, params.cfg.gait, foot_ground=foot_ground))
+    terms.update(
+        go2_gait_reward_terms(
+            s_next,
+            goal,
+            params.cfg.gait,
+            foot_ground=foot_ground,
+            clearance_weight=clearance_weight,
+        )
+    )
     return terms
 
 

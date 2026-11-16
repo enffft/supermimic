@@ -1,0 +1,103 @@
+{
+  "migration": "go2_stairs_clearance_reward_v1",
+  "source": "/home/yifeiy/ws_go2_unilab/Uni-SuperMimic/results/stairs_omni_continuation_v2/best.pt",
+  "source_sha256": "008ef06e29a78a288879a1b6d9138ef74d505975c67526e8fbee2fa9d3775e3e",
+  "changes": [
+    {
+      "field": "gait.clearance_region",
+      "old": "all",
+      "new": "stairs"
+    },
+    {
+      "field": "gait.clearance_sigma",
+      "old": 0.025,
+      "new": 0.065
+    },
+    {
+      "field": "gait.clearance_target",
+      "old": 0.05,
+      "new": 0.12
+    },
+    {
+      "field": "gait.feet_clearance",
+      "old": 0.0,
+      "new": 0.05
+    }
+  ],
+  "replay": {
+    "transitions": 2097152,
+    "cached_reward_delta_mean": 1.1410052138671745e-05,
+    "cached_reward_delta_min": 0.0,
+    "cached_reward_delta_max": 0.00083072081906721,
+    "method": "replace clearance only; retain all measured-torque/other reward terms"
+  },
+  "inherited": [
+    "pi",
+    "wm",
+    "critic",
+    "opt_pi",
+    "opt_wm",
+    "opt_v",
+    "value_normalization",
+    "curricula",
+    "sampler",
+    "rng",
+    "counts"
+  ],
+  "critic": "preserved; 100 critic-only updates required before Actor; raw-return EMA adapts during warmup",
+  "normalization": "max_step_reward is reporting only; new positive Gaussian upper bound .105 vs .104 per step",
+  "old_reward": {
+    "linear_tracking": 3.0,
+    "command_direction": 0.5,
+    "yaw_tracking": 1.2,
+    "upright": 0.5,
+    "base_lin_vel_z": -1.0,
+    "base_ang_vel_xy": -0.05,
+    "action_rate": -0.03,
+    "joint_torque": -1e-05,
+    "joint_acceleration": -2.5e-07,
+    "joint_deviation": -0.02,
+    "joint_limit": -1.0,
+    "base_height_low": -5.0,
+    "tracking_sigma_sq": 0.09,
+    "zero_speed_baseline": true,
+    "upright_sigma_sq": 0.16,
+    "min_safe_height": 0.22,
+    "action_clip": 1.0,
+    "gait": {
+      "feet_clearance": 0.0,
+      "diagonal_gait": -0.15,
+      "feet_slip": -0.2,
+      "clearance_target": 0.05,
+      "clearance_sigma": 0.025
+    }
+  },
+  "new_reward": {
+    "linear_tracking": 3.0,
+    "command_direction": 0.5,
+    "yaw_tracking": 1.2,
+    "upright": 0.5,
+    "base_lin_vel_z": -1.0,
+    "base_ang_vel_xy": -0.05,
+    "action_rate": -0.03,
+    "joint_torque": -1e-05,
+    "joint_acceleration": -2.5e-07,
+    "joint_deviation": -0.02,
+    "joint_limit": -1.0,
+    "base_height_low": -5.0,
+    "tracking_sigma_sq": 0.09,
+    "zero_speed_baseline": true,
+    "upright_sigma_sq": 0.16,
+    "min_safe_height": 0.22,
+    "action_clip": 1.0,
+    "gait": {
+      "feet_clearance": 0.05,
+      "diagonal_gait": -0.15,
+      "feet_slip": -0.2,
+      "clearance_target": 0.12,
+      "clearance_sigma": 0.065,
+      "clearance_region": "stairs"
+    }
+  },
+  "sha256": "f8b16859c5aae093153b50c4a851391688a0927ce0154e3ec886d25682ddf49e"
+}

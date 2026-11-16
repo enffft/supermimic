@@ -1,0 +1,42 @@
+{
+  "created_at": "2026-11-15T19:23:30.268584+08:00",
+  "training_source_snapshot": "/home/yifeiy/ws_go2_unilab/runs/go2w_ppo_2h_20261115/source_snapshot",
+  "checkpoints": {
+    "initial_actor": {
+      "path": "/home/yifeiy/ws_go2_unilab/runs/go2w_ppo_2h_20261115/bootstrap/actor.pt",
+      "sha256": "3c311e8b7e483ae1eb335bb6e7e9aa1d99ba2f212f73ed715491c26d06d04c01"
+    },
+    "PPO_final": {
+      "path": "/home/yifeiy/ws_go2_unilab/runs/go2w_ppo_2h_20261115/training/last.pt",
+      "sha256": "49318a4cc347ba8f069e4560565af3101656159a9e174eea17227243974bb211"
+    },
+    "SuperMimic_final": {
+      "path": "/home/yifeiy/ws_go2_unilab/runs/go2w_omni_v3_2h_20261114/training/last.pt",
+      "sha256": "7591f5364423dde7429477df2a3f1685024a3ea010e1daec91ed1a354390a7fc"
+    },
+    "Go2_teacher": {
+      "path": "/home/yifeiy/ws_go2_unilab/Uni-SuperMimic/results/omnidirectional_terrain/stageB/last.pt",
+      "sha256": "52ebc6fdf1e3d575733756939645e4baec1e26c3be4f010892655275ffbdf8d9"
+    }
+  },
+  "shared_WM_sha256_now": "3c3c4d1c5e70bb12c8cc68274fda39003e465c6ec1fbe745c0729f9f7d028610",
+  "shared_WM_sha256_after_PPO": "3c3c4d1c5e70bb12c8cc68274fda39003e465c6ec1fbe745c0729f9f7d028610",
+  "read_only_WM_matches_previous": true,
+  "physical_probes": {
+    "main_trials": 432,
+    "Go2_zero_shot_trials": 96,
+    "max_episode_seconds": 10,
+    "control_dt": 0.02
+  },
+  "PPO_diagnostics": "Two identical first native PPO updates in memory, second records ratios; exact value/surrogate/entropy losses match original first iteration.",
+  "source_cache_sha256": {
+    "loco_ppo.py": "2824c387445e6faf8de74a48ae898480e7e78c2240ecb8eacd83d98f490e2dd5",
+    "dream_paper.html": "8a873993316cc3918878aef3f8f9fbae18732d2c3b58b4784b47b442f810e49f",
+    "loco_env.py": "ef8bfd48c73cd0d89ef64f3434911596956e1dea08bf19d3188f87ad84835451",
+    "loco_asset.py": "797bb2c01ff952d12053ec44ca88cb986e65495dd99d06cd03ea40aab1f57265",
+    "dream_ppo.py": "08e0162d50c72b5a4ba7d24d2453dfe0ce97db0bac079617f7b763c39b55716a",
+    "eth_paper.html": "910d5623b1a5662dd7f80b121327251573131d6a060ad222f9b620b75240d610",
+    "robotlab_ppo.py": "a570af3558ff1505829ec52225ff676ca12ae84ad09a52406ecd819f5d4f6984",
+    "robotlab_env.py": "66726330eeb40200f2938b02393d0bcd1275920cc77503378737be1d18df80f1"
+  }
+}

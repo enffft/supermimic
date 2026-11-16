@@ -1,0 +1,33 @@
+{
+  "commit": "3c9aea1ea6b2d8ee41d668f6b46b5db905e9892d",
+  "argv": [
+    "tools/train_go2_clearance_ablation.py",
+    "--checkpoint",
+    "results/stairs_omni_continuation_v2/best.pt",
+    "--output",
+    "results/stairs_clearance_B4/baseline/trial",
+    "--task",
+    "stairs_omni_level7",
+    "--iterations",
+    "500",
+    "--seconds",
+    "1800"
+  ],
+  "source_sha256": "008ef06e29a78a288879a1b6d9138ef74d505975c67526e8fbee2fa9d3775e3e",
+  "origin": {
+    "iteration": 30807,
+    "sim_steps": 161064960,
+    "update_counts": {
+      "wm": 123228,
+      "actor": 25807,
+      "critic": 526140
+    },
+    "wall_time": 13775.643279314041
+  },
+  "num_envs": 2048,
+  "resume_mode": "weights_optimizers_replay_curriculum_restored; environment_resampled; not_exact",
+  "wm_rare_fraction": 0.35,
+  "speed_metadata": "old replay explicitly unknown; new labels recorded before action",
+  "probe_steps": 196608,
+  "gates": "unchanged; reassess before any Actor optimization; no high-level blanket admission"
+}

@@ -1,0 +1,110 @@
+{
+  "go2": {
+    "robot_total_mass_kg": 15.208406621084924,
+    "dt": 0.005,
+    "cone": 0,
+    "impratio": 1.0,
+    "wheel_or_foot_bodies": {},
+    "wheel_collision": {}
+  },
+  "go2w_raw": {
+    "robot_total_mass_kg": 19.126408000000005,
+    "dt": 0.005,
+    "cone": 1,
+    "impratio": 100.0,
+    "wheel_or_foot_bodies": {
+      "robot/FL_wheel_link": 0.98,
+      "robot/FR_wheel_link": 0.98,
+      "robot/RL_wheel_link": 0.98,
+      "robot/RR_wheel_link": 0.98
+    },
+    "wheel_collision": {
+      "robot/FL_wheel_collision": {
+        "friction": [
+          0.8,
+          0.02,
+          0.01
+        ],
+        "condim": 6,
+        "mesh_id": 0
+      },
+      "robot/FR_wheel_collision": {
+        "friction": [
+          0.8,
+          0.02,
+          0.01
+        ],
+        "condim": 6,
+        "mesh_id": 0
+      },
+      "robot/RL_wheel_collision": {
+        "friction": [
+          0.8,
+          0.02,
+          0.01
+        ],
+        "condim": 6,
+        "mesh_id": 0
+      },
+      "robot/RR_wheel_collision": {
+        "friction": [
+          0.8,
+          0.02,
+          0.01
+        ],
+        "condim": 6,
+        "mesh_id": 0
+      }
+    }
+  },
+  "go2w_compiled": {
+    "robot_total_mass_kg": 19.126408000000005,
+    "dt": 0.005,
+    "cone": 1,
+    "impratio": 100.0,
+    "wheel_or_foot_bodies": {
+      "robot/FL_wheel_link": 0.98,
+      "robot/FR_wheel_link": 0.98,
+      "robot/RL_wheel_link": 0.98,
+      "robot/RR_wheel_link": 0.98
+    },
+    "wheel_collision": {
+      "robot/FL_wheel_collision": {
+        "friction": [
+          0.8,
+          0.02,
+          0.01
+        ],
+        "condim": 6,
+        "mesh_id": 0
+      },
+      "robot/FR_wheel_collision": {
+        "friction": [
+          0.8,
+          0.02,
+          0.01
+        ],
+        "condim": 6,
+        "mesh_id": 0
+      },
+      "robot/RL_wheel_collision": {
+        "friction": [
+          0.8,
+          0.02,
+          0.01
+        ],
+        "condim": 6,
+        "mesh_id": 0
+      },
+      "robot/RR_wheel_collision": {
+        "friction": [
+          0.8,
+          0.02,
+          0.01
+        ],
+        "condim": 6,
+        "mesh_id": 0
+      }
+    }
+  }
+}

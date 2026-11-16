@@ -35,6 +35,7 @@ class VelocityCommandCfg(CommandTermCfg):
     terrain_curriculum: bool = False
     terrain_fixed_level: int = 0
     terrain_max_level: int = 4
+    terrain_stair_increment: float = 0.02
     terrain_recycle_probability: float = 0.15
     terrain_phase: str = "skill"
     terrain_coverage_weights: tuple[float, ...] = (0.2, 0.4, 0.3, 0.1, 0.0)
@@ -56,6 +57,14 @@ class VelocityCommand(CommandTerm):
         if tuple(self.robot.joint_names) != JOINTS:
             raise ValueError("Go2 requires exact named FL/FR/RL/RR joint order")
         self.mdp = Go2VelocityMdp(env.device)
+        gait = env.cfg.rewards["velocity"].params.get("gait")
+        if gait:
+            from .gait import Go2GaitCfg
+
+            self.mdp.params.cfg.gait = Go2GaitCfg(**gait)
+            # Reporting upper bound only; optimizer rewards/value targets are raw.
+            if self.mdp.params.cfg.gait.clearance_mode == "gaussian":
+                self.mdp.max_step_reward += max(0, self.mdp.params.cfg.gait.feet_clearance) * 0.02
         self.g = torch.zeros(self.num_envs, 3, device=env.device)
         self.xi = torch.zeros(self.num_envs, 16, device=env.device)
         self.xi[:, 0] = 1.0
@@ -330,7 +339,7 @@ def observation(env):
     return c.mdp.obs(c.state(), c.a_prev, c.xi, c.f)
 
 
-def reward(env):
+def reward(env, *, gait=None):
     c = env.command_manager.get_term("velocity")
     pre = env.velocity_pre_action
     # Snapshot post-physics state before any manager reset or command resampling.

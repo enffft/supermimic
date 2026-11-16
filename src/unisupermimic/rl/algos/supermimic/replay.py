@@ -61,6 +61,7 @@ class ReplayBuffer:
                 command_mode=((), torch.long),
                 crossing_episode=((), torch.bool),
                 term=((), torch.bool),
+                command_speed_level=((), torch.long),
             )
         self.sampling_counts = {
             k: torch.zeros(6, dtype=torch.long, device=self.device)
@@ -74,6 +75,11 @@ class ReplayBuffer:
         self.size = 0
         # Opt-in collector metadata admission, never an observation feature.
         self.start_scope_mask = None
+        # Opt-in WM-only tail sampling; Actor admission remains independent.
+        self.wm_rare_fraction = 0.0
+        self.wm_rare_min_level = 5
+        self.wm_rare_balance_levels = False
+        self.wm_level_counts = torch.zeros(8, device=self.device, dtype=torch.long)
 
     def mark_reset_boundary(self, reset_mask: torch.Tensor) -> None:
         """Close prior transitions after an explicit reset outside env.step().
@@ -86,7 +92,10 @@ class ReplayBuffer:
 
     def add(self, transition: dict[str, torch.Tensor]) -> None:
         for key in self.fields:
-            self.data[key][self.ptr] = transition[key]
+            if key == "command_speed_level" and key not in transition:
+                self.data[key][self.ptr].fill_(-1)  # Explicit unknown historical label.
+            else:
+                self.data[key][self.ptr] = transition[key]
         self.ptr = (self.ptr + 1) % self.T
         self.size = min(self.size + 1, self.T)
 
@@ -99,9 +108,25 @@ class ReplayBuffer:
             "data": self.data,
             "sampling_counts": self.sampling_counts,
             "start_scope_mask": self.start_scope_mask,
+            "wm_rare_fraction": self.wm_rare_fraction,
+            "wm_rare_min_level": self.wm_rare_min_level,
+            "wm_rare_balance_levels": self.wm_rare_balance_levels,
+            "wm_level_counts": self.wm_level_counts,
         }
 
     def load_state_dict(self, values, *, infer_command_metadata=False):
+        values = dict(values)
+        values["data"] = dict(values["data"])
+        if "command_speed_level" in self.fields and "command_speed_level" not in values["data"]:
+            values["data"]["command_speed_level"] = torch.full_like(values["data"]["f"], -1)
+        self.wm_rare_fraction = float(values.get("wm_rare_fraction", 0.0))
+        self.wm_rare_min_level = int(values.get("wm_rare_min_level", 5))
+        self.wm_rare_balance_levels = bool(values.get("wm_rare_balance_levels", False))
+        self.wm_level_counts.copy_(
+            values.get("wm_level_counts", torch.zeros_like(self.wm_level_counts))
+        )
+        if not 0 <= self.wm_rare_fraction <= 1:
+            raise ValueError("Invalid WM rare sampling fraction")
         if infer_command_metadata:
             from unisupermimic.tasks.velocity.go2.command_sampler import command_modes
 
@@ -146,6 +171,33 @@ class ReplayBuffer:
             raise ValueError(f"window length must be in [1, {self.size}], got {k}")
         start = torch.randint(0, self.size - k + 1, (B,), device=self.device)
         env = torch.randint(0, self.N, (B,), device=self.device)
+        rare_n = int(B * self.wm_rare_fraction)
+        if rare_n:
+            if "terrain_level" not in self.fields:
+                raise ValueError("WM tail sampling requires terrain metadata")
+            pool = max(4096, B * 32)
+            rare_age = torch.randint(0, self.size - k + 1, (pool,), device=self.device)
+            rare_env = torch.randint(0, self.N, (pool,), device=self.device)
+            candidate_rows = self._row(rare_age)
+            levels = self.data["terrain_level"][candidate_rows, rare_env]
+            rare_mask = levels >= self.wm_rare_min_level
+            if "command_domain" in self.fields:
+                rare_mask &= self.data["command_domain"][candidate_rows, rare_env] >= 4
+            rare_age, rare_env = rare_age[rare_mask], rare_env[rare_mask]
+            if len(rare_age):
+                if self.wm_rare_balance_levels:
+                    scopes = levels[rare_mask]
+                    counts = torch.bincount(scopes, minlength=8)
+                    weights = (counts > 0).float()
+                    targets = torch.multinomial(weights, rare_n, replacement=True)
+                    offsets = counts.cumsum(0) - counts
+                    pick = torch.argsort(scopes)[
+                        offsets[targets]
+                        + (torch.rand(rare_n, device=self.device) * counts[targets]).long()
+                    ]
+                else:
+                    pick = torch.randint(len(rare_age), (rare_n,), device=self.device)
+                start[:rare_n], env[:rare_n] = rare_age[pick], rare_env[pick]
         ages = start.unsqueeze(-1) + torch.arange(k, device=self.device)
         rows = self._row(ages)
         envs = env.unsqueeze(-1).expand_as(rows)
@@ -153,6 +205,10 @@ class ReplayBuffer:
         for key in ("g", "command_mode", "command_domain"):
             if key in self.fields:
                 out[key] = self.data[key][rows, envs]
+        if "terrain_level" in self.fields:
+            self.wm_level_counts.add_(
+                torch.bincount(self.data["terrain_level"][rows[:, 0], env], minlength=8)
+            )
         done = out["done"].float()
         mask = torch.cumprod(
             torch.cat((torch.ones(B, 1, device=self.device), 1 - done[:, :-1]), -1),
@@ -226,7 +282,7 @@ class ReplayBuffer:
         start = {key: self.data[key][row, env] for key in ("s", "a_prev", "xi", "f")}
         if "g" in self.fields:
             start["g"] = self.data["g"][row, env]
-        for key in ("command_mode", "command_domain", "terrain_level"):
+        for key in ("command_mode", "command_domain", "terrain_level", "command_speed_level"):
             if key in self.fields:
                 start[key] = self.data[key][row, env]
         if "command_mode" in start:

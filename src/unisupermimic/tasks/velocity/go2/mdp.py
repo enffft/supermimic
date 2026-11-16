@@ -1,5 +1,6 @@
 """Direct velocity MDP: no motion reference, encoder, phase or privileged actor input."""
 
+from copy import deepcopy
 from dataclasses import replace
 
 import torch
@@ -25,6 +26,7 @@ class Go2VelocityMdp:
     def __init__(self, device="cpu", terrain=None):
         self.device = torch.device(device)
         self.terrain = terrain
+        self.clearance_boxes = None
         self.default_q = torch.tensor(DEFAULT_Q, device=device)
         self.params = VelocityRobotParams(
             self.default_q,
@@ -38,7 +40,13 @@ class Go2VelocityMdp:
         )
 
     def to(self, device):
-        return type(self)(device, None if self.terrain is None else self.terrain.to(device))
+        result = type(self)(device, None if self.terrain is None else self.terrain.to(device))
+        result.params.cfg = deepcopy(self.params.cfg)
+        result.max_step_reward = self.max_step_reward
+        result.clearance_boxes = (
+            None if self.clearance_boxes is None else self.clearance_boxes.to(device)
+        )
+        return result
 
     def obs(self, state, previous_action, context, frames):
         p, R, v, w, q, qd = state
@@ -71,6 +79,14 @@ class Go2VelocityMdp:
             feet, _ = go2_feet_world(source)
             measurements["base_height"] = self.local_height(state)
             measurements["foot_ground"] = self.terrain.ground_height(feet[..., :2])
+        if self.params.cfg.gait.clearance_region == "stairs":
+            from .feet import go2_feet_world
+            from .gait import clearance_region_weight
+
+            feet, _ = go2_feet_world(self.source_state(state))
+            measurements["clearance_weight"] = clearance_region_weight(
+                feet[..., :2], self.clearance_boxes
+            )
         return velocity_reward_terms(
             self.source_state(previous),
             self.source_state(state),

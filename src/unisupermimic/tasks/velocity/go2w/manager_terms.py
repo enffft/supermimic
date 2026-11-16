@@ -49,7 +49,7 @@ class Go2WMixedAction(ActionTerm):
         from .contract import DEFAULT_Q, soft_limits
 
         self.default = self._raw.new_tensor(DEFAULT_Q)
-        self.limits = soft_limits(env.device)
+        self.limits = soft_limits(env.device, cfg.control.leg_limit_fraction)
 
     @property
     def action_dim(self):
@@ -120,6 +120,8 @@ class VelocityCommandCfg(CommandTermCfg):
     terrain_recycle_probability: float = 0.15
     terrain_target_progress: float = 1.2
     automatic_wm_skill_transition: bool = True
+    persistent_wm_coverage: bool = False
+    actor_level_lookahead: int = 0
     spawn_height: float = 0.42
     spawn_heading: float = 0.0
 

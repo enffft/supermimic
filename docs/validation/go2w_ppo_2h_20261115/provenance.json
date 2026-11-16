@@ -1,0 +1,52 @@
+{
+  "baseline_source": "/home/yifeiy/ws_go2_unilab/runs/go2w_omni_v3_2h_20261114/source_snapshot",
+  "baseline_run": "/home/yifeiy/ws_go2_unilab/runs/go2w_omni_v3_2h_20261114",
+  "overlays": [
+    "ppo.py",
+    "train_go2w_ppo.py",
+    "evaluate_go2w_experiment.py",
+    "test_go2w_ppo.py"
+  ],
+  "shared_WM": "/home/yifeiy/ws_go2_unilab/artifacts/world_models/go2w_conditioned.pt",
+  "WM_sha256_before": "3c3c4d1c5e70bb12c8cc68274fda39003e465c6ec1fbe745c0729f9f7d028610",
+  "versions": {
+    "torch": "2.11.0+cu126",
+    "rsl-rl-lib": "5.5.1",
+    "tensordict": "0.15.2",
+    "mujoco": "3.11.0"
+  },
+  "rsl_rl_code_sha256": {
+    "__init__.py": "9b4c420fef3ae39683544833b6d2efbb26aecfc0583ec59be7f4eeb748fecf66",
+    "algorithms/distillation.py": "3d9fb8e010346ab42f3f4a84584e7e175a7632b39700e7778d0a01746a6317a7",
+    "algorithms/__init__.py": "e370271e689bada5cdf2b4623e0d16d75e8439864a2ae913b22215f7b2985843",
+    "algorithms/ppo.py": "01a82cea45fa9d8ccb161bd75e07d8623d25450ff92982e9c9d59ca8a9b78393",
+    "utils/__init__.py": "b04e7ce7ccbbaefa275930e5ffc33edd84e77364a14d7e5717e6a5cb02338066",
+    "utils/wandb_log_writer.py": "69effd6926c8eb7ca4de96d3311e33ccef9cfe8556ca13fec9421e9c8f17ad8d",
+    "utils/neptune_log_writer.py": "971784c3291d7d7dc8e93202fb8d0102fa67214227440569719cbad278c2cf77",
+    "utils/logger.py": "ff9a592899c6eb803d4a434cef8712aa0424575ac01b13575f3efe2596d4116e",
+    "utils/utils.py": "37e1cf2961d91204633e3d3e46951c3abd695c9c4b48a269cbc97846ac155751",
+    "utils/log_writer.py": "53e9447d4337ab7e2d9f48f6ee8ee07ab865789ff1c722e2bc8b3f44ee247693",
+    "storage/__init__.py": "7c9d96df3cad10aa27f34e77f7105a29f74e2d7dd10467b2919f99867a69298e",
+    "storage/rollout_storage.py": "d2728ab2cbc280c163a3d33289216d807ac60e1edf41fb85dd09560e966c9b04",
+    "extensions/symmetry.py": "4121d8804c9555118f031f604bc5232c85db0b41ce8d8295a5a22b85190b4048",
+    "extensions/__init__.py": "20dc79170fb9777b7267abe4296b5c22f4b417d5a18c4346fb8159f9d4aea62f",
+    "extensions/rnd.py": "7ff5a34f54bcfe8e9494cf5c27155102b6f50c9b10dff49f7a1d98f32e6e16ca",
+    "models/cnn_model.py": "bc8119274d2058f0abe3482563e6e391aba312fa19c59d961413cfe09f4b0d93",
+    "models/__init__.py": "6444fc1df8bc94d40ab1911f0e8e6b3f777459986e7f7944d25b7e5ca9b3e206",
+    "models/mlp_model.py": "86a8ea5c77fdae8167b84d817e5280fe226bf15d2aafab8455c6366155ab2eee",
+    "models/rnn_model.py": "80c1d6452ef021e4d7b174231ed7abac1ed0db8de9604561f8060148d4333ccc",
+    "runners/distillation_runner.py": "7445cbaf3e1fa241d742447ab17d941a659c92b6f8365ef22c5d818923d9e275",
+    "runners/__init__.py": "26f4130a403414e13041b62a848d04da3fb0166757603950ea758b151d4b5aaa",
+    "runners/on_policy_runner.py": "c2dbe47974b047e6992e37ff39ac0a236c8fa5cb595cb9e1715e1344e81dc852",
+    "env/__init__.py": "33bfc9562580377c2ce6388c37b0df2b8e992c22ce46923443681cbbf1960d60",
+    "env/vec_env.py": "4a72df2fbf9b3e162e0e4b10e0b473511f02ad8c3ebaab0b7993ddfd63a9fa43",
+    "modules/rnn.py": "07f0eec06c7f2638edbdbc3ba25f56122a7941cb0543138f4a6b04675b2a97e6",
+    "modules/__init__.py": "336085b45fb1e4a807f29cb2703b63f933cdf2c2ff00279cef3cfed14bdccc49",
+    "modules/normalization.py": "67a70c88b540f212759c6e6c023aed41321ea9ad949e5faf428670fafbdf73bd",
+    "modules/distribution.py": "ef490fac4baa8a6e6c2b6541cddd4c17f8838097c4298fc7c7efdfefa119941f",
+    "modules/cnn.py": "4f5bab5f192c42180125f32a4af350108dd1c247e1e84c81f6cf4ea560037ccf",
+    "modules/mlp.py": "bad934b364b26cd47b6d1612e00ace107a425ae4d272c0cd0c82cbfc57bbcdbc"
+  },
+  "WM_sha256_after": "3c3c4d1c5e70bb12c8cc68274fda39003e465c6ec1fbe745c0729f9f7d028610",
+  "WM_unchanged": true
+}

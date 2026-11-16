@@ -1,0 +1,94 @@
+{
+  "migration": "go2_stairs_4cm_level5_atlas_v1",
+  "source": "/home/yifeiy/ws_go2_unilab/Uni-SuperMimic/results/stairs_clearance_B4/soft_deficit/trial/last.pt",
+  "source_sha256": "aba2ebf8ee68556fa6c4cf81cefdb7e511a54d3cb813f642d005a98a564cc7c9",
+  "old_fingerprint": "6eda6e48ccbfacf5a6a23ae2ac157b57c3fce1ca96e21f1295e8d024eae481b0",
+  "new_fingerprint": "0426f89c7fb28f0ce45913bcd6b797d49afeb37b574c998a0f6f997590379ce7",
+  "source_counters": {
+    "iteration": 31307,
+    "sim_steps": 164214784,
+    "update_counts": {
+      "wm": 125228,
+      "actor": 26107,
+      "critic": 534140
+    },
+    "wall_time": 14000.550520896912
+  },
+  "stair_heights_m": [
+    0.04,
+    0.08,
+    0.12,
+    0.16,
+    0.2
+  ],
+  "rough_slope_max_level": 4,
+  "mastery": "stairs floor(old_level / 2), rough/slopes unchanged; reset streaks and new-map statistics; previous statistics archived",
+  "replay": "intentionally empty: atlas world coordinates and collision interpolation changed; refill with real physics, no cross-reset windows",
+  "actor_admission": "all new nonflat stairs blocked pending fresh seven-probe/H32 validation",
+  "preserved": "Actor, WM, Critic, optimizers, value normalization, accumulated counters, flat speed state, sampler RNG",
+  "reward_equal": true,
+  "compiled_heights": [
+    {
+      "level": 1,
+      "type": 3,
+      "target_m": 0.04,
+      "compiled_first_riser_m": 0.0376470685005188
+    },
+    {
+      "level": 1,
+      "type": 4,
+      "target_m": 0.04,
+      "compiled_first_riser_m": 0.043921589851379395
+    },
+    {
+      "level": 2,
+      "type": 3,
+      "target_m": 0.08,
+      "compiled_first_riser_m": 0.0752941370010376
+    },
+    {
+      "level": 2,
+      "type": 4,
+      "target_m": 0.08,
+      "compiled_first_riser_m": 0.0815686583518982
+    },
+    {
+      "level": 3,
+      "type": 3,
+      "target_m": 0.12,
+      "compiled_first_riser_m": 0.11921566724777222
+    },
+    {
+      "level": 3,
+      "type": 4,
+      "target_m": 0.12,
+      "compiled_first_riser_m": 0.1254902482032776
+    },
+    {
+      "level": 4,
+      "type": 3,
+      "target_m": 0.16,
+      "compiled_first_riser_m": 0.15686273574829102
+    },
+    {
+      "level": 4,
+      "type": 4,
+      "target_m": 0.16,
+      "compiled_first_riser_m": 0.1631373167037964
+    },
+    {
+      "level": 5,
+      "type": 3,
+      "target_m": 0.2,
+      "compiled_first_riser_m": 0.19450980424880981
+    },
+    {
+      "level": 5,
+      "type": 4,
+      "target_m": 0.2,
+      "compiled_first_riser_m": 0.2007843255996704
+    }
+  ],
+  "compiled_height_tolerance_m": 0.006275509803921569,
+  "output_sha256": "65342fed3b8729f6e7bf588087bebb60d78b169e5d193b6e2be7d2dd60d97d70"
+}

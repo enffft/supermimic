@@ -9,7 +9,11 @@ from unilab.base.config_materialization import apply_cfg_overrides
 
 
 def load_config(profile="terrain"):
-    if profile not in ("base", "mujoco", "flat", "mixed", "terrain", "curriculum"):
+    if profile not in (
+        "base", "mujoco", "flat", "mixed", "terrain", "curriculum",
+        "persistent", "persistent_stop", "persistent_lateral",
+        "joint_range", "omni_v3",
+    ):
         raise ValueError("Unknown Go2W config owner")
     root = Path(__file__).resolve().parents[5]
     with initialize_config_dir(config_dir=str(root / "src/unisupermimic/conf/supermimic"), version_base="1.3"):

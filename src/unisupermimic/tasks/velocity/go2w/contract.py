@@ -23,6 +23,8 @@ MODEL = Path(__file__).resolve().parents[3] / "assets/robots/go2w/flat.xml"
 class MixedControlCfg:
     dt: float = 0.02
     leg_position_scale: float = 0.25
+    full_leg_target_range: bool = False
+    leg_limit_fraction: float = 0.90
     leg_kp: float = 40.0
     leg_kd: float = 1.0
     wheel_kp: float = 0.0
@@ -38,6 +40,8 @@ class MixedControlCfg:
                   self.wheel_kd, self.wheel_velocity_scale)
         if any(not math.isfinite(x) or x <= 0 for x in values) or self.wheel_kp != 0:
             raise ValueError("Mixed control requires positive finite gains/scales and wheel_kp=0")
+        if not isinstance(self.full_leg_target_range, bool) or not 0 < self.leg_limit_fraction <= 1:
+            raise ValueError("Expected boolean target mapping and joint limit fraction in (0,1]")
         limits = tuple(self.leg_effort_limits) + tuple(self.wheel_effort_limits)
         if len(self.leg_effort_limits) != 12 or len(self.wheel_effort_limits) != 4:
             raise ValueError("Expected twelve leg and four wheel effort limits")
@@ -45,21 +49,39 @@ class MixedControlCfg:
             raise ValueError("Controller effort limits exceed official motor ctrlrange")
 
 
-def soft_limits(device="cpu"):
+def soft_limits(device="cpu", fraction=0.90):
+    if not 0 < fraction <= 1:
+        raise ValueError("Joint limit fraction must be in (0,1]")
     bounds = torch.tensor([
         (-1.0472, 1.0472), (-1.5708, 3.4907), (-2.7227, -0.83776),
         (-1.0472, 1.0472), (-1.5708, 3.4907), (-2.7227, -0.83776),
         (-1.0472, 1.0472), (-0.5236, 4.5379), (-2.7227, -0.83776),
         (-1.0472, 1.0472), (-0.5236, 4.5379), (-2.7227, -0.83776),
     ], device=device)
-    mid, radius = bounds.mean(-1), (bounds[:, 1] - bounds[:, 0]) * 0.45
+    mid, radius = bounds.mean(-1), (bounds[:, 1] - bounds[:, 0]) * (fraction * 0.5)
     return torch.stack((mid - radius, mid + radius), -1)
+
+
+def leg_position_target(action, control, default_q, limits):
+    """Default-centred action with either offset or full asymmetric joint range.
+
+    In full-range mode -1/0/+1 maps to lower/default/upper respectively, so
+    neutral action still commands the nominal standing posture. Joint limits
+    bound every target; the physical motor/effort limits do not change.
+    """
+    a = action[..., :12].clamp(-1, 1)
+    if control.full_leg_target_range:
+        span = torch.where(a >= 0, limits[:, 1] - default_q, default_q - limits[:, 0])
+        target = default_q + span * a
+    else:
+        target = default_q + control.leg_position_scale * a
+    return target.clamp(limits[:, 0], limits[:, 1])
 
 
 def mixed_torque(q_leg, qd, action, control, default_q, limits):
     """Same differentiable law for substep effort control and imagined torque."""
     a = action.clamp(-1, 1)
-    target = (default_q + control.leg_position_scale * a[..., :12]).clamp(limits[:, 0], limits[:, 1])
+    target = leg_position_target(a, control, default_q, limits)
     leg = control.leg_kp * (target - q_leg) - control.leg_kd * qd[..., :12]
     wheel = control.wheel_kd * (control.wheel_velocity_scale * a[..., 12:] - qd[..., 12:])
     effort = a.new_tensor(tuple(control.leg_effort_limits) + tuple(control.wheel_effort_limits))

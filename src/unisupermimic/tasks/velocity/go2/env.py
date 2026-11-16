@@ -46,6 +46,14 @@ class Go2VelocityEnv(ManagerBasedRlEnv):
             "sim_dt": self.cfg.sim_dt,
             "ctrl_dt": self.cfg.ctrl_dt,
         }
+        # Preserve exact legacy default contract; new nondefault reward fields stay explicit.
+        from .gait import Go2GaitCfg
+
+        for key in ("clearance_mode", "clearance_tau", "clearance_region"):
+            if contract["reward"]["gait"][key] == getattr(Go2GaitCfg(), key):
+                contract["reward"]["gait"].pop(key)
+        if self.cfg.commands["velocity"].terrain_stair_increment == 0.02:
+            contract["commands"].pop("terrain_stair_increment", None)
         if not any(self.cfg.commands["velocity"].reset_jitter):
             contract["commands"].pop("reset_jitter", None)
         if self.cfg.commands["velocity"].sampling_mode == "legacy_stage":
@@ -152,6 +160,13 @@ class Go2VelocityEnv(ManagerBasedRlEnv):
                 command_domain=c.command_domain.clone(),
                 command_mode=c.command_mode.clone(),
                 crossing_episode=c.crossing_episode.clone(),
+                command_speed_level=torch.where(
+                    c.command_domain >= 4,
+                    c.sampler.stairs_levels.to(c.g.device)[
+                        (c.command_domain - 4).clamp(0, 1), c.curriculum.terrain_level
+                    ],
+                    torch.full_like(c.command_domain, c.sampler.speed_level),
+                ),
             )
         return super().apply_action(actions.clamp(-1, 1), state)
 
@@ -213,6 +228,7 @@ def make_go2_env(cfg, num_envs=1, backend_type="mujoco"):
                 levels=True,
                 entry_quarter_turns=entry_turns,
                 max_level=command_cfg.terrain_max_level,
+                stair_step_increment=command_cfg.terrain_stair_increment,
             )
         command_cfg.terrain_aware = True
     if (
@@ -312,6 +328,22 @@ def make_go2_env(cfg, num_envs=1, backend_type="mujoco"):
                 ):
                     raise ValueError("Compiled terrain entry footprint is not safely planar")
                 command.curriculum.origins[..., 2] = field.ground_height(points[..., :2])
+                # Query physical tile AABBs by predicted per-foot XY in real/H32.
+                # Derive the tile center from the entry and configured heading;
+                # this also handles rotated approaches without reset-domain labels.
+                stair_types = [
+                    i
+                    for i, name in enumerate(cfg.scene.terrain.generator.sub_terrains)
+                    if "stairs" in name
+                ]
+                stair_entries = points[1:, stair_types, :2].reshape(-1, 2)
+                center = stair_entries + points.new_tensor(
+                    [
+                        3.4 * math.cos(command_cfg.spawn_heading),
+                        3.4 * math.sin(command_cfg.spawn_heading),
+                    ]
+                )
+                command.mdp.clearance_boxes = torch.cat((center - 4.0, center + 4.0), -1)
         return env
     except Exception:
         backend.cleanup_scene_assets()

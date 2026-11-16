@@ -1,0 +1,14 @@
+# @package _global_
+defaults:
+  - /task/go2_velocity/stairs_omni_level7
+# Independent reward ablation; all other task semantics inherited unchanged.
+reward:
+  velocity:
+    params:
+      gait:
+        feet_clearance: 0.05
+        clearance_target: 0.12
+        clearance_sigma: 0.065
+        clearance_mode: gaussian
+        clearance_tau: 0.02
+        clearance_region: stairs

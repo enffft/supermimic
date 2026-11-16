@@ -1,0 +1,47 @@
+[
+  {
+    "policy": "initial",
+    "case": "forward_030",
+    "target_power_fraction_above_8Hz": 0.39438052835564147
+  },
+  {
+    "policy": "initial",
+    "case": "left_015",
+    "target_power_fraction_above_8Hz": 0.0936789754991897
+  },
+  {
+    "policy": "initial",
+    "case": "right_015",
+    "target_power_fraction_above_8Hz": 0.14801008287507603
+  },
+  {
+    "policy": "PPO",
+    "case": "forward_030",
+    "target_power_fraction_above_8Hz": 0.12793014711453965
+  },
+  {
+    "policy": "PPO",
+    "case": "left_015",
+    "target_power_fraction_above_8Hz": 0.034646806723595415
+  },
+  {
+    "policy": "PPO",
+    "case": "right_015",
+    "target_power_fraction_above_8Hz": 0.04538990378734728
+  },
+  {
+    "policy": "SuperMimic",
+    "case": "forward_030",
+    "target_power_fraction_above_8Hz": 0.8485595223358475
+  },
+  {
+    "policy": "SuperMimic",
+    "case": "left_015",
+    "target_power_fraction_above_8Hz": 0.8206857356398214
+  },
+  {
+    "policy": "SuperMimic",
+    "case": "right_015",
+    "target_power_fraction_above_8Hz": 0.817233340634184
+  }
+]

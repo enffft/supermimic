@@ -107,6 +107,9 @@ def test_reward_and_all_protected_migration_fields_remain_strict():
         feet_slip=-0.2,
         clearance_target=0.05,
         clearance_sigma=0.025,
+        clearance_mode="gaussian",
+        clearance_tau=0.02,
+        clearance_region="all",
     )
     old = dict(
         commands=dict(sampler={}),
@@ -220,7 +223,10 @@ def test_new_command_only_real_resume_and_reward_contract(tmp_path):
     try:
         resumed = SuperMimicLearner(env, lc, tmp_path / "new")
         resumed.load(saved, allow_command_distribution_change=True)
-        assert resumed.extra_state['command_distribution_migration']['old_replay_tags']=='preserved_recorded_command_metadata'
+        assert (
+            resumed.extra_state["command_distribution_migration"]["old_replay_tags"]
+            == "preserved_recorded_command_metadata"
+        )
         assert env.supermimic_contract["reward"] == original_reward
         assert torch.equal(resumed.buffer.data["g"], oldreplay)
         cmd = env.command_manager.get_term("velocity")

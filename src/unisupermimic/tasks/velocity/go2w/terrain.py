@@ -60,11 +60,76 @@ class Go2WTerrainCurriculum(TerrainCurriculum):
         for name in ("transitions", "valid_transitions", "falls"):
             self.statistics["real_" + name] = torch.zeros_like(self.statistics["episodes"])
 
+    def configure_persistent_coverage(self):
+        """Fixed roles inside existing physical domains, scaled from 4096 envs.
+
+        Role and level are checkpointed tensors. Only reset changes the physical
+        location; coverage episodes never promote or demote skill mastery.
+        """
+        import torch
+
+        if self.fixed_domain is None:
+            raise ValueError("Persistent coverage requires fixed domains")
+        self.coverage_level = torch.full_like(self.mastery, -1)
+        weights = torch.tensor([24, 24, 24, 20, 16, 12, 8], device=self.mastery.device)
+        for domain, quota in ((1, 128), (2, 64), (3, 64), (4, 128), (5, 128)):
+            ids = (self.fixed_domain == domain).nonzero().flatten()
+            total = round(len(self.mastery) * quota / 4096)
+            if total > len(ids):
+                raise ValueError("Coverage quota exceeds physical domain capacity")
+            exact = weights.float() * total / weights.sum()
+            counts = exact.long()
+            remainder = total - int(counts.sum())
+            counts[torch.argsort(exact - counts, descending=True, stable=True)[:remainder]] += 1
+            levels = torch.arange(1, 8, device=ids.device).repeat_interleave(counts)
+            self.coverage_level[ids[:total]] = levels
+
+    def reset(self, ids, rng):
+        if not hasattr(self, "coverage_level"):
+            return super().reset(ids, rng)
+        covered = ids[self.coverage_level[ids] >= 1]
+        crossing = self.crossing_episode[covered].clone()
+        # The parent qualifies skill updates using crossing_episode. Coverage
+        # data remain in real_* statistics, independently of certified success.
+        self.crossing_episode[covered] = False
+        try:
+            origins = super().reset(ids, rng)
+        finally:
+            self.crossing_episode[covered] = crossing
+        selected = self.coverage_level[ids] >= 1
+        if self.enabled and self.phase in ("wm", "skill"):
+            self.terrain_level[covered] = self.coverage_level[covered]
+            self.probe[covered] = False
+            self.probe_offset[covered] = 0
+            origins[selected] = self.origins[
+                self.terrain_level[covered], self.terrain_type[covered]
+            ]
+            self.start_xy[covered] = origins[selected, :2]
+        return origins
+
+    def summary(self):
+        out = super().summary()
+        if hasattr(self, "coverage_level"):
+            import torch
+
+            selected = self.coverage_level >= 1
+            scopes = self.fixed_domain[selected] * 8 + self.coverage_level[selected]
+            out["persistent_coverage_domain_level"] = (
+                torch.bincount(scopes, minlength=48).reshape(6, 8).cpu().tolist()
+            )
+        return out
+
     def load_state_dict(self, values):
         # Learner.load already validates the task contract, with command-only
         # migration requiring allow_command_distribution_change=True. Preserve
         # the newly configured quotas instead of restoring old A/B/C assignments.
         domains = self.fixed_domain.clone()
+        if hasattr(self, "coverage_level"):
+            import torch
+
+            saved = values["tensors"].get("coverage_level")
+            if saved is None or not torch.equal(saved.to(self.coverage_level), self.coverage_level):
+                raise ValueError("Persistent coverage roles changed on resume")
         if values["phase"] not in ("wm", "skill"):
             raise ValueError("Unsupported Go2W curriculum phase")
         self.phase = values["phase"]

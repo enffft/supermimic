@@ -737,6 +737,19 @@ class SuperMimicLearner:
                             minlength=6 * scope_levels,
                         )
                     )
+        if update_actor and "command_speed_level" in start:
+            levels = self.env.command_manager.get_term("velocity").cfg.terrain_max_level + 1
+            # Last speed slot is explicitly UNKNOWN for replay predating metadata.
+            speed = torch.where(start["command_speed_level"] < 0, 4, start["command_speed_level"])
+            self.extra_state.setdefault(
+                "actor_starts_domain_terrain_speed",
+                torch.zeros(6, levels, 5, device=self.device, dtype=torch.long),
+            ).view(-1).add_(
+                torch.bincount(
+                    (start["command_domain"] * levels + start["terrain_level"]) * 5 + speed,
+                    minlength=6 * levels * 5,
+                )
+            )
         state = self._unflatten_state(start["s"])
         context, frames, previous_action = start["xi"], start["f"], start["a_prev"]
         normalized_context = self.mdp.normalize_context(context)

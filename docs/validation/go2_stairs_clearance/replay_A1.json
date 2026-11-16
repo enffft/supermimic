@@ -1,0 +1,654 @@
+{
+  "checkpoint": "results/stairs_clearance_B4/gaussian/trial/last.pt",
+  "replay_rows": 1024,
+  "replay_capacity": 2097152,
+  "scopes": [
+    {
+      "domain": 4,
+      "level": 1,
+      "transitions": 0,
+      "observed_episode_starts": 0,
+      "falls": 0,
+      "probes": 0,
+      "valid_window_note": "windows start at this scope; subsequent done masks prevent crossing resets",
+      "valid_H8_windows": 0,
+      "valid_H8_fraction": 0.0,
+      "valid_H32_windows": 0,
+      "valid_H32_fraction": 0.0
+    },
+    {
+      "domain": 4,
+      "level": 2,
+      "transitions": 349,
+      "observed_episode_starts": 1,
+      "falls": 0,
+      "probes": 0,
+      "valid_window_note": "windows start at this scope; subsequent done masks prevent crossing resets",
+      "valid_H8_windows": 342,
+      "valid_H8_fraction": 0.9799426794052124,
+      "valid_H32_windows": 318,
+      "valid_H32_fraction": 0.9111747741699219,
+      "mixed_three_nonzero": 0,
+      "action_abs_max": 1.0,
+      "action_saturation": 0.20248328149318695,
+      "command_abs_max": [
+        0.509178876876831,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "domain": 4,
+      "level": 3,
+      "transitions": 161,
+      "observed_episode_starts": 2,
+      "falls": 0,
+      "probes": 0,
+      "valid_window_note": "windows start at this scope; subsequent done masks prevent crossing resets",
+      "valid_H8_windows": 147,
+      "valid_H8_fraction": 0.9130434989929199,
+      "valid_H32_windows": 112,
+      "valid_H32_fraction": 0.695652186870575,
+      "mixed_three_nonzero": 41,
+      "action_abs_max": 1.0,
+      "action_saturation": 0.1899585872888565,
+      "command_abs_max": [
+        0.3999503254890442,
+        0.036135800182819366,
+        0.025733541697263718
+      ]
+    },
+    {
+      "domain": 4,
+      "level": 4,
+      "transitions": 93910,
+      "observed_episode_starts": 223,
+      "falls": 4,
+      "probes": 0,
+      "valid_window_note": "windows start at this scope; subsequent done masks prevent crossing resets",
+      "valid_H8_windows": 91481,
+      "valid_H8_fraction": 0.9816716313362122,
+      "valid_H32_windows": 83174,
+      "valid_H32_fraction": 0.916851282119751,
+      "mixed_three_nonzero": 42066,
+      "action_abs_max": 1.0,
+      "action_saturation": 0.2091168910264969,
+      "command_abs_max": [
+        0.7973902821540833,
+        0.07961823046207428,
+        0.14967241883277893
+      ]
+    },
+    {
+      "domain": 4,
+      "level": 5,
+      "transitions": 135002,
+      "observed_episode_starts": 474,
+      "falls": 12,
+      "probes": 16512,
+      "valid_window_note": "windows start at this scope; subsequent done masks prevent crossing resets",
+      "valid_H8_windows": 130767,
+      "valid_H8_fraction": 0.9763758778572083,
+      "valid_H32_windows": 116269,
+      "valid_H32_fraction": 0.892598569393158,
+      "mixed_three_nonzero": 58509,
+      "action_abs_max": 1.0,
+      "action_saturation": 0.24493156373500824,
+      "command_abs_max": [
+        0.7924360632896423,
+        0.07998340576887131,
+        0.14994606375694275
+      ]
+    },
+    {
+      "domain": 4,
+      "level": 6,
+      "transitions": 16320,
+      "observed_episode_starts": 170,
+      "falls": 0,
+      "probes": 16320,
+      "valid_window_note": "windows start at this scope; subsequent done masks prevent crossing resets",
+      "valid_H8_windows": 15130,
+      "valid_H8_fraction": 0.9270833134651184,
+      "valid_H32_windows": 11050,
+      "valid_H32_fraction": 0.6770833134651184,
+      "mixed_three_nonzero": 7200,
+      "action_abs_max": 1.0,
+      "action_saturation": 0.23048406839370728,
+      "command_abs_max": [
+        0.7974646687507629,
+        0.07935026288032532,
+        0.14941006898880005
+      ]
+    },
+    {
+      "domain": 4,
+      "level": 7,
+      "transitions": 16320,
+      "observed_episode_starts": 170,
+      "falls": 0,
+      "probes": 16320,
+      "valid_window_note": "windows start at this scope; subsequent done masks prevent crossing resets",
+      "valid_H8_windows": 15130,
+      "valid_H8_fraction": 0.9270833134651184,
+      "valid_H32_windows": 11050,
+      "valid_H32_fraction": 0.6770833134651184,
+      "mixed_three_nonzero": 7680,
+      "action_abs_max": 1.0,
+      "action_saturation": 0.2321997582912445,
+      "command_abs_max": [
+        0.7293242812156677,
+        0.07976461201906204,
+        0.14886732399463654
+      ]
+    },
+    {
+      "domain": 5,
+      "level": 1,
+      "transitions": 103,
+      "observed_episode_starts": 1,
+      "falls": 0,
+      "probes": 0,
+      "valid_window_note": "windows start at this scope; subsequent done masks prevent crossing resets",
+      "valid_H8_windows": 89,
+      "valid_H8_fraction": 0.9270833134651184,
+      "valid_H32_windows": 51,
+      "valid_H32_fraction": 0.6219512224197388,
+      "mixed_three_nonzero": 21,
+      "action_abs_max": 1.0,
+      "action_saturation": 0.19012944400310516,
+      "command_abs_max": [
+        0.4647362530231476,
+        0.05641285330057144,
+        0.10000000149011612
+      ]
+    },
+    {
+      "domain": 5,
+      "level": 2,
+      "transitions": 0,
+      "observed_episode_starts": 0,
+      "falls": 0,
+      "probes": 0,
+      "valid_window_note": "windows start at this scope; subsequent done masks prevent crossing resets",
+      "valid_H8_windows": 0,
+      "valid_H8_fraction": 0.0,
+      "valid_H32_windows": 0,
+      "valid_H32_fraction": 0.0
+    },
+    {
+      "domain": 5,
+      "level": 3,
+      "transitions": 3741,
+      "observed_episode_starts": 9,
+      "falls": 0,
+      "probes": 0,
+      "valid_window_note": "windows start at this scope; subsequent done masks prevent crossing resets",
+      "valid_H8_windows": 3636,
+      "valid_H8_fraction": 0.9792620539665222,
+      "valid_H32_windows": 3276,
+      "valid_H32_fraction": 0.905722975730896,
+      "mixed_three_nonzero": 1386,
+      "action_abs_max": 1.0,
+      "action_saturation": 0.18791766464710236,
+      "command_abs_max": [
+        0.6733173727989197,
+        0.06947151571512222,
+        0.14210766553878784
+      ]
+    },
+    {
+      "domain": 5,
+      "level": 4,
+      "transitions": 115603,
+      "observed_episode_starts": 280,
+      "falls": 5,
+      "probes": 0,
+      "valid_window_note": "windows start at this scope; subsequent done masks prevent crossing resets",
+      "valid_H8_windows": 112593,
+      "valid_H8_fraction": 0.9819299578666687,
+      "valid_H32_windows": 102273,
+      "valid_H32_fraction": 0.917748749256134,
+      "mixed_three_nonzero": 49437,
+      "action_abs_max": 1.0,
+      "action_saturation": 0.20384708046913147,
+      "command_abs_max": [
+        0.7895641922950745,
+        0.07995101064443588,
+        0.14965452253818512
+      ]
+    },
+    {
+      "domain": 5,
+      "level": 5,
+      "transitions": 106229,
+      "observed_episode_starts": 417,
+      "falls": 32,
+      "probes": 16229,
+      "valid_window_note": "windows start at this scope; subsequent done masks prevent crossing resets",
+      "valid_H8_windows": 102624,
+      "valid_H8_fraction": 0.9729883670806885,
+      "valid_H32_windows": 90316,
+      "valid_H32_fraction": 0.8778685927391052,
+      "mixed_three_nonzero": 47369,
+      "action_abs_max": 1.0,
+      "action_saturation": 0.21118761599063873,
+      "command_abs_max": [
+        0.7987374663352966,
+        0.07995898276567459,
+        0.14911648631095886
+      ]
+    },
+    {
+      "domain": 5,
+      "level": 6,
+      "transitions": 20094,
+      "observed_episode_starts": 198,
+      "falls": 15,
+      "probes": 16223,
+      "valid_window_note": "windows start at this scope; subsequent done masks prevent crossing resets",
+      "valid_H8_windows": 18701,
+      "valid_H8_fraction": 0.9332767724990845,
+      "valid_H32_windows": 13975,
+      "valid_H32_fraction": 0.7041721343994141,
+      "mixed_three_nonzero": 8582,
+      "action_abs_max": 1.0,
+      "action_saturation": 0.22633206844329834,
+      "command_abs_max": [
+        0.7195078730583191,
+        0.0797831118106842,
+        0.1473005712032318
+      ]
+    },
+    {
+      "domain": 5,
+      "level": 7,
+      "transitions": 16320,
+      "observed_episode_starts": 212,
+      "falls": 43,
+      "probes": 15283,
+      "valid_window_note": "windows start at this scope; subsequent done masks prevent crossing resets",
+      "valid_H8_windows": 14854,
+      "valid_H8_fraction": 0.9101715683937073,
+      "valid_H32_windows": 10112,
+      "valid_H32_fraction": 0.6196078658103943,
+      "mixed_three_nonzero": 6431,
+      "action_abs_max": 1.0,
+      "action_saturation": 0.23460988700389862,
+      "command_abs_max": [
+        0.7432599663734436,
+        0.07939989119768143,
+        0.14821891486644745
+      ]
+    }
+  ],
+  "actor_starts_domain_terrain_speed": [
+    [
+      [
+        0,
+        37216,
+        0,
+        0,
+        2917
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    [
+      [
+        0,
+        581,
+        0,
+        0,
+        41
+      ],
+      [
+        0,
+        445,
+        0,
+        0,
+        31
+      ],
+      [
+        0,
+        859,
+        0,
+        0,
+        14
+      ],
+      [
+        0,
+        434,
+        0,
+        0,
+        38
+      ],
+      [
+        0,
+        13965,
+        0,
+        0,
+        1113
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    [
+      [
+        0,
+        339,
+        0,
+        0,
+        19
+      ],
+      [
+        0,
+        308,
+        0,
+        0,
+        18
+      ],
+      [
+        0,
+        190,
+        0,
+        0,
+        11
+      ],
+      [
+        0,
+        267,
+        0,
+        0,
+        24
+      ],
+      [
+        0,
+        5683,
+        0,
+        0,
+        381
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    [
+      [
+        0,
+        181,
+        0,
+        0,
+        24
+      ],
+      [
+        0,
+        246,
+        0,
+        0,
+        16
+      ],
+      [
+        0,
+        225,
+        0,
+        0,
+        14
+      ],
+      [
+        0,
+        224,
+        0,
+        0,
+        15
+      ],
+      [
+        0,
+        6127,
+        0,
+        0,
+        408
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    [
+      [
+        5,
+        0,
+        0,
+        0,
+        48
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        25
+      ],
+      [
+        1,
+        0,
+        0,
+        0,
+        24
+      ],
+      [
+        7,
+        0,
+        0,
+        0,
+        8
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    [
+      [
+        0,
+        0,
+        0,
+        0,
+        35
+      ],
+      [
+        12,
+        0,
+        0,
+        0,
+        32
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        28
+      ],
+      [
+        180,
+        0,
+        0,
+        0,
+        20
+      ],
+      [
+        3677,
+        0,
+        0,
+        0,
+        324
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ]
+  ],
+  "speed_axis": [
+    "S0",
+    "S1",
+    "S2",
+    "S3",
+    "historical_unknown"
+  ],
+  "wm_sampled_start_levels": [
+    123726,
+    6131,
+    6454,
+    5978,
+    149020,
+    179798,
+    21209,
+    19684
+  ],
+  "actual_contacts": "training Replay does not store solver forces; actual force/contact events are in diagnostics/baseline_feet/contacts.jsonl.gz",
+  "snapshot_not_cumulative": true
+}

@@ -1,0 +1,54 @@
+{
+  "num_steps_per_env": 24,
+  "save_interval": 1000000,
+  "logger": "tensorboard",
+  "obs_groups": {
+    "actor": [
+      "policy"
+    ],
+    "critic": [
+      "critic"
+    ]
+  },
+  "actor": {
+    "class_name": "unisupermimic.tasks.velocity.go2w.ppo:AlignedActor",
+    "hidden_dims": [
+      2048,
+      1024,
+      512,
+      256
+    ],
+    "activation": "swish",
+    "obs_normalization": false,
+    "distribution_cfg": {
+      "class_name": "rsl_rl.modules.distribution:GaussianDistribution",
+      "init_std": 0.02,
+      "std_type": "log"
+    }
+  },
+  "critic": {
+    "class_name": "rsl_rl.models:MLPModel",
+    "hidden_dims": [
+      256,
+      128
+    ],
+    "activation": "elu",
+    "obs_normalization": true
+  },
+  "algorithm": {
+    "class_name": "rsl_rl.algorithms:PPO",
+    "value_loss_coef": 1.0,
+    "use_clipped_value_loss": true,
+    "clip_param": 0.2,
+    "entropy_coef": 0.01,
+    "num_learning_epochs": 5,
+    "num_mini_batches": 48,
+    "learning_rate": 0.0002,
+    "schedule": "adaptive",
+    "gamma": 0.99,
+    "lam": 0.95,
+    "desired_kl": 0.01,
+    "max_grad_norm": 1.0
+  },
+  "multi_gpu": null
+}

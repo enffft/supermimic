@@ -66,7 +66,7 @@ def begin_iteration(env, learner):
     for domain in range(1, 6):
         selected = curriculum.mastery[c.command_domain == domain]
         if selected.numel():
-            ceilings[domain] = selected.max()
+            ceilings[domain] = (selected.max() + getattr(c.cfg, "actor_level_lookahead", 0)).clamp(max=7)
     learner.buffer.start_scope_mask = (
         torch.arange(8, device=env.device)[None] <= ceilings[:, None]
     ).to(learner.device)

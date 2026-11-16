@@ -1,0 +1,2177 @@
+{
+  "collect_time": 6.82459282875061,
+  "learn_time": 1.1944987773895264,
+  "loss_dict": {
+    "value": 1.4463345338900884,
+    "surrogate": 0.17208140041523923,
+    "entropy": -39.8780132929484
+  },
+  "learning_rate": 1e-05,
+  "records": [
+    {
+      "ratio_outside_clip_fraction": 0.0,
+      "action_mean_delta_RMS": 0.0,
+      "mean_log_ratio": 0.0,
+      "minibatch": 1,
+      "KL_mean": 0.0,
+      "learning_rate_before_schedule": 0.0002,
+      "learning_rate_after_schedule": 0.0002
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9912109375,
+      "action_mean_delta_RMS": 0.026342272758483887,
+      "mean_log_ratio": -13.834538459777832,
+      "minibatch": 2,
+      "KL_mean": 13.878283500671387,
+      "learning_rate_before_schedule": 0.0002,
+      "learning_rate_after_schedule": 0.00013333333333333334
+    },
+    {
+      "ratio_outside_clip_fraction": 0.998046875,
+      "action_mean_delta_RMS": 0.03932604566216469,
+      "mean_log_ratio": -30.942832946777344,
+      "minibatch": 3,
+      "KL_mean": 30.927433013916016,
+      "learning_rate_before_schedule": 0.00013333333333333334,
+      "learning_rate_after_schedule": 8.888888888888889e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9970703125,
+      "action_mean_delta_RMS": 0.037380099296569824,
+      "mean_log_ratio": -28.259929656982422,
+      "minibatch": 4,
+      "KL_mean": 27.9395809173584,
+      "learning_rate_before_schedule": 8.888888888888889e-05,
+      "learning_rate_after_schedule": 5.925925925925926e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9970703125,
+      "action_mean_delta_RMS": 0.03646830469369888,
+      "mean_log_ratio": -26.516986846923828,
+      "minibatch": 5,
+      "KL_mean": 26.590831756591797,
+      "learning_rate_before_schedule": 5.925925925925926e-05,
+      "learning_rate_after_schedule": 3.950617283950617e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.99853515625,
+      "action_mean_delta_RMS": 0.03576482832431793,
+      "mean_log_ratio": -25.648361206054688,
+      "minibatch": 6,
+      "KL_mean": 25.573089599609375,
+      "learning_rate_before_schedule": 3.950617283950617e-05,
+      "learning_rate_after_schedule": 2.6337448559670783e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9990234375,
+      "action_mean_delta_RMS": 0.036836400628089905,
+      "mean_log_ratio": -27.23953628540039,
+      "minibatch": 7,
+      "KL_mean": 27.126964569091797,
+      "learning_rate_before_schedule": 2.6337448559670783e-05,
+      "learning_rate_after_schedule": 1.755829903978052e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.99658203125,
+      "action_mean_delta_RMS": 0.037935078144073486,
+      "mean_log_ratio": -28.852190017700195,
+      "minibatch": 8,
+      "KL_mean": 28.767780303955078,
+      "learning_rate_before_schedule": 1.755829903978052e-05,
+      "learning_rate_after_schedule": 1.1705532693187015e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.99560546875,
+      "action_mean_delta_RMS": 0.03789839521050453,
+      "mean_log_ratio": -28.497833251953125,
+      "minibatch": 9,
+      "KL_mean": 28.7115535736084,
+      "learning_rate_before_schedule": 1.1705532693187015e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.99658203125,
+      "action_mean_delta_RMS": 0.03891046717762947,
+      "mean_log_ratio": -30.45305633544922,
+      "minibatch": 10,
+      "KL_mean": 30.265090942382812,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9990234375,
+      "action_mean_delta_RMS": 0.03918212652206421,
+      "mean_log_ratio": -30.56250762939453,
+      "minibatch": 11,
+      "KL_mean": 30.68878936767578,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.99658203125,
+      "action_mean_delta_RMS": 0.03846321254968643,
+      "mean_log_ratio": -29.699705123901367,
+      "minibatch": 12,
+      "KL_mean": 29.572128295898438,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.99658203125,
+      "action_mean_delta_RMS": 0.038933221250772476,
+      "mean_log_ratio": -30.393795013427734,
+      "minibatch": 13,
+      "KL_mean": 30.298994064331055,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.99658203125,
+      "action_mean_delta_RMS": 0.039325401186943054,
+      "mean_log_ratio": -30.986392974853516,
+      "minibatch": 14,
+      "KL_mean": 30.911598205566406,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.99560546875,
+      "action_mean_delta_RMS": 0.0397409163415432,
+      "mean_log_ratio": -31.260122299194336,
+      "minibatch": 15,
+      "KL_mean": 31.568401336669922,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.99267578125,
+      "action_mean_delta_RMS": 0.039258427917957306,
+      "mean_log_ratio": -30.547176361083984,
+      "minibatch": 16,
+      "KL_mean": 30.80552101135254,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.99560546875,
+      "action_mean_delta_RMS": 0.03915724158287048,
+      "mean_log_ratio": -30.573637008666992,
+      "minibatch": 17,
+      "KL_mean": 30.646484375,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.99853515625,
+      "action_mean_delta_RMS": 0.03959433361887932,
+      "mean_log_ratio": -31.403535842895508,
+      "minibatch": 18,
+      "KL_mean": 31.33401107788086,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9951171875,
+      "action_mean_delta_RMS": 0.039419181644916534,
+      "mean_log_ratio": -31.0023193359375,
+      "minibatch": 19,
+      "KL_mean": 31.056812286376953,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.99169921875,
+      "action_mean_delta_RMS": 0.038666900247335434,
+      "mean_log_ratio": -30.019092559814453,
+      "minibatch": 20,
+      "KL_mean": 29.882061004638672,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.994140625,
+      "action_mean_delta_RMS": 0.03814506158232689,
+      "mean_log_ratio": -28.868253707885742,
+      "minibatch": 21,
+      "KL_mean": 29.08083724975586,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.99609375,
+      "action_mean_delta_RMS": 0.039384886622428894,
+      "mean_log_ratio": -31.128496170043945,
+      "minibatch": 22,
+      "KL_mean": 31.001401901245117,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.99462890625,
+      "action_mean_delta_RMS": 0.038470979779958725,
+      "mean_log_ratio": -29.652687072753906,
+      "minibatch": 23,
+      "KL_mean": 29.57908058166504,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.99267578125,
+      "action_mean_delta_RMS": 0.03857581689953804,
+      "mean_log_ratio": -29.66729736328125,
+      "minibatch": 24,
+      "KL_mean": 29.74036407470703,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.99072265625,
+      "action_mean_delta_RMS": 0.038710903376340866,
+      "mean_log_ratio": -30.202983856201172,
+      "minibatch": 25,
+      "KL_mean": 29.94853973388672,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9912109375,
+      "action_mean_delta_RMS": 0.03868456929922104,
+      "mean_log_ratio": -29.951812744140625,
+      "minibatch": 26,
+      "KL_mean": 29.90719223022461,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.994140625,
+      "action_mean_delta_RMS": 0.03876129537820816,
+      "mean_log_ratio": -29.846033096313477,
+      "minibatch": 27,
+      "KL_mean": 30.02567481994629,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9970703125,
+      "action_mean_delta_RMS": 0.039171844720840454,
+      "mean_log_ratio": -30.65003776550293,
+      "minibatch": 28,
+      "KL_mean": 30.66424560546875,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9921875,
+      "action_mean_delta_RMS": 0.03816960006952286,
+      "mean_log_ratio": -29.097753524780273,
+      "minibatch": 29,
+      "KL_mean": 29.11526870727539,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9951171875,
+      "action_mean_delta_RMS": 0.03976176679134369,
+      "mean_log_ratio": -31.431018829345703,
+      "minibatch": 30,
+      "KL_mean": 31.59478187561035,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.994140625,
+      "action_mean_delta_RMS": 0.039046283811330795,
+      "mean_log_ratio": -30.48065185546875,
+      "minibatch": 31,
+      "KL_mean": 30.466938018798828,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.99267578125,
+      "action_mean_delta_RMS": 0.039195846766233444,
+      "mean_log_ratio": -30.803966522216797,
+      "minibatch": 32,
+      "KL_mean": 30.700899124145508,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.99169921875,
+      "action_mean_delta_RMS": 0.03857683762907982,
+      "mean_log_ratio": -29.671188354492188,
+      "minibatch": 33,
+      "KL_mean": 29.738117218017578,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.994140625,
+      "action_mean_delta_RMS": 0.03913240134716034,
+      "mean_log_ratio": -30.457618713378906,
+      "minibatch": 34,
+      "KL_mean": 30.600662231445312,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9951171875,
+      "action_mean_delta_RMS": 0.039084188640117645,
+      "mean_log_ratio": -30.323213577270508,
+      "minibatch": 35,
+      "KL_mean": 30.525022506713867,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.99267578125,
+      "action_mean_delta_RMS": 0.038113631308078766,
+      "mean_log_ratio": -28.9582462310791,
+      "minibatch": 36,
+      "KL_mean": 29.02711296081543,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.99267578125,
+      "action_mean_delta_RMS": 0.039280425757169724,
+      "mean_log_ratio": -30.765605926513672,
+      "minibatch": 37,
+      "KL_mean": 30.83136558532715,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9921875,
+      "action_mean_delta_RMS": 0.037969041615724564,
+      "mean_log_ratio": -28.867347717285156,
+      "minibatch": 38,
+      "KL_mean": 28.806777954101562,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.99267578125,
+      "action_mean_delta_RMS": 0.03767066448926926,
+      "mean_log_ratio": -28.411643981933594,
+      "minibatch": 39,
+      "KL_mean": 28.355628967285156,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.99169921875,
+      "action_mean_delta_RMS": 0.03859326243400574,
+      "mean_log_ratio": -29.761470794677734,
+      "minibatch": 40,
+      "KL_mean": 29.76134490966797,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.99267578125,
+      "action_mean_delta_RMS": 0.03853636607527733,
+      "mean_log_ratio": -29.63020896911621,
+      "minibatch": 41,
+      "KL_mean": 29.673051834106445,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.99169921875,
+      "action_mean_delta_RMS": 0.03801210597157478,
+      "mean_log_ratio": -28.790306091308594,
+      "minibatch": 42,
+      "KL_mean": 28.87089729309082,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.98876953125,
+      "action_mean_delta_RMS": 0.03742637857794762,
+      "mean_log_ratio": -27.808948516845703,
+      "minibatch": 43,
+      "KL_mean": 27.987607955932617,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9931640625,
+      "action_mean_delta_RMS": 0.03767763823270798,
+      "mean_log_ratio": -28.386117935180664,
+      "minibatch": 44,
+      "KL_mean": 28.364192962646484,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9912109375,
+      "action_mean_delta_RMS": 0.03699337691068649,
+      "mean_log_ratio": -27.27572250366211,
+      "minibatch": 45,
+      "KL_mean": 27.34280776977539,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9873046875,
+      "action_mean_delta_RMS": 0.0375218391418457,
+      "mean_log_ratio": -28.214508056640625,
+      "minibatch": 46,
+      "KL_mean": 28.129470825195312,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.98876953125,
+      "action_mean_delta_RMS": 0.037217531353235245,
+      "mean_log_ratio": -27.520462036132812,
+      "minibatch": 47,
+      "KL_mean": 27.674571990966797,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.98876953125,
+      "action_mean_delta_RMS": 0.03684106841683388,
+      "mean_log_ratio": -27.12633514404297,
+      "minibatch": 48,
+      "KL_mean": 27.11733627319336,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9892578125,
+      "action_mean_delta_RMS": 0.03783949092030525,
+      "mean_log_ratio": -28.80727767944336,
+      "minibatch": 49,
+      "KL_mean": 28.60703468322754,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.986328125,
+      "action_mean_delta_RMS": 0.03725646808743477,
+      "mean_log_ratio": -27.563777923583984,
+      "minibatch": 50,
+      "KL_mean": 27.731204986572266,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.98828125,
+      "action_mean_delta_RMS": 0.03733550012111664,
+      "mean_log_ratio": -27.838661193847656,
+      "minibatch": 51,
+      "KL_mean": 27.849124908447266,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.986328125,
+      "action_mean_delta_RMS": 0.03752059116959572,
+      "mean_log_ratio": -28.316539764404297,
+      "minibatch": 52,
+      "KL_mean": 28.12537384033203,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.98876953125,
+      "action_mean_delta_RMS": 0.03706121817231178,
+      "mean_log_ratio": -27.36612319946289,
+      "minibatch": 53,
+      "KL_mean": 27.44042205810547,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.990234375,
+      "action_mean_delta_RMS": 0.03568946570158005,
+      "mean_log_ratio": -25.52759552001953,
+      "minibatch": 54,
+      "KL_mean": 25.446462631225586,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.986328125,
+      "action_mean_delta_RMS": 0.03594833239912987,
+      "mean_log_ratio": -25.938201904296875,
+      "minibatch": 55,
+      "KL_mean": 25.816822052001953,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.984375,
+      "action_mean_delta_RMS": 0.036885276436805725,
+      "mean_log_ratio": -27.26075553894043,
+      "minibatch": 56,
+      "KL_mean": 27.179460525512695,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.98583984375,
+      "action_mean_delta_RMS": 0.0361168198287487,
+      "mean_log_ratio": -25.797801971435547,
+      "minibatch": 57,
+      "KL_mean": 26.058515548706055,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9853515625,
+      "action_mean_delta_RMS": 0.03662435710430145,
+      "mean_log_ratio": -26.91893768310547,
+      "minibatch": 58,
+      "KL_mean": 26.79595947265625,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.98486328125,
+      "action_mean_delta_RMS": 0.03632212057709694,
+      "mean_log_ratio": -26.264293670654297,
+      "minibatch": 59,
+      "KL_mean": 26.355369567871094,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.98193359375,
+      "action_mean_delta_RMS": 0.03557790070772171,
+      "mean_log_ratio": -25.42397117614746,
+      "minibatch": 60,
+      "KL_mean": 25.285839080810547,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.98046875,
+      "action_mean_delta_RMS": 0.03589611127972603,
+      "mean_log_ratio": -25.817230224609375,
+      "minibatch": 61,
+      "KL_mean": 25.740230560302734,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.97998046875,
+      "action_mean_delta_RMS": 0.03592720255255699,
+      "mean_log_ratio": -25.890226364135742,
+      "minibatch": 62,
+      "KL_mean": 25.78411293029785,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.98583984375,
+      "action_mean_delta_RMS": 0.03582038730382919,
+      "mean_log_ratio": -25.33377456665039,
+      "minibatch": 63,
+      "KL_mean": 25.631193161010742,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.98095703125,
+      "action_mean_delta_RMS": 0.03518916293978691,
+      "mean_log_ratio": -24.578598022460938,
+      "minibatch": 64,
+      "KL_mean": 24.73490333557129,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.98388671875,
+      "action_mean_delta_RMS": 0.0347268208861351,
+      "mean_log_ratio": -23.979114532470703,
+      "minibatch": 65,
+      "KL_mean": 24.088756561279297,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.97412109375,
+      "action_mean_delta_RMS": 0.035112276673316956,
+      "mean_log_ratio": -24.654544830322266,
+      "minibatch": 66,
+      "KL_mean": 24.626134872436523,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.98486328125,
+      "action_mean_delta_RMS": 0.03476311266422272,
+      "mean_log_ratio": -24.08614730834961,
+      "minibatch": 67,
+      "KL_mean": 24.1383056640625,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.97607421875,
+      "action_mean_delta_RMS": 0.03402770683169365,
+      "mean_log_ratio": -23.246685028076172,
+      "minibatch": 68,
+      "KL_mean": 23.127182006835938,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.98486328125,
+      "action_mean_delta_RMS": 0.03336751461029053,
+      "mean_log_ratio": -22.036375045776367,
+      "minibatch": 69,
+      "KL_mean": 22.238300323486328,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9814453125,
+      "action_mean_delta_RMS": 0.03454730287194252,
+      "mean_log_ratio": -23.96133041381836,
+      "minibatch": 70,
+      "KL_mean": 23.83828353881836,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.97802734375,
+      "action_mean_delta_RMS": 0.03349979221820831,
+      "mean_log_ratio": -22.457975387573242,
+      "minibatch": 71,
+      "KL_mean": 22.414215087890625,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.97802734375,
+      "action_mean_delta_RMS": 0.03345268964767456,
+      "mean_log_ratio": -22.2692928314209,
+      "minibatch": 72,
+      "KL_mean": 22.351255416870117,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.97802734375,
+      "action_mean_delta_RMS": 0.033172279596328735,
+      "mean_log_ratio": -22.298568725585938,
+      "minibatch": 73,
+      "KL_mean": 21.977468490600586,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.97021484375,
+      "action_mean_delta_RMS": 0.03293775022029877,
+      "mean_log_ratio": -21.68243408203125,
+      "minibatch": 74,
+      "KL_mean": 21.66735076904297,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.97705078125,
+      "action_mean_delta_RMS": 0.03271876648068428,
+      "mean_log_ratio": -21.23861312866211,
+      "minibatch": 75,
+      "KL_mean": 21.38009262084961,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.97216796875,
+      "action_mean_delta_RMS": 0.032620128244161606,
+      "mean_log_ratio": -21.244335174560547,
+      "minibatch": 76,
+      "KL_mean": 21.250898361206055,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.966796875,
+      "action_mean_delta_RMS": 0.03145105391740799,
+      "mean_log_ratio": -19.795787811279297,
+      "minibatch": 77,
+      "KL_mean": 19.75513458251953,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.97412109375,
+      "action_mean_delta_RMS": 0.03310813009738922,
+      "mean_log_ratio": -21.742965698242188,
+      "minibatch": 78,
+      "KL_mean": 21.892108917236328,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.97021484375,
+      "action_mean_delta_RMS": 0.031077710911631584,
+      "mean_log_ratio": -19.30659294128418,
+      "minibatch": 79,
+      "KL_mean": 19.288244247436523,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.97314453125,
+      "action_mean_delta_RMS": 0.031319648027420044,
+      "mean_log_ratio": -19.611812591552734,
+      "minibatch": 80,
+      "KL_mean": 19.5899658203125,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9716796875,
+      "action_mean_delta_RMS": 0.030523141846060753,
+      "mean_log_ratio": -18.457929611206055,
+      "minibatch": 81,
+      "KL_mean": 18.60572052001953,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.96923828125,
+      "action_mean_delta_RMS": 0.030737845227122307,
+      "mean_log_ratio": -18.718265533447266,
+      "minibatch": 82,
+      "KL_mean": 18.868295669555664,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.96533203125,
+      "action_mean_delta_RMS": 0.030804309993982315,
+      "mean_log_ratio": -18.7945556640625,
+      "minibatch": 83,
+      "KL_mean": 18.949825286865234,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.96875,
+      "action_mean_delta_RMS": 0.02965279296040535,
+      "mean_log_ratio": -17.517568588256836,
+      "minibatch": 84,
+      "KL_mean": 17.559040069580078,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9716796875,
+      "action_mean_delta_RMS": 0.03113562799990177,
+      "mean_log_ratio": -19.178544998168945,
+      "minibatch": 85,
+      "KL_mean": 19.358919143676758,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.95751953125,
+      "action_mean_delta_RMS": 0.02974272333085537,
+      "mean_log_ratio": -17.68994903564453,
+      "minibatch": 86,
+      "KL_mean": 17.665260314941406,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9697265625,
+      "action_mean_delta_RMS": 0.029839005321264267,
+      "mean_log_ratio": -17.771095275878906,
+      "minibatch": 87,
+      "KL_mean": 17.779672622680664,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9609375,
+      "action_mean_delta_RMS": 0.031033292412757874,
+      "mean_log_ratio": -19.19402503967285,
+      "minibatch": 88,
+      "KL_mean": 19.231346130371094,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.96435546875,
+      "action_mean_delta_RMS": 0.030883556231856346,
+      "mean_log_ratio": -19.005022048950195,
+      "minibatch": 89,
+      "KL_mean": 19.04582977294922,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9638671875,
+      "action_mean_delta_RMS": 0.030395442619919777,
+      "mean_log_ratio": -18.373767852783203,
+      "minibatch": 90,
+      "KL_mean": 18.448394775390625,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.96142578125,
+      "action_mean_delta_RMS": 0.03020242229104042,
+      "mean_log_ratio": -18.034000396728516,
+      "minibatch": 91,
+      "KL_mean": 18.214771270751953,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9619140625,
+      "action_mean_delta_RMS": 0.030706064775586128,
+      "mean_log_ratio": -18.789203643798828,
+      "minibatch": 92,
+      "KL_mean": 18.8270206451416,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9609375,
+      "action_mean_delta_RMS": 0.030025355517864227,
+      "mean_log_ratio": -17.953786849975586,
+      "minibatch": 93,
+      "KL_mean": 18.001220703125,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.962890625,
+      "action_mean_delta_RMS": 0.030685054138302803,
+      "mean_log_ratio": -18.90191078186035,
+      "minibatch": 94,
+      "KL_mean": 18.800907135009766,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.966796875,
+      "action_mean_delta_RMS": 0.030539987608790398,
+      "mean_log_ratio": -18.45777702331543,
+      "minibatch": 95,
+      "KL_mean": 18.62323760986328,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.96484375,
+      "action_mean_delta_RMS": 0.030114319175481796,
+      "mean_log_ratio": -18.120210647583008,
+      "minibatch": 96,
+      "KL_mean": 18.107606887817383,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9541015625,
+      "action_mean_delta_RMS": 0.031105196103453636,
+      "mean_log_ratio": -19.69588851928711,
+      "minibatch": 97,
+      "KL_mean": 19.31905746459961,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.95849609375,
+      "action_mean_delta_RMS": 0.030536934733390808,
+      "mean_log_ratio": -18.41252326965332,
+      "minibatch": 98,
+      "KL_mean": 18.618804931640625,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.95849609375,
+      "action_mean_delta_RMS": 0.030464373528957367,
+      "mean_log_ratio": -18.52063751220703,
+      "minibatch": 99,
+      "KL_mean": 18.530662536621094,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9482421875,
+      "action_mean_delta_RMS": 0.03065139800310135,
+      "mean_log_ratio": -18.896121978759766,
+      "minibatch": 100,
+      "KL_mean": 18.758773803710938,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.958984375,
+      "action_mean_delta_RMS": 0.02994987741112709,
+      "mean_log_ratio": -17.74530792236328,
+      "minibatch": 101,
+      "KL_mean": 17.909610748291016,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.951171875,
+      "action_mean_delta_RMS": 0.028159987181425095,
+      "mean_log_ratio": -15.808157920837402,
+      "minibatch": 102,
+      "KL_mean": 15.832840919494629,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9453125,
+      "action_mean_delta_RMS": 0.028681054711341858,
+      "mean_log_ratio": -16.483469009399414,
+      "minibatch": 103,
+      "KL_mean": 16.42427635192871,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.95703125,
+      "action_mean_delta_RMS": 0.029812049120664597,
+      "mean_log_ratio": -17.806293487548828,
+      "minibatch": 104,
+      "KL_mean": 17.744747161865234,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.962890625,
+      "action_mean_delta_RMS": 0.029098836705088615,
+      "mean_log_ratio": -16.664243698120117,
+      "minibatch": 105,
+      "KL_mean": 16.90575408935547,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.94140625,
+      "action_mean_delta_RMS": 0.029911482706665993,
+      "mean_log_ratio": -17.98575210571289,
+      "minibatch": 106,
+      "KL_mean": 17.86334800720215,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9501953125,
+      "action_mean_delta_RMS": 0.029712658375501633,
+      "mean_log_ratio": -17.583322525024414,
+      "minibatch": 107,
+      "KL_mean": 17.62661361694336,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9482421875,
+      "action_mean_delta_RMS": 0.029165860265493393,
+      "mean_log_ratio": -17.084197998046875,
+      "minibatch": 108,
+      "KL_mean": 16.98333740234375,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9482421875,
+      "action_mean_delta_RMS": 0.029945340007543564,
+      "mean_log_ratio": -17.92795181274414,
+      "minibatch": 109,
+      "KL_mean": 17.903440475463867,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9541015625,
+      "action_mean_delta_RMS": 0.02992475964128971,
+      "mean_log_ratio": -18.028465270996094,
+      "minibatch": 110,
+      "KL_mean": 17.878421783447266,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9482421875,
+      "action_mean_delta_RMS": 0.030217615887522697,
+      "mean_log_ratio": -18.01631736755371,
+      "minibatch": 111,
+      "KL_mean": 18.230487823486328,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.94189453125,
+      "action_mean_delta_RMS": 0.02945278398692608,
+      "mean_log_ratio": -17.16836929321289,
+      "minibatch": 112,
+      "KL_mean": 17.31863021850586,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9462890625,
+      "action_mean_delta_RMS": 0.029163623228669167,
+      "mean_log_ratio": -16.845537185668945,
+      "minibatch": 113,
+      "KL_mean": 16.979944229125977,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.94384765625,
+      "action_mean_delta_RMS": 0.0299150962382555,
+      "mean_log_ratio": -17.855087280273438,
+      "minibatch": 114,
+      "KL_mean": 17.866235733032227,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9365234375,
+      "action_mean_delta_RMS": 0.029543204233050346,
+      "mean_log_ratio": -17.383811950683594,
+      "minibatch": 115,
+      "KL_mean": 17.424579620361328,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.93115234375,
+      "action_mean_delta_RMS": 0.028980866074562073,
+      "mean_log_ratio": -16.87687110900879,
+      "minibatch": 116,
+      "KL_mean": 16.76723861694336,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9404296875,
+      "action_mean_delta_RMS": 0.02827126532793045,
+      "mean_log_ratio": -15.735908508300781,
+      "minibatch": 117,
+      "KL_mean": 15.956169128417969,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.93896484375,
+      "action_mean_delta_RMS": 0.029649794101715088,
+      "mean_log_ratio": -17.66535186767578,
+      "minibatch": 118,
+      "KL_mean": 17.54998016357422,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.94287109375,
+      "action_mean_delta_RMS": 0.02874266356229782,
+      "mean_log_ratio": -16.462249755859375,
+      "minibatch": 119,
+      "KL_mean": 16.492435455322266,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9443359375,
+      "action_mean_delta_RMS": 0.028923427686095238,
+      "mean_log_ratio": -16.67137908935547,
+      "minibatch": 120,
+      "KL_mean": 16.700733184814453,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.93115234375,
+      "action_mean_delta_RMS": 0.028597839176654816,
+      "mean_log_ratio": -16.64767837524414,
+      "minibatch": 121,
+      "KL_mean": 16.32624053955078,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.93212890625,
+      "action_mean_delta_RMS": 0.028446441516280174,
+      "mean_log_ratio": -16.13321876525879,
+      "minibatch": 122,
+      "KL_mean": 16.15352439880371,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9306640625,
+      "action_mean_delta_RMS": 0.02846970595419407,
+      "mean_log_ratio": -16.03362274169922,
+      "minibatch": 123,
+      "KL_mean": 16.17999267578125,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.94970703125,
+      "action_mean_delta_RMS": 0.028455810621380806,
+      "mean_log_ratio": -16.199874877929688,
+      "minibatch": 124,
+      "KL_mean": 16.163724899291992,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9326171875,
+      "action_mean_delta_RMS": 0.02784997969865799,
+      "mean_log_ratio": -15.48501968383789,
+      "minibatch": 125,
+      "KL_mean": 15.48301887512207,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9365234375,
+      "action_mean_delta_RMS": 0.029829667881131172,
+      "mean_log_ratio": -17.574569702148438,
+      "minibatch": 126,
+      "KL_mean": 17.763132095336914,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.92919921875,
+      "action_mean_delta_RMS": 0.02731212228536606,
+      "mean_log_ratio": -14.896328926086426,
+      "minibatch": 127,
+      "KL_mean": 14.890360832214355,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.93896484375,
+      "action_mean_delta_RMS": 0.028011376038193703,
+      "mean_log_ratio": -15.648496627807617,
+      "minibatch": 128,
+      "KL_mean": 15.662877082824707,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.93212890625,
+      "action_mean_delta_RMS": 0.026981523260474205,
+      "mean_log_ratio": -14.398733139038086,
+      "minibatch": 129,
+      "KL_mean": 14.532041549682617,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9404296875,
+      "action_mean_delta_RMS": 0.027334213256835938,
+      "mean_log_ratio": -14.735602378845215,
+      "minibatch": 130,
+      "KL_mean": 14.914510726928711,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.93310546875,
+      "action_mean_delta_RMS": 0.027470475062727928,
+      "mean_log_ratio": -14.8804349899292,
+      "minibatch": 131,
+      "KL_mean": 15.063404083251953,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.93017578125,
+      "action_mean_delta_RMS": 0.026370134204626083,
+      "mean_log_ratio": -13.776914596557617,
+      "minibatch": 132,
+      "KL_mean": 13.880341529846191,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.93701171875,
+      "action_mean_delta_RMS": 0.02806556224822998,
+      "mean_log_ratio": -15.563899993896484,
+      "minibatch": 133,
+      "KL_mean": 15.722450256347656,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.92724609375,
+      "action_mean_delta_RMS": 0.02644718438386917,
+      "mean_log_ratio": -13.99015998840332,
+      "minibatch": 134,
+      "KL_mean": 13.961313247680664,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.92919921875,
+      "action_mean_delta_RMS": 0.026432231068611145,
+      "mean_log_ratio": -13.907526016235352,
+      "minibatch": 135,
+      "KL_mean": 13.945480346679688,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.931640625,
+      "action_mean_delta_RMS": 0.027602992951869965,
+      "mean_log_ratio": -15.161529541015625,
+      "minibatch": 136,
+      "KL_mean": 15.208284378051758,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.92333984375,
+      "action_mean_delta_RMS": 0.026996523141860962,
+      "mean_log_ratio": -14.452476501464844,
+      "minibatch": 137,
+      "KL_mean": 14.547119140625,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.91650390625,
+      "action_mean_delta_RMS": 0.026664894074201584,
+      "mean_log_ratio": -14.077689170837402,
+      "minibatch": 138,
+      "KL_mean": 14.191798210144043,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.92724609375,
+      "action_mean_delta_RMS": 0.02628251165151596,
+      "mean_log_ratio": -13.651814460754395,
+      "minibatch": 139,
+      "KL_mean": 13.787802696228027,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.93310546875,
+      "action_mean_delta_RMS": 0.026768457144498825,
+      "mean_log_ratio": -14.245650291442871,
+      "minibatch": 140,
+      "KL_mean": 14.30212688446045,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.92236328125,
+      "action_mean_delta_RMS": 0.02597259171307087,
+      "mean_log_ratio": -13.39869499206543,
+      "minibatch": 141,
+      "KL_mean": 13.464064598083496,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.916015625,
+      "action_mean_delta_RMS": 0.02669951133430004,
+      "mean_log_ratio": -14.299016952514648,
+      "minibatch": 142,
+      "KL_mean": 14.228259086608887,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.92724609375,
+      "action_mean_delta_RMS": 0.02644607052206993,
+      "mean_log_ratio": -13.835981369018555,
+      "minibatch": 143,
+      "KL_mean": 13.95926570892334,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.91552734375,
+      "action_mean_delta_RMS": 0.026134677231311798,
+      "mean_log_ratio": -13.668092727661133,
+      "minibatch": 144,
+      "KL_mean": 13.632390975952148,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9267578125,
+      "action_mean_delta_RMS": 0.02709929645061493,
+      "mean_log_ratio": -15.109756469726562,
+      "minibatch": 145,
+      "KL_mean": 14.657624244689941,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9169921875,
+      "action_mean_delta_RMS": 0.026473555713891983,
+      "mean_log_ratio": -13.788322448730469,
+      "minibatch": 146,
+      "KL_mean": 13.98772144317627,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.91259765625,
+      "action_mean_delta_RMS": 0.02622612938284874,
+      "mean_log_ratio": -13.72374153137207,
+      "minibatch": 147,
+      "KL_mean": 13.727664947509766,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9228515625,
+      "action_mean_delta_RMS": 0.026735380291938782,
+      "mean_log_ratio": -14.37034797668457,
+      "minibatch": 148,
+      "KL_mean": 14.266016006469727,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9248046875,
+      "action_mean_delta_RMS": 0.025945235043764114,
+      "mean_log_ratio": -13.254276275634766,
+      "minibatch": 149,
+      "KL_mean": 13.434895515441895,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.91357421875,
+      "action_mean_delta_RMS": 0.02430085279047489,
+      "mean_log_ratio": -11.774323463439941,
+      "minibatch": 150,
+      "KL_mean": 11.78577709197998,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.91162109375,
+      "action_mean_delta_RMS": 0.025121821090579033,
+      "mean_log_ratio": -12.63163948059082,
+      "minibatch": 151,
+      "KL_mean": 12.595699310302734,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.91796875,
+      "action_mean_delta_RMS": 0.026352625340223312,
+      "mean_log_ratio": -13.86888599395752,
+      "minibatch": 152,
+      "KL_mean": 13.859685897827148,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.91357421875,
+      "action_mean_delta_RMS": 0.025815308094024658,
+      "mean_log_ratio": -13.064790725708008,
+      "minibatch": 153,
+      "KL_mean": 13.300209045410156,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.90087890625,
+      "action_mean_delta_RMS": 0.026625657454133034,
+      "mean_log_ratio": -14.25966739654541,
+      "minibatch": 154,
+      "KL_mean": 14.148564338684082,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.91552734375,
+      "action_mean_delta_RMS": 0.02650764212012291,
+      "mean_log_ratio": -13.99336051940918,
+      "minibatch": 155,
+      "KL_mean": 14.023456573486328,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.90771484375,
+      "action_mean_delta_RMS": 0.02585289068520069,
+      "mean_log_ratio": -13.447261810302734,
+      "minibatch": 156,
+      "KL_mean": 13.338863372802734,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9130859375,
+      "action_mean_delta_RMS": 0.026669589802622795,
+      "mean_log_ratio": -14.213436126708984,
+      "minibatch": 157,
+      "KL_mean": 14.195096969604492,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.91455078125,
+      "action_mean_delta_RMS": 0.026483837515115738,
+      "mean_log_ratio": -14.118758201599121,
+      "minibatch": 158,
+      "KL_mean": 13.997652053833008,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.90283203125,
+      "action_mean_delta_RMS": 0.026632539927959442,
+      "mean_log_ratio": -13.990595817565918,
+      "minibatch": 159,
+      "KL_mean": 14.155778884887695,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.90625,
+      "action_mean_delta_RMS": 0.025549251586198807,
+      "mean_log_ratio": -12.869457244873047,
+      "minibatch": 160,
+      "KL_mean": 13.027083396911621,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.90576171875,
+      "action_mean_delta_RMS": 0.025080924853682518,
+      "mean_log_ratio": -12.432012557983398,
+      "minibatch": 161,
+      "KL_mean": 12.55362319946289,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.91259765625,
+      "action_mean_delta_RMS": 0.02607891522347927,
+      "mean_log_ratio": -13.572705268859863,
+      "minibatch": 162,
+      "KL_mean": 13.572515487670898,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.900390625,
+      "action_mean_delta_RMS": 0.02594713307917118,
+      "mean_log_ratio": -13.409116744995117,
+      "minibatch": 163,
+      "KL_mean": 13.43559455871582,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.89892578125,
+      "action_mean_delta_RMS": 0.02566424384713173,
+      "mean_log_ratio": -13.220832824707031,
+      "minibatch": 164,
+      "KL_mean": 13.14399528503418,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.90185546875,
+      "action_mean_delta_RMS": 0.02531900629401207,
+      "mean_log_ratio": -12.600347518920898,
+      "minibatch": 165,
+      "KL_mean": 12.792800903320312,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.900390625,
+      "action_mean_delta_RMS": 0.026959780603647232,
+      "mean_log_ratio": -14.603936195373535,
+      "minibatch": 166,
+      "KL_mean": 14.504484176635742,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.90185546875,
+      "action_mean_delta_RMS": 0.026076454669237137,
+      "mean_log_ratio": -13.498222351074219,
+      "minibatch": 167,
+      "KL_mean": 13.569571495056152,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.896484375,
+      "action_mean_delta_RMS": 0.02651333436369896,
+      "mean_log_ratio": -14.002480506896973,
+      "minibatch": 168,
+      "KL_mean": 14.028284072875977,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.89794921875,
+      "action_mean_delta_RMS": 0.02627508156001568,
+      "mean_log_ratio": -14.079158782958984,
+      "minibatch": 169,
+      "KL_mean": 13.776596069335938,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.89208984375,
+      "action_mean_delta_RMS": 0.025893917307257652,
+      "mean_log_ratio": -13.37840461730957,
+      "minibatch": 170,
+      "KL_mean": 13.379560470581055,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.8916015625,
+      "action_mean_delta_RMS": 0.025726735591888428,
+      "mean_log_ratio": -13.087831497192383,
+      "minibatch": 171,
+      "KL_mean": 13.20747184753418,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.8994140625,
+      "action_mean_delta_RMS": 0.0255882628262043,
+      "mean_log_ratio": -13.113639831542969,
+      "minibatch": 172,
+      "KL_mean": 13.065347671508789,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.892578125,
+      "action_mean_delta_RMS": 0.02513868175446987,
+      "mean_log_ratio": -12.599628448486328,
+      "minibatch": 173,
+      "KL_mean": 12.610538482666016,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.89453125,
+      "action_mean_delta_RMS": 0.027331219986081123,
+      "mean_log_ratio": -14.727218627929688,
+      "minibatch": 174,
+      "KL_mean": 14.906854629516602,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.8955078125,
+      "action_mean_delta_RMS": 0.024576343595981598,
+      "mean_log_ratio": -12.054973602294922,
+      "minibatch": 175,
+      "KL_mean": 12.052334785461426,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.896484375,
+      "action_mean_delta_RMS": 0.025611992925405502,
+      "mean_log_ratio": -13.073166847229004,
+      "minibatch": 176,
+      "KL_mean": 13.089683532714844,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.89794921875,
+      "action_mean_delta_RMS": 0.02471494860947132,
+      "mean_log_ratio": -12.063817977905273,
+      "minibatch": 177,
+      "KL_mean": 12.188569068908691,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.900390625,
+      "action_mean_delta_RMS": 0.025206979364156723,
+      "mean_log_ratio": -12.515613555908203,
+      "minibatch": 178,
+      "KL_mean": 12.67869758605957,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.9033203125,
+      "action_mean_delta_RMS": 0.025666136294603348,
+      "mean_log_ratio": -12.978717803955078,
+      "minibatch": 179,
+      "KL_mean": 13.144603729248047,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.89306640625,
+      "action_mean_delta_RMS": 0.02483648620545864,
+      "mean_log_ratio": -12.156991958618164,
+      "minibatch": 180,
+      "KL_mean": 12.308113098144531,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.89794921875,
+      "action_mean_delta_RMS": 0.026518572121858597,
+      "mean_log_ratio": -13.891022682189941,
+      "minibatch": 181,
+      "KL_mean": 14.03177261352539,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.892578125,
+      "action_mean_delta_RMS": 0.02478044107556343,
+      "mean_log_ratio": -12.253707885742188,
+      "minibatch": 182,
+      "KL_mean": 12.252606391906738,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.88623046875,
+      "action_mean_delta_RMS": 0.024696361273527145,
+      "mean_log_ratio": -12.122838973999023,
+      "minibatch": 183,
+      "KL_mean": 12.169599533081055,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.8916015625,
+      "action_mean_delta_RMS": 0.025829175487160683,
+      "mean_log_ratio": -13.287498474121094,
+      "minibatch": 184,
+      "KL_mean": 13.311729431152344,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.89697265625,
+      "action_mean_delta_RMS": 0.02501605823636055,
+      "mean_log_ratio": -12.381025314331055,
+      "minibatch": 185,
+      "KL_mean": 12.486588478088379,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.88623046875,
+      "action_mean_delta_RMS": 0.0247972272336483,
+      "mean_log_ratio": -12.16758918762207,
+      "minibatch": 186,
+      "KL_mean": 12.268875122070312,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.8828125,
+      "action_mean_delta_RMS": 0.024537449702620506,
+      "mean_log_ratio": -11.887786865234375,
+      "minibatch": 187,
+      "KL_mean": 12.01325798034668,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.89990234375,
+      "action_mean_delta_RMS": 0.02516264282166958,
+      "mean_log_ratio": -12.556720733642578,
+      "minibatch": 188,
+      "KL_mean": 12.632997512817383,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.88427734375,
+      "action_mean_delta_RMS": 0.024435242637991905,
+      "mean_log_ratio": -11.847404479980469,
+      "minibatch": 189,
+      "KL_mean": 11.912912368774414,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.87109375,
+      "action_mean_delta_RMS": 0.02538556046783924,
+      "mean_log_ratio": -12.904330253601074,
+      "minibatch": 190,
+      "KL_mean": 12.857522010803223,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.8759765625,
+      "action_mean_delta_RMS": 0.025158099830150604,
+      "mean_log_ratio": -12.502325057983398,
+      "minibatch": 191,
+      "KL_mean": 12.62806224822998,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.876953125,
+      "action_mean_delta_RMS": 0.024898551404476166,
+      "mean_log_ratio": -12.397008895874023,
+      "minibatch": 192,
+      "KL_mean": 12.368809700012207,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.87939453125,
+      "action_mean_delta_RMS": 0.025817668065428734,
+      "mean_log_ratio": -13.796274185180664,
+      "minibatch": 193,
+      "KL_mean": 13.29925537109375,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.8876953125,
+      "action_mean_delta_RMS": 0.02523341216146946,
+      "mean_log_ratio": -12.494168281555176,
+      "minibatch": 194,
+      "KL_mean": 12.703399658203125,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.88427734375,
+      "action_mean_delta_RMS": 0.024933140724897385,
+      "mean_log_ratio": -12.401778221130371,
+      "minibatch": 195,
+      "KL_mean": 12.40300178527832,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.876953125,
+      "action_mean_delta_RMS": 0.025438854470849037,
+      "mean_log_ratio": -12.98714828491211,
+      "minibatch": 196,
+      "KL_mean": 12.911331176757812,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.8837890625,
+      "action_mean_delta_RMS": 0.024694673717021942,
+      "mean_log_ratio": -11.986642837524414,
+      "minibatch": 197,
+      "KL_mean": 12.166631698608398,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.8857421875,
+      "action_mean_delta_RMS": 0.023308338597416878,
+      "mean_log_ratio": -10.819610595703125,
+      "minibatch": 198,
+      "KL_mean": 10.838804244995117,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.87158203125,
+      "action_mean_delta_RMS": 0.024144412949681282,
+      "mean_log_ratio": -11.659414291381836,
+      "minibatch": 199,
+      "KL_mean": 11.63052749633789,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.86328125,
+      "action_mean_delta_RMS": 0.025528179481625557,
+      "mean_log_ratio": -12.98505973815918,
+      "minibatch": 200,
+      "KL_mean": 13.001407623291016,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.873046875,
+      "action_mean_delta_RMS": 0.025085121393203735,
+      "mean_log_ratio": -12.322348594665527,
+      "minibatch": 201,
+      "KL_mean": 12.553979873657227,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.86572265625,
+      "action_mean_delta_RMS": 0.025855623185634613,
+      "mean_log_ratio": -13.430843353271484,
+      "minibatch": 202,
+      "KL_mean": 13.337259292602539,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.888671875,
+      "action_mean_delta_RMS": 0.025827210396528244,
+      "mean_log_ratio": -13.296670913696289,
+      "minibatch": 203,
+      "KL_mean": 13.307924270629883,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.87109375,
+      "action_mean_delta_RMS": 0.025145022198557854,
+      "mean_log_ratio": -12.746889114379883,
+      "minibatch": 204,
+      "KL_mean": 12.613778114318848,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.87890625,
+      "action_mean_delta_RMS": 0.025842640548944473,
+      "mean_log_ratio": -13.370698928833008,
+      "minibatch": 205,
+      "KL_mean": 13.323540687561035,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.87548828125,
+      "action_mean_delta_RMS": 0.025525184348225594,
+      "mean_log_ratio": -13.124547004699707,
+      "minibatch": 206,
+      "KL_mean": 12.9978609085083,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.8720703125,
+      "action_mean_delta_RMS": 0.025595780462026596,
+      "mean_log_ratio": -12.947864532470703,
+      "minibatch": 207,
+      "KL_mean": 13.070394515991211,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.87353515625,
+      "action_mean_delta_RMS": 0.02458096854388714,
+      "mean_log_ratio": -11.876824378967285,
+      "minibatch": 208,
+      "KL_mean": 12.054043769836426,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.87744140625,
+      "action_mean_delta_RMS": 0.0242182407528162,
+      "mean_log_ratio": -11.579190254211426,
+      "minibatch": 209,
+      "KL_mean": 11.700727462768555,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.86572265625,
+      "action_mean_delta_RMS": 0.02533578872680664,
+      "mean_log_ratio": -12.810432434082031,
+      "minibatch": 210,
+      "KL_mean": 12.805536270141602,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.86572265625,
+      "action_mean_delta_RMS": 0.025260623544454575,
+      "mean_log_ratio": -12.714212417602539,
+      "minibatch": 211,
+      "KL_mean": 12.72956371307373,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.86767578125,
+      "action_mean_delta_RMS": 0.02506309002637863,
+      "mean_log_ratio": -12.585865020751953,
+      "minibatch": 212,
+      "KL_mean": 12.531045913696289,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.8857421875,
+      "action_mean_delta_RMS": 0.02471250481903553,
+      "mean_log_ratio": -12.000938415527344,
+      "minibatch": 213,
+      "KL_mean": 12.182971954345703,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.8759765625,
+      "action_mean_delta_RMS": 0.026314567774534225,
+      "mean_log_ratio": -13.917664527893066,
+      "minibatch": 214,
+      "KL_mean": 13.813753128051758,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.87109375,
+      "action_mean_delta_RMS": 0.02536849118769169,
+      "mean_log_ratio": -12.748342514038086,
+      "minibatch": 215,
+      "KL_mean": 12.83830451965332,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.86572265625,
+      "action_mean_delta_RMS": 0.025628169998526573,
+      "mean_log_ratio": -13.078462600708008,
+      "minibatch": 216,
+      "KL_mean": 13.102734565734863,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.87646484375,
+      "action_mean_delta_RMS": 0.025213593617081642,
+      "mean_log_ratio": -12.977012634277344,
+      "minibatch": 217,
+      "KL_mean": 12.681575775146484,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.8720703125,
+      "action_mean_delta_RMS": 0.024557560682296753,
+      "mean_log_ratio": -12.028607368469238,
+      "minibatch": 218,
+      "KL_mean": 12.030075073242188,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.8701171875,
+      "action_mean_delta_RMS": 0.02436574175953865,
+      "mean_log_ratio": -11.720367431640625,
+      "minibatch": 219,
+      "KL_mean": 11.843013763427734,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.87890625,
+      "action_mean_delta_RMS": 0.024060944095253944,
+      "mean_log_ratio": -11.58587646484375,
+      "minibatch": 220,
+      "KL_mean": 11.548356056213379,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.86865234375,
+      "action_mean_delta_RMS": 0.023809630423784256,
+      "mean_log_ratio": -11.292841911315918,
+      "minibatch": 221,
+      "KL_mean": 11.30862045288086,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.8623046875,
+      "action_mean_delta_RMS": 0.026303695514798164,
+      "mean_log_ratio": -13.62479019165039,
+      "minibatch": 222,
+      "KL_mean": 13.80251693725586,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.873046875,
+      "action_mean_delta_RMS": 0.023736877366900444,
+      "mean_log_ratio": -11.240091323852539,
+      "minibatch": 223,
+      "KL_mean": 11.239256858825684,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.8525390625,
+      "action_mean_delta_RMS": 0.025057364255189896,
+      "mean_log_ratio": -12.511897087097168,
+      "minibatch": 224,
+      "KL_mean": 12.524662017822266,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.857421875,
+      "action_mean_delta_RMS": 0.024363309144973755,
+      "mean_log_ratio": -11.733175277709961,
+      "minibatch": 225,
+      "KL_mean": 11.840246200561523,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.86474609375,
+      "action_mean_delta_RMS": 0.024720868095755577,
+      "mean_log_ratio": -12.035881042480469,
+      "minibatch": 226,
+      "KL_mean": 12.190383911132812,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.86865234375,
+      "action_mean_delta_RMS": 0.024932991713285446,
+      "mean_log_ratio": -12.234611511230469,
+      "minibatch": 227,
+      "KL_mean": 12.400400161743164,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.8505859375,
+      "action_mean_delta_RMS": 0.02403033897280693,
+      "mean_log_ratio": -11.3480224609375,
+      "minibatch": 228,
+      "KL_mean": 11.518464088439941,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.87109375,
+      "action_mean_delta_RMS": 0.02534153126180172,
+      "mean_log_ratio": -12.68312931060791,
+      "minibatch": 229,
+      "KL_mean": 12.809836387634277,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.85498046875,
+      "action_mean_delta_RMS": 0.02372005581855774,
+      "mean_log_ratio": -11.183002471923828,
+      "minibatch": 230,
+      "KL_mean": 11.22294807434082,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.8642578125,
+      "action_mean_delta_RMS": 0.023645956069231033,
+      "mean_log_ratio": -11.099876403808594,
+      "minibatch": 231,
+      "KL_mean": 11.152901649475098,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.85693359375,
+      "action_mean_delta_RMS": 0.024957584217190742,
+      "mean_log_ratio": -12.406126022338867,
+      "minibatch": 232,
+      "KL_mean": 12.424555778503418,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.86962890625,
+      "action_mean_delta_RMS": 0.024129506200551987,
+      "mean_log_ratio": -11.511608123779297,
+      "minibatch": 233,
+      "KL_mean": 11.613533973693848,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.865234375,
+      "action_mean_delta_RMS": 0.02417461946606636,
+      "mean_log_ratio": -11.542811393737793,
+      "minibatch": 234,
+      "KL_mean": 11.656771659851074,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.8583984375,
+      "action_mean_delta_RMS": 0.02402125485241413,
+      "mean_log_ratio": -11.382879257202148,
+      "minibatch": 235,
+      "KL_mean": 11.509415626525879,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.8623046875,
+      "action_mean_delta_RMS": 0.02456286922097206,
+      "mean_log_ratio": -11.932092666625977,
+      "minibatch": 236,
+      "KL_mean": 12.034059524536133,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.85791015625,
+      "action_mean_delta_RMS": 0.02382930926978588,
+      "mean_log_ratio": -11.244675636291504,
+      "minibatch": 237,
+      "KL_mean": 11.325756072998047,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.84423828125,
+      "action_mean_delta_RMS": 0.024684282019734383,
+      "mean_log_ratio": -12.196748733520508,
+      "minibatch": 238,
+      "KL_mean": 12.15307331085205,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.85205078125,
+      "action_mean_delta_RMS": 0.02435418590903282,
+      "mean_log_ratio": -11.710543632507324,
+      "minibatch": 239,
+      "KL_mean": 11.83010482788086,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    },
+    {
+      "ratio_outside_clip_fraction": 0.85546875,
+      "action_mean_delta_RMS": 0.024072030559182167,
+      "mean_log_ratio": -11.580910682678223,
+      "minibatch": 240,
+      "KL_mean": 11.5575590133667,
+      "learning_rate_before_schedule": 1e-05,
+      "learning_rate_after_schedule": 1e-05
+    }
+  ],
+  "initial_std": 0.02,
+  "initial_learning_rate": 0.0002,
+  "transitions": 98304,
+  "native_optimizer_steps": 240,
+  "note": "One diagnostic native PPO update, in-memory Actor/Critic only; no saved weights or WM mutated"
+}

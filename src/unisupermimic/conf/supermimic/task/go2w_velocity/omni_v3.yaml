@@ -1,0 +1,44 @@
+# @package _global_
+defaults:
+  - /task/go2w_velocity/joint_range
+# Same full-range dynamics asset; task rewards and collection may change.
+algo:
+  action_noise: 0.02
+  actor_lr_scale: 0.05
+  actor_ramp_iters: 1000
+  command_start_weights: [0.06, 0.20, 0.12, 0.26, 0.20, 0.16]
+env:
+  commands:
+    velocity:
+      terrain_phase: skill
+      automatic_wm_skill_transition: false
+      actor_level_lookahead: 1
+      sampler:
+        domain_weights: [0.40, 0.15, 0.075, 0.075, 0.15, 0.15]
+        flat_mode_weights: [0.06, 0.20, 0.12, 0.26, 0.20, 0.16]
+        flat_velocity_levels:
+          - [[-0.25, 0.60], [-0.25, 0.25], [-0.60, 0.60]]
+          - [[-0.25, 0.60], [-0.25, 0.25], [-0.60, 0.60]]
+          - [[-0.25, 0.60], [-0.25, 0.25], [-0.60, 0.60]]
+        terrain_velocity_ranges:
+          - [[-0.20, 0.60], [-0.15, 0.15], [-0.35, 0.35]]
+          - [[0.15, 0.55], [-0.08, 0.08], [-0.20, 0.20]]
+          - [[0.15, 0.55], [-0.08, 0.08], [-0.20, 0.20]]
+          - [[0.20, 0.45], [-0.03, 0.03], [-0.10, 0.10]]
+          - [[0.20, 0.45], [-0.03, 0.03], [-0.10, 0.10]]
+      reward:
+        track_vx: 3.0
+        track_vy: 3.0
+        track_yaw: 2.5
+        sigma_y: 0.20
+        sigma_yaw: 0.35
+        tracking_error_cost: [0.25, 0.60, 0.30]
+        stand_still: 0.25
+        stop_reward_command_sigma: 0.02
+        terrain_alignment: 1.0
+        base_ang_vel_xy: -0.15
+        base_height_low: -40.0
+        min_safe_height: 0.25
+        leg_joint_deviation: [-0.02, -0.015, -0.01, -0.01, -0.003, -0.003]
+        leg_action_rate: -0.003
+        physical_leg_action_rate: true

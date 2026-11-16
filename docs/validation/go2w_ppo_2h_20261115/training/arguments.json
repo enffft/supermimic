@@ -1,0 +1,21 @@
+{
+  "output": "/home/yifeiy/ws_go2_unilab/runs/go2w_ppo_2h_20261115/training",
+  "actor_from": "/home/yifeiy/ws_go2_unilab/runs/go2w_ppo_2h_20261115/bootstrap/actor.pt",
+  "envs": 4096,
+  "rollout": 24,
+  "minibatch": 2048,
+  "epochs": 5,
+  "iterations": 100000,
+  "seconds": 7200.0,
+  "seed": 2026,
+  "source": "/home/yifeiy/ws_go2_unilab/runs/go2w_ppo_2h_20261115/source_snapshot",
+  "rsl_rl_version": "5.5.1",
+  "actor_asset_sha256": "3c311e8b7e483ae1eb335bb6e7e9aa1d99ba2f212f73ed715491c26d06d04c01",
+  "wm": "not applicable: model-free PPO; shared WM untouched",
+  "differences": [
+    "Real on-policy rollouts replace imagined rollouts and replay-start lookahead",
+    "Same persistent coverage environments also contribute PPO gradients",
+    "Gaussian starts at previous collection std .02, then learns its std",
+    "Fresh privileged critic, native PPO normalization/GAE/clipping/KL schedule"
+  ]
+}

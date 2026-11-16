@@ -29,6 +29,7 @@ class ApproachTerrainCfg(SubTerrainCfg):
     entry_quarter_turns: int = 0
     atlas_max_level: int = 4
     profile_max_level: int = 4
+    stair_step_increment: float = 0.02
 
     def function(self, difficulty, rng):
         cfg = deepcopy(self.delegate)
@@ -53,7 +54,10 @@ class ApproachTerrainCfg(SubTerrainCfg):
             elif hasattr(cfg, "slope_range"):
                 cfg.slope_range = (0.05 * level, 0.05 * level)
             elif hasattr(cfg, "step_height_range"):
-                cfg.step_height_range = (0.02 * level, 0.02 * level)
+                cfg.step_height_range = (
+                    self.stair_step_increment * level,
+                    self.stair_step_increment * level,
+                )
         output = cfg.function(difficulty, rng)
         hf = output.heightfield
         hf.noise = np.rot90(hf.noise, self.quarter_turns).copy()
@@ -87,8 +91,17 @@ class ApproachTerrainCfg(SubTerrainCfg):
 
 
 def terrain_profile(
-    name, *, seed=2026, quarter_turns=0, levels=False, entry_quarter_turns=0, max_level=4
+    name,
+    *,
+    seed=2026,
+    quarter_turns=0,
+    levels=False,
+    entry_quarter_turns=0,
+    max_level=4,
+    stair_step_increment=0.02,
 ):
+    if stair_step_increment not in (0.02, 0.04):
+        raise ValueError("Audited stair increments are 2cm or 4cm")
     if not 0 <= max_level <= 7:
         raise ValueError("Audited terrain level range is 0..7")
     if name == "flat":
@@ -137,6 +150,7 @@ def terrain_profile(
             entry_quarter_turns=entry_quarter_turns,
             atlas_max_level=max_level,
             profile_max_level=max_level if "stairs" in key else min(max_level, 4),
+            stair_step_increment=stair_step_increment if "stairs" in key else 0.02,
         )
         for key, value in selected.items()
     }
@@ -162,6 +176,8 @@ def terrain_contract(cfg):
     """Keep the original Level0..4 serialization/fingerprint unchanged."""
     values = asdict(cfg)
     for sub in values["generator"]["sub_terrains"].values():
+        if sub.get("stair_step_increment") == 0.02:
+            sub.pop("stair_step_increment")
         for key in ("atlas_max_level", "profile_max_level"):
             if sub.get(key) == 4:
                 sub.pop(key)

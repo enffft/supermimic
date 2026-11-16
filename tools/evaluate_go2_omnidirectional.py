@@ -77,6 +77,7 @@ def evaluate(
     quick=False,
     stairs_omni=False,
     terrain_max_level=4,
+    stair_step_increment=0.02,
 ):
     output = Path(output)
     output.mkdir(parents=True, exist_ok=False)
@@ -144,15 +145,18 @@ def evaluate(
                 else [
                     s
                     for s in scenarios
-                    if s[1] in (3, 4) and s[2] in (1, 4) and s[3] == (0.4, 0, 0)
+                    if s[1] in (3, 4)
+                    and s[2] in (1, min(terrain_max_level, round(0.08 / stair_step_increment)))
+                    and s[3] == (0.4, 0, 0)
                 ]
             )
         episode_seconds = min(seconds, 4.0) if domain == "stairs_maneuver" else seconds
         cfg = load_config(terrain=True)
         c = cfg.commands["velocity"]
         c.terrain_max_level = terrain_max_level
-        if terrain_max_level == 7:
-            c.terrain_coverage_weights = (0.2, 0.4, 0.3, 0.1, 0, 0, 0, 0)
+        c.terrain_stair_increment = stair_step_increment
+        if terrain_max_level > 4:
+            c.terrain_coverage_weights = (0.2, 0.4, 0.3, 0.1) + (0.0,) * (terrain_max_level - 3)
             c.sampler.stairs_safe_spawn = True
         c.terrain_profile = "flat" if domain == "flat" else "mixed"
         c.terrain_curriculum = False
@@ -363,7 +367,8 @@ def evaluate(
         seconds=seconds,
         maneuver_seconds=min(seconds, 4.0) if stairs_omni else None,
         actor_device=actor_device,
-        safe_spawn=terrain_max_level == 7,
+        safe_spawn=terrain_max_level > 4,
+        stair_step_increment=stair_step_increment,
         platform_metric="center x within [3.0,3.8]m of entry, lateral <=.6m, collision height within 2.5cm of center, alive; distinct from full crossing",
         initial_perturbation="XY +/-2cm, yaw +/-0.03rad, joints +/-0.01rad",
         records=records,
@@ -379,11 +384,21 @@ def main():
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--quick", action="store_true")
     p.add_argument("--stairs-omni", action="store_true")
-    p.add_argument("--max-level", type=int, choices=(4, 7), default=4)
+    p.add_argument("--max-level", type=int, choices=(4, 5, 7), default=4)
     p.add_argument("--seconds", type=float, default=20)
     p.add_argument("--seeds", type=int, nargs="+", default=[2426, 2427, 2428, 2429, 2430])
+    p.add_argument("--stair-step-increment", type=float, choices=(0.02, 0.04), default=0.02)
     a = p.parse_args()
-    evaluate(a.checkpoint, a.output, a.seeds, a.seconds, a.quick, a.stairs_omni, a.max_level)
+    evaluate(
+        a.checkpoint,
+        a.output,
+        a.seeds,
+        a.seconds,
+        a.quick,
+        a.stairs_omni,
+        a.max_level,
+        a.stair_step_increment,
+    )
 
 
 if __name__ == "__main__":

@@ -1,0 +1,1162 @@
+{
+  "cases": [
+    {
+      "name": "stop",
+      "policy": "Go2_zero_shot",
+      "goal": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "std": 0.0,
+      "hold": 1,
+      "replicas": 12,
+      "falls": 12,
+      "survived_10s": 0,
+      "valid_samples_after_1s": 0,
+      "mean_actual": null,
+      "per_trial_mean_vy": [],
+      "displacement_world_xyz": [
+        [
+          -0.004756927490234375,
+          -0.08958244323730469,
+          -0.08731791377067566
+        ],
+        [
+          -0.0058803558349609375,
+          -0.09057140350341797,
+          -0.0868750810623169
+        ],
+        [
+          -0.011322021484375,
+          -0.08404030650854111,
+          -0.08214601874351501
+        ],
+        [
+          -0.008924484252929688,
+          -0.09051752090454102,
+          -0.08996856212615967
+        ],
+        [
+          -0.012561798095703125,
+          -0.08397293090820312,
+          -0.08211252093315125
+        ],
+        [
+          -0.011638641357421875,
+          -0.08391571044921875,
+          -0.08207514882087708
+        ],
+        [
+          -0.0054168701171875,
+          -0.08965444564819336,
+          -0.08700889348983765
+        ],
+        [
+          -0.008981704711914062,
+          -0.0866483822464943,
+          -0.08856290578842163
+        ],
+        [
+          -0.010961532592773438,
+          -0.0841970443725586,
+          -0.08217775821685791
+        ],
+        [
+          -0.01419830322265625,
+          -0.08269786834716797,
+          -0.08013367652893066
+        ],
+        [
+          -0.0047779083251953125,
+          -0.08938407897949219,
+          -0.08735719323158264
+        ],
+        [
+          -0.00513458251953125,
+          -0.08942222595214844,
+          -0.0871424674987793
+        ]
+      ],
+      "mean_absolute_velocity": null,
+      "q_temporal_std_rad": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "target_temporal_std_rad": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "mean_abs_joint_velocity": null,
+      "mean_reward_rates": {
+        "track_vx": null,
+        "track_vy": null,
+        "track_yaw": null,
+        "stand_still": null,
+        "terrain_alignment": null,
+        "base_lin_vel_z": null,
+        "base_ang_vel_xy": null,
+        "base_height_low": null,
+        "leg_joint_deviation": null,
+        "leg_joint_limit": null,
+        "leg_action_rate": null,
+        "wheel_action_rate": null,
+        "leg_torque": null,
+        "wheel_torque": null,
+        "leg_joint_acceleration": null,
+        "wheel_joint_acceleration": null,
+        "tracking_error_cost": null
+      },
+      "total_mean_reward_rate": null,
+      "wheel_gap_over_2cm_fraction_FL_FR_RL_RR": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "any_wheel_gap_over_2cm_fraction": 0.0,
+      "max_wheel_gap_p95_m": null,
+      "mean_abs_mean_action": null
+    },
+    {
+      "name": "forward_030",
+      "policy": "Go2_zero_shot",
+      "goal": [
+        0.3,
+        0.0,
+        0.0
+      ],
+      "std": 0.0,
+      "hold": 1,
+      "replicas": 12,
+      "falls": 12,
+      "survived_10s": 0,
+      "valid_samples_after_1s": 0,
+      "mean_actual": null,
+      "per_trial_mean_vy": [],
+      "displacement_world_xyz": [
+        [
+          0.023609161376953125,
+          -0.08202015608549118,
+          -0.12333816289901733
+        ],
+        [
+          0.022565841674804688,
+          -0.08213233947753906,
+          -0.11971214413642883
+        ],
+        [
+          0.05027961730957031,
+          -0.08589553833007812,
+          -0.1619013547897339
+        ],
+        [
+          0.021009445190429688,
+          -0.08219623565673828,
+          -0.11590394377708435
+        ],
+        [
+          0.026956558227539062,
+          -0.08284616470336914,
+          -0.123636394739151
+        ],
+        [
+          0.04072380065917969,
+          -0.08894392848014832,
+          -0.17279785871505737
+        ],
+        [
+          0.034275054931640625,
+          -0.08246803283691406,
+          -0.1475222110748291
+        ],
+        [
+          0.025323867797851562,
+          -0.08111095428466797,
+          -0.12170010805130005
+        ],
+        [
+          0.051753997802734375,
+          -0.08767127990722656,
+          -0.1614568531513214
+        ],
+        [
+          0.029596328735351562,
+          -0.08372783660888672,
+          -0.14554071426391602
+        ],
+        [
+          0.027301788330078125,
+          -0.08071808516979218,
+          -0.12320861220359802
+        ],
+        [
+          0.04897117614746094,
+          -0.08529806137084961,
+          -0.17075005173683167
+        ]
+      ],
+      "mean_absolute_velocity": null,
+      "q_temporal_std_rad": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "target_temporal_std_rad": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "mean_abs_joint_velocity": null,
+      "mean_reward_rates": {
+        "track_vx": null,
+        "track_vy": null,
+        "track_yaw": null,
+        "stand_still": null,
+        "terrain_alignment": null,
+        "base_lin_vel_z": null,
+        "base_ang_vel_xy": null,
+        "base_height_low": null,
+        "leg_joint_deviation": null,
+        "leg_joint_limit": null,
+        "leg_action_rate": null,
+        "wheel_action_rate": null,
+        "leg_torque": null,
+        "wheel_torque": null,
+        "leg_joint_acceleration": null,
+        "wheel_joint_acceleration": null,
+        "tracking_error_cost": null
+      },
+      "total_mean_reward_rate": null,
+      "wheel_gap_over_2cm_fraction_FL_FR_RL_RR": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "any_wheel_gap_over_2cm_fraction": 0.0,
+      "max_wheel_gap_p95_m": null,
+      "mean_abs_mean_action": null
+    },
+    {
+      "name": "left_015",
+      "policy": "Go2_zero_shot",
+      "goal": [
+        0.0,
+        0.15,
+        0.0
+      ],
+      "std": 0.0,
+      "hold": 1,
+      "replicas": 12,
+      "falls": 12,
+      "survived_10s": 0,
+      "valid_samples_after_1s": 13,
+      "mean_actual": [
+        0.28786852955818176,
+        0.0995524674654007,
+        -0.5196186304092407
+      ],
+      "per_trial_mean_vy": [
+        0.0995524674654007
+      ],
+      "displacement_world_xyz": [
+        [
+          -0.1544666290283203,
+          -0.16370582580566406,
+          -0.25009000301361084
+        ],
+        [
+          -0.028018951416015625,
+          -0.23897361755371094,
+          -0.10774728655815125
+        ],
+        [
+          -0.03854560852050781,
+          -0.21633434295654297,
+          -0.07989320158958435
+        ],
+        [
+          0.2503795623779297,
+          0.22773537039756775,
+          -0.2558344602584839
+        ],
+        [
+          -0.03465461730957031,
+          -0.2154865264892578,
+          -0.08024826645851135
+        ],
+        [
+          -0.02936553955078125,
+          -0.24358367919921875,
+          -0.10339081287384033
+        ],
+        [
+          -0.04586982727050781,
+          -0.23847103118896484,
+          -0.10568714141845703
+        ],
+        [
+          -0.08980941772460938,
+          -0.19097661972045898,
+          -0.2506266236305237
+        ],
+        [
+          -0.2832069396972656,
+          -0.26017796993255615,
+          -0.25107818841934204
+        ],
+        [
+          -0.04446983337402344,
+          -0.23966312408447266,
+          -0.10563063621520996
+        ],
+        [
+          -0.1537036895751953,
+          -0.27637481689453125,
+          -0.25336629152297974
+        ],
+        [
+          -0.033596038818359375,
+          -0.2411365509033203,
+          -0.10336750745773315
+        ]
+      ],
+      "mean_absolute_velocity": [
+        0.33127647638320923,
+        0.10710545629262924,
+        0.5576304197311401
+      ],
+      "q_temporal_std_rad": [
+        0.0003947392979171127,
+        0.024835359305143356,
+        0.004829178564250469,
+        0.000297322403639555,
+        0.00027109330403618515,
+        0.0030939949210733175,
+        0.00032334792194887996,
+        0.0013714396627619863,
+        0.013417365960776806,
+        0.0005940312403254211,
+        0.001618614187464118,
+        0.0032028399873524904
+      ],
+      "target_temporal_std_rad": [
+        0.036320917308330536,
+        0.0005794165772385895,
+        2.23966362682404e-05,
+        2.9287080906215124e-05,
+        0.04203246906399727,
+        3.306270812686307e-08,
+        0.10901005566120148,
+        3.6180634310767346e-07,
+        0.0,
+        0.013958914205431938,
+        0.0,
+        0.0
+      ],
+      "mean_abs_joint_velocity": [
+        0.014749130234122276,
+        0.5981377363204956,
+        0.12842383980751038,
+        0.011880883015692234,
+        0.00463749747723341,
+        0.07120827585458755,
+        0.015025738626718521,
+        0.06288374215364456,
+        0.6411718130111694,
+        0.014306923374533653,
+        0.034057483077049255,
+        0.07263200730085373,
+        147.73782348632812,
+        147.79188537597656,
+        117.64213562011719,
+        146.8755645751953
+      ],
+      "mean_reward_rates": {
+        "track_vx": 1.702284574508667,
+        "track_vy": 0.9165874719619751,
+        "track_yaw": 0.7439703345298767,
+        "stand_still": 2.8608246802344043e-27,
+        "terrain_alignment": 0.6942597031593323,
+        "base_lin_vel_z": -0.0332297645509243,
+        "base_ang_vel_xy": -0.7642368674278259,
+        "base_height_low": -0.1921054571866989,
+        "leg_joint_deviation": -0.7328752875328064,
+        "leg_joint_limit": -0.13020606338977814,
+        "leg_action_rate": -0.0004643173306249082,
+        "wheel_action_rate": 0.0,
+        "leg_torque": -0.23325371742248535,
+        "wheel_torque": -0.009000001475214958,
+        "leg_joint_acceleration": -0.004061919637024403,
+        "wheel_joint_acceleration": -0.000856037309858948,
+        "tracking_error_cost": -0.5556652545928955
+      },
+      "total_mean_reward_rate": 1.4011473963037133,
+      "wheel_gap_over_2cm_fraction_FL_FR_RL_RR": [
+        1.0,
+        1.0,
+        0.3333333333333333,
+        1.0
+      ],
+      "any_wheel_gap_over_2cm_fraction": 1.0,
+      "max_wheel_gap_p95_m": 0.3148118400778307,
+      "mean_abs_mean_action": [
+        0.2468704879283905,
+        0.11106105893850327,
+        0.2126542627811432,
+        0.228322833776474,
+        0.08773919939994812,
+        0.4064270257949829,
+        0.1922110915184021,
+        0.17894673347473145,
+        0.4064270555973053,
+        0.2535760998725891,
+        0.07328449934720993,
+        0.21266157925128937,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "name": "right_015",
+      "policy": "Go2_zero_shot",
+      "goal": [
+        0.0,
+        -0.15,
+        0.0
+      ],
+      "std": 0.0,
+      "hold": 1,
+      "replicas": 12,
+      "falls": 12,
+      "survived_10s": 0,
+      "valid_samples_after_1s": 0,
+      "mean_actual": null,
+      "per_trial_mean_vy": [],
+      "displacement_world_xyz": [
+        [
+          -0.05134010314941406,
+          0.21530723571777344,
+          -0.2328832745552063
+        ],
+        [
+          -0.05208015441894531,
+          0.20313915610313416,
+          -0.25267493724823
+        ],
+        [
+          -0.06750679016113281,
+          0.19869136810302734,
+          -0.22319236397743225
+        ],
+        [
+          -0.04369163513183594,
+          0.1893768310546875,
+          -0.2524487376213074
+        ],
+        [
+          -0.021610260009765625,
+          0.20354652404785156,
+          -0.25003719329833984
+        ],
+        [
+          -0.05465507507324219,
+          0.20113039016723633,
+          -0.25093868374824524
+        ],
+        [
+          -0.030117034912109375,
+          0.21147525310516357,
+          -0.25350823998451233
+        ],
+        [
+          -0.01578521728515625,
+          0.26575565338134766,
+          -0.2538754343986511
+        ],
+        [
+          -0.06289291381835938,
+          0.19492340087890625,
+          -0.22497008740901947
+        ],
+        [
+          -0.03527641296386719,
+          0.21994590759277344,
+          -0.2512018382549286
+        ],
+        [
+          0.07419395446777344,
+          0.2617340087890625,
+          -0.2521536946296692
+        ],
+        [
+          -0.046443939208984375,
+          0.23134703934192657,
+          -0.2524682283401489
+        ]
+      ],
+      "mean_absolute_velocity": null,
+      "q_temporal_std_rad": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "target_temporal_std_rad": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "mean_abs_joint_velocity": null,
+      "mean_reward_rates": {
+        "track_vx": null,
+        "track_vy": null,
+        "track_yaw": null,
+        "stand_still": null,
+        "terrain_alignment": null,
+        "base_lin_vel_z": null,
+        "base_ang_vel_xy": null,
+        "base_height_low": null,
+        "leg_joint_deviation": null,
+        "leg_joint_limit": null,
+        "leg_action_rate": null,
+        "wheel_action_rate": null,
+        "leg_torque": null,
+        "wheel_torque": null,
+        "leg_joint_acceleration": null,
+        "wheel_joint_acceleration": null,
+        "tracking_error_cost": null
+      },
+      "total_mean_reward_rate": null,
+      "wheel_gap_over_2cm_fraction_FL_FR_RL_RR": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "any_wheel_gap_over_2cm_fraction": 0.0,
+      "max_wheel_gap_p95_m": null,
+      "mean_abs_mean_action": null
+    },
+    {
+      "name": "left_025",
+      "policy": "Go2_zero_shot",
+      "goal": [
+        0.0,
+        0.25,
+        0.0
+      ],
+      "std": 0.0,
+      "hold": 1,
+      "replicas": 12,
+      "falls": 12,
+      "survived_10s": 0,
+      "valid_samples_after_1s": 0,
+      "mean_actual": null,
+      "per_trial_mean_vy": [],
+      "displacement_world_xyz": [
+        [
+          -0.01386260986328125,
+          -0.23140907287597656,
+          -0.04565969109535217
+        ],
+        [
+          -0.017137527465820312,
+          -0.23259449005126953,
+          -0.04312518239021301
+        ],
+        [
+          -0.016887664794921875,
+          -0.2102375030517578,
+          -0.02321609854698181
+        ],
+        [
+          -0.022882461547851562,
+          -0.21332645416259766,
+          -0.022541284561157227
+        ],
+        [
+          -0.017896652221679688,
+          -0.20894654095172882,
+          -0.02114465832710266
+        ],
+        [
+          -0.017953872680664062,
+          -0.21378803253173828,
+          -0.021005690097808838
+        ],
+        [
+          -0.019344329833984375,
+          -0.20985698699951172,
+          -0.023166894912719727
+        ],
+        [
+          -0.018468856811523438,
+          -0.21058082580566406,
+          -0.02181375026702881
+        ],
+        [
+          -0.01416015625,
+          -0.20968055725097656,
+          -0.02329111099243164
+        ],
+        [
+          -0.024135589599609375,
+          -0.21050474047660828,
+          -0.021894991397857666
+        ],
+        [
+          -0.012599945068359375,
+          -0.20505237579345703,
+          -0.029165118932724
+        ],
+        [
+          -0.021657943725585938,
+          -0.21516990661621094,
+          -0.02262943983078003
+        ]
+      ],
+      "mean_absolute_velocity": null,
+      "q_temporal_std_rad": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "target_temporal_std_rad": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "mean_abs_joint_velocity": null,
+      "mean_reward_rates": {
+        "track_vx": null,
+        "track_vy": null,
+        "track_yaw": null,
+        "stand_still": null,
+        "terrain_alignment": null,
+        "base_lin_vel_z": null,
+        "base_ang_vel_xy": null,
+        "base_height_low": null,
+        "leg_joint_deviation": null,
+        "leg_joint_limit": null,
+        "leg_action_rate": null,
+        "wheel_action_rate": null,
+        "leg_torque": null,
+        "wheel_torque": null,
+        "leg_joint_acceleration": null,
+        "wheel_joint_acceleration": null,
+        "tracking_error_cost": null
+      },
+      "total_mean_reward_rate": null,
+      "wheel_gap_over_2cm_fraction_FL_FR_RL_RR": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "any_wheel_gap_over_2cm_fraction": 0.0,
+      "max_wheel_gap_p95_m": null,
+      "mean_abs_mean_action": null
+    },
+    {
+      "name": "right_025",
+      "policy": "Go2_zero_shot",
+      "goal": [
+        0.0,
+        -0.25,
+        0.0
+      ],
+      "std": 0.0,
+      "hold": 1,
+      "replicas": 12,
+      "falls": 12,
+      "survived_10s": 0,
+      "valid_samples_after_1s": 0,
+      "mean_actual": null,
+      "per_trial_mean_vy": [],
+      "displacement_world_xyz": [
+        [
+          -0.09539222717285156,
+          0.25464630126953125,
+          -0.2601642608642578
+        ],
+        [
+          -0.09349441528320312,
+          0.2523622512817383,
+          -0.2527856230735779
+        ],
+        [
+          -0.07934188842773438,
+          0.2543891370296478,
+          -0.2542773485183716
+        ],
+        [
+          -0.075439453125,
+          0.24883174896240234,
+          -0.2530817687511444
+        ],
+        [
+          -0.07740974426269531,
+          0.2351531982421875,
+          -0.25492122769355774
+        ],
+        [
+          -0.09674263000488281,
+          0.230621337890625,
+          -0.2548132538795471
+        ],
+        [
+          -0.08811187744140625,
+          0.23082923889160156,
+          -0.2546992301940918
+        ],
+        [
+          -0.08636283874511719,
+          0.25304272770881653,
+          -0.25535857677459717
+        ],
+        [
+          -0.08162498474121094,
+          0.2544279098510742,
+          -0.25025373697280884
+        ],
+        [
+          -0.0881195068359375,
+          0.24475669860839844,
+          -0.25526440143585205
+        ],
+        [
+          -0.08978462219238281,
+          0.25719738006591797,
+          -0.26146113872528076
+        ],
+        [
+          -0.08920860290527344,
+          0.2366952896118164,
+          -0.25502312183380127
+        ]
+      ],
+      "mean_absolute_velocity": null,
+      "q_temporal_std_rad": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "target_temporal_std_rad": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "mean_abs_joint_velocity": null,
+      "mean_reward_rates": {
+        "track_vx": null,
+        "track_vy": null,
+        "track_yaw": null,
+        "stand_still": null,
+        "terrain_alignment": null,
+        "base_lin_vel_z": null,
+        "base_ang_vel_xy": null,
+        "base_height_low": null,
+        "leg_joint_deviation": null,
+        "leg_joint_limit": null,
+        "leg_action_rate": null,
+        "wheel_action_rate": null,
+        "leg_torque": null,
+        "wheel_torque": null,
+        "leg_joint_acceleration": null,
+        "wheel_joint_acceleration": null,
+        "tracking_error_cost": null
+      },
+      "total_mean_reward_rate": null,
+      "wheel_gap_over_2cm_fraction_FL_FR_RL_RR": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "any_wheel_gap_over_2cm_fraction": 0.0,
+      "max_wheel_gap_p95_m": null,
+      "mean_abs_mean_action": null
+    },
+    {
+      "name": "yaw_left_060",
+      "policy": "Go2_zero_shot",
+      "goal": [
+        0.0,
+        0.0,
+        0.6
+      ],
+      "std": 0.0,
+      "hold": 1,
+      "replicas": 12,
+      "falls": 12,
+      "survived_10s": 0,
+      "valid_samples_after_1s": 0,
+      "mean_actual": null,
+      "per_trial_mean_vy": [],
+      "displacement_world_xyz": [
+        [
+          0.11330223083496094,
+          -0.14124110341072083,
+          -0.267007052898407
+        ],
+        [
+          0.16651535034179688,
+          0.02626514434814453,
+          -0.255084753036499
+        ],
+        [
+          0.1329021453857422,
+          -0.13416385650634766,
+          -0.2637631297111511
+        ],
+        [
+          0.1491413116455078,
+          0.027858734130859375,
+          -0.26332294940948486
+        ],
+        [
+          0.018358230590820312,
+          -0.09362936019897461,
+          -0.2509320378303528
+        ],
+        [
+          0.03868293762207031,
+          -0.027600854635238647,
+          -0.25128835439682007
+        ],
+        [
+          0.09421920776367188,
+          -0.12642812728881836,
+          -0.25529175996780396
+        ],
+        [
+          -0.010005950927734375,
+          -0.0038166046142578125,
+          -0.2594054937362671
+        ],
+        [
+          0.17053985595703125,
+          -0.06853103637695312,
+          -0.26443174481391907
+        ],
+        [
+          0.06202888488769531,
+          -0.03866100311279297,
+          -0.2523385286331177
+        ],
+        [
+          0.14867591857910156,
+          -0.04603903368115425,
+          -0.25809696316719055
+        ],
+        [
+          0.06546974182128906,
+          -0.11984682083129883,
+          -0.25872206687927246
+        ]
+      ],
+      "mean_absolute_velocity": null,
+      "q_temporal_std_rad": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "target_temporal_std_rad": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "mean_abs_joint_velocity": null,
+      "mean_reward_rates": {
+        "track_vx": null,
+        "track_vy": null,
+        "track_yaw": null,
+        "stand_still": null,
+        "terrain_alignment": null,
+        "base_lin_vel_z": null,
+        "base_ang_vel_xy": null,
+        "base_height_low": null,
+        "leg_joint_deviation": null,
+        "leg_joint_limit": null,
+        "leg_action_rate": null,
+        "wheel_action_rate": null,
+        "leg_torque": null,
+        "wheel_torque": null,
+        "leg_joint_acceleration": null,
+        "wheel_joint_acceleration": null,
+        "tracking_error_cost": null
+      },
+      "total_mean_reward_rate": null,
+      "wheel_gap_over_2cm_fraction_FL_FR_RL_RR": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "any_wheel_gap_over_2cm_fraction": 0.0,
+      "max_wheel_gap_p95_m": null,
+      "mean_abs_mean_action": null
+    },
+    {
+      "name": "yaw_right_060",
+      "policy": "Go2_zero_shot",
+      "goal": [
+        0.0,
+        0.0,
+        -0.6
+      ],
+      "std": 0.0,
+      "hold": 1,
+      "replicas": 12,
+      "falls": 12,
+      "survived_10s": 0,
+      "valid_samples_after_1s": 0,
+      "mean_actual": null,
+      "per_trial_mean_vy": [],
+      "displacement_world_xyz": [
+        [
+          -0.0021648406982421875,
+          -0.08325862884521484,
+          -0.08435839414596558
+        ],
+        [
+          -0.0058307647705078125,
+          -0.08708572387695312,
+          -0.059864044189453125
+        ],
+        [
+          -0.0041561126708984375,
+          -0.08170604705810547,
+          -0.07763245701789856
+        ],
+        [
+          -0.0054779052734375,
+          -0.08395621925592422,
+          -0.08695071935653687
+        ],
+        [
+          -0.0062503814697265625,
+          -0.08607101440429688,
+          -0.05916494131088257
+        ],
+        [
+          -0.004367828369140625,
+          -0.0808267593383789,
+          -0.07664713263511658
+        ],
+        [
+          -0.0054149627685546875,
+          -0.08060741424560547,
+          -0.07712745666503906
+        ],
+        [
+          -0.0035152435302734375,
+          -0.0838322639465332,
+          -0.08532699942588806
+        ],
+        [
+          -0.00327301025390625,
+          -0.08165309578180313,
+          -0.07739865779876709
+        ],
+        [
+          -0.00664520263671875,
+          -0.08098077774047852,
+          -0.07625669240951538
+        ],
+        [
+          -0.002193450927734375,
+          -0.08333778381347656,
+          -0.08213284611701965
+        ],
+        [
+          -0.0048236846923828125,
+          -0.08113288879394531,
+          -0.0764661431312561
+        ]
+      ],
+      "mean_absolute_velocity": null,
+      "q_temporal_std_rad": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "target_temporal_std_rad": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "mean_abs_joint_velocity": null,
+      "mean_reward_rates": {
+        "track_vx": null,
+        "track_vy": null,
+        "track_yaw": null,
+        "stand_still": null,
+        "terrain_alignment": null,
+        "base_lin_vel_z": null,
+        "base_ang_vel_xy": null,
+        "base_height_low": null,
+        "leg_joint_deviation": null,
+        "leg_joint_limit": null,
+        "leg_action_rate": null,
+        "wheel_action_rate": null,
+        "leg_torque": null,
+        "wheel_torque": null,
+        "leg_joint_acceleration": null,
+        "wheel_joint_acceleration": null,
+        "tracking_error_cost": null
+      },
+      "total_mean_reward_rate": null,
+      "wheel_gap_over_2cm_fraction_FL_FR_RL_RR": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "any_wheel_gap_over_2cm_fraction": 0.0,
+      "max_wheel_gap_p95_m": null,
+      "mean_abs_mean_action": null
+    }
+  ],
+  "replicas": 12,
+  "protocol": "500 control steps, fixed flat L0, identical xy/yaw reset offsets, one seed; no learning",
+  "wheel_clearance": "minimum compiled collision-mesh vertex z minus local ground, FK, sampled 10Hz after 1s; not force-based contacts",
+  "noise": "independent Gaussian in normalized action coordinates, all 16 joints, held for specified control steps; inference-only probes",
+  "source": "/home/yifeiy/ws_go2_unilab/runs/go2w_ppo_2h_20261115/source_snapshot/src/unisupermimic/__init__.py",
+  "checkpoints": {
+    "initial": "../runs/go2w_ppo_2h_20261115/bootstrap/actor.pt",
+    "PPO": "../runs/go2w_ppo_2h_20261115/training/last.pt",
+    "SuperMimic": "../runs/go2w_omni_v3_2h_20261114/training/last.pt"
+  }
+}

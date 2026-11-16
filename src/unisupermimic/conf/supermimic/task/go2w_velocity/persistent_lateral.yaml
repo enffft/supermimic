@@ -1,0 +1,8 @@
+# @package _global_
+defaults:
+  - /task/go2w_velocity/persistent_stop
+env:
+  commands:
+    velocity:
+      reward:
+        sigma_y: 0.15

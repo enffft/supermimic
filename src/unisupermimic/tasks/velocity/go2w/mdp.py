@@ -29,7 +29,7 @@ class Go2WVelocityMdp(Go2VelocityMdp):
         self.control.validate()
         self.reward_cfg.validate()
         self.default_q = torch.tensor(DEFAULT_Q, device=device)
-        self.limits = soft_limits(device)
+        self.limits = soft_limits(device, self.control.leg_limit_fraction)
         # Upper bound on positive rate terms, including zero-command restoration.
         c = self.reward_cfg
         self.max_step_reward = self.control.dt * sum(

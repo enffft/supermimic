@@ -11,7 +11,7 @@ import torch.nn.functional as F
 
 from unisupermimic.rl.algos.supermimic.geometry import matvec
 
-from .contract import mixed_torque
+from .contract import leg_position_target, mixed_torque
 
 
 @dataclass
@@ -25,6 +25,8 @@ class VelocityRewardCfg:
     zero_speed_baseline: bool = True
     stand_still: float = 0.5
     stop_command_sigma: float = 0.05
+    # Separate the full-command stop gate from axis baseline restoration.
+    stop_reward_command_sigma: float = 0.05
     stop_velocity_sigma: float = 0.15
     terrain_alignment: float = 0.4
     terrain_alignment_sigma: float = 0.16
@@ -41,6 +43,9 @@ class VelocityRewardCfg:
     wheel_torque: float = -1e-5
     leg_joint_acceleration: float = -2.5e-7
     wheel_joint_acceleration: float = -2.5e-9
+    # Smooth absolute-error cost supplies gradients outside the Gaussian peak.
+    tracking_error_cost: tuple[float, ...] = (0.0, 0.0, 0.0)
+    physical_leg_action_rate: bool = False
 
     def validate(self):
         import math
@@ -58,6 +63,7 @@ class VelocityRewardCfg:
                 self.sigma_y,
                 self.sigma_yaw,
                 self.stop_command_sigma,
+                self.stop_reward_command_sigma,
                 self.stop_velocity_sigma,
                 self.terrain_alignment_sigma,
             )
@@ -70,6 +76,8 @@ class VelocityRewardCfg:
         for values in (self.base_lin_vel_z, self.leg_joint_deviation):
             if len(values) != 6 or any(x > 0 for x in values):
                 raise ValueError("Expected six nonpositive domain penalty weights")
+        if len(self.tracking_error_cost) != 3 or any(x < 0 for x in self.tracking_error_cost):
+            raise ValueError("Expected three nonnegative tracking error cost weights")
 
 
 def velocity_reward_terms(
@@ -116,13 +124,20 @@ def velocity_reward_terms(
     )
     acceleration = (qd - previous[5]) / control.dt
     rate = a - previous_action.clamp(-1, 1)
-    stop_gate = torch.exp(-(command / cfg.stop_command_sigma).square().sum(-1))
+    leg_rate = rate[..., :12]
+    if cfg.physical_leg_action_rate:
+        # Preserve the old .25-rad action scale as the cost's reference unit.
+        leg_rate = (
+            leg_position_target(a, control, default, limits)
+            - leg_position_target(previous_action, control, default, limits)
+        ) / .25
+    stop_gate = torch.exp(-(command / cfg.stop_reward_command_sigma).square().sum(-1))
     stop = stop_gate * torch.exp(
         -velocity_body[..., :2].square().sum(-1) / cfg.stop_velocity_sigma**2
         - angular_body[..., 2].square() / cfg.sigma_yaw**2
     )
     below, above = F.relu(limits[:, 0] - q), F.relu(q - limits[:, 1])
-    return {
+    terms = {
         "track_vx": cfg.track_vx * track[..., 0],
         "track_vy": cfg.track_vy * track[..., 1],
         "track_yaw": cfg.track_yaw * track[..., 2],
@@ -137,7 +152,7 @@ def velocity_reward_terms(
         ).square(),
         "leg_joint_deviation": deviation_weight * (q - default).square().sum(-1),
         "leg_joint_limit": cfg.leg_joint_limit * (below.square() + above.square()).sum(-1),
-        "leg_action_rate": cfg.leg_action_rate * rate[..., :12].square().sum(-1),
+        "leg_action_rate": cfg.leg_action_rate * leg_rate.square().sum(-1),
         "wheel_action_rate": cfg.wheel_action_rate * rate[..., 12:].square().sum(-1),
         "leg_torque": cfg.leg_torque * torque[..., :12].square().sum(-1),
         "wheel_torque": cfg.wheel_torque * torque[..., 12:].square().sum(-1),
@@ -146,6 +161,12 @@ def velocity_reward_terms(
         "wheel_joint_acceleration": cfg.wheel_joint_acceleration
         * acceleration[..., 12:].square().sum(-1),
     }
+    if any(cfg.tracking_error_cost):
+        error = (observed - command) / sigma
+        terms["tracking_error_cost"] = -(
+            error.square().add(1).sqrt().sub(1) * command.new_tensor(cfg.tracking_error_cost)
+        ).sum(-1)
+    return terms
 
 
 def velocity_reward_total(terms):

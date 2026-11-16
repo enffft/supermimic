@@ -1,0 +1,13 @@
+# @package _global_
+defaults:
+  - /task/go2_velocity/stairs_clearance_soft_deficit
+# Explicit user-authorized new atlas: 4cm per stair level, ceiling 20cm.
+# Rough/slopes retain Level0..4. Reward and control are unchanged from A2.
+env:
+  commands:
+    velocity:
+      terrain_max_level: 5
+      terrain_stair_increment: 0.04
+      terrain_coverage_weights: [0.2, 0.4, 0.3, 0.1, 0.0, 0.0]
+      sampler:
+        terrain_level_count: 6

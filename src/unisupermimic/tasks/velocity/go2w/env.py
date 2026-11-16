@@ -123,6 +123,26 @@ class Go2WVelocityEnv(Go2VelocityEnv):
         }
         # Learner additionally strictly checks structured integration,
         # terrain conditioning/gradients, history, and network sizes on resume.
+        # Preserve the exact default v2 contract for existing checkpoints.
+        if not cfg.commands["velocity"].persistent_wm_coverage:
+            contract["commands"].pop("persistent_wm_coverage")
+        else:
+            contract["curriculum_protocol"] = "persistent_wm_eighth_domain_level_quotas"
+        for reward in (contract["reward"], contract["commands"]["reward"]):
+            if reward["stop_reward_command_sigma"] == reward["stop_command_sigma"]:
+                reward.pop("stop_reward_command_sigma")
+            if not any(reward["tracking_error_cost"]):
+                reward.pop("tracking_error_cost")
+            if not reward["physical_leg_action_rate"]:
+                reward.pop("physical_leg_action_rate")
+        if cfg.commands["velocity"].actor_level_lookahead == 0:
+            contract["commands"].pop("actor_level_lookahead")
+        control = contract["actions"]["mixed"]["control"]
+        if not control["full_leg_target_range"] and control["leg_limit_fraction"] == .90:
+            control.pop("full_leg_target_range")
+            control.pop("leg_limit_fraction")
+        if cfg.actions["mixed"].control.full_leg_target_range:
+            contract["control_protocol"] = "substep_effort;leg_default_centered_joint_range_PD;wheel_velocity_PD;gear1;saturated"
         return json.loads(
             json.dumps(
                 contract,
@@ -133,6 +153,8 @@ class Go2WVelocityEnv(Go2VelocityEnv):
 
 def make_go2w_env(cfg, num_envs=1, backend_type="mujoco"):
     c = cfg.commands["velocity"]
+    if c.actor_level_lookahead not in (0, 1):
+        raise ValueError("Go2W actor starts admit at most one level beyond measured mastery")
     if backend_type != "mujoco":
         raise NotImplementedError("Go2W v2 supports only the MuJoCo torque-motor backend")
     if (
@@ -194,6 +216,8 @@ def make_go2w_env(cfg, num_envs=1, backend_type="mujoco"):
             device=env.device,
         )
         command.curriculum.fixed_domain = command.command_domain
+        if c.persistent_wm_coverage:
+            command.curriculum.configure_persistent_coverage()
         points = torch.as_tensor(origins.copy(), device=env.device, dtype=torch.float32)
         offsets = points.new_tensor([[-0.4, -0.25], [-0.4, 0.25], [0.4, -0.25], [0.4, 0.25]])
         ground = command.mdp.terrain.ground_height(points[..., None, :2] + offsets)

@@ -1,0 +1,52 @@
+{
+  "source_sha256": "e53b67e54a9aae1f9dbe19b9d11f26ce04b58e12f9b4cf5fe02de7d5c7b8ec5e",
+  "checks": {
+    "gradient_direction": {
+      "path": "/home/yifeiy/ws_go2_unilab/runs/go2w_unified_h8_20261116/gradient_gate/audit.json",
+      "sha256": "f42ea90b34c1c07302ffe0a324e1d18f354757f0a1492769926a4a90b41a0885",
+      "passed": false
+    },
+    "unit_regression": {
+      "path": "/home/yifeiy/ws_go2_unilab/runs/go2w_unified_h8_20261116/regression_final.log",
+      "sha256": "2b2f65458c612d0b5c5a0428c7312a0bc3a2f22cf525b4c6e72506abf7c5f496",
+      "passed": true
+    },
+    "reward_parity": {
+      "path": "/home/yifeiy/ws_go2_unilab/runs/go2w_unified_h8_20261116/geometry_reward.json",
+      "sha256": "a109ba389601b9fddefa188e0e8dc8d6a798179f566c242bdd772ebe3e1c7055",
+      "passed": true
+    },
+    "terrain_collision": {
+      "path": "/home/yifeiy/ws_go2_unilab/runs/go2w_unified_h8_20261116/geometry_reward.json",
+      "sha256": "a109ba389601b9fddefa188e0e8dc8d6a798179f566c242bdd772ebe3e1c7055",
+      "passed": true
+    },
+    "wheel_geometry": {
+      "path": "/home/yifeiy/ws_go2_unilab/runs/go2w_unified_h8_20261116/geometry_reward.json",
+      "sha256": "a109ba389601b9fddefa188e0e8dc8d6a798179f566c242bdd772ebe3e1c7055",
+      "passed": true
+    },
+    "initialization": {
+      "path": "/home/yifeiy/ws_go2_unilab/runs/go2w_unified_h8_20261116/smoke4096_verified/wm_initialization.json",
+      "sha256": "ff37af72368ee11ec67b9344160bd68f96403519368d0b62ae0bff54516e9c8a",
+      "passed": true
+    },
+    "4096_smoke": {
+      "path": "/home/yifeiy/ws_go2_unilab/runs/go2w_unified_h8_20261116/smoke4096_verified/training_summary.json",
+      "sha256": "d25d670adfa32b8dd33651856f86333e67850de06f56c7031a1900277078071c",
+      "passed": true
+    },
+    "checkpoint_resume": {
+      "path": "/home/yifeiy/ws_go2_unilab/runs/go2w_unified_h8_20261116/resume4096_verified.json",
+      "sha256": "66fcea27cdbe8d99a96c32dd733bcf3fb6cb012db55be6aafb36d1c14bf8d3ad",
+      "passed": true
+    },
+    "physical_evaluator": {
+      "path": "/home/yifeiy/ws_go2_unilab/runs/go2w_unified_h8_20261116/smoke4096/physical_evaluation.json",
+      "sha256": "3c1255df022393038c14a5fcd5a3c7119309b671272ec4b93ecf7c6d31f85b8b",
+      "passed": true
+    }
+  },
+  "direction_diagnostic_authorization": "User: \u4e0d\u8981\u4e00\u5473\u7528gate\u963b\u6320\uff0c\u5982\u679c\u4ee3\u7801\u5199\u597d\u53ef\u4ee5\u76f4\u63a5\u5f00\u59cb\u8bad\u7ec3",
+  "physical_evaluator_semantics": "Evaluator executed and generated data; skill success is NOT asserted"
+}

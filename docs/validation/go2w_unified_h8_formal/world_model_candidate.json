@@ -1,0 +1,23 @@
+{
+  "format": "go2w_continual_dynamics_asset",
+  "architecture": {
+    "wm_hidden": [
+      2048,
+      2048,
+      2048
+    ],
+    "wm_structured": true,
+    "terrain_conditioning": true,
+    "terrain_sensor_grad": true
+  },
+  "tensor_sha256": "531a6a9824e22d902ad60306cedd0aa2e8edba567c419d88017e017e5a80717d",
+  "source_checkpoint": "/home/yifeiy/ws_go2_unilab/runs/go2w_unified_h8_4h_20261116/last.pt",
+  "source_iteration": 11561,
+  "source_updates": {
+    "wm": 115610,
+    "actor": 11561,
+    "critic": 231220
+  },
+  "wm_updates": 115610,
+  "validation_status": "candidate; consult independent physics and WM assessment before skill claims"
+}

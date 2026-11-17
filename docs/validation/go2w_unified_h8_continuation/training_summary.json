@@ -1,0 +1,42 @@
+{
+  "iteration": 21190,
+  "wall_h": 7.497053144511754,
+  "sim_steps": 217247744,
+  "wm_loss": 0.07855765540152788,
+  "wm_err8": 0.1335351038724184,
+  "pi_loss": -15.506233739852906,
+  "v_loss": 0.0031666290655266494,
+  "imag_rew": 0.7552795499563217,
+  "pi_gradnorm": 7.490079009532929,
+  "imag_survival": 0.9921639531850814,
+  "sim_rew": 0.6580894947052002,
+  "ep_len": null,
+  "ep_ret_norm": null,
+  "term_frac": 0.17148760330578514,
+  "it_per_s": 0.7654375920764811,
+  "lr": 0.0003931697382675209,
+  "completed": false,
+  "wall_time": 27001.998728489503,
+  "mode": "formal",
+  "stop_reason": "effective_training_budget",
+  "updates": {
+    "wm": 211900,
+    "actor": 21190,
+    "critic": 423800
+  },
+  "peak_CPU_MiB": 4833.30078125,
+  "peak_GPU_MiB": 4062.03466796875,
+  "formal_budget_complete": true,
+  "session_loop_seconds": 12601.150062442524,
+  "requested_session_seconds": 12600.0,
+  "parent_loop_seconds": 14400.848666046979,
+  "session_iterations": 9629,
+  "session_transitions": 98603008,
+  "session_updates": {
+    "wm": 96290,
+    "actor": 9629,
+    "critic": 192580
+  },
+  "resume_from": "/home/yifeiy/ws_go2_unilab/runs/go2w_unified_h8_4h_20261116/last.pt",
+  "ended_utc": "2026-11-17T04:03:47Z"
+}

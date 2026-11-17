@@ -1,27 +1,29 @@
-# Go2W H8 额外3.5小时续训
+# Go2W H8 额外3.5小时续训结果
 
-2026-11-17。用户在审阅修正评测后明确要求：“评测完以后以当前为基础，继续续训3.5h”。按当前最终模型继续训练，不改奖励、课程或超参数。本记录的运行状态将在启动及最终评测后更新。
+状态：已完成额外12600秒有效训练循环。
+父检查点：`/home/yifeiy/ws_go2_unilab/runs/go2w_unified_h8_4h_20261116/last.pt`；续训目录：`/home/yifeiy/ws_go2_unilab/runs/go2w_unified_h8_resume_3p5h_20261117`。
+恢复已有Actor、Critic、WM、三套优化器、Replay、历史池和课程；环境重采样，非逐步完全复现。
+H8、wm_window8、4096env、1024buffer、WM/Actor batch2048、奖励及采样设置保持不变。
+方向检查保留诊断，依照用户明确授权继续训练。原始WM资产SHA未变。
 
-## 已完成的评测
+本次有效循环：12601.150秒；累计：27001.999秒。
+本次iteration：9629；新增真实转移：98603008。
+新增更新：{'wm': 96290, 'actor': 9629, 'critic': 192580}；GPU峰值：4062.03466796875MiB。
+最终14项课程等级：[10, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 6, 1, 1]。
 
-[四小时结果复核](go2w_h8_results_review.md)采用完整10秒、847条固定物理条件：平地16/77（20.8%），单级下台阶16/110（14.5%），上单级和连续上下楼均未通过。11个确定性初始yaw用于检查朝向敏感性，不是独立随机试验。以最终last.pt作为此次续训起点，不将其称为各任务最优模型。
+评测为冻结Actor的真实物理847条固定条件，每条最多10秒；11个确定性初始yaw并非独立随机实验。
 
-## 续训协议与来源
+|任务|续训前通过率|续训后通过率|续训后跌倒率|
+|---|---:|---:|---:|
+|flat|20.8%|33.8%|48.1%|
+|rough|0.0%|20.0%|11.8%|
+|slope_up|0.0%|100.0%|0.0%|
+|slope_down|0.0%|100.0%|0.0%|
+|single_step_up|0.0%|0.0%|100.0%|
+|single_step_down|14.5%|0.0%|100.0%|
+|multi_stairs_up|0.0%|0.0%|99.1%|
+|multi_stairs_down|0.0%|0.0%|99.1%|
 
-- 父完整检查点：`/home/yifeiy/ws_go2_unilab/runs/go2w_unified_h8_4h_20261116/last.pt`，iteration11561。
-- 输出：`/home/yifeiy/ws_go2_unilab/runs/go2w_unified_h8_resume_3p5h_20261117`。
-- 额外有效训练循环12600秒，父有效循环14400.848666秒，累计停止目标27000.848666秒；前后评测与保存不计入预算。
-- 恢复Actor、Critic、训练后WM、三套优化器、Replay、历史池及课程。仿真环境重新采样，封闭Replay的旧episode边界，清理未完成课程episode，不声称逐步完全复现。
-- H8、wm_window8、4096env、buffer1024、WM/Actor batch2048及训练代码和有效配置全部保持一致。未使用PPO、多个Actor或重新初始化WM。
-- 原始WM仅作为原四小时训练的WM-only起点，文件SHA保持不变；此次不重新加载原始WM覆盖训练后WM，也不使用失败校准候选。
-- 方向问题保留为诊断，遵循用户此前明确的继续训练授权。初始化/配置/状态恢复检查仍执行；父run的源证据完整保留。
-
-## 验证和运行状态
-
-启动前预检已通过：完整checkpoint有效配置逐项相等；训练src、资产与依赖无变化，仅tools/tests变化。新增预算、来源兼容性和优化器比较测试，与课程/模式/Critic回归合计17项通过；Ruff通过。
-
-当前状态：**已启动并实际更新，尚未完成3.5小时预算**。启动北京时间2026-11-17 08:29:07，训练PID2202256，结束处理PID2202257。权重、三套优化器、Replay/历史池大小、更新计数与课程等级共10项恢复检查全部通过；恢复Actor的231条物理评测与父最终模型每条全部字段一致。完整源码与有效配置快照已保存。
-
-启动核验时iteration=11611，本次有效循环62.392秒，GPU峰值4062.03MiB；未减少环境数或buffer。证据见[恢复审计](../validation/go2w_unified_h8_continuation/resume_initialization.json)、[预算](../validation/go2w_unified_h8_continuation/budget.json)及[启动进度](../validation/go2w_unified_h8_continuation/startup_progress.json)。
-
-已实现结束处理：Runner每1800秒有效循环做物理及WM评测；正常结束后额外执行同一847条件最终评测、输出与续训前对照及物理视频、更新本报告并提交推送。训练结果尚未产生。
+分轴速度、RMSE和每级台阶明细见[完整物理评测](../validation/go2w_unified_h8_continuation/final_11yaw.json)。
+[平地视频](../validation/go2w_unified_h8_continuation/flat.mp4) · [台阶视频](../validation/go2w_unified_h8_continuation/stairs.mp4)。
+训练时间完成与运动能力达标分开判断；通过率来自物理评测，不以loss或想象奖励替代。

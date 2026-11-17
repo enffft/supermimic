@@ -1,0 +1,18 @@
+{
+  "effective_config_equal": true,
+  "unchanged_training_source": true,
+  "parent_iteration": 11561,
+  "parent_seconds": 14400.848666046979,
+  "target_seconds": 27000.84866604698,
+  "changed_tools_tests": [
+    "tests/tasks/test_go2w_continuation.py",
+    "tools/analyze_go2w_results.py",
+    "tools/evaluate_go2w.py",
+    "tools/finalize_go2w_continuation.py",
+    "tools/render_go2w_evaluation.py",
+    "tools/train_go2w.py"
+  ],
+  "original_wm_preserved": true,
+  "source_sha256": "761ddc36e20f2e755c789444242d8ae2f217a732098a81b5324f2a7a0b0ba6a3",
+  "tests": "17 passed"
+}

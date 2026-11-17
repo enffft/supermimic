@@ -20,6 +20,8 @@
 
 启动前预检已通过：完整checkpoint有效配置逐项相等；训练src、资产与依赖无变化，仅tools/tests变化。新增预算、来源兼容性和优化器比较测试，与课程/模式/Critic回归合计17项通过；Ruff通过。
 
-当前状态：准备启动。实际load后必须通过权重、三套优化器、Replay/历史池大小、更新计数与课程等级检查，写入`resume_initialization.json`后才能开始更新。完整源码与有效配置由Runner再次保存快照。
+当前状态：**已启动并实际更新，尚未完成3.5小时预算**。启动北京时间2026-11-17 08:29:07，训练PID2202256，结束处理PID2202257。权重、三套优化器、Replay/历史池大小、更新计数与课程等级共10项恢复检查全部通过；恢复Actor的231条物理评测与父最终模型每条全部字段一致。完整源码与有效配置快照已保存。
+
+启动核验时iteration=11611，本次有效循环62.392秒，GPU峰值4062.03MiB；未减少环境数或buffer。证据见[恢复审计](../validation/go2w_unified_h8_continuation/resume_initialization.json)、[预算](../validation/go2w_unified_h8_continuation/budget.json)及[启动进度](../validation/go2w_unified_h8_continuation/startup_progress.json)。
 
 已实现结束处理：Runner每1800秒有效循环做物理及WM评测；正常结束后额外执行同一847条件最终评测、输出与续训前对照及物理视频、更新本报告并提交推送。训练结果尚未产生。

@@ -1,0 +1,37 @@
+{
+  "source_checkpoint": "/home/yifeiy/ws_go2_unilab/runs/go2w_unified_h8_4h_20261116/last.pt",
+  "source_identity": "e53b67e54a9aae1f9dbe19b9d11f26ce04b58e12f9b4cf5fe02de7d5c7b8ec5e",
+  "current_identity": "761ddc36e20f2e755c789444242d8ae2f217a732098a81b5324f2a7a0b0ba6a3",
+  "allowed_tool_test_changes": [
+    "tests/tasks/test_go2w_continuation.py",
+    "tools/analyze_go2w_results.py",
+    "tools/evaluate_go2w.py",
+    "tools/finalize_go2w_continuation.py",
+    "tools/render_go2w_evaluation.py",
+    "tools/train_go2w.py"
+  ],
+  "unchanged_training_source": true,
+  "restoration_checks": {
+    "actor": true,
+    "critic": true,
+    "wm": true,
+    "wm_optimizer": true,
+    "actor_optimizer": true,
+    "critic_optimizer": true,
+    "replay_size": true,
+    "history_size": true,
+    "updates": true,
+    "curriculum_levels": true
+  },
+  "parent_iteration": 11561,
+  "parent_loop_seconds": 14400.848666046979,
+  "parent_updates": {
+    "wm": 115610,
+    "actor": 11561,
+    "critic": 231220
+  },
+  "parent_transitions": 118644736,
+  "replay_size": 1024,
+  "history_size": 8192,
+  "semantics": "weights_optimizers_replay_curriculum_restored; environment_resampled; not_exact"
+}

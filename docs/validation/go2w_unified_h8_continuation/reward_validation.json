@@ -1,0 +1,190 @@
+{
+  "baseline": {
+    "physical_847_rows_identical_to_uninstrumented": true,
+    "per_step_reward_parity_max_error": 0,
+    "accumulated_return_max_float_roundoff": 7.569079753011465e-05
+  },
+  "iteration_018401": {
+    "physical_847_rows_identical_to_uninstrumented": true,
+    "per_step_reward_parity_max_error": 0,
+    "accumulated_return_max_float_roundoff": 0.00011492730118334293
+  },
+  "best": {
+    "physical_847_rows_identical_to_uninstrumented": true,
+    "per_step_reward_parity_max_error": 0,
+    "accumulated_return_max_float_roundoff": 0.0001085365547623951
+  },
+  "final": {
+    "physical_847_rows_identical_to_uninstrumented": true,
+    "per_step_reward_parity_max_error": 0,
+    "accumulated_return_max_float_roundoff": 9.785924339666963e-05
+  },
+  "play": {
+    "independent_process_repeat_13_scenarios_identical": true,
+    "episodes": 13,
+    "comparison_to_847_batch": [
+      {
+        "terrain": "flat",
+        "level": 1,
+        "goal": [
+          0,
+          0,
+          0
+        ],
+        "single_steps": 500,
+        "matrix_steps": 500,
+        "rmse_max_difference": 0.0002451874315738678
+      },
+      {
+        "terrain": "flat",
+        "level": 1,
+        "goal": [
+          0.3,
+          0,
+          0
+        ],
+        "single_steps": 500,
+        "matrix_steps": 500,
+        "rmse_max_difference": 0.006317786872386932
+      },
+      {
+        "terrain": "flat",
+        "level": 1,
+        "goal": [
+          -0.2,
+          0,
+          0
+        ],
+        "single_steps": 500,
+        "matrix_steps": 500,
+        "rmse_max_difference": 0.007560059428215027
+      },
+      {
+        "terrain": "flat",
+        "level": 1,
+        "goal": [
+          0,
+          0.2,
+          0
+        ],
+        "single_steps": 500,
+        "matrix_steps": 500,
+        "rmse_max_difference": 0.024546943604946136
+      },
+      {
+        "terrain": "flat",
+        "level": 1,
+        "goal": [
+          0,
+          -0.2,
+          0
+        ],
+        "single_steps": 500,
+        "matrix_steps": 500,
+        "rmse_max_difference": 0.008084893226623535
+      },
+      {
+        "terrain": "flat",
+        "level": 1,
+        "goal": [
+          0,
+          0,
+          0.35
+        ],
+        "single_steps": 500,
+        "matrix_steps": 500,
+        "rmse_max_difference": 0.008436128497123718
+      },
+      {
+        "terrain": "flat",
+        "level": 1,
+        "goal": [
+          0,
+          0,
+          -0.35
+        ],
+        "single_steps": 500,
+        "matrix_steps": 500,
+        "rmse_max_difference": 0.002177208662033081
+      },
+      {
+        "terrain": "single_step_up",
+        "level": 1,
+        "goal": [
+          0.3,
+          0,
+          0
+        ],
+        "single_steps": 500,
+        "matrix_steps": 369,
+        "rmse_max_difference": 0.2767907679080963
+      },
+      {
+        "terrain": "single_step_up",
+        "level": 9,
+        "goal": [
+          0.3,
+          0,
+          0
+        ],
+        "single_steps": 500,
+        "matrix_steps": 500,
+        "rmse_max_difference": 0.006123930215835571
+      },
+      {
+        "terrain": "single_step_down",
+        "level": 5,
+        "goal": [
+          0.3,
+          0,
+          0
+        ],
+        "single_steps": 211,
+        "matrix_steps": 213,
+        "rmse_max_difference": 0.0036714524030685425
+      },
+      {
+        "terrain": "single_step_down",
+        "level": 9,
+        "goal": [
+          0.3,
+          0,
+          0
+        ],
+        "single_steps": 164,
+        "matrix_steps": 145,
+        "rmse_max_difference": 0.25858455896377563
+      },
+      {
+        "terrain": "multi_stairs_up",
+        "level": 6,
+        "goal": [
+          0.3,
+          0,
+          0
+        ],
+        "single_steps": 500,
+        "matrix_steps": 500,
+        "rmse_max_difference": 0.019288990646600723
+      },
+      {
+        "terrain": "multi_stairs_down",
+        "level": 6,
+        "goal": [
+          0.3,
+          0,
+          0
+        ],
+        "single_steps": 383,
+        "matrix_steps": 386,
+        "rmse_max_difference": 0.004914827644824982
+      }
+    ],
+    "scope": "single-env visualization is reproducible independently; batch-1 and batch-847 numerical trajectories differ; official rates use 847-matrix only"
+  },
+  "checkpoint_sha256": {
+    "selected_19796": "e902cb76e4d6982ab2d78617040af9408cfea139a66ef5084c7becab1d893d62",
+    "flat_18401": "8d368eae8d1ca5859f73fb8e645d41271758c0cda228a10427c77d03235068dc",
+    "final_21190": "1bb4a04f4132065445c53c94760baac12e5f949ac932dee30aad3e96722a92af"
+  }
+}

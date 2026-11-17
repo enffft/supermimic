@@ -1,0 +1,34 @@
+{
+  "checkpoint": "/home/yifeiy/ws_go2_unilab/runs/go2w_unified_h8_resume_3p5h_20261117/evaluation/final.pt",
+  "iteration": 21190,
+  "scope": "frozen Actor; actual MuJoCo; one-based levels; no exploration; first episode only",
+  "rows": [
+    {
+      "episode": 0,
+      "terrain": "flat",
+      "level": 1,
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "initial_yaw_rad": 0,
+      "steps": 245,
+      "fall": true,
+      "traversal_success": false,
+      "terminal_reason": "fallen",
+      "duration_seconds": 4.9,
+      "mean_actual_vx_vy_yaw": [
+        0.2820914089679718,
+        -5.175605110707693e-05,
+        0.026224015280604362
+      ],
+      "rmse_vx_vy_yaw": [
+        0.1354919672012329,
+        0.0724857822060585,
+        0.7591531276702881
+      ],
+      "return_value": 34.58641737047583
+    }
+  ]
+}

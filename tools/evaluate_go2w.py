@@ -2,6 +2,7 @@
 
 import argparse
 import json
+from dataclasses import asdict
 from pathlib import Path
 
 import torch
@@ -41,7 +42,9 @@ def matrix(seeds):
     return cases
 
 
-def evaluate(checkpoint, output, seeds=(2026, 2027, 2028), trace_output=None):
+def evaluate(
+    checkpoint, output, seeds=(2026, 2027, 2028), trace_output=None, collect_rewards=False
+):
     torch.set_num_threads(1)
     saved = torch.load(checkpoint, map_location="cpu", weights_only=True, mmap=True)
     cfg = saved["args"]
@@ -123,6 +126,8 @@ def evaluate(checkpoint, output, seeds=(2026, 2027, 2028), trace_output=None):
         distance = torch.zeros(n)
         yaw_distance = torch.zeros(n)
         reward = torch.zeros(n)
+        reward_sums = {}
+        reward_parity_error = 0.0
         start = c.state()[0].clone()
         last = start.clone()
         with torch.no_grad():
@@ -139,6 +144,26 @@ def evaluate(checkpoint, output, seeds=(2026, 2027, 2028), trace_output=None):
                 action = actor(history, c.g).clamp(-1, 1)
                 result = env.step(action)
                 s = env.velocity_next_state
+                if collect_rewards:
+                    pre = env.velocity_pre_action
+                    tags = env.velocity_terrain_tags
+                    terms = c.mdp.terms(
+                        pre["state"],
+                        s,
+                        pre["goal"],
+                        env.velocity_executed_action,
+                        pre["previous_action"],
+                        command_domain=tags["command_domain"],
+                        traversal=tags["traversal"],
+                        success_peak=tags["success_peak"],
+                    )
+                    reconstructed = torch.stack(list(terms.values())).sum(0) * c.mdp.control.dt
+                    reward_parity_error = max(
+                        reward_parity_error,
+                        float((reconstructed - result.reward)[active].abs().max()),
+                    )
+                    for name, value in terms.items():
+                        reward_sums.setdefault(name, torch.zeros(n)).add_(value * active)
                 actual = torch.cat(
                     (
                         matvec(s[1].transpose(-1, -2), s[2])[:, :2],
@@ -261,6 +286,48 @@ def evaluate(checkpoint, output, seeds=(2026, 2027, 2028), trace_output=None):
             single_heights_m=SINGLE_HEIGHTS,
             multi_riser_heights_m=STAIR_HEIGHTS,
         )
+        if collect_rewards:
+            if reward_parity_error > 1e-6:
+                raise RuntimeError(
+                    f"Recomputed reward differs from physical manager: {reward_parity_error}"
+                )
+            contributions = []
+            for i, case in enumerate(cases):
+                contributions.append(
+                    case
+                    | dict(
+                        steps=int(count[i]),
+                        rate_terms={
+                            k: float(v[i] / count[i].clamp_min(1)) for k, v in reward_sums.items()
+                        },
+                        return_terms={
+                            k: float(v[i] * c.mdp.control.dt) for k, v in reward_sums.items()
+                        },
+                    )
+                )
+            by_domain = {}
+            for domain, name in enumerate(DOMAINS):
+                selected = torch.tensor([case["domain"] == domain for case in cases])
+                by_domain[name] = dict(
+                    physical_steps=int(count[selected].sum()),
+                    pooled_rate_terms={
+                        k: float(v[selected].sum() / count[selected].sum())
+                        for k, v in reward_sums.items()
+                    },
+                    mean_episode_return_terms={
+                        k: float(v[selected].mean() * c.mdp.control.dt)
+                        for k, v in reward_sums.items()
+                    },
+                )
+            result["reward_analysis"] = dict(
+                configuration=asdict(c.mdp.reward_cfg),
+                dt=c.mdp.control.dt,
+                rate_semantics="weighted rates before dt; only first-episode live steps; endpoint saturated PD torque",
+                recomputed_reward_max_abs_error=reward_parity_error,
+                max_step_reward_normalizer=c.mdp.max_step_reward,
+                rows=contributions,
+                by_domain=by_domain,
+            )
         if trace_output is not None:
             trace_output = Path(trace_output)
             trace_output.parent.mkdir(parents=True, exist_ok=True)
@@ -287,8 +354,13 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--seeds", type=int, nargs="+", default=[2026, 2027, 2028])
     parser.add_argument("--traces", type=Path)
+    parser.add_argument(
+        "--rewards",
+        action="store_true",
+        help="Collect weighted per-term physical reward contributions",
+    )
     args = parser.parse_args()
-    result = evaluate(args.checkpoint, args.output, args.seeds, args.traces)
+    result = evaluate(args.checkpoint, args.output, args.seeds, args.traces, args.rewards)
     print(json.dumps(result["by_domain"], indent=2))
 
 

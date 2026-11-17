@@ -41,7 +41,7 @@ def matrix(seeds):
     return cases
 
 
-def evaluate(checkpoint, output, seeds=(2026, 2027, 2028)):
+def evaluate(checkpoint, output, seeds=(2026, 2027, 2028), trace_output=None):
     torch.set_num_threads(1)
     saved = torch.load(checkpoint, map_location="cpu", weights_only=True, mmap=True)
     cfg = saved["args"]
@@ -58,6 +58,9 @@ def evaluate(checkpoint, output, seeds=(2026, 2027, 2028)):
         cur.terrain_type[:] = (c.command_domain - 1).clamp_min(0)
         cur.terrain_level[:] = torch.tensor([case["level"] for case in cases])
         env.reset()
+        # Training staggers initial episode ages. Every evaluation starts at t=0.
+        env.set_episode_length_buf(torch.zeros(env.num_envs, dtype=torch.int64, device=env.device))
+        assert not env.episode_length_buf.any()
         if saved.get("task_contract") != env.supermimic_contract:
             raise ValueError("Evaluation task contract differs")
         goals = torch.tensor([case["goal"] for case in cases], dtype=torch.float32)
@@ -79,7 +82,12 @@ def evaluate(checkpoint, output, seeds=(2026, 2027, 2028)):
         root = torch.zeros(n, 13)
         root[:, :3] = c._origins
         root[:, 2] = c.mdp.terrain.ground_height(root[:, :2]) + c.cfg.spawn_height
-        yaw = torch.tensor([0.025 * ((case["seed"] - 2026) % 3 - 1) for case in cases])
+        unique_seeds = sorted(set(seeds))
+        yaw_map = {
+            seed: (-0.025 + 0.05 * i / (len(unique_seeds) - 1) if len(unique_seeds) > 1 else 0.0)
+            for i, seed in enumerate(unique_seeds)
+        }
+        yaw = torch.tensor([yaw_map[case["seed"]] for case in cases])
         root[:, 3] = torch.cos(yaw / 2)
         root[:, 6] = torch.sin(yaw / 2)
         views = env.backend.get_state_views(("qpos", "qvel"), device="cpu")
@@ -93,6 +101,23 @@ def evaluate(checkpoint, output, seeds=(2026, 2027, 2028)):
         active = torch.ones(n, dtype=torch.bool)
         count = torch.zeros(n)
         err = torch.zeros(n, 3)
+        actual_sum = torch.zeros(n, 3)
+        steady_error = torch.zeros(n, 3)
+        steady_count = torch.zeros(n)
+        terminal_reasons = ["running"] * n
+        signed_distance = torch.zeros(n)
+        terminal_position = torch.zeros(n, 3)
+        trace_ids = [
+            i
+            for i, case in enumerate(cases)
+            if case["seed"] == unique_seeds[len(unique_seeds) // 2]
+            and (
+                case["domain"] == 0
+                or (case["domain"] in (4, 5) and case["level"] in (0, 5, 8, 9))
+                or (case["domain"] in (6, 7) and case["level"] in (0, 5, 9))
+            )
+        ]
+        traces = []
         fall = torch.zeros(n, dtype=torch.bool)
         success = torch.zeros_like(fall)
         distance = torch.zeros(n)
@@ -106,6 +131,11 @@ def evaluate(checkpoint, output, seeds=(2026, 2027, 2028)):
                 history = torch.cat((history[:, 1:], obs[:, None]), 1)
                 if step == 0:
                     history = obs[:, None].expand(-1, cfg["hist"], -1).clone()
+                if trace_output is not None:
+                    native = env.backend.get_state_views(("qpos",), device="cpu")["qpos"]
+                    traces.append(
+                        dict(qpos=native[trace_ids].clone(), active=active[trace_ids].clone())
+                    )
                 action = actor(history, c.g).clamp(-1, 1)
                 result = env.step(action)
                 s = env.velocity_next_state
@@ -117,17 +147,41 @@ def evaluate(checkpoint, output, seeds=(2026, 2027, 2028)):
                     -1,
                 )
                 err += (actual - goals).square() * active[:, None]
+                actual_sum += actual * active[:, None]
+                if step >= 100:
+                    steady_error += (actual - goals).square() * active[:, None]
+                    steady_count += active
+                signed_distance += torch.where(
+                    active,
+                    (actual[:, :2] * goals[:, :2]).sum(-1)
+                    / goals[:, :2].norm(dim=-1).clamp_min(0.01)
+                    * 0.02,
+                    0.0,
+                )
+                terminal_position[active] = s[0][active]
                 count += active
                 distance += torch.where(active, (s[0][:, :2] - last[:, :2]).norm(dim=-1), 0)
                 yaw_distance += torch.where(active, actual[:, 2] * goals[:, 2].sign() * 0.02, 0)
                 reward += result.reward * active
                 fall |= active & c.mdp.hard_termination(s)
                 # Auto-reset clears the event; termination tags expose the pre-reset success.
-                traversed = (
-                    (~c.mdp.hard_termination(s)) & result.terminated & (c.command_domain >= 4)
-                )
+                traversed = env.termination_manager.get_term(
+                    "traversal_finished"
+                ).clone() & ~c.mdp.hard_termination(s)
                 success |= active & traversed
                 last = s[0].clone()
+                ended = active & (result.terminated | result.truncated)
+                term_values = {
+                    name: env.termination_manager.get_term(name).clone()
+                    for name in env.termination_manager.active_terms
+                }
+                for i in ended.nonzero().flatten().tolist():
+                    reasons = [name for name, value in term_values.items() if bool(value[i])]
+                    terminal_reasons[i] = (
+                        "+".join(reasons)
+                        if reasons
+                        else ("time_limit" if result.truncated[i] else "unknown_termination")
+                    )
                 active &= ~(result.terminated | result.truncated)
                 if not active.any():
                     break
@@ -135,7 +189,7 @@ def evaluate(checkpoint, output, seeds=(2026, 2027, 2028)):
         for i, case in enumerate(cases):
             rmse = (err[i] / count[i].clamp_min(1)).sqrt()
             moving = (
-                distance[i] > 0.3
+                signed_distance[i] > 0.3
                 if abs(case["goal"][0]) + abs(case["goal"][1]) > 0.05
                 else yaw_distance[i] > 0.3
                 if abs(case["goal"][2]) > 0.05
@@ -151,6 +205,20 @@ def evaluate(checkpoint, output, seeds=(2026, 2027, 2028)):
                 | dict(
                     initial_yaw_rad=float(yaw[i]),
                     steps=int(count[i]),
+                    duration_seconds=float(count[i] * 0.02),
+                    terminal_reason=terminal_reasons[i]
+                    if terminal_reasons[i] != "running"
+                    else "evaluation_horizon",
+                    full_duration=bool(count[i] >= 499),
+                    mean_actual_vx_vy_yaw=(actual_sum[i] / count[i].clamp_min(1)).tolist(),
+                    steady_rmse_vx_vy_yaw=(steady_error[i] / steady_count[i].clamp_min(1))
+                    .sqrt()
+                    .tolist()
+                    if steady_count[i] > 0
+                    else None,
+                    signed_progress_m=float(signed_distance[i]),
+                    signed_yaw_rad=float(yaw_distance[i]),
+                    final_position_world=terminal_position[i].tolist(),
                     rmse_vx_vy_yaw=rmse.tolist(),
                     fall=bool(fall[i]),
                     traversal_success=bool(success[i]),
@@ -166,6 +234,8 @@ def evaluate(checkpoint, output, seeds=(2026, 2027, 2028)):
                 episodes=len(selected),
                 passed=sum(r["passed"] for r in selected),
                 fall_rate=sum(r["fall"] for r in selected) / len(selected),
+                mean_duration_seconds=sum(r["duration_seconds"] for r in selected) / len(selected),
+                full_duration_rate=sum(r["full_duration"] for r in selected) / len(selected),
                 success_rate=sum(r["passed"] for r in selected) / len(selected),
                 mean_rmse_vx_vy_yaw=torch.tensor([r["rmse_vx_vy_yaw"] for r in selected])
                 .mean(0)
@@ -173,6 +243,17 @@ def evaluate(checkpoint, output, seeds=(2026, 2027, 2028)):
             )
         result = dict(
             checkpoint=str(checkpoint),
+            evaluation_protocol="t0 counters; frozen policy; first episode; explicit termination reasons; signed motion; full 500-step non-stair admission",
+            initial_episode_counter=0,
+            time_horizon_seconds=10.0,
+            yaw_map=yaw_map,
+            pass_criteria=dict(
+                tracking_max_rmse=0.15,
+                min_translation_m=0.3,
+                min_yaw_rad=0.3,
+                minimum_nonstair_steps=499,
+                stairs="physical traversal_finished event; no fall",
+            ),
             scope="real MuJoCo; fixed commands; initial yaw seeds; policy frozen",
             rows=rows,
             by_domain=grouped,
@@ -180,6 +261,19 @@ def evaluate(checkpoint, output, seeds=(2026, 2027, 2028)):
             single_heights_m=SINGLE_HEIGHTS,
             multi_riser_heights_m=STAIR_HEIGHTS,
         )
+        if trace_output is not None:
+            trace_output = Path(trace_output)
+            trace_output.parent.mkdir(parents=True, exist_ok=True)
+            torch.save(
+                dict(
+                    cases=[cases[i] for i in trace_ids],
+                    qpos=torch.stack([t["qpos"] for t in traces]),
+                    active=torch.stack([t["active"] for t in traces]),
+                    dt=0.02,
+                    rows=[rows[i] for i in trace_ids],
+                ),
+                trace_output,
+            )
         write_json(output, result)
         return result
     finally:
@@ -192,8 +286,9 @@ def main():
     parser.add_argument("--checkpoint", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--seeds", type=int, nargs="+", default=[2026, 2027, 2028])
+    parser.add_argument("--traces", type=Path)
     args = parser.parse_args()
-    result = evaluate(args.checkpoint, args.output, args.seeds)
+    result = evaluate(args.checkpoint, args.output, args.seeds, args.traces)
     print(json.dumps(result["by_domain"], indent=2))
 
 

@@ -1,7 +1,9 @@
 """Strict H8 SuperMimic runner. Smoke runs never authorize formal training by themselves."""
 
 import argparse
+import hashlib
 import json
+import math
 import os
 import resource
 import signal
@@ -60,6 +62,56 @@ def validate_admission(path, identity, *, accept_direction_diagnostic=False):
     return admission
 
 
+def loop_budget_target(previous_seconds, additional_seconds=None):
+    if additional_seconds is None:
+        return float(BUDGET_SECONDS)
+    if not math.isfinite(additional_seconds) or additional_seconds <= 0:
+        raise ValueError("Additional training budget must be finite and positive")
+    if not math.isfinite(previous_seconds) or previous_seconds < 0:
+        raise ValueError("Invalid restored effective loop time")
+    return previous_seconds + additional_seconds
+
+
+def validate_resume_manifest(parent, recorded_identity, current_manifest):
+    manifest = json.loads((parent / "source_manifest.json").read_text())
+    if manifest["sha256"] != recorded_identity:
+        raise ValueError("Resume checkpoint/source manifest identity differs")
+    old = manifest["files"]
+    changed = sorted(
+        path
+        for path in old.keys() | current_manifest.keys()
+        if old.get(path) != current_manifest.get(path)
+    )
+    # Evaluation/runner/test changes can be snapshotted separately. Exact task,
+    # learner, replay, assets, configuration and dependency files remain mandatory.
+    forbidden = [path for path in changed if not path.startswith(("tools/", "tests/"))]
+    if forbidden:
+        raise ValueError(f"Resume training source changed: {forbidden}")
+    return changed
+
+
+def nested_digest(value):
+    digest = hashlib.sha256()
+
+    def visit(item):
+        if isinstance(item, torch.Tensor):
+            tensor = item.detach().cpu().contiguous()
+            digest.update(str((tensor.dtype, tuple(tensor.shape))).encode())
+            digest.update(tensor.numpy().tobytes())
+        elif isinstance(item, dict):
+            for key in sorted(item, key=str):
+                digest.update(str(key).encode())
+                visit(item[key])
+        elif isinstance(item, (list, tuple)):
+            for part in item:
+                visit(part)
+        else:
+            digest.update(repr(item).encode())
+
+    visit(value)
+    return digest.hexdigest()
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--mode", choices=("smoke", "formal"), required=True)
@@ -69,6 +121,11 @@ def main():
     parser.add_argument("--admission", type=Path)
     parser.add_argument("--resume", type=Path)
     parser.add_argument(
+        "--additional-seconds",
+        type=float,
+        help="Resume only: add this many actual training-loop seconds to restored time",
+    )
+    parser.add_argument(
         "--accept-direction-diagnostic",
         action="store_true",
         help="Explicit user authorization: retain failed H8 directions as warnings, not admission veto",
@@ -77,7 +134,11 @@ def main():
     owner, cfg = configuration()
     if args.envs < 1 or args.iterations < 1:
         parser.error("Positive smoke dimensions required")
-    identity, _ = source_identity()
+    if args.additional_seconds is not None:
+        if args.resume is None or args.mode != "formal":
+            parser.error("--additional-seconds requires formal --resume")
+        loop_budget_target(0.0, args.additional_seconds)
+    identity, manifest = source_identity()
     if args.mode == "formal":
         if args.envs != 4096 or args.admission is None:
             parser.error("Formal requires 4096 envs and complete admission")
@@ -109,7 +170,12 @@ def main():
             else None,
             envs=args.envs,
             pid=os.getpid(),
-            budget_seconds=BUDGET_SECONDS if args.mode == "formal" else None,
+            budget_seconds=(
+                args.additional_seconds if args.additional_seconds is not None else BUDGET_SECONDS
+            )
+            if args.mode == "formal"
+            else None,
+            resume_from=str(args.resume.resolve()) if args.resume else None,
             started_utc=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         ),
     )
@@ -123,12 +189,55 @@ def main():
         learner = SuperMimicLearner(env, cfg, args.output, device="cuda:0", backend="mujoco")
         if args.resume:
             restored = torch.load(args.resume, map_location="cpu", weights_only=True, mmap=True)
-            if restored.get("extra_state", {}).get("formal_source_sha256") != identity:
-                raise ValueError("Resume source changed")
+            parent_identity = restored.get("extra_state", {}).get("formal_source_sha256")
+            changed_tools = validate_resume_manifest(
+                args.resume.resolve().parent, parent_identity, manifest
+            )
             if restored["args"] != asdict(cfg):
                 raise ValueError("Resume effective algorithm differs")
-            del restored
             learner.load(args.resume)
+            unchanged = {
+                "actor": nested_digest(learner.pi.state_dict())
+                == nested_digest(restored.get("pi_live", restored["pi"])),
+                "critic": nested_digest(learner.critic.state_dict())
+                == nested_digest(restored["critic"]),
+                "wm": nested_digest(learner.wm.state_dict()) == nested_digest(restored["wm"]),
+                "wm_optimizer": nested_digest(learner.opt_wm.state_dict())
+                == nested_digest(restored["opt_wm"]),
+                "actor_optimizer": nested_digest(learner.opt_pi.state_dict())
+                == nested_digest(restored["opt_pi"]),
+                "critic_optimizer": nested_digest(learner.opt_v.state_dict())
+                == nested_digest(restored["opt_v"]),
+                "replay_size": learner.buffer.size == restored["replay"]["size"],
+                "history_size": learner.buffer.history.size
+                == restored["replay"]["history"]["size"],
+                "updates": learner.update_counts == restored["update_counts"],
+                "curriculum_levels": torch.equal(
+                    env.command_manager.get_term("velocity").curriculum.skill_levels.cpu(),
+                    restored["curriculum"]["tensors"]["skill_levels"],
+                ),
+            }
+            if not all(unchanged.values()):
+                raise RuntimeError(f"Resume restoration mismatch: {unchanged}")
+            write_json(
+                args.output / "resume_initialization.json",
+                dict(
+                    source_checkpoint=str(args.resume.resolve()),
+                    source_identity=parent_identity,
+                    current_identity=identity,
+                    allowed_tool_test_changes=changed_tools,
+                    unchanged_training_source=True,
+                    restoration_checks=unchanged,
+                    parent_iteration=learner.iteration,
+                    parent_loop_seconds=learner.wall_time,
+                    parent_updates=dict(learner.update_counts),
+                    parent_transitions=learner.sim_steps,
+                    replay_size=learner.buffer.size,
+                    history_size=learner.buffer.history.size,
+                    semantics=learner.resume_mode,
+                ),
+            )
+            del restored
         else:
             audit = initialize_wm_only(
                 learner,
@@ -137,6 +246,23 @@ def main():
                 expected_tensor_sha256=WM_TENSOR_SHA,
             )
             write_json(args.output / "wm_initialization.json", audit)
+        base_loop_seconds = learner.wall_time
+        base_updates = dict(learner.update_counts)
+        base_transitions = learner.sim_steps
+        base_iteration = learner.iteration
+        target_loop_seconds = loop_budget_target(base_loop_seconds, args.additional_seconds)
+        write_json(
+            args.output / "budget.json",
+            dict(
+                base_loop_seconds=base_loop_seconds,
+                target_loop_seconds=target_loop_seconds,
+                additional_seconds=args.additional_seconds,
+                requested_session_seconds=target_loop_seconds - base_loop_seconds,
+            ),
+        )
+        learner.extra_state["continuation_parent"] = (
+            str(args.resume.resolve()) if args.resume else None
+        )
         learner.extra_state["formal_source_sha256"] = identity
         learner.extra_state["direction_diagnostic_accepted"] = args.accept_direction_diagnostic
         write_json(
@@ -219,7 +345,7 @@ def main():
                     ),
                 )
 
-        if args.mode == "formal" and args.resume is None:
+        if args.mode == "formal":
             assess("initial")
         last_assessment = learner.wall_time
 
@@ -233,12 +359,14 @@ def main():
 
         def observe(current):
             nonlocal stop, last_checkpoint, last_assessment
-            if args.mode == "formal" and current.wall_time >= BUDGET_SECONDS:
+            if args.mode == "formal" and current.wall_time >= target_loop_seconds:
                 stop = "effective_training_budget"
                 current.stop_requested = True
             status = dict(
                 iteration=current.iteration,
                 loop_seconds=current.wall_time,
+                session_loop_seconds=current.wall_time - base_loop_seconds,
+                target_loop_seconds=target_loop_seconds,
                 updates=dict(current.update_counts),
                 transitions=current.sim_steps,
                 elapsed_seconds=time.monotonic() - start,
@@ -277,7 +405,17 @@ def main():
             updates=dict(learner.update_counts),
             peak_CPU_MiB=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024,
             peak_GPU_MiB=torch.cuda.max_memory_allocated() / 2**20,
-            formal_budget_complete=args.mode == "formal" and learner.wall_time >= BUDGET_SECONDS,
+            formal_budget_complete=args.mode == "formal"
+            and learner.wall_time >= target_loop_seconds,
+            session_loop_seconds=learner.wall_time - base_loop_seconds,
+            requested_session_seconds=target_loop_seconds - base_loop_seconds,
+            parent_loop_seconds=base_loop_seconds,
+            session_iterations=learner.iteration - base_iteration,
+            session_transitions=learner.sim_steps - base_transitions,
+            session_updates={
+                key: learner.update_counts[key] - base_updates[key] for key in base_updates
+            },
+            resume_from=str(args.resume.resolve()) if args.resume else None,
             ended_utc=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         )
         write_json(args.output / "training_summary.json", summary)

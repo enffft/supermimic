@@ -1,0 +1,49 @@
+{
+  "source_checkpoint": "/home/yifeiy/ws_go2_unilab/runs/go2w_unified_h8_resume_3p5h_20261117/last.pt",
+  "source_identity": "761ddc36e20f2e755c789444242d8ae2f217a732098a81b5324f2a7a0b0ba6a3",
+  "current_identity": "a5bdd3f52f8ff2670e99df50a60d7c440e2242b34c4ea266f680ca032aeb0e38",
+  "allowed_tool_test_changes": [
+    "src/unisupermimic/conf/supermimic/task/go2w_velocity/train.yaml",
+    "src/unisupermimic/rl/algos/supermimic/learner.py",
+    "src/unisupermimic/rl/algos/supermimic/replay.py",
+    "src/unisupermimic/tasks/velocity/go2w/curriculum.py",
+    "src/unisupermimic/tasks/velocity/go2w/diagnostics.py",
+    "src/unisupermimic/tasks/velocity/go2w/env.py",
+    "src/unisupermimic/tasks/velocity/go2w/manager_terms.py",
+    "src/unisupermimic/tasks/velocity/go2w/migration.py",
+    "tests/tasks/test_go2w_distance_curriculum.py",
+    "tests/tasks/test_go2w_unified.py",
+    "tools/evaluate_go2w.py",
+    "tools/finalize_go2w_distance.py",
+    "tools/play_go2w.py",
+    "tools/train_go2w.py"
+  ],
+  "unchanged_training_source": false,
+  "explicit_curriculum_migration": true,
+  "restoration_checks": {
+    "actor": true,
+    "critic": true,
+    "wm": true,
+    "wm_optimizer": true,
+    "actor_optimizer": true,
+    "critic_optimizer": true,
+    "replay_size": true,
+    "history_size": true,
+    "history_data_and_rng": true,
+    "value_normalization": true,
+    "iteration_time_and_transitions": true,
+    "updates": true,
+    "curriculum_levels": true
+  },
+  "parent_iteration": 21190,
+  "parent_loop_seconds": 27001.998728489503,
+  "parent_updates": {
+    "wm": 211900,
+    "actor": 21190,
+    "critic": 423800
+  },
+  "parent_transitions": 217247744,
+  "replay_size": 1024,
+  "history_size": 8192,
+  "semantics": "weights_optimizers_replay_curriculum_restored; environment_resampled; not_exact"
+}

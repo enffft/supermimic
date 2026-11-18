@@ -1,0 +1,24 @@
+{
+  "pid": 540391,
+  "argv": [
+    "/home/yifeiy/miniconda3/envs/go2_unilab/bin/python",
+    "/home/yifeiy/ws_go2_unilab/Uni-SuperMimic-unified/tools/train_go2w.py",
+    "--mode",
+    "formal",
+    "--envs",
+    "4096",
+    "--resume",
+    "/home/yifeiy/ws_go2_unilab/runs/go2w_unified_h8_resume_3p5h_20261117/last.pt",
+    "--migrate-curriculum",
+    "--additional-seconds",
+    "12600",
+    "--accept-direction-diagnostic",
+    "--admission",
+    "/home/yifeiy/ws_go2_unilab/runs/go2w_distance_20261118_preparation/admission.json",
+    "--output",
+    "/home/yifeiy/ws_go2_unilab/runs/go2w_distance_resume_3p5h_20261118"
+  ],
+  "run": "/home/yifeiy/ws_go2_unilab/runs/go2w_distance_resume_3p5h_20261118",
+  "source_sha256": "a5bdd3f52f8ff2670e99df50a60d7c440e2242b34c4ea266f680ca032aeb0e38",
+  "log": "/home/yifeiy/ws_go2_unilab/runs/go2w_distance_20261118_preparation/formal_training.log"
+}

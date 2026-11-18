@@ -1,0 +1,358 @@
+{
+  "checkpoint": "/home/yifeiy/ws_go2_unilab/runs/go2w_distance_resume_3p5h_20261118/evaluation/initial.pt",
+  "iteration": 21190,
+  "scope": "frozen Actor; actual MuJoCo; one-based levels; no exploration; first episode only",
+  "rows": [
+    {
+      "episode": 0,
+      "terrain": "flat",
+      "level": 1,
+      "goal": [
+        0,
+        0,
+        0
+      ],
+      "initial_yaw_rad": 0,
+      "steps": 175,
+      "fall": true,
+      "traversal_success": false,
+      "terminal_reason": "fallen",
+      "duration_seconds": 3.5,
+      "mean_actual_vx_vy_yaw": [
+        0.03717789798974991,
+        -0.04084820672869682,
+        0.10581932961940765
+      ],
+      "rmse_vx_vy_yaw": [
+        0.1808023452758789,
+        0.2425851821899414,
+        1.2161800861358643
+      ],
+      "return_value": 21.603295096196234
+    },
+    {
+      "episode": 0,
+      "terrain": "flat",
+      "level": 1,
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "initial_yaw_rad": 0,
+      "steps": 245,
+      "fall": true,
+      "traversal_success": false,
+      "terminal_reason": "fallen",
+      "duration_seconds": 4.9,
+      "mean_actual_vx_vy_yaw": [
+        0.2820914089679718,
+        -5.175605110707693e-05,
+        0.026224015280604362
+      ],
+      "rmse_vx_vy_yaw": [
+        0.1354919672012329,
+        0.0724857822060585,
+        0.7591531276702881
+      ],
+      "return_value": 34.58641737047583
+    },
+    {
+      "episode": 0,
+      "terrain": "flat",
+      "level": 1,
+      "goal": [
+        -0.2,
+        0,
+        0
+      ],
+      "initial_yaw_rad": 0,
+      "steps": 122,
+      "fall": true,
+      "traversal_success": false,
+      "terminal_reason": "fallen",
+      "duration_seconds": 2.44,
+      "mean_actual_vx_vy_yaw": [
+        -0.056833554059267044,
+        -0.09769334644079208,
+        0.14774546027183533
+      ],
+      "rmse_vx_vy_yaw": [
+        0.3067080080509186,
+        0.3835621178150177,
+        1.6536250114440918
+      ],
+      "return_value": 10.01615001168102
+    },
+    {
+      "episode": 0,
+      "terrain": "flat",
+      "level": 1,
+      "goal": [
+        0,
+        0.2,
+        0
+      ],
+      "initial_yaw_rad": 0,
+      "steps": 500,
+      "fall": false,
+      "traversal_success": false,
+      "terminal_reason": "time_out",
+      "duration_seconds": 10.0,
+      "mean_actual_vx_vy_yaw": [
+        0.013197489082813263,
+        0.030989782884716988,
+        0.0019007750088348985
+      ],
+      "rmse_vx_vy_yaw": [
+        0.032423101365566254,
+        0.17565904557704926,
+        0.13030847907066345
+      ],
+      "return_value": 61.949606973677874
+    },
+    {
+      "episode": 0,
+      "terrain": "flat",
+      "level": 1,
+      "goal": [
+        0,
+        -0.2,
+        0
+      ],
+      "initial_yaw_rad": 0,
+      "steps": 500,
+      "fall": false,
+      "traversal_success": false,
+      "terminal_reason": "time_out",
+      "duration_seconds": 10.0,
+      "mean_actual_vx_vy_yaw": [
+        -0.016959138214588165,
+        -0.069705531001091,
+        0.01124897226691246
+      ],
+      "rmse_vx_vy_yaw": [
+        0.03198790177702904,
+        0.1573757827281952,
+        0.10711773484945297
+      ],
+      "return_value": 65.27765903621912
+    },
+    {
+      "episode": 0,
+      "terrain": "flat",
+      "level": 1,
+      "goal": [
+        0,
+        0,
+        0.35
+      ],
+      "initial_yaw_rad": 0,
+      "steps": 142,
+      "fall": true,
+      "traversal_success": false,
+      "terminal_reason": "fallen",
+      "duration_seconds": 2.84,
+      "mean_actual_vx_vy_yaw": [
+        0.07292278856039047,
+        -0.14281252026557922,
+        0.5497019290924072
+      ],
+      "rmse_vx_vy_yaw": [
+        0.28828126192092896,
+        0.5151820778846741,
+        1.8762677907943726
+      ],
+      "return_value": 5.1543214321136475
+    },
+    {
+      "episode": 0,
+      "terrain": "flat",
+      "level": 1,
+      "goal": [
+        0,
+        0,
+        -0.35
+      ],
+      "initial_yaw_rad": 0,
+      "steps": 500,
+      "fall": false,
+      "traversal_success": false,
+      "terminal_reason": "time_out",
+      "duration_seconds": 10.0,
+      "mean_actual_vx_vy_yaw": [
+        0.03679584711790085,
+        0.01628824509680271,
+        -0.40345582365989685
+      ],
+      "rmse_vx_vy_yaw": [
+        0.045395273715257645,
+        0.033835455775260925,
+        0.11883740872144699
+      ],
+      "return_value": 80.46923477202654
+    },
+    {
+      "episode": 0,
+      "terrain": "single_step_up",
+      "level": 1,
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "initial_yaw_rad": 0,
+      "steps": 96,
+      "fall": true,
+      "traversal_success": false,
+      "terminal_reason": "fallen",
+      "duration_seconds": 1.92,
+      "mean_actual_vx_vy_yaw": [
+        0.30634045600891113,
+        0.02675752341747284,
+        0.32574304938316345
+      ],
+      "rmse_vx_vy_yaw": [
+        0.28106534481048584,
+        0.23104289174079895,
+        1.0358303785324097
+      ],
+      "return_value": 6.007874943315983
+    },
+    {
+      "episode": 0,
+      "terrain": "single_step_up",
+      "level": 9,
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "initial_yaw_rad": 0,
+      "steps": 106,
+      "fall": true,
+      "traversal_success": false,
+      "terminal_reason": "fallen",
+      "duration_seconds": 2.12,
+      "mean_actual_vx_vy_yaw": [
+        0.12413744628429413,
+        0.07458677142858505,
+        0.3033159077167511
+      ],
+      "rmse_vx_vy_yaw": [
+        0.33215388655662537,
+        0.2297573834657669,
+        1.537598967552185
+      ],
+      "return_value": 5.453194230329245
+    },
+    {
+      "episode": 0,
+      "terrain": "single_step_down",
+      "level": 5,
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "initial_yaw_rad": 0,
+      "steps": 197,
+      "fall": true,
+      "traversal_success": false,
+      "terminal_reason": "fallen",
+      "duration_seconds": 3.94,
+      "mean_actual_vx_vy_yaw": [
+        0.23524883389472961,
+        0.15042245388031006,
+        -0.08002892881631851
+      ],
+      "rmse_vx_vy_yaw": [
+        0.33386287093162537,
+        0.26634299755096436,
+        0.916837751865387
+      ],
+      "return_value": 7.072988689964404
+    },
+    {
+      "episode": 0,
+      "terrain": "single_step_down",
+      "level": 9,
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "initial_yaw_rad": 0,
+      "steps": 105,
+      "fall": true,
+      "traversal_success": false,
+      "terminal_reason": "fallen",
+      "duration_seconds": 2.1,
+      "mean_actual_vx_vy_yaw": [
+        0.2833022475242615,
+        0.24656115472316742,
+        -0.8012556433677673
+      ],
+      "rmse_vx_vy_yaw": [
+        0.41732898354530334,
+        0.531103253364563,
+        2.190567970275879
+      ],
+      "return_value": 3.5025898199528456
+    },
+    {
+      "episode": 0,
+      "terrain": "multi_stairs_up",
+      "level": 6,
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "initial_yaw_rad": 0,
+      "steps": 99,
+      "fall": true,
+      "traversal_success": false,
+      "terminal_reason": "fallen",
+      "duration_seconds": 1.98,
+      "mean_actual_vx_vy_yaw": [
+        0.2231464982032776,
+        0.09059984236955643,
+        0.23777107894420624
+      ],
+      "rmse_vx_vy_yaw": [
+        0.14043806493282318,
+        0.2895142734050751,
+        1.0503222942352295
+      ],
+      "return_value": 6.7215216113836505
+    },
+    {
+      "episode": 0,
+      "terrain": "multi_stairs_down",
+      "level": 6,
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "initial_yaw_rad": 0,
+      "steps": 164,
+      "fall": true,
+      "traversal_success": false,
+      "terminal_reason": "fallen",
+      "duration_seconds": 3.2800000000000002,
+      "mean_actual_vx_vy_yaw": [
+        0.20831231772899628,
+        0.2400384247303009,
+        -0.9945497512817383
+      ],
+      "rmse_vx_vy_yaw": [
+        0.3772220015525818,
+        0.48001694679260254,
+        1.906959891319275
+      ],
+      "return_value": 2.47722621972207
+    }
+  ]
+}

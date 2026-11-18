@@ -4,7 +4,7 @@
 
 2026-11-18，在 `experiment/go2w-unified-curriculum` 当前工作树原地修改。起始提交 `c1724f62fd06219a8ee6a05da6013e7b74a2a7e6`。没有切换分支、另建工作树或覆盖历史运行。本次用户明确要求完成后额外训练3.5小时，已满足任务文档“未经另行要求不开长训”的授权条件。
 
-**已完成实现及短时验证；本报告初稿时正式续训尚未启动。** 后续启动记录追加在末尾；训练结束后的实际物理结果由独立的 `go2w_distance_20261118_results.md` 报告保存。不能把课程晋级、短时loss或预期改善当成最终物理能力。
+**已完成实现、验证、提交推送，并已从21190轮完整断点启动额外3.5小时正式续训；尚未完成该训练预算。** 启动记录见末尾；训练结束后的实际物理结果由独立的 `go2w_distance_20261118_results.md` 报告保存。不能把课程晋级、短时loss或预期改善当成最终物理能力。
 
 保持 SuperMimic 单Actor/WM/Critic、4096环境、H8、WM window8、Replay1024步/环境、WM/Actor batch2048、历史池8192和recent/historical 50/50。没有修改21项reward、PD/action scale、网络结构、地形碰撞或严格物理成功定义。Actor仍为50维观测×5历史和7维命令；没有加入真实等级、目标位置、接触力或高度图。
 
@@ -139,3 +139,16 @@ PYTHONPATH=src /home/yifeiy/miniconda3/envs/go2_unilab/bin/python tools/play_go2
 ```
 
 `--demo`包含停止、正负vx/vy/yaw及代表性单级/连续上下台阶；有桌面时打开MuJoCo窗口。单项可替换`--demo`为`--terrain single_step_down --level 5 --vx .3`。无人值守验证加`--headless --no-realtime`。训练中间策略位于`evaluation/iteration_*.pt`，结束后用`evaluation/final.pt`；不要把initial播放当成续训后能力。
+
+## 正式启动证据（2026-11-18T12:08:12+08:00）
+
+- 训练代码提交：`5634032526f3039774c55a831cb3f072ab8aca93`，启动时工作树干净；完整源码身份`a5bdd3f52f8ff2670e99df50a60d7c440e2242b34c4ea266f680ca032aeb0e38`。本次后续提交只更新文档证据。
+- 训练PID `540391`，自动终评/报告/推送PID `542337`，均独立后台进程。运行目录`/home/yifeiy/ws_go2_unilab/runs/go2w_distance_resume_3p5h_20261118`。
+- 完整恢复审计13项全部通过；recent Replay=1024，historical bank=8192。累计目标39601.998728秒，即额外12600秒。
+- 抽查时iteration=21361，已新增有效循环222.561秒；实际WM/Actor/Critic更新={'wm': 213610, 'actor': 21361, 'critic': 427220}，峰值GPU=4063.25MiB。此数值只是启动快照，实时状态见运行目录`progress.json`。
+- 记录于iteration 21360的课程晋级计数（八域）：`[109, 0, 0, 0, 7, 361, 0, 11]`；它证明合法episode结算路径已实际工作，不能解释为严格物理评测通过率。
+- 正式初评231条固定条件：flat通过7/21（33.3%），四类台阶均0/30；这是迁移时父策略的基线，尚非续训后的能力。
+- 上述play命令完整13场景已通过`--headless --no-realtime`执行验证，见`play_initial_demo.json`。
+- 结束后自动终评将新增847条固定条件、全向分轴RMSE、单级/连续上下每级通过率、21项reward表和视频，并提交推送独立结果报告。当前未把这些未来结果标成完成。
+
+训练日志：`/home/yifeiy/ws_go2_unilab/runs/go2w_distance_20261118_preparation/formal_training.log`；自动终评日志：`/home/yifeiy/ws_go2_unilab/runs/go2w_distance_20261118_preparation/finalizer.log`。

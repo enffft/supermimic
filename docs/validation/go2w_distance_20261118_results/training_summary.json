@@ -1,0 +1,42 @@
+{
+  "iteration": 30663,
+  "wall_h": 10.999586684623242,
+  "sim_steps": 314249216,
+  "wm_loss": 0.10444656051695347,
+  "wm_err8": 0.1937556706368923,
+  "pi_loss": -13.053026056289672,
+  "v_loss": 0.003261888038832694,
+  "imag_rew": 0.5926529675722122,
+  "pi_gradnorm": 8.294646191596986,
+  "imag_survival": 0.9809765428304672,
+  "sim_rew": 0.5457812237739563,
+  "ep_len": null,
+  "ep_ret_norm": null,
+  "term_frac": 0.4909819639278557,
+  "it_per_s": 0.7502303965134595,
+  "lr": 0.0003857790457796267,
+  "completed": false,
+  "wall_time": 39602.35689230077,
+  "mode": "formal",
+  "stop_reason": "effective_training_budget",
+  "updates": {
+    "wm": 306630,
+    "actor": 30663,
+    "critic": 613260
+  },
+  "peak_CPU_MiB": 5068.66796875,
+  "peak_GPU_MiB": 4063.24951171875,
+  "formal_budget_complete": true,
+  "session_loop_seconds": 12600.358163811266,
+  "requested_session_seconds": 12600.0,
+  "parent_loop_seconds": 27001.998728489503,
+  "session_iterations": 9473,
+  "session_transitions": 97001472,
+  "session_updates": {
+    "wm": 94730,
+    "actor": 9473,
+    "critic": 189460
+  },
+  "resume_from": "/home/yifeiy/ws_go2_unilab/runs/go2w_unified_h8_resume_3p5h_20261117/last.pt",
+  "ended_utc": "2026-11-18T07:38:42Z"
+}

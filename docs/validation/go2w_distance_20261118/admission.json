@@ -1,0 +1,60 @@
+{
+  "source_sha256": "a5bdd3f52f8ff2670e99df50a60d7c440e2242b34c4ea266f680ca032aeb0e38",
+  "checks": {
+    "gradient_direction": {
+      "path": "/home/yifeiy/ws_go2_unilab/runs/go2w_unified_h8_20261116/gradient_gate/audit.json",
+      "sha256": "f42ea90b34c1c07302ffe0a324e1d18f354757f0a1492769926a4a90b41a0885",
+      "passed": false
+    },
+    "unit_regression": {
+      "path": "/home/yifeiy/ws_go2_unilab/runs/go2w_distance_20261118_preparation/regression_final.log",
+      "sha256": "6715675d2f324c84a58d19dd5a30300a7fed10a7b36229727ab0f3e71f87de56",
+      "passed": true
+    },
+    "reward_parity": {
+      "path": "/home/yifeiy/ws_go2_unilab/runs/go2w_unified_h8_20261116/geometry_reward.json",
+      "sha256": "a109ba389601b9fddefa188e0e8dc8d6a798179f566c242bdd772ebe3e1c7055",
+      "passed": true
+    },
+    "terrain_collision": {
+      "path": "/home/yifeiy/ws_go2_unilab/runs/go2w_unified_h8_20261116/geometry_reward.json",
+      "sha256": "a109ba389601b9fddefa188e0e8dc8d6a798179f566c242bdd772ebe3e1c7055",
+      "passed": true
+    },
+    "wheel_geometry": {
+      "path": "/home/yifeiy/ws_go2_unilab/runs/go2w_unified_h8_20261116/geometry_reward.json",
+      "sha256": "a109ba389601b9fddefa188e0e8dc8d6a798179f566c242bdd772ebe3e1c7055",
+      "passed": true
+    },
+    "initialization": {
+      "path": "/home/yifeiy/ws_go2_unilab/runs/go2w_distance_20261118_smoke4096_final/resume_initialization.json",
+      "sha256": "76de951dfc0c2ecf3266c849f12ed44571027706e16b8dbd0bcd142e8f45d5df",
+      "passed": true
+    },
+    "4096_smoke": {
+      "path": "/home/yifeiy/ws_go2_unilab/runs/go2w_distance_20261118_smoke4096_final/training_summary.json",
+      "sha256": "edbcc4df2d5fd0390c670b612cbfd7cf5cc8b3441662becd66f6b9c8ebbb39ad",
+      "passed": true
+    },
+    "checkpoint_resume": {
+      "path": "/home/yifeiy/ws_go2_unilab/runs/go2w_distance_20261118_smoke4096_final/resume_initialization.json",
+      "sha256": "76de951dfc0c2ecf3266c849f12ed44571027706e16b8dbd0bcd142e8f45d5df",
+      "passed": true
+    },
+    "physical_evaluator": {
+      "path": "/home/yifeiy/ws_go2_unilab/runs/go2w_unified_h8_4h_20261116/reassessment/evaluation_validation.json",
+      "sha256": "b6dfd9822541ac72481b0f2935acc06bd154c28b8d63033659fad6d0b00e3ac1",
+      "passed": true
+    }
+  },
+  "direction_diagnostic_authorization": "User: \u4e0d\u8981\u4e00\u5473\u7528gate\u963b\u6320\uff0c\u5982\u679c\u4ee3\u7801\u5199\u597d\u53ef\u4ee5\u76f4\u63a5\u5f00\u59cb\u8bad\u7ec3",
+  "physical_evaluator_semantics": "Evaluator executed and generated data; skill success is NOT asserted",
+  "continuation": {
+    "parent_checkpoint": "/home/yifeiy/ws_go2_unilab/runs/go2w_unified_h8_resume_3p5h_20261117/last.pt",
+    "explicit_curriculum_migration": true,
+    "unchanged_training_source": false,
+    "additional_seconds": 12600,
+    "restoration_checks": "All networks/normalizers, optimizers, value normalization, counters, history data/RNG verified equal in final4096; formal runtime independently repeats audit",
+    "scope": "New distance curriculum/domain sampling experiment; reset curriculum/sampling state, retain original physical recent/history. Reward/control/terrain assets unchanged and protected by immutable contract comparison. Direction audit retained as failed diagnostic per prior user authorization. Physical evaluation execution does not assert skill success."
+  }
+}

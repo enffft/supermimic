@@ -1,0 +1,15 @@
+..........................                                               [100%]
+=============================== warnings summary ===============================
+../../miniconda3/envs/go2_unilab/lib/python3.12/site-packages/torch/jit/_script.py:1488: 36 warnings
+  /home/yifeiy/miniconda3/envs/go2_unilab/lib/python3.12/site-packages/torch/jit/_script.py:1488: DeprecationWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+    warnings.warn(
+
+tests/tasks/test_go2w_distance_curriculum.py::test_physical_auto_reset_consumes_completed_episode_before_clear
+  /home/yifeiy/miniconda3/envs/go2_unilab/lib/python3.12/site-packages/unisim/backend/mujoco/xml.py:490: UserWarning: Attach conflict when attaching 'Go2WVelocitySuperMimic', policy is 'warning'
+  timestep: parent has 0.002 (default), child has 0.005, keeping parent value
+  impratio: parent has 1 (default), child has 100, keeping parent value
+  cone: parent has 0 (default), child has 1, keeping parent value
+    root = ET.fromstring(spec.to_xml())
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+26 passed, 37 warnings in 7.42s

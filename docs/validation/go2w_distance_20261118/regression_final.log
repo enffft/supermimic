@@ -1,0 +1,17 @@
+..................s..................................................... [ 55%]
+..........................................................               [100%]
+=============================== warnings summary ===============================
+../../miniconda3/envs/go2_unilab/lib/python3.12/site-packages/torch/jit/_script.py:1488: 36 warnings
+  /home/yifeiy/miniconda3/envs/go2_unilab/lib/python3.12/site-packages/torch/jit/_script.py:1488: DeprecationWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+    warnings.warn(
+
+tests/tasks/test_go2_command_sampler.py::test_adaptive_physics_goal_snapshot_resume_and_h32_blind_contract
+  /home/yifeiy/miniconda3/envs/go2_unilab/lib/python3.12/site-packages/unisim/backend/mujoco/xml.py:490: UserWarning: Attach conflict when attaching 'mjlab scene', policy is 'warning'
+  timestep: parent has 0.002 (default), child has 0.005, keeping parent value
+  iterations: parent has 100 (default), child has 10, keeping parent value
+  ls_iterations: parent has 50 (default), child has 20, keeping parent value
+  nkey: parent has 0 (default), child has 1, keeping parent value
+    root = ET.fromstring(spec.to_xml())
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+129 passed, 1 skipped, 1 deselected, 37 warnings in 5.35s

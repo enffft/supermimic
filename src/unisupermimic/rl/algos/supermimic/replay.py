@@ -85,6 +85,10 @@ class ReplayBuffer:
             k: torch.zeros(6, dtype=torch.long, device=self.device)
             for k in ("wm_modes", "actor_modes")
         }
+        self.wm_scope_counts = torch.zeros(
+            2, self.domain_count, self.level_count, dtype=torch.long, device=self.device
+        )
+        self.last_actor_sampling = {}
         self.data = {}
         for key, (shape, dtype) in self.fields.items():
             field_shape = (T, N) + ((shape,) if isinstance(shape, int) else shape)
@@ -123,6 +127,7 @@ class ReplayBuffer:
         return {
             "history": None if self.history is None else self.history.state_dict(),
             "history_actual": self.history_actual,
+            "wm_scope_counts": self.wm_scope_counts,
             "T": self.T,
             "N": self.N,
             "ptr": self.ptr,
@@ -142,6 +147,9 @@ class ReplayBuffer:
                 raise ValueError("Missing historical bank")
             self.history.load_state_dict(values["history"])
             self.history_actual = list(values.get("history_actual", [0, 0]))
+        self.wm_scope_counts.copy_(
+            values.get("wm_scope_counts", torch.zeros_like(self.wm_scope_counts))
+        )
         values = dict(values)
         values["data"] = dict(values["data"])
         if "command_speed_level" in self.fields and "command_speed_level" not in values["data"]:
@@ -279,6 +287,14 @@ class ReplayBuffer:
         )
         self.history_actual[0] += recent
         self.history_actual[1] += historical
+        for part, lo, hi in ((0, 0, recent), (1, recent, B)):
+            scopes = (
+                result["command_domain"][lo:hi, 0] * self.level_count
+                + result["terrain_level"][lo:hi, 0]
+            )
+            self.wm_scope_counts[part].view(-1).add_(
+                torch.bincount(scopes, minlength=self.domain_count * self.level_count)
+            )
         self.last_history_split = recent
         return result
 
@@ -287,12 +303,19 @@ class ReplayBuffer:
         B: int,
         hist: int,
         command_bucket_weights=None,
+        actor_domain_weights=None,
+        valid_start_fn=None,
     ) -> tuple[dict[str, torch.Tensor], dict[str, torch.Tensor]]:
         """Sample imagination starts and oldest-first, boundary-padded histories."""
         if self.size == 0:
             raise ValueError("cannot sample from an empty replay buffer")
         if hist < 1:
             raise ValueError(f"history length must be positive, got {hist}")
+        if actor_domain_weights is not None:
+            age, env = self._domain_starts(
+                B, command_bucket_weights, actor_domain_weights, valid_start_fn
+            )
+            return self._start_and_history(age, env, hist)
         pool = (
             B
             if command_bucket_weights is None and self.start_scope_mask is None
@@ -333,6 +356,104 @@ class ReplayBuffer:
                 offsets[target] + (torch.rand(B, device=self.device) * counts[target]).long()
             ]
             age, env = age[chosen], env[chosen]
+        return self._start_and_history(age, env, hist)
+
+    def _domain_starts(self, B, command_weights, domain_weights, valid_start_fn):
+        required = {"command_domain", "command_mode", "terrain_level", "term", "g"}
+        if not required <= self.fields.keys():
+            raise ValueError("Domain-stratified starts require recorded physical metadata")
+        weights = torch.as_tensor(domain_weights, device=self.device, dtype=torch.float32)
+        if (
+            weights.shape != (self.domain_count,)
+            or not torch.isfinite(weights).all()
+            or (weights < 0).any()
+            or weights.sum() <= 0
+        ):
+            raise ValueError("Invalid actor domain weights")
+        command_weights = (
+            torch.ones(6, device=self.device)
+            if command_weights is None
+            else torch.as_tensor(command_weights, device=self.device, dtype=torch.float32)
+        )
+        if (
+            command_weights.shape != (6,)
+            or not torch.isfinite(command_weights).all()
+            or (command_weights < 0).any()
+            or command_weights.sum() <= 0
+        ):
+            raise ValueError("Invalid command weights")
+        pool = max(8192, B * 32)
+        ages = torch.randint(self.size, (pool,), device=self.device)
+        envs = torch.randint(self.N, (pool,), device=self.device)
+        # Deduplicate candidate IDs without copying the full ring.
+        ids = torch.unique(self._row(ages) * self.N + envs)
+        rows, envs = ids // self.N, ids % self.N
+        ages = (rows - (self.ptr - self.size)) % self.T
+        domain = self.data["command_domain"][rows, envs]
+        level = self.data["terrain_level"][rows, envs]
+        modes = self.data["command_mode"][rows, envs]
+        valid = (
+            (domain >= 0)
+            & (domain < self.domain_count)
+            & (level >= 0)
+            & (level < self.level_count)
+            & (modes >= 0)
+            & (modes < 6)
+        )
+        valid &= ~self.data["done"][rows, envs] & ~self.data["term"][rows, envs]
+        valid &= torch.isfinite(self.data["s"][rows, envs]).all(-1)
+        goal = self.data["g"][rows, envs]
+        valid &= torch.isfinite(goal).all(-1)
+        if goal.shape[-1] == 7 and self.domain_count == 8:
+            mapping = domain.new_tensor([0, 1, 2, 2, 3, 3, 3, 3])[domain.clamp(0, 7)]
+            valid &= (goal[:, 3:] == torch.nn.functional.one_hot(mapping, 4)).all(-1)
+        if valid_start_fn is not None:
+            valid &= valid_start_fn(self.data["f"][rows, envs])
+        ages, envs, domain, modes = ages[valid], envs[valid], domain[valid], modes[valid]
+        counts = torch.bincount(domain, minlength=self.domain_count)
+        available = counts > 0
+        effective = weights * available
+        if effective.sum() <= 0:
+            raise ValueError("No valid physical starts in requested domains")
+        expected = B * effective / effective.sum()
+        budgets = expected.floor().long()
+        remainder = B - int(budgets.sum())
+        budgets[torch.argsort(expected - budgets, descending=True, stable=True)[:remainder]] += 1
+        chosen = []
+        fallback = []
+        for d, n in enumerate(budgets.cpu().tolist()):
+            if not n:
+                continue
+            indices = (domain == d).nonzero().flatten()
+            local_modes = modes[indices]
+            local_counts = torch.bincount(local_modes, minlength=6)
+            w = command_weights * (local_counts > 0)
+            use_fallback = bool(w.sum() <= 0)
+            if use_fallback:
+                w = (local_counts > 0).float()
+            target = torch.multinomial(w, n, replacement=True)
+            offsets = local_counts.cumsum(0) - local_counts
+            selected = torch.argsort(local_modes)[
+                offsets[target] + (torch.rand(n, device=self.device) * local_counts[target]).long()
+            ]
+            chosen.append(indices[selected])
+            fallback.append(d if use_fallback else -1)
+        chosen = torch.cat(chosen)
+        chosen = chosen[torch.randperm(B, device=self.device)]
+        unique = torch.unique(self._row(ages[chosen]) * self.N + envs[chosen]).numel()
+        self.last_actor_sampling = dict(
+            candidate_domain_counts=counts,
+            actual_domain_counts=budgets,
+            requested_weights=weights / weights.sum(),
+            missing_domains=(~available) & (weights > 0),
+            candidate_shortage=counts < budgets,
+            duplicate_fraction=1 - unique / B,
+            command_fallback_domains=[d for d in fallback if d >= 0],
+            candidate_pool_size=pool,
+        )
+        return ages[chosen], envs[chosen]
+
+    def _start_and_history(self, age, env, hist):
         row = self._row(age)
         ep_step = self.data["ep_step"][row, env].long()
         back = torch.arange(hist - 1, -1, -1, device=self.device)
@@ -340,6 +461,21 @@ class ReplayBuffer:
         back = torch.minimum(back, age.unsqueeze(-1))
         history_rows = self._row(age.unsqueeze(-1) - back)
         history_envs = env.unsqueeze(-1).expand_as(history_rows)
+        # Protect manual reset boundaries as well as ordinary ep_step padding.
+        done = self.data["done"][history_rows, history_envs]
+        boundaries = torch.where(done[:, :-1], torch.arange(1, hist, device=self.device), 0)
+        earliest = boundaries.amax(-1) if hist > 1 else torch.zeros_like(age)
+        if "target_id" in self.fields:
+            targets = self.data["target_id"][history_rows, history_envs]
+            mismatch = targets != self.data["target_id"][row, env, None]
+            earliest = torch.maximum(
+                earliest,
+                torch.where(mismatch, torch.arange(1, hist + 1, device=self.device), 0)
+                .amax(-1)
+                .clamp_max(hist - 1),
+            )
+        index = torch.maximum(torch.arange(hist, device=self.device)[None], earliest[:, None])
+        history_rows = history_rows.gather(1, index)
         start = {key: self.data[key][row, env] for key in ("s", "a_prev", "xi", "f")}
         if "g" in self.fields:
             start["g"] = self.data["g"][row, env]

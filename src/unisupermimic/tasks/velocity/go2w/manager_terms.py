@@ -233,12 +233,13 @@ class VelocityCommand(CommandTerm):
             # Each signed flat skill uses its own command difficulty, including mixtures.
             axes = torch.arange(3, device=goal.device)[None]
             skills = 1 + axes * 2 + (goal < 0).long()
-            ceilings = self.curriculum.skill_levels[skills]
+            env_ids = torch.arange(len(goal), device=goal.device)[:, None]
+            ceilings = self.curriculum.flat_levels[env_ids, skills]
             ceilings = torch.where(goal.abs() > 0.05, ceilings, 9).amin(-1)
             ceilings = torch.where(
-                goal.norm(dim=-1) < 0.05, self.curriculum.skill_levels[0], ceilings
+                goal.norm(dim=-1) < 0.05, self.curriculum.flat_levels[:, 0], ceilings
             )
-            flat = (self.command_domain == 0) & mask
+            flat = (self.command_domain == 0) & mask & (self.curriculum.coverage_level < 0)
             if self.curriculum.enabled:
                 review = (
                     torch.rand(len(goal), device=goal.device, generator=self.sampler.rng)
@@ -248,9 +249,12 @@ class VelocityCommand(CommandTerm):
                     torch.rand(len(goal), device=goal.device, generator=self.sampler.rng)
                     * (ceilings + 1)
                 ).long()
-                ceilings = torch.where(review, lower, ceilings)
-                self.curriculum.terrain_level[flat] = ceilings[flat]
-                goal[flat] *= 1 + 0.12 * ceilings[flat, None]
+                selected_level = torch.where(review, lower, ceilings)
+                self.curriculum.terrain_level[flat] = selected_level[flat]
+                goal[flat] *= 1 + 0.12 * selected_level[flat, None]
+                from unisupermimic.tasks.velocity.go2.command_sampler import command_modes
+
+                mode = command_modes(goal)
         if self.cfg.fixed_command is not None:
             from unisupermimic.tasks.velocity.go2.command_sampler import command_modes
 
@@ -343,6 +347,11 @@ def reward(env):
             pre["goal"],
             c.mdp.hard_termination(env.velocity_next_state),
             0.0,
+            **(
+                {"traversal": env.velocity_terrain_tags["traversal"]}
+                if c.cfg.unified_curriculum
+                else {}
+            ),
         )
     views = env.scene.read_plan.sensor_tensor_views(c.robot, c.tensor_sensor_names)
     torque = torch.cat([views.values[name] for name in c.tensor_sensor_names], -1)

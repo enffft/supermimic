@@ -51,66 +51,21 @@ def curriculum(n=128):
     return UnifiedCurriculum(
         n,
         np.zeros((10, 7, 3), np.float32),
-        UnifiedCurriculumCfg(window=16),
+        UnifiedCurriculumCfg(review_fraction=0),
         torch.zeros(n, dtype=torch.long),
     )
 
 
-def test_ten_levels_hysteresis_signed_skills_and_coverage_isolation():
+def test_distance_curriculum_state_is_versioned_and_roundtrips_rng():
     c = curriculum()
-    ids = torch.arange(16, 32)
-
-    def finish(skill, success):
-        c.steps[ids] = 500
-        c.skill[ids] = skill
-        c.fixed_domain[ids] = 0
-        c.error[ids] = 0 if success else 1000
-        c.progress[ids] = 2
-        c.yaw_progress[ids] = 2
-        c._mastery(ids)
-
-    finish(3, True)
-    assert c.skill_levels[3] == 0
-    finish(3, True)
-    assert c.skill_levels[3] == 1
-    assert (c.skill_levels[[1, 2, 4, 5, 6]] == 0).all()
-    finish(3, False)
-    finish(3, False)
-    assert c.skill_levels[3] == 0
-    coverage = torch.arange(16)
-    c.steps[coverage] = 500
-    c.progress[coverage] = 3
-    c.skill[coverage] = 1
-    c._mastery(coverage)
-    c._mastery(coverage)
-    assert c.skill_levels[1] == 0
-    assert c.start_scope_mask().shape == (8, 10)
-    c.skill_levels[7:] = 9
-    c.skill_levels[1] = 9
-    c.reset(torch.arange(128), None)
-    assert (c.terrain_level[:16] == c.coverage_level[:16]).all()
-    assert (c.terrain_level[16:] < 9).any()  # lower-level review
     saved = copy.deepcopy(c.state_dict())
     d = curriculum()
     d.load_state_dict(saved)
     torch.testing.assert_close(c.rng.get_state(), d.rng.get_state())
-
-
-def test_rotation_requires_rotation_and_manual_resets_never_certify():
-    c = curriculum()
-    ids = torch.arange(16, 32)
-    c.skill[ids] = 5
-    c.steps[ids] = 500
-    c.progress[ids] = 1
-    c.yaw_progress[ids] = 0
-    c._mastery(ids)
-    c._mastery(ids)
-    assert c.skill_levels[5] == 0
-    c.steps[ids] = 1
-    c.yaw_progress[ids] = 10
-    c._mastery(ids)
-    c._mastery(ids)
-    assert c.skill_levels[5] == 0
+    saved.pop("schema")
+    with pytest.raises(ValueError, match="migration"):
+        d.load_state_dict(saved)
+    assert c.start_scope_mask().all()
 
 
 def metadata(n):

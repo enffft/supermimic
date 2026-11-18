@@ -72,7 +72,9 @@ def loop_budget_target(previous_seconds, additional_seconds=None):
     return previous_seconds + additional_seconds
 
 
-def validate_resume_manifest(parent, recorded_identity, current_manifest):
+def validate_resume_manifest(
+    parent, recorded_identity, current_manifest, *, curriculum_migration=False
+):
     manifest = json.loads((parent / "source_manifest.json").read_text())
     if manifest["sha256"] != recorded_identity:
         raise ValueError("Resume checkpoint/source manifest identity differs")
@@ -84,7 +86,25 @@ def validate_resume_manifest(parent, recorded_identity, current_manifest):
     )
     # Evaluation/runner/test changes can be snapshotted separately. Exact task,
     # learner, replay, assets, configuration and dependency files remain mandatory.
-    forbidden = [path for path in changed if not path.startswith(("tools/", "tests/"))]
+    authorized = (
+        {
+            "src/unisupermimic/tasks/velocity/go2w/curriculum.py",
+            "src/unisupermimic/tasks/velocity/go2w/manager_terms.py",
+            "src/unisupermimic/tasks/velocity/go2w/env.py",
+            "src/unisupermimic/tasks/velocity/go2w/diagnostics.py",
+            "src/unisupermimic/tasks/velocity/go2w/migration.py",
+            "src/unisupermimic/rl/algos/supermimic/replay.py",
+            "src/unisupermimic/rl/algos/supermimic/learner.py",
+            "src/unisupermimic/conf/supermimic/task/go2w_velocity/train.yaml",
+        }
+        if curriculum_migration
+        else set()
+    )
+    forbidden = [
+        path
+        for path in changed
+        if not path.startswith(("tools/", "tests/")) and path not in authorized
+    ]
     if forbidden:
         raise ValueError(f"Resume training source changed: {forbidden}")
     return changed
@@ -121,6 +141,11 @@ def main():
     parser.add_argument("--admission", type=Path)
     parser.add_argument("--resume", type=Path)
     parser.add_argument(
+        "--migrate-curriculum",
+        action="store_true",
+        help="Explicit old-window to new distance/Actor-domain sampling experiment",
+    )
+    parser.add_argument(
         "--additional-seconds",
         type=float,
         help="Resume only: add this many actual training-loop seconds to restored time",
@@ -138,6 +163,8 @@ def main():
         if args.resume is None or args.mode != "formal":
             parser.error("--additional-seconds requires formal --resume")
         loop_budget_target(0.0, args.additional_seconds)
+    if args.migrate_curriculum and not args.resume:
+        parser.error("--migrate-curriculum requires a complete --resume checkpoint")
     identity, manifest = source_identity()
     if args.mode == "formal":
         if args.envs != 4096 or args.admission is None:
@@ -147,6 +174,10 @@ def main():
         )
     args.output.mkdir(parents=True, exist_ok=False)
     cfg.iterations = 2**31 - 1 if args.mode == "formal" else args.iterations
+    if args.mode == "smoke" and args.resume:
+        header = torch.load(args.resume, map_location="cpu", weights_only=True, mmap=True)
+        cfg.iterations = header["iteration"] + args.iterations
+        del header
     cfg.log_backend = "none"
     cfg.log_every = 1 if args.mode == "smoke" else 20
     cfg.ckpt_every = 2000
@@ -191,11 +222,23 @@ def main():
             restored = torch.load(args.resume, map_location="cpu", weights_only=True, mmap=True)
             parent_identity = restored.get("extra_state", {}).get("formal_source_sha256")
             changed_tools = validate_resume_manifest(
-                args.resume.resolve().parent, parent_identity, manifest
+                args.resume.resolve().parent,
+                parent_identity,
+                manifest,
+                curriculum_migration=args.migrate_curriculum,
             )
-            if restored["args"] != asdict(cfg):
-                raise ValueError("Resume effective algorithm differs")
-            learner.load(args.resume)
+            replay_retained = True
+            if args.migrate_curriculum:
+                from unisupermimic.tasks.velocity.go2w.migration import migrate_checkpoint
+
+                migration_path, replay_retained = migrate_checkpoint(
+                    learner, args.resume, args.output, identity, smoke=args.mode == "smoke"
+                )
+                learner.load(migration_path)
+            else:
+                if restored["args"] != asdict(cfg):
+                    raise ValueError("Resume effective algorithm differs")
+                learner.load(args.resume)
             unchanged = {
                 "actor": nested_digest(learner.pi.state_dict())
                 == nested_digest(restored.get("pi_live", restored["pi"])),
@@ -208,11 +251,34 @@ def main():
                 == nested_digest(restored["opt_pi"]),
                 "critic_optimizer": nested_digest(learner.opt_v.state_dict())
                 == nested_digest(restored["opt_v"]),
-                "replay_size": learner.buffer.size == restored["replay"]["size"],
+                "replay_size": learner.buffer.size
+                == (restored["replay"]["size"] if replay_retained else 0),
                 "history_size": learner.buffer.history.size
                 == restored["replay"]["history"]["size"],
+                "history_data_and_rng": nested_digest(learner.buffer.history.state_dict())
+                == nested_digest(restored["replay"]["history"]),
+                "value_normalization": nested_digest(
+                    dict(mean=learner._v_mean, std=learner._v_std, initialized=learner._v_init)
+                )
+                == nested_digest(restored["value_normalization"]),
+                "iteration_time_and_transitions": (
+                    learner.iteration,
+                    learner.wall_time,
+                    learner.sim_steps,
+                    learner.step_accumulator,
+                )
+                == (
+                    restored["iteration"],
+                    restored["wall_time"],
+                    restored["sim_steps"],
+                    restored["step_accumulator"],
+                ),
                 "updates": learner.update_counts == restored["update_counts"],
-                "curriculum_levels": torch.equal(
+                "curriculum_levels": (
+                    not bool(env.command_manager.get_term("velocity").curriculum.mastery.any())
+                )
+                if args.migrate_curriculum
+                else torch.equal(
                     env.command_manager.get_term("velocity").curriculum.skill_levels.cpu(),
                     restored["curriculum"]["tensors"]["skill_levels"],
                 ),
@@ -226,7 +292,8 @@ def main():
                     source_identity=parent_identity,
                     current_identity=identity,
                     allowed_tool_test_changes=changed_tools,
-                    unchanged_training_source=True,
+                    unchanged_training_source=not args.migrate_curriculum,
+                    explicit_curriculum_migration=args.migrate_curriculum,
                     restoration_checks=unchanged,
                     parent_iteration=learner.iteration,
                     parent_loop_seconds=learner.wall_time,
@@ -250,7 +317,11 @@ def main():
         base_updates = dict(learner.update_counts)
         base_transitions = learner.sim_steps
         base_iteration = learner.iteration
-        target_loop_seconds = loop_budget_target(base_loop_seconds, args.additional_seconds)
+        target_loop_seconds = (
+            loop_budget_target(base_loop_seconds, args.additional_seconds)
+            if args.mode == "formal"
+            else base_loop_seconds
+        )
         write_json(
             args.output / "budget.json",
             dict(

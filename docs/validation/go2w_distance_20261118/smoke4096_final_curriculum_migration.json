@@ -1,0 +1,29 @@
+{
+  "migration": "window_to_per_env_distance_v1",
+  "parent_checkpoint": "/home/yifeiy/ws_go2_unilab/runs/go2w_unified_h8_resume_3p5h_20261117/last.pt",
+  "parent_source_identity": "761ddc36e20f2e755c789444242d8ae2f217a732098a81b5324f2a7a0b0ba6a3",
+  "current_source_identity": "f4732ed7fe941b616c358208103a9971be5a3cd84b1e949857bf79171b0609e9",
+  "algorithm_fields_changed": [
+    "actor_domain_weights",
+    "iterations",
+    "log_every"
+  ],
+  "preserved": [
+    "Actor",
+    "Critic",
+    "World Model and all normalizers",
+    "three optimizers",
+    "value normalization",
+    "iteration/time/update counters",
+    "historical WM bank and RNG"
+  ],
+  "recent_replay": "retained physical data; reset boundary closed",
+  "reset": [
+    "per-env curriculum levels and episode statistics",
+    "fixed domain/coverage roles",
+    "command sampler RNG",
+    "sampling diagnostics",
+    "old best-selection score"
+  ],
+  "semantics": "new sampling experiment, not step-equivalent; no reward/control/dynamics change"
+}

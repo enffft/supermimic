@@ -127,6 +127,21 @@ def finish_iteration(env, learner):
         ),
         curriculum=env.command_manager.get_term("velocity").curriculum.summary(),
     )
+    if (
+        getattr(c := env.command_manager.get_term("velocity"), "cfg", None)
+        and c.cfg.unified_curriculum
+    ):
+        data["actor_domain_sampling"] = {
+            k: v.detach().cpu().tolist() if isinstance(v, torch.Tensor) else v
+            for k, v in learner.buffer.last_actor_sampling.items()
+        }
+        data["wm_recent_history_domain_level_cumulative"] = (
+            learner.buffer.wm_scope_counts.cpu().tolist()
+        )
+        scopes = learner.extra_state.get("actual_actor_start_scopes")
+        data["actor_domain_level_cumulative"] = (
+            scopes.cpu().tolist() if scopes is not None else None
+        )
     with (learner.log_dir / "go2w_diagnostics.jsonl").open("a") as stream:
         stream.write(json.dumps(data) + "\n")
     for value in metrics.values():

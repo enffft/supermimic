@@ -87,6 +87,7 @@ class SuperMimicConfig:
     checkpoint_replay: bool = False
     strict_finite: bool = False
     command_start_weights: tuple[float, ...] | None = None
+    actor_domain_weights: tuple[float, ...] | None = None
     history_capacity: int = 0
     history_fraction: float = 0.5
     wm_lr_scale: float = 1.0
@@ -753,6 +754,16 @@ class SuperMimicLearner:
     def _sample_valid_starts(
         self, batch_size: int
     ) -> tuple[dict[str, torch.Tensor], dict[str, torch.Tensor]]:
+        if self.cfg.actor_domain_weights is not None:
+            # Validate frames BEFORE domain allocation; oversampling then truncating
+            # would destroy the requested domain ratios.
+            return self.buffer.sample_starts(
+                batch_size,
+                self.cfg.hist,
+                self.cfg.command_start_weights,
+                self.cfg.actor_domain_weights,
+                lambda frames: self.mdp.valid_imagination_start(frames, self.cfg.horizon),
+            )
         if self.cfg.no_sync:
             # Fixed-size selection without reading the valid count on the host: oversample by 2x,
             # stable-sort the valid starts first, and keep the leading ``batch_size``. Only starts

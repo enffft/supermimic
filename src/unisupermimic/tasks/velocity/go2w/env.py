@@ -57,6 +57,26 @@ class Go2WVelocityEnv(Go2VelocityEnv):
     owners are all Go2W-specific; no Go2 environment factory is invoked.
     """
 
+    def _compute_termination_and_reset_flags(self):
+        super()._compute_termination_and_reset_flags()
+        c = self.command_manager.get_term("velocity")
+        if c.cfg.unified_curriculum and c.curriculum is not None:
+            c.curriculum.episode_ended.copy_(self.reset_buf)
+
+    def reset(self, env_ids=None, *, seed=None, options=None):
+        # Explicit/manual reset is not a completed physical episode.
+        c = self.command_manager.get_term("velocity")
+        if (
+            c.cfg.unified_curriculum
+            and c.curriculum is not None
+            and not self._autoreset_reset_active
+        ):
+            if env_ids is None:
+                c.curriculum.episode_ended.fill_(False)
+            else:
+                c.curriculum.episode_ended[env_ids] = False
+        return super().reset(env_ids, seed=seed, options=options)
+
     def apply_action(self, actions, state):
         result = super().apply_action(actions, state)
         c = self.command_manager.get_term("velocity")
@@ -171,7 +191,7 @@ class Go2WVelocityEnv(Go2VelocityEnv):
             contract["commands"].pop("unified_curriculum")
             contract["commands"].pop("curriculum")
         else:
-            contract["curriculum_protocol"] = "ten_level_per_skill_hysteresis_review_and_coverage"
+            contract["curriculum_protocol"] = "per_env_episode_distance_fixed_domain_v1"
             contract["reward_protocol"] = "shared_endpoint_PD_traversal_potential_once_budget"
             contract["traversal_protocol"] = (
                 "target10;immutable_episode;success_hold10;no_actor_target"

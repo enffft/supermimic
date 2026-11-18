@@ -1,0 +1,183 @@
+{
+  "fields": {
+    "s": {
+      "shape": [
+        1024,
+        128,
+        41
+      ],
+      "dtype": "torch.float32",
+      "bytes": 21495808
+    },
+    "s1": {
+      "shape": [
+        1024,
+        128,
+        41
+      ],
+      "dtype": "torch.float32",
+      "bytes": 21495808
+    },
+    "a": {
+      "shape": [
+        1024,
+        128,
+        16
+      ],
+      "dtype": "torch.float32",
+      "bytes": 8388608
+    },
+    "a_prev": {
+      "shape": [
+        1024,
+        128,
+        16
+      ],
+      "dtype": "torch.float32",
+      "bytes": 8388608
+    },
+    "xi": {
+      "shape": [
+        1024,
+        128,
+        0
+      ],
+      "dtype": "torch.float32",
+      "bytes": 0
+    },
+    "r": {
+      "shape": [
+        1024,
+        128
+      ],
+      "dtype": "torch.float32",
+      "bytes": 524288
+    },
+    "f": {
+      "shape": [
+        1024,
+        128
+      ],
+      "dtype": "torch.int64",
+      "bytes": 1048576
+    },
+    "ep_step": {
+      "shape": [
+        1024,
+        128
+      ],
+      "dtype": "torch.int32",
+      "bytes": 524288
+    },
+    "done": {
+      "shape": [
+        1024,
+        128
+      ],
+      "dtype": "torch.bool",
+      "bytes": 131072
+    },
+    "g": {
+      "shape": [
+        1024,
+        128,
+        7
+      ],
+      "dtype": "torch.float32",
+      "bytes": 3670016
+    },
+    "terrain_type": {
+      "shape": [
+        1024,
+        128
+      ],
+      "dtype": "torch.int64",
+      "bytes": 1048576
+    },
+    "terrain_level": {
+      "shape": [
+        1024,
+        128
+      ],
+      "dtype": "torch.int64",
+      "bytes": 1048576
+    },
+    "terrain_probe": {
+      "shape": [
+        1024,
+        128
+      ],
+      "dtype": "torch.bool",
+      "bytes": 131072
+    },
+    "command_domain": {
+      "shape": [
+        1024,
+        128
+      ],
+      "dtype": "torch.int64",
+      "bytes": 1048576
+    },
+    "command_mode": {
+      "shape": [
+        1024,
+        128
+      ],
+      "dtype": "torch.int64",
+      "bytes": 1048576
+    },
+    "crossing_episode": {
+      "shape": [
+        1024,
+        128
+      ],
+      "dtype": "torch.bool",
+      "bytes": 131072
+    },
+    "term": {
+      "shape": [
+        1024,
+        128
+      ],
+      "dtype": "torch.bool",
+      "bytes": 131072
+    },
+    "command_speed_level": {
+      "shape": [
+        1024,
+        128
+      ],
+      "dtype": "torch.int64",
+      "bytes": 1048576
+    },
+    "traversal": {
+      "shape": [
+        1024,
+        128,
+        10
+      ],
+      "dtype": "torch.float32",
+      "bytes": 5242880
+    },
+    "target_id": {
+      "shape": [
+        1024,
+        128
+      ],
+      "dtype": "torch.int64",
+      "bytes": 1048576
+    },
+    "success_peak": {
+      "shape": [
+        1024,
+        128
+      ],
+      "dtype": "torch.float32",
+      "bytes": 524288
+    }
+  },
+  "total_bytes": 78118912,
+  "historical_capacity": 8192,
+  "history_fraction": 0.5,
+  "historical_source": "current run contiguous physical windows only"
+}

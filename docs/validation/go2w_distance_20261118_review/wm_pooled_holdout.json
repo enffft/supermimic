@@ -1,0 +1,84 @@
+{
+  "initial": {
+    "1": {
+      "valid": 239,
+      "total": 240,
+      "rmse": {
+        "position_m": 0.00039286183951238224,
+        "orientation_rad": 0.0013852902253158395,
+        "linear_velocity_m_s": 0.024613972128816664,
+        "angular_velocity_rad_s": 0.16715170795775783,
+        "leg_position_rad": 0.012122730414929422,
+        "leg_velocity_rad_s": 0.6553064920257556,
+        "wheel_velocity_rad_s": 0.7572322326918292
+      }
+    },
+    "8": {
+      "valid": 217,
+      "total": 240,
+      "rmse": {
+        "position_m": 0.045273973905022455,
+        "orientation_rad": 0.341798880688818,
+        "linear_velocity_m_s": 0.8829742265012238,
+        "angular_velocity_rad_s": 6.7136261799420565,
+        "leg_position_rad": 0.7490201259901047,
+        "leg_velocity_rad_s": 17.820955158352238,
+        "wheel_velocity_rad_s": 21.336697802780034
+      }
+    },
+    "16": {
+      "valid": 43,
+      "total": 240,
+      "rmse": {
+        "position_m": 0.1574776815039007,
+        "orientation_rad": 0.8621540893228615,
+        "linear_velocity_m_s": 0.8832145580017348,
+        "angular_velocity_rad_s": 5.212366745159988,
+        "leg_position_rad": 1.7849141457765199,
+        "leg_velocity_rad_s": 15.497283154736072,
+        "wheel_velocity_rad_s": 102.04755382435046
+      }
+    }
+  },
+  "final": {
+    "1": {
+      "valid": 239,
+      "total": 240,
+      "rmse": {
+        "position_m": 0.00027195644887740216,
+        "orientation_rad": 0.0027919188042748897,
+        "linear_velocity_m_s": 0.02402266298004685,
+        "angular_velocity_rad_s": 0.14646571912574122,
+        "leg_position_rad": 0.010300575239720985,
+        "leg_velocity_rad_s": 0.5609955675434147,
+        "wheel_velocity_rad_s": 0.5828571520479138
+      }
+    },
+    "8": {
+      "valid": 217,
+      "total": 240,
+      "rmse": {
+        "position_m": 0.03706501496317664,
+        "orientation_rad": 0.33613227658666756,
+        "linear_velocity_m_s": 0.7230303947599328,
+        "angular_velocity_rad_s": 6.498125972390469,
+        "leg_position_rad": 0.7785295331002485,
+        "leg_velocity_rad_s": 17.204969706026287,
+        "wheel_velocity_rad_s": 15.924438316130095
+      }
+    },
+    "16": {
+      "valid": 43,
+      "total": 240,
+      "rmse": {
+        "position_m": 0.09428846604610847,
+        "orientation_rad": 0.5273491483166229,
+        "linear_velocity_m_s": 0.7322081642867247,
+        "angular_velocity_rad_s": 4.677079494507846,
+        "leg_position_rad": 1.5644771972691696,
+        "leg_velocity_rad_s": 14.040513927431242,
+        "wheel_velocity_rad_s": 78.14498476052005
+      }
+    }
+  }
+}

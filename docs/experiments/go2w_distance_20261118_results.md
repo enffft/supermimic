@@ -117,3 +117,5 @@ H8/window8、4096env、1024Replay、2048batch、单Actor及21项reward不变。
 cd /home/yifeiy/ws_go2_unilab/Uni-SuperMimic-unified
 PYTHONPATH=src /home/yifeiy/miniconda3/envs/go2_unilab/bin/python tools/play_go2w.py --checkpoint /home/yifeiy/ws_go2_unilab/runs/go2w_distance_resume_3p5h_20261118/evaluation/final.pt --demo
 ```
+
+候选29333轮与最终模型同条件847条补充比较见[能力复评与reward诊断](go2w_distance_20261118_review.md)。候选平地87.0%，最终59.7%；最终下单级74.5%，候选58.2%，不存在全任务统一占优。

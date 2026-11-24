@@ -764,11 +764,10 @@ def apply_stage(learner, stage, config, *, reset=False):
                 if stage.terrain_review
                 else config["terrain_weights"]
             )
-            coverage = 0.05 if stage.terrain_review else 0.125
         else:
-            weights, coverage = FLAT_DOMAINS, 0.0
+            weights = FLAT_DOMAINS
         previous_domain = term.command_domain.clone()
-        term.curriculum.reassign_domains(weights, coverage)
+        term.curriculum.reassign_domains(weights, coverage_fraction=0.0)
         learner.buffer.mark_reset_boundary(
             torch.ones(learner.env.num_envs, device=learner.device, dtype=torch.bool)
         )

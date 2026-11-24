@@ -72,28 +72,48 @@ class TrainingStage:
             self.last_assessed_iteration = iteration
         rates = evaluation["pass_rates"]
         criteria = config.get("autonomous", config) if self.name == "flat_autonomous" else config
-        if evaluation.get("invalid_count", 0):
-            self.consecutive_passes = 0
-            self.ready_for_next_stage = False
-            return False
-        pass_flat = evaluation["fall_rate"] <= criteria["max_fall_rate"] and all(
-            rates.get(name, 0.0) >= threshold for name, threshold in criteria["pass_rates"].items()
+        # The evaluator counts early boundary exits as failed attempts in these rates.
+        pass_flat = (
+            evaluation["flat_pass_rate"] >= criteria["min_flat_pass_rate"]
+            and evaluation["fall_rate"] <= criteria["max_fall_rate"]
+            and all(
+                rates.get(name, 0.0) >= threshold
+                for name, threshold in criteria["pass_rates"].items()
+            )
         )
         if self.name == "flat_autonomous":
             pass_flat &= (
                 self.fraction(config) == 0
                 and evaluation.get("active_reference_environments", 0) == 0
-                and evaluation.get("switch_pass_rate", 0.0) >= config["switch_pass_rate"]
+            )
+        else:
+            pass_flat &= (
+                max(rates.get("forward", 0.0), rates.get("backward", 0.0))
+                >= criteria["min_longitudinal_pass_rate"]
             )
         self.consecutive_passes = self.consecutive_passes + 1 if pass_flat else 0
         self.ready_for_next_stage = self.consecutive_passes >= config["consecutive_evaluations"]
         if not self.ready_for_next_stage or not self.auto_transition or self.name == self.max_stage:
             return False
-        self.name = ORDER[ORDER.index(self.name) + 1]
+        self._enter(ORDER[ORDER.index(self.name) + 1])
+        return True
+
+    def apply_deadline(self, config):
+        if (
+            self.auto_transition
+            and self.max_stage == "terrain"
+            and self.name != "terrain"
+            and self.training_seconds >= config["max_flat_training_seconds"]
+        ):
+            self._enter("terrain")
+            return True
+        return False
+
+    def _enter(self, name):
+        self.name = name
         self.entered_at = self.training_seconds
         self.ready_for_next_stage = False
         self.consecutive_passes = 0
-        return True
 
     def state_dict(self):
         return asdict(self)

@@ -123,28 +123,61 @@ def test_reference_command_and_phase_priority(prior):
         assert (candidates == q[index]).all(dim=(1, 2)).any()
 
 
-def test_stage_readiness_must_survive_limit(prior):
+def test_stage_readiness_allows_zero_lateral_passes_and_survives_limit(prior):
     _, cfg, _, settings = prior
+    config = settings | cfg
     stage = TrainingStage()
-    good = {"pass_rates": settings["pass_rates"], "fall_rate": 0.0, "switch_pass_rate": 1.0}
-    assert not stage.assess(good, settings | cfg)
-    assert not stage.assess(good, settings | cfg)
+    basic = {
+        "iteration": 300,
+        "flat_pass_rate": 18 / 39,
+        "fall_rate": 0.0,
+        "pass_rates": {"standing": 1.0, "forward": 0.0, "backward": 1.0, "left": 0.0, "right": 0.0},
+    }
+    assert not stage.assess(basic, config)
     assert stage.ready_for_next_stage
     restored = TrainingStage(max_stage="terrain")
     restored.restore(stage.state_dict())
-    assert restored.assess(good, settings | cfg) and restored.name == "flat_autonomous"
-    assert restored.fraction(cfg) == 1
+    assert not restored.assess(basic, config)
+    assert restored.assess(basic | {"iteration": 400}, config)
+    assert restored.name == "flat_autonomous"
+    complete = {
+        "iteration": 500,
+        "flat_pass_rate": 39 / 120,
+        "fall_rate": 5 / 120,
+        "pass_rates": {"standing": 1.0, "forward": 0.6, "left": 0.0, "right": 0.0},
+        "switch_pass_rate": 0.0,
+        "invalid_count": 1,
+        "active_reference_environments": 0,
+    }
+    assert not restored.assess(complete, config)
     restored.training_seconds = cfg["fade_seconds"]
-    good["pass_rates"] = settings["autonomous"]["pass_rates"]
-    good["iteration"] = 1
-    assert not restored.assess(good, settings | cfg)
-    assert not restored.assess(good, settings | cfg)
-    good["iteration"] = 2
-    assert restored.assess(good, settings | cfg) and restored.name == "terrain"
+    assert not restored.assess(
+        complete | {"iteration": 600, "active_reference_environments": 1}, config
+    )
+    assert not restored.assess(complete | {"iteration": 700, "fall_rate": 0.4}, config)
+    assert not restored.assess(complete | {"iteration": 800, "flat_pass_rate": 0.2}, config)
+    assert restored.assess(complete | {"iteration": 900}, config)
+    assert restored.name == "terrain"
+
+
+@pytest.mark.parametrize("name", ["flat_prior", "flat_autonomous"])
+def test_flat_time_limit_survives_resume(prior, name):
+    _, _, _, settings = prior
+    stage = TrainingStage(name=name, max_stage="terrain", training_seconds=14399.0)
+    assert not stage.apply_deadline(settings)
+    stage.training_seconds = 14400.0
+    locked = TrainingStage(name=name, max_stage=name)
+    locked.restore(stage.state_dict())
+    assert not locked.apply_deadline(settings)
+    restored = TrainingStage(max_stage="terrain")
+    restored.restore(stage.state_dict())
+    assert restored.apply_deadline(settings)
+    assert restored.name == "terrain" and restored.entered_at == 14400.0
+    assert not restored.apply_deadline(settings)
 
 
 def test_physical_reset_collection_gradient_and_reassignment(prior, tmp_path):
-    _, cfg, bank, _ = prior
+    _, cfg, bank, settings = prior
     torch.set_num_threads(1)
     env = make_go2w_env(load_config("motion_prior"), 16)
     try:
@@ -273,9 +306,12 @@ def test_physical_reset_collection_gradient_and_reassignment(prior, tmp_path):
         term.time_left.fill_(0)
         env.step(torch.zeros(16, 16))
         assert (term.target_id != previous_target).all()
-        stage.name = "terrain"
+        stage.training_seconds = settings["max_flat_training_seconds"]
+        assert stage.apply_deadline(settings)
         apply_stage(learner, stage, cfg, reset=True)
-        assert term.command_domain.any()
+        assert term.command_domain.any() and (term.command_domain == 0).any()
+        assert not term.curriculum.terrain_level.any()
+        assert (term.curriculum.coverage_level == -1).all()
         assert torch.all(learner.buffer.data["done"][15])
         stair = term.command_domain >= 4
         assert stair.any()

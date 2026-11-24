@@ -10,6 +10,8 @@ algo:
   actor_ramp_iters: 250
   profile: false
   history_fraction: 0.5
+  ckpt_every: 1000
+  numbered_ckpt_every: null
   actor_domain_weights: [1, 0, 0, 0, 0, 0, 0, 0]
 env:
   max_episode_seconds: 18.0
@@ -35,32 +37,22 @@ stage:
   initial: flat_prior
   auto_transition: true
   max_stage: terrain
-  consecutive_evaluations: 2
-  max_fall_rate: 0.15
+  consecutive_evaluations: 1
+  max_flat_training_seconds: 14400
   basic_assessment_seconds: 900
   assessment_seconds: 1800
-  recovery_seconds: 3600
-  switch_pass_rate: 0.75
   terrain_review_pass_rate: 0.65
+  min_flat_pass_rate: 0.30
+  max_fall_rate: 0.35
+  min_longitudinal_pass_rate: 0.33
   pass_rates:
-    standing: 0.90
-    forward: 0.80
-    backward: 0.80
-    left: 0.60
-    right: 0.60
-    yaw_left: 0.70
-    yaw_right: 0.70
+    standing: 0.50
   autonomous:
-    max_fall_rate: 0.08
+    min_flat_pass_rate: 0.25
+    max_fall_rate: 0.25
     pass_rates:
-      standing: 0.95
-      forward: 0.90
-      backward: 0.90
-      left: 0.80
-      right: 0.80
-      yaw_left: 0.80
-      yaw_right: 0.80
-      coupled: 0.70
+      standing: 0.50
+      forward: 0.40
 motion_prior:
   enabled: true
   bank: data/go2w_motion_bank

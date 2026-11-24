@@ -4,6 +4,7 @@ import argparse
 import csv
 import json
 import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -51,17 +52,81 @@ def record_benchmarks(root):
     return records
 
 
-def finalize(run):
+def evaluate_actor(checkpoint, output, traces, holdout=None):
+    args = [
+        sys.executable,
+        "-m",
+        "tools.evaluate_go2w",
+        "--protocol",
+        "motion_prior",
+        "--checkpoint",
+        str(checkpoint),
+        "--output",
+        str(output),
+        "--switches",
+        "--traces",
+        str(traces),
+    ]
+    if holdout is not None:
+        args += ["--holdout", str(holdout)]
+    subprocess.run(args, cwd=ROOT, check=True)
+
+
+def finalize(run, *, early_stop=False):
     run = run.resolve()
     summary = load(run / "training_summary.json")
     evaluation = run / "evaluation"
     artifact = evaluation / "final.pt"
-    if not summary["completed_budget"] or not artifact.exists():
+    if not summary["completed_budget"] and not early_stop:
         raise RuntimeError(
-            "The formal training budget and physical final evaluation must complete first"
+            "Training stopped early. Use --early-stop to finalize the saved checkpoint."
         )
     best = run / "best.pt"
     dataset = evaluation / "holdout.pt"
+    final_report = evaluation / "final.json"
+    final_traces = evaluation / "final_traces.pt"
+    if early_stop and not artifact.exists():
+        full = torch.load(run / "last.pt", weights_only=True, map_location="cpu", mmap=True)
+        if full["iteration"] != summary["iteration"]:
+            raise ValueError("The final recovery checkpoint disagrees with the training summary")
+        keys = (
+            "pi",
+            "wm",
+            "args",
+            "iteration",
+            "wall_time",
+            "sim_steps",
+            "task_contract",
+            "motion_prior",
+        )
+        temporary = artifact.with_suffix(".tmp")
+        torch.save({key: full[key] for key in keys}, temporary)
+        temporary.replace(artifact)
+        del full
+    if not artifact.exists():
+        raise FileNotFoundError(artifact)
+    if early_stop and not all(path.exists() for path in (final_report, final_traces, dataset)):
+        evaluate_actor(artifact, final_report, final_traces, dataset)
+    if early_stop:
+        metrics = load(final_report)
+        metrics.update(
+            iteration=summary["iteration"],
+            training_seconds=summary["training_loop_seconds"],
+            real_transitions=summary["real_transitions"],
+            stage_after_evaluation=summary["stage"],
+        )
+        write_json(final_report, metrics)
+        selected_path = run / "best_selection.json"
+        score = (
+            metrics["flat_pass_rate"] - 0.05 * metrics["fall_rate"] - 0.01 * sum(metrics["rmse"])
+        )
+        if not selected_path.exists() or score > load(selected_path)["score"]:
+            temporary = best.with_suffix(".tmp")
+            shutil.copyfile(artifact, temporary)
+            temporary.replace(best)
+            write_json(
+                selected_path, {"checkpoint": str(artifact.relative_to(ROOT)), "score": score}
+            )
     if not dataset.exists():
         raise FileNotFoundError(dataset)
     saved = torch.load(dataset, map_location="cpu", weights_only=True)
@@ -72,24 +137,7 @@ def finalize(run):
         if not (evaluation / f"{name}_wm.json").exists():
             evaluate_wm(model, dataset, evaluation / f"{name}_wm.json")
     if not (evaluation / "best_physical.json").exists():
-        subprocess.run(
-            [
-                sys.executable,
-                "-m",
-                "tools.evaluate_go2w",
-                "--protocol",
-                "motion_prior",
-                "--checkpoint",
-                str(best),
-                "--output",
-                str(evaluation / "best_physical.json"),
-                "--switches",
-                "--traces",
-                str(evaluation / "best_traces.pt"),
-            ],
-            cwd=ROOT,
-            check=True,
-        )
+        evaluate_actor(best, evaluation / "best_physical.json", evaluation / "best_traces.pt")
     for tag in ("final", "best"):
         output = evaluation / f"{tag}_videos"
         if not all((output / f"{name}.mp4").exists() for name in ("flat", "coupled")):
@@ -125,12 +173,15 @@ def finalize(run):
     pools = progress["wm_pool"]
     logged = list(csv.DictReader((run / "train_log.csv").open()))
     lines = [
-        "# Go2W Motion Prior 三小时训练报告",
+        "# Go2W Motion Prior 训练报告",
         "",
         f"训练源码为 `{base}`，由 `174c6c11` 开始开发。训练阶段为 `flat_prior`，"
         f"实际训练循环 **{summary['training_loop_seconds']:.1f} s**，进程在 {summary['process_seconds']:.1f} s "
         f"内完成 {summary['iteration']:,} 次迭代和 {summary['real_transitions']:,} 条物理 transition。",
         "4096 个训练环境，UniLab CPU 批量 MuJoCo 与 CUDA Learner。从随机权重开始，单组正式训练。",
+        "应用户要求在迭代边界提前停止，评测基于最终落盘 checkpoint。"
+        if early_stop
+        else "训练达到预定循环时间。",
         "",
         "## 固定真实 MuJoCo 评测",
         "",
@@ -160,7 +211,11 @@ def finalize(run):
         "",
         "## 采集和训练",
         "",
-        f"实测采集占比为 {summary['collection']['source_fractions']}，顺序为普通 Actor、RSI Actor、参考 PD。",
+        "本轮源占比统计使用 float32 累加，普通 Actor 计数达到 2²⁴ 后饱和。"
+        "因此以计数饱和之前的日志和并发配额核验约 70%／20%／10%，最终 JSON 中的累计占比失真。"
+        if summary["collection"]["source_fractions"][0] < 0.70
+        and summary["real_transitions"] > 2**24
+        else f"实测采集占比为 {summary['collection']['source_fractions']}，顺序为普通 Actor、RSI Actor、参考 PD。",
         f"保护池、普通历史池和近期池的累计采样数见 `progress.json`。近期、普通历史、保护顺序的比例为 "
         f"{[round(x / max(1, sum(pools)), 4) for x in pools]}。",
         f"训练全程峰值 GPU 分配为 {summary['gpu_peak_MiB']:.0f} MiB。训练最后一次日志记录的归一化 WM H8 误差为 "
@@ -232,4 +287,8 @@ def finalize(run):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run", type=Path, required=True)
-    finalize(parser.parse_args().run)
+    parser.add_argument(
+        "--early-stop", action="store_true", help="Finalize after an authorized graceful stop"
+    )
+    args = parser.parse_args()
+    finalize(args.run, early_stop=args.early_stop)

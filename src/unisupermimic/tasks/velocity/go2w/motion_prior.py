@@ -251,15 +251,15 @@ class ReferenceCollection:
         self.source = torch.zeros(env.num_envs, dtype=torch.long, device=env.device)
         self.clip = torch.zeros_like(self.source)
         self.frame = torch.zeros_like(self.source)
-        self.source_counts = torch.zeros(3, device=env.device)
-        self.category_counts = torch.zeros(8, device=env.device)
-        self.signed_counts = torch.zeros(27, device=env.device)
+        self.source_counts = torch.zeros(3, dtype=torch.long, device=env.device)
+        self.category_counts = torch.zeros(8, dtype=torch.long, device=env.device)
+        self.signed_counts = torch.zeros(27, dtype=torch.long, device=env.device)
         self.speed_sum = torch.zeros(3, device=env.device)
         self.samples = 0
-        self.clipped = torch.zeros((), device=env.device)
+        self.clipped = torch.zeros((), dtype=torch.long, device=env.device)
         self.active_components = torch.zeros_like(self.clipped)
-        self.tracking_sse = torch.zeros(27, 3, device=env.device)
-        self.tracking_count = torch.zeros(27, device=env.device)
+        self.tracking_sse = torch.zeros(27, 3, dtype=torch.float64, device=env.device)
+        self.tracking_count = torch.zeros(27, dtype=torch.long, device=env.device)
         self.ended_count = torch.zeros((), device=env.device)
         self.fall_count = torch.zeros_like(self.ended_count)
 
@@ -366,10 +366,8 @@ class ReferenceCollection:
                 goal[terrain, 0],
             )
         category, signed = command_keys(goal[ids])
-        self.category_counts.scatter_add_(
-            0, category, torch.ones_like(category, dtype=torch.float32)
-        )
-        self.signed_counts.scatter_add_(0, signed, torch.ones_like(signed, dtype=torch.float32))
+        self.category_counts.scatter_add_(0, category, torch.ones_like(category))
+        self.signed_counts.scatter_add_(0, signed, torch.ones_like(signed))
         self.speed_sum += goal[ids].abs().sum(0)
         self.samples += n
         hold = torch.full_like(term.time_left, term._env.cfg.max_episode_seconds + 0.02)
@@ -411,7 +409,7 @@ class ReferenceCollection:
     def action(self, proposed, command, mixed):
         frame = self.frame + command.ep_step.long() + 1
         guide = self.source == 2
-        self.source_counts.scatter_add_(0, self.source, torch.ones_like(frame, dtype=torch.float32))
+        self.source_counts.scatter_add_(0, self.source, torch.ones_like(frame))
         # The final reference sample is a standing hold. There is no cyclic jump.
         frame = frame.clamp(max=self.bank.positions.shape[1] - 1)
         data = self.bank.data
@@ -428,8 +426,8 @@ class ReferenceCollection:
         )
         goal = transition["g"][..., :3]
         _, signed = command_keys(goal)
-        self.tracking_sse.index_add_(0, signed, (local - goal).square())
-        self.tracking_count.index_add_(0, signed, torch.ones_like(signed, dtype=torch.float32))
+        self.tracking_sse.index_add_(0, signed, (local - goal).square().double())
+        self.tracking_count.index_add_(0, signed, torch.ones_like(signed))
         self.ended_count += transition["done"].sum()
         self.fall_count += transition["term"].sum()
 

@@ -192,7 +192,9 @@ def test_physical_reset_collection_gradient_and_reassignment(prior, tmp_path):
         learner.buffer.protected_success_fraction = 0.2
         learner.buffer.history.protection_enabled = True
         apply_stage(learner, stage, cfg)
+        guide.source_counts[0] = 2**24
         learner.collect(16)
+        assert int(guide.source_counts.sum()) == 2**24 + 16 * env.num_envs
         assert learner.buffer.size == 16
         data = learner.buffer.data
         # The latest buffer truth is the pre-autoreset post-physics state and executed action.

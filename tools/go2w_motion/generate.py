@@ -150,7 +150,7 @@ def candidate_score(row):
     )
 
 
-def generate_dataset(output, config_path=CONFIG, category=None, pilot=False, gait="crawl"):
+def generate_dataset(output, config_path=CONFIG, category=None, pilot=False, gait="diagonal"):
     config = yaml.safe_load(Path(config_path).read_text())
     jobs = list(commands(config))
     if pilot:
@@ -237,7 +237,7 @@ def main():
     parser.add_argument("--output-dir", required=True, type=Path)
     parser.add_argument("--config", type=Path, default=CONFIG)
     parser.add_argument("--pilot", action="store_true")
-    parser.add_argument("--gait", choices=("crawl", "diagonal"), default="crawl")
+    parser.add_argument("--gait", choices=("diagonal", "crawl"), default="diagonal")
     parser.add_argument("--category", choices=[*yaml.safe_load(CONFIG.read_text())["commands"], "standing"])
     args = parser.parse_args()
     try:

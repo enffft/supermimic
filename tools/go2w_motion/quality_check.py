@@ -268,9 +268,12 @@ def mirror_checks(rows, clips, config):
         a, b = clips[motion_id], clips[opposite]
         position = rms(a["base_pos"]*np.array([1, -1, 1]) - b["base_pos"])
         joint = rms(a["leg_q"].reshape(-1, 4, 3)[:, leg_order] * joint_sign - b["leg_q"].reshape(-1, 4, 3))
+        velocity = rms(a["base_lin_vel"]*np.array([1, -1, 1]) - b["base_lin_vel"], axis=0)
+        yaw_rate = rms(a["base_ang_vel"][:, 2] + b["base_ang_vel"][:, 2])
         within = (position <= config["quality"]["mirror_position_rmse"]
                   and joint <= config["quality"]["mirror_joint_rmse"])
         checks.append(dict(pair=[motion_id, opposite], base_position_rmse=position,
+                           world_linear_velocity_rmse=velocity.tolist(), yaw_rate_rmse=yaw_rate,
                            joint_rmse=joint, within_review_thresholds=bool(within)))
     return checks
 
@@ -332,6 +335,8 @@ def audit_dataset(dataset, robot=None):
             ) if any(key in row for row in items)},
             "min_support_margin": min((row["min_support_margin"] for row in items if "min_support_margin" in row), default=None),
             "collision_count": sum(row.get("collision_count", 0) for row in items),
+            "max_diagonal_com_distance": max((row.get("max_diagonal_com_distance", 0.) for row in items), default=0.),
+            "diagonal_frames": sum(row.get("diagonal_frames", 0) for row in items),
         }
     mirrors = mirror_checks(rows, clips, config)
     summary = dict(

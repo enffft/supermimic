@@ -247,11 +247,13 @@ def live(playback):
         camera_setup(handle.cam, playback)
         handle.opt.geomgroup[3] = 1
         last = perf_counter()
-        while handle.is_running():
+        running = True
+        while running and handle.is_running():
             while not pending.empty():
                 key = pending.get()
                 if key == glfw.KEY_ESCAPE:
-                    return
+                    running = False
+                    break
                 if key == glfw.KEY_SPACE:
                     playback.paused = not playback.paused
                 elif key in (glfw.KEY_LEFT, glfw.KEY_RIGHT):
@@ -272,6 +274,8 @@ def live(playback):
                     playback.show_help = not playback.show_help
                 elif glfw.KEY_1 <= key <= glfw.KEY_6:
                     playback.overlays.symmetric_difference_update({OVERLAYS[key - glfw.KEY_1]})
+            if not running or not handle.is_running():
+                break
             now = perf_counter()
             with handle.lock():
                 playback.advance(now-last)
@@ -287,6 +291,9 @@ def live(playback):
             handle.sync(state_only=True)
             last = now
             sleep(.01)
+    # launch_passive closes asynchronously on a daemon thread. Give GLFW time
+    # to release the window and its context before Python tears down the model.
+    sleep(.25)
 
 
 def render_frames(playback, frames: Iterable[int], output):

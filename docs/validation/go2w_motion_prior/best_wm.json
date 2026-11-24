@@ -1,0 +1,810 @@
+{
+  "model": "/home/yifeiy/ws_go2_unilab/Uni-SuperMimic-motion-prior/runs/go2w_motion_prior/best.pt",
+  "wm_tensor_sha256": "3de956eb5cf246effbe63bf3f6938d8fc1bd4ef741e718135662caa2fb462823",
+  "holdout": "/home/yifeiy/ws_go2_unilab/Uni-SuperMimic-motion-prior/runs/go2w_motion_prior/evaluation/holdout.pt",
+  "holdout_file_sha256": "c34458e8a7090a16c937663be073b875e9528026434e6debde98dce0ebac00ec",
+  "independent": true,
+  "rows": [
+    {
+      "horizon": 1,
+      "source": "actor",
+      "family": "standing",
+      "valid": 60,
+      "total": 60,
+      "rmse": {
+        "position_m": 0.00026818126207217574,
+        "orientation_rad": 0.0018612724961712956,
+        "linear_velocity_m_s": 0.016081862151622772,
+        "angular_velocity_rad_s": 0.14615371823310852,
+        "leg_position_rad": 0.010115602985024452,
+        "leg_velocity_rad_s": 0.7576373815536499,
+        "wheel_velocity_rad_s": 0.729972779750824
+      }
+    },
+    {
+      "horizon": 1,
+      "source": "actor",
+      "family": "forward",
+      "valid": 198,
+      "total": 198,
+      "rmse": {
+        "position_m": 0.0002197352150687948,
+        "orientation_rad": 0.0023324843496084213,
+        "linear_velocity_m_s": 0.012261568568646908,
+        "angular_velocity_rad_s": 0.18076620995998383,
+        "leg_position_rad": 0.0071183061227202415,
+        "leg_velocity_rad_s": 0.570520281791687,
+        "wheel_velocity_rad_s": 0.805964469909668
+      }
+    },
+    {
+      "horizon": 1,
+      "source": "actor",
+      "family": "backward",
+      "valid": 240,
+      "total": 240,
+      "rmse": {
+        "position_m": 0.00024312666209880263,
+        "orientation_rad": 0.002290128730237484,
+        "linear_velocity_m_s": 0.013151129707694054,
+        "angular_velocity_rad_s": 0.184532031416893,
+        "leg_position_rad": 0.007974479347467422,
+        "leg_velocity_rad_s": 0.5609833002090454,
+        "wheel_velocity_rad_s": 0.9391207695007324
+      }
+    },
+    {
+      "horizon": 1,
+      "source": "actor",
+      "family": "left",
+      "valid": 84,
+      "total": 84,
+      "rmse": {
+        "position_m": 0.0010830030078068376,
+        "orientation_rad": 0.014914081431925297,
+        "linear_velocity_m_s": 0.08508214354515076,
+        "angular_velocity_rad_s": 0.9298931360244751,
+        "leg_position_rad": 0.04358987882733345,
+        "leg_velocity_rad_s": 3.2632293701171875,
+        "wheel_velocity_rad_s": 3.557333469390869
+      }
+    },
+    {
+      "horizon": 1,
+      "source": "actor",
+      "family": "right",
+      "valid": 240,
+      "total": 240,
+      "rmse": {
+        "position_m": 0.000520855828654021,
+        "orientation_rad": 0.003501108381897211,
+        "linear_velocity_m_s": 0.03598786145448685,
+        "angular_velocity_rad_s": 0.34076908230781555,
+        "leg_position_rad": 0.01993464305996895,
+        "leg_velocity_rad_s": 1.4864540100097656,
+        "wheel_velocity_rad_s": 1.2501215934753418
+      }
+    },
+    {
+      "horizon": 1,
+      "source": "actor",
+      "family": "yaw_left",
+      "valid": 300,
+      "total": 300,
+      "rmse": {
+        "position_m": 0.0003435799735598266,
+        "orientation_rad": 0.0032714952249079943,
+        "linear_velocity_m_s": 0.019146282225847244,
+        "angular_velocity_rad_s": 0.28199759125709534,
+        "leg_position_rad": 0.010177909396588802,
+        "leg_velocity_rad_s": 0.795935869216919,
+        "wheel_velocity_rad_s": 1.4073909521102905
+      }
+    },
+    {
+      "horizon": 1,
+      "source": "actor",
+      "family": "yaw_right",
+      "valid": 300,
+      "total": 300,
+      "rmse": {
+        "position_m": 0.00026682435418479145,
+        "orientation_rad": 0.002681106561794877,
+        "linear_velocity_m_s": 0.018385769799351692,
+        "angular_velocity_rad_s": 0.22559598088264465,
+        "leg_position_rad": 0.009371766820549965,
+        "leg_velocity_rad_s": 0.7990250587463379,
+        "wheel_velocity_rad_s": 0.9230690002441406
+      }
+    },
+    {
+      "horizon": 1,
+      "source": "actor",
+      "family": "forward_yaw",
+      "valid": 174,
+      "total": 174,
+      "rmse": {
+        "position_m": 0.0001939612120622769,
+        "orientation_rad": 0.0023897693026810884,
+        "linear_velocity_m_s": 0.011415764689445496,
+        "angular_velocity_rad_s": 0.2337159514427185,
+        "leg_position_rad": 0.007727456279098988,
+        "leg_velocity_rad_s": 0.6100901961326599,
+        "wheel_velocity_rad_s": 0.6449490189552307
+      }
+    },
+    {
+      "horizon": 1,
+      "source": "actor",
+      "family": "forward_lateral",
+      "valid": 190,
+      "total": 190,
+      "rmse": {
+        "position_m": 0.0003848471387755126,
+        "orientation_rad": 0.0036275519523769617,
+        "linear_velocity_m_s": 0.02604955993592739,
+        "angular_velocity_rad_s": 0.39726001024246216,
+        "leg_position_rad": 0.016392607241868973,
+        "leg_velocity_rad_s": 1.0833208560943604,
+        "wheel_velocity_rad_s": 1.266850233078003
+      }
+    },
+    {
+      "horizon": 1,
+      "source": "actor",
+      "family": "lateral_yaw",
+      "valid": 147,
+      "total": 147,
+      "rmse": {
+        "position_m": 0.0010145672131329775,
+        "orientation_rad": 0.008573390543460846,
+        "linear_velocity_m_s": 0.07054848968982697,
+        "angular_velocity_rad_s": 0.6572483777999878,
+        "leg_position_rad": 0.030677568167448044,
+        "leg_velocity_rad_s": 2.3275985717773438,
+        "wheel_velocity_rad_s": 4.21966552734375
+      }
+    },
+    {
+      "horizon": 1,
+      "source": "actor",
+      "family": "switch",
+      "valid": 263,
+      "total": 263,
+      "rmse": {
+        "position_m": 0.0004085404216311872,
+        "orientation_rad": 0.005810639355331659,
+        "linear_velocity_m_s": 0.03232164680957794,
+        "angular_velocity_rad_s": 0.42517077922821045,
+        "leg_position_rad": 0.01881541684269905,
+        "leg_velocity_rad_s": 1.4367817640304565,
+        "wheel_velocity_rad_s": 1.7307974100112915
+      }
+    },
+    {
+      "horizon": 1,
+      "source": "reference_pd",
+      "family": "forward_backward",
+      "valid": 6,
+      "total": 6,
+      "rmse": {
+        "position_m": 0.0002561728470027447,
+        "orientation_rad": 0.000299924926366657,
+        "linear_velocity_m_s": 0.010232813656330109,
+        "angular_velocity_rad_s": 0.0990840271115303,
+        "leg_position_rad": 0.0034615816548466682,
+        "leg_velocity_rad_s": 0.29588523507118225,
+        "wheel_velocity_rad_s": 0.2980998456478119
+      }
+    },
+    {
+      "horizon": 1,
+      "source": "reference_pd",
+      "family": "yaw",
+      "valid": 2,
+      "total": 2,
+      "rmse": {
+        "position_m": 0.0002361659426242113,
+        "orientation_rad": 0.0004867461684625596,
+        "linear_velocity_m_s": 0.00823706854134798,
+        "angular_velocity_rad_s": 0.09449916332960129,
+        "leg_position_rad": 0.0026984636206179857,
+        "leg_velocity_rad_s": 0.30075952410697937,
+        "wheel_velocity_rad_s": 0.30169016122817993
+      }
+    },
+    {
+      "horizon": 1,
+      "source": "reference_pd",
+      "family": "lateral",
+      "valid": 5,
+      "total": 5,
+      "rmse": {
+        "position_m": 0.0002154216927010566,
+        "orientation_rad": 0.0010864069918170571,
+        "linear_velocity_m_s": 0.009938524104654789,
+        "angular_velocity_rad_s": 0.11799175292253494,
+        "leg_position_rad": 0.002996506867930293,
+        "leg_velocity_rad_s": 0.25113579630851746,
+        "wheel_velocity_rad_s": 0.26576554775238037
+      }
+    },
+    {
+      "horizon": 1,
+      "source": "reference_pd",
+      "family": "forward_yaw",
+      "valid": 2,
+      "total": 2,
+      "rmse": {
+        "position_m": 0.00027649200637824833,
+        "orientation_rad": 0.0007252946961671114,
+        "linear_velocity_m_s": 0.010103903710842133,
+        "angular_velocity_rad_s": 0.12136662751436234,
+        "leg_position_rad": 0.0035129033494740725,
+        "leg_velocity_rad_s": 0.3173684775829315,
+        "wheel_velocity_rad_s": 0.2589641213417053
+      }
+    },
+    {
+      "horizon": 1,
+      "source": "reference_pd",
+      "family": "forward_lateral",
+      "valid": 4,
+      "total": 4,
+      "rmse": {
+        "position_m": 0.00022217263176571578,
+        "orientation_rad": 0.0006698700599372387,
+        "linear_velocity_m_s": 0.010551882907748222,
+        "angular_velocity_rad_s": 0.13128705322742462,
+        "leg_position_rad": 0.003453698242083192,
+        "leg_velocity_rad_s": 0.2714802026748657,
+        "wheel_velocity_rad_s": 0.22302787005901337
+      }
+    },
+    {
+      "horizon": 1,
+      "source": "reference_pd",
+      "family": "lateral_yaw",
+      "valid": 3,
+      "total": 3,
+      "rmse": {
+        "position_m": 0.00017545788432471454,
+        "orientation_rad": 0.0006937150028534234,
+        "linear_velocity_m_s": 0.009522429667413235,
+        "angular_velocity_rad_s": 0.08538319170475006,
+        "leg_position_rad": 0.0025395762640982866,
+        "leg_velocity_rad_s": 0.2958623170852661,
+        "wheel_velocity_rad_s": 0.2899557650089264
+      }
+    },
+    {
+      "horizon": 1,
+      "source": "reference_pd",
+      "family": "standing",
+      "valid": 1,
+      "total": 1,
+      "rmse": {
+        "position_m": 0.00023549963952973485,
+        "orientation_rad": 0.0002839824592228979,
+        "linear_velocity_m_s": 0.009355119429528713,
+        "angular_velocity_rad_s": 0.07132020592689514,
+        "leg_position_rad": 0.0025933405850082636,
+        "leg_velocity_rad_s": 0.2921218276023865,
+        "wheel_velocity_rad_s": 0.17944273352622986
+      }
+    },
+    {
+      "horizon": 1,
+      "source": "perturbed_actor",
+      "family": "forward_backward",
+      "valid": 6,
+      "total": 6,
+      "rmse": {
+        "position_m": 0.0006611201097257435,
+        "orientation_rad": 0.00664491718634963,
+        "linear_velocity_m_s": 0.02996980771422386,
+        "angular_velocity_rad_s": 0.27211546897888184,
+        "leg_position_rad": 0.01652660220861435,
+        "leg_velocity_rad_s": 1.1313036680221558,
+        "wheel_velocity_rad_s": 1.4634361267089844
+      }
+    },
+    {
+      "horizon": 1,
+      "source": "perturbed_actor",
+      "family": "yaw",
+      "valid": 2,
+      "total": 2,
+      "rmse": {
+        "position_m": 0.00027669675182551146,
+        "orientation_rad": 0.006412644404917955,
+        "linear_velocity_m_s": 0.029143914580345154,
+        "angular_velocity_rad_s": 0.17892782390117645,
+        "leg_position_rad": 0.011624032631516457,
+        "leg_velocity_rad_s": 1.0080585479736328,
+        "wheel_velocity_rad_s": 1.6541699171066284
+      }
+    },
+    {
+      "horizon": 1,
+      "source": "perturbed_actor",
+      "family": "lateral",
+      "valid": 5,
+      "total": 5,
+      "rmse": {
+        "position_m": 0.0003879438736476004,
+        "orientation_rad": 0.005007100757211447,
+        "linear_velocity_m_s": 0.02918001264333725,
+        "angular_velocity_rad_s": 0.4372904598712921,
+        "leg_position_rad": 0.022749997675418854,
+        "leg_velocity_rad_s": 2.3806936740875244,
+        "wheel_velocity_rad_s": 1.88701331615448
+      }
+    },
+    {
+      "horizon": 1,
+      "source": "perturbed_actor",
+      "family": "forward_yaw",
+      "valid": 2,
+      "total": 2,
+      "rmse": {
+        "position_m": 0.0005559083656407893,
+        "orientation_rad": 0.005998389329761267,
+        "linear_velocity_m_s": 0.02760954201221466,
+        "angular_velocity_rad_s": 0.11435142904520035,
+        "leg_position_rad": 0.011555785313248634,
+        "leg_velocity_rad_s": 1.053055763244629,
+        "wheel_velocity_rad_s": 1.6694532632827759
+      }
+    },
+    {
+      "horizon": 1,
+      "source": "perturbed_actor",
+      "family": "forward_lateral",
+      "valid": 4,
+      "total": 4,
+      "rmse": {
+        "position_m": 0.00045353738823905587,
+        "orientation_rad": 0.00992710143327713,
+        "linear_velocity_m_s": 0.021350620314478874,
+        "angular_velocity_rad_s": 0.3851345479488373,
+        "leg_position_rad": 0.02191861905157566,
+        "leg_velocity_rad_s": 1.9531091451644897,
+        "wheel_velocity_rad_s": 2.0442049503326416
+      }
+    },
+    {
+      "horizon": 1,
+      "source": "perturbed_actor",
+      "family": "lateral_yaw",
+      "valid": 3,
+      "total": 3,
+      "rmse": {
+        "position_m": 0.00041763021727092564,
+        "orientation_rad": 0.006911902222782373,
+        "linear_velocity_m_s": 0.021237600594758987,
+        "angular_velocity_rad_s": 0.28823956847190857,
+        "leg_position_rad": 0.024454748257994652,
+        "leg_velocity_rad_s": 2.4239652156829834,
+        "wheel_velocity_rad_s": 2.1951169967651367
+      }
+    },
+    {
+      "horizon": 1,
+      "source": "perturbed_actor",
+      "family": "standing",
+      "valid": 1,
+      "total": 1,
+      "rmse": {
+        "position_m": 0.0003862316661980003,
+        "orientation_rad": 0.005188245326280594,
+        "linear_velocity_m_s": 0.023637834936380386,
+        "angular_velocity_rad_s": 0.18669311702251434,
+        "leg_position_rad": 0.018569111824035645,
+        "leg_velocity_rad_s": 1.3077222108840942,
+        "wheel_velocity_rad_s": 1.7353535890579224
+      }
+    },
+    {
+      "horizon": 8,
+      "source": "actor",
+      "family": "standing",
+      "valid": 60,
+      "total": 60,
+      "rmse": {
+        "position_m": 0.008144747465848923,
+        "orientation_rad": 0.01607862301170826,
+        "linear_velocity_m_s": 0.09100015461444855,
+        "angular_velocity_rad_s": 0.2262367159128189,
+        "leg_position_rad": 0.040280405431985855,
+        "leg_velocity_rad_s": 0.8535680770874023,
+        "wheel_velocity_rad_s": 2.5952963829040527
+      }
+    },
+    {
+      "horizon": 8,
+      "source": "actor",
+      "family": "forward",
+      "valid": 198,
+      "total": 198,
+      "rmse": {
+        "position_m": 0.005839179735630751,
+        "orientation_rad": 0.019414257258176804,
+        "linear_velocity_m_s": 0.0712103322148323,
+        "angular_velocity_rad_s": 0.29767778515815735,
+        "leg_position_rad": 0.04520122706890106,
+        "leg_velocity_rad_s": 0.918122410774231,
+        "wheel_velocity_rad_s": 3.1099789142608643
+      }
+    },
+    {
+      "horizon": 8,
+      "source": "actor",
+      "family": "backward",
+      "valid": 240,
+      "total": 240,
+      "rmse": {
+        "position_m": 0.0034744732547551394,
+        "orientation_rad": 0.017558859661221504,
+        "linear_velocity_m_s": 0.0405740849673748,
+        "angular_velocity_rad_s": 0.3425433039665222,
+        "leg_position_rad": 0.03680755943059921,
+        "leg_velocity_rad_s": 0.7917216420173645,
+        "wheel_velocity_rad_s": 1.795283317565918
+      }
+    },
+    {
+      "horizon": 8,
+      "source": "actor",
+      "family": "left",
+      "valid": 84,
+      "total": 84,
+      "rmse": {
+        "position_m": 0.025787431746721268,
+        "orientation_rad": 0.12788724899291992,
+        "linear_velocity_m_s": 0.3291829824447632,
+        "angular_velocity_rad_s": 1.6519882678985596,
+        "leg_position_rad": 0.35694199800491333,
+        "leg_velocity_rad_s": 5.527344703674316,
+        "wheel_velocity_rad_s": 16.593917846679688
+      }
+    },
+    {
+      "horizon": 8,
+      "source": "actor",
+      "family": "right",
+      "valid": 240,
+      "total": 240,
+      "rmse": {
+        "position_m": 0.008324451744556427,
+        "orientation_rad": 0.01695706881582737,
+        "linear_velocity_m_s": 0.08960270881652832,
+        "angular_velocity_rad_s": 0.6626594662666321,
+        "leg_position_rad": 0.08264230936765671,
+        "leg_velocity_rad_s": 1.271834373474121,
+        "wheel_velocity_rad_s": 4.397812366485596
+      }
+    },
+    {
+      "horizon": 8,
+      "source": "actor",
+      "family": "yaw_left",
+      "valid": 300,
+      "total": 300,
+      "rmse": {
+        "position_m": 0.008553762920200825,
+        "orientation_rad": 0.024326009675860405,
+        "linear_velocity_m_s": 0.12184306234121323,
+        "angular_velocity_rad_s": 0.40143024921417236,
+        "leg_position_rad": 0.05612778663635254,
+        "leg_velocity_rad_s": 1.38179612159729,
+        "wheel_velocity_rad_s": 1.9870837926864624
+      }
+    },
+    {
+      "horizon": 8,
+      "source": "actor",
+      "family": "yaw_right",
+      "valid": 300,
+      "total": 300,
+      "rmse": {
+        "position_m": 0.0053999158553779125,
+        "orientation_rad": 0.01839028112590313,
+        "linear_velocity_m_s": 0.06532992422580719,
+        "angular_velocity_rad_s": 0.39980337023735046,
+        "leg_position_rad": 0.047162774950265884,
+        "leg_velocity_rad_s": 1.0787346363067627,
+        "wheel_velocity_rad_s": 2.3248860836029053
+      }
+    },
+    {
+      "horizon": 8,
+      "source": "actor",
+      "family": "forward_yaw",
+      "valid": 174,
+      "total": 174,
+      "rmse": {
+        "position_m": 0.00427064998075366,
+        "orientation_rad": 0.022946462035179138,
+        "linear_velocity_m_s": 0.05609974265098572,
+        "angular_velocity_rad_s": 0.27818554639816284,
+        "leg_position_rad": 0.04381171986460686,
+        "leg_velocity_rad_s": 0.8537721633911133,
+        "wheel_velocity_rad_s": 2.4404563903808594
+      }
+    },
+    {
+      "horizon": 8,
+      "source": "actor",
+      "family": "forward_lateral",
+      "valid": 190,
+      "total": 190,
+      "rmse": {
+        "position_m": 0.0074436780996620655,
+        "orientation_rad": 0.0327523835003376,
+        "linear_velocity_m_s": 0.093931645154953,
+        "angular_velocity_rad_s": 1.0529496669769287,
+        "leg_position_rad": 0.09147202223539352,
+        "leg_velocity_rad_s": 1.8706005811691284,
+        "wheel_velocity_rad_s": 4.879085063934326
+      }
+    },
+    {
+      "horizon": 8,
+      "source": "actor",
+      "family": "lateral_yaw",
+      "valid": 147,
+      "total": 147,
+      "rmse": {
+        "position_m": 0.016664855182170868,
+        "orientation_rad": 0.0755036398768425,
+        "linear_velocity_m_s": 0.19909252226352692,
+        "angular_velocity_rad_s": 1.1031938791275024,
+        "leg_position_rad": 0.18800027668476105,
+        "leg_velocity_rad_s": 3.8088295459747314,
+        "wheel_velocity_rad_s": 10.802031517028809
+      }
+    },
+    {
+      "horizon": 8,
+      "source": "actor",
+      "family": "switch",
+      "valid": 263,
+      "total": 263,
+      "rmse": {
+        "position_m": 0.009906118735671043,
+        "orientation_rad": 0.05063322186470032,
+        "linear_velocity_m_s": 0.12087608873844147,
+        "angular_velocity_rad_s": 0.583634614944458,
+        "leg_position_rad": 0.10382430255413055,
+        "leg_velocity_rad_s": 1.8812116384506226,
+        "wheel_velocity_rad_s": 4.4820170402526855
+      }
+    },
+    {
+      "horizon": 8,
+      "source": "reference_pd",
+      "family": "forward_backward",
+      "valid": 6,
+      "total": 6,
+      "rmse": {
+        "position_m": 0.0016314686508849263,
+        "orientation_rad": 0.005075600929558277,
+        "linear_velocity_m_s": 0.03531471639871597,
+        "angular_velocity_rad_s": 0.12953218817710876,
+        "leg_position_rad": 0.017598150297999382,
+        "leg_velocity_rad_s": 0.47490841150283813,
+        "wheel_velocity_rad_s": 1.9887852668762207
+      }
+    },
+    {
+      "horizon": 8,
+      "source": "reference_pd",
+      "family": "yaw",
+      "valid": 2,
+      "total": 2,
+      "rmse": {
+        "position_m": 0.0023841937072575092,
+        "orientation_rad": 0.021701252087950706,
+        "linear_velocity_m_s": 0.06443379819393158,
+        "angular_velocity_rad_s": 0.6332345008850098,
+        "leg_position_rad": 0.046818364411592484,
+        "leg_velocity_rad_s": 1.4227571487426758,
+        "wheel_velocity_rad_s": 1.834708333015442
+      }
+    },
+    {
+      "horizon": 8,
+      "source": "reference_pd",
+      "family": "lateral",
+      "valid": 5,
+      "total": 5,
+      "rmse": {
+        "position_m": 0.007473976816982031,
+        "orientation_rad": 0.046369101852178574,
+        "linear_velocity_m_s": 0.12805134057998657,
+        "angular_velocity_rad_s": 1.072717547416687,
+        "leg_position_rad": 0.1525263637304306,
+        "leg_velocity_rad_s": 5.623798370361328,
+        "wheel_velocity_rad_s": 3.383450746536255
+      }
+    },
+    {
+      "horizon": 8,
+      "source": "reference_pd",
+      "family": "forward_yaw",
+      "valid": 2,
+      "total": 2,
+      "rmse": {
+        "position_m": 0.0027675433084368706,
+        "orientation_rad": 0.017018189653754234,
+        "linear_velocity_m_s": 0.07023662328720093,
+        "angular_velocity_rad_s": 0.6682443618774414,
+        "leg_position_rad": 0.05301910638809204,
+        "leg_velocity_rad_s": 1.6468206644058228,
+        "wheel_velocity_rad_s": 6.16677188873291
+      }
+    },
+    {
+      "horizon": 8,
+      "source": "reference_pd",
+      "family": "forward_lateral",
+      "valid": 4,
+      "total": 4,
+      "rmse": {
+        "position_m": 0.0025036553852260113,
+        "orientation_rad": 0.010813888162374496,
+        "linear_velocity_m_s": 0.05182306468486786,
+        "angular_velocity_rad_s": 0.4174487888813019,
+        "leg_position_rad": 0.040261462330818176,
+        "leg_velocity_rad_s": 1.620322346687317,
+        "wheel_velocity_rad_s": 2.647212266921997
+      }
+    },
+    {
+      "horizon": 8,
+      "source": "reference_pd",
+      "family": "lateral_yaw",
+      "valid": 3,
+      "total": 3,
+      "rmse": {
+        "position_m": 0.0063920048996806145,
+        "orientation_rad": 0.022577904164791107,
+        "linear_velocity_m_s": 0.10167832672595978,
+        "angular_velocity_rad_s": 0.9913203716278076,
+        "leg_position_rad": 0.07409346103668213,
+        "leg_velocity_rad_s": 2.3573989868164062,
+        "wheel_velocity_rad_s": 3.3610408306121826
+      }
+    },
+    {
+      "horizon": 8,
+      "source": "reference_pd",
+      "family": "standing",
+      "valid": 1,
+      "total": 1,
+      "rmse": {
+        "position_m": 0.001868380350060761,
+        "orientation_rad": 0.006389958318322897,
+        "linear_velocity_m_s": 0.03492288663983345,
+        "angular_velocity_rad_s": 0.1023971438407898,
+        "leg_position_rad": 0.01661503128707409,
+        "leg_velocity_rad_s": 0.5275770425796509,
+        "wheel_velocity_rad_s": 0.46878910064697266
+      }
+    },
+    {
+      "horizon": 8,
+      "source": "perturbed_actor",
+      "family": "forward_backward",
+      "valid": 6,
+      "total": 6,
+      "rmse": {
+        "position_m": 0.00744622154161334,
+        "orientation_rad": 0.03482961654663086,
+        "linear_velocity_m_s": 0.10440891981124878,
+        "angular_velocity_rad_s": 0.41431617736816406,
+        "leg_position_rad": 0.09913540631532669,
+        "leg_velocity_rad_s": 1.606080174446106,
+        "wheel_velocity_rad_s": 4.8035783767700195
+      }
+    },
+    {
+      "horizon": 8,
+      "source": "perturbed_actor",
+      "family": "yaw",
+      "valid": 2,
+      "total": 2,
+      "rmse": {
+        "position_m": 0.008863489143550396,
+        "orientation_rad": 0.03701655939221382,
+        "linear_velocity_m_s": 0.14587824046611786,
+        "angular_velocity_rad_s": 0.37004610896110535,
+        "leg_position_rad": 0.08733479678630829,
+        "leg_velocity_rad_s": 1.3694782257080078,
+        "wheel_velocity_rad_s": 3.5111584663391113
+      }
+    },
+    {
+      "horizon": 8,
+      "source": "perturbed_actor",
+      "family": "lateral",
+      "valid": 5,
+      "total": 5,
+      "rmse": {
+        "position_m": 0.009852617979049683,
+        "orientation_rad": 0.03930356726050377,
+        "linear_velocity_m_s": 0.17251387238502502,
+        "angular_velocity_rad_s": 0.8647924661636353,
+        "leg_position_rad": 0.13497953116893768,
+        "leg_velocity_rad_s": 1.734889268875122,
+        "wheel_velocity_rad_s": 4.878979682922363
+      }
+    },
+    {
+      "horizon": 8,
+      "source": "perturbed_actor",
+      "family": "forward_yaw",
+      "valid": 2,
+      "total": 2,
+      "rmse": {
+        "position_m": 0.010540091432631016,
+        "orientation_rad": 0.03698708862066269,
+        "linear_velocity_m_s": 0.16896405816078186,
+        "angular_velocity_rad_s": 0.3287501931190491,
+        "leg_position_rad": 0.0814867690205574,
+        "leg_velocity_rad_s": 1.1434253454208374,
+        "wheel_velocity_rad_s": 5.210756778717041
+      }
+    },
+    {
+      "horizon": 8,
+      "source": "perturbed_actor",
+      "family": "forward_lateral",
+      "valid": 4,
+      "total": 4,
+      "rmse": {
+        "position_m": 0.010199043899774551,
+        "orientation_rad": 0.05255391076207161,
+        "linear_velocity_m_s": 0.18010124564170837,
+        "angular_velocity_rad_s": 0.7710863351821899,
+        "leg_position_rad": 0.10882425308227539,
+        "leg_velocity_rad_s": 1.8702113628387451,
+        "wheel_velocity_rad_s": 6.800787448883057
+      }
+    },
+    {
+      "horizon": 8,
+      "source": "perturbed_actor",
+      "family": "lateral_yaw",
+      "valid": 3,
+      "total": 3,
+      "rmse": {
+        "position_m": 0.00760792987421155,
+        "orientation_rad": 0.02873319573700428,
+        "linear_velocity_m_s": 0.12080788612365723,
+        "angular_velocity_rad_s": 0.5738665461540222,
+        "leg_position_rad": 0.11649171262979507,
+        "leg_velocity_rad_s": 1.761192798614502,
+        "wheel_velocity_rad_s": 5.750813961029053
+      }
+    },
+    {
+      "horizon": 8,
+      "source": "perturbed_actor",
+      "family": "standing",
+      "valid": 1,
+      "total": 1,
+      "rmse": {
+        "position_m": 0.0074931550770998,
+        "orientation_rad": 0.0256927702575922,
+        "linear_velocity_m_s": 0.11985233426094055,
+        "angular_velocity_rad_s": 0.19386544823646545,
+        "leg_position_rad": 0.07463493943214417,
+        "leg_velocity_rad_s": 1.396315097808838,
+        "wheel_velocity_rad_s": 2.4869282245635986
+      }
+    }
+  ],
+  "censored": "episodes terminated before requested horizon are excluded and counted"
+}

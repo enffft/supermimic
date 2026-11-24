@@ -1,0 +1,30 @@
+{
+  "physical_evaluations": 5,
+  "ready_for_next_stage": false,
+  "best_flat_pass_rate": 0.5,
+  "final_flat_pass_rate": 0.4,
+  "final_fall_rate": 0.19166666666666668,
+  "final_pass_rates": {
+    "standing": 1.0,
+    "forward": 0.8,
+    "backward": 0.75,
+    "left": 0.0,
+    "right": 0.0,
+    "yaw_left": 0.2,
+    "yaw_right": 0.6,
+    "forward_yaw": 1.0,
+    "forward_lateral": 0.0,
+    "lateral_yaw": 0.0,
+    "coupled": 0.3333333333333333
+  },
+  "videos": {
+    "best": [
+      "evaluation/best_videos/flat.mp4",
+      "evaluation/best_videos/coupled.mp4"
+    ],
+    "final": [
+      "evaluation/final_videos/flat.mp4",
+      "evaluation/final_videos/coupled.mp4"
+    ]
+  }
+}

@@ -1,0 +1,38 @@
+[
+  {
+    "run": "go2w_prior_benchmark_2048",
+    "num_envs": 2048,
+    "iterations": 12,
+    "seconds_per_iteration": 0.9271627874259138,
+    "real_transitions_per_second": 5522.223356498894,
+    "gpu_peak_MiB": 2880.50341796875,
+    "profile_ms_per_call": null
+  },
+  {
+    "run": "go2w_prior_benchmark_4096_no_prior",
+    "num_envs": 4096,
+    "iterations": 14,
+    "seconds_per_iteration": 1.1482213052139352,
+    "real_transitions_per_second": 8918.141436238284,
+    "gpu_peak_MiB": 4075.26513671875,
+    "profile_ms_per_call": null
+  },
+  {
+    "run": "go2w_prior_benchmark_4096",
+    "num_envs": 4096,
+    "iterations": 14,
+    "seconds_per_iteration": 1.134058456776464,
+    "real_transitions_per_second": 9029.516899073238,
+    "gpu_peak_MiB": 4077.119140625,
+    "profile_ms_per_call": null
+  },
+  {
+    "run": "go2w_prior_benchmark_4096_profile",
+    "num_envs": 4096,
+    "iterations": 14,
+    "seconds_per_iteration": 1.149189244997355,
+    "real_transitions_per_second": 8910.629858899843,
+    "gpu_peak_MiB": 4077.119140625,
+    "profile_ms_per_call": null
+  }
+]

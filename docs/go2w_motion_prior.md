@@ -100,3 +100,5 @@ python tools/train_go2w.py --mode formal --profile motion_prior \
 最终 World Model 在 2,196 个普通 Actor 真实留出窗口上，H1/H8 线速度 RMSE 为 0.029/0.098 m/s，角速度为 0.290/0.521 rad/s，腿位置为 0.014/0.092 rad，腿速度为 1.114/1.769 rad/s。23 个参考 PD 窗口的 H8 角速度 RMSE 为 0.836 rad/s，23 个扰动 Actor 窗口的 H8 线速度 RMSE 为 0.133 m/s。完整逐类别结果记录在运行目录。采集源累计计数曾在 float32 的 2²⁴ 饱和，修复采用 int64。饱和前的日志及并发配额显示普通 Actor、RSI Actor、参考 PD 约为 70%／20%／10%。
 
 恢复 checkpoint、真实 rollout 视频、评测 JSON 和完整 `training_report.md` 保存在 `runs/go2w_motion_prior/`。
+
+[完整训练与评测报告](validation/go2w_motion_prior/training_report.md) · [学习曲线](validation/go2w_motion_prior/learning_curves.png)

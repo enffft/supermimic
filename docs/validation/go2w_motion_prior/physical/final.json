@@ -1,0 +1,4565 @@
+{
+  "rows": [
+    {
+      "name": "standing_0",
+      "family": "standing",
+      "goal": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.05182149261236191,
+        0.03881640359759331,
+        0.09094813466072083
+      ],
+      "mean_actual": [
+        0.03151887655258179,
+        0.015368900261819363,
+        -0.07119995355606079
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 92.7557601928711
+    },
+    {
+      "name": "forward_0",
+      "family": "forward",
+      "goal": [
+        0.1,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04347383230924606,
+        0.01944732666015625,
+        0.10960506647825241
+      ],
+      "mean_actual": [
+        0.13260649144649506,
+        0.006786820478737354,
+        -0.10079151391983032
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 65.73368835449219
+    },
+    {
+      "name": "forward_1",
+      "family": "forward",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.05339356139302254,
+        0.025505295023322105,
+        0.048718199133872986
+      ],
+      "mean_actual": [
+        0.3322833776473999,
+        0.019534533843398094,
+        0.004166289232671261
+      ],
+      "duration_seconds": 9.6,
+      "terminal_reason": "boundary",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 80.82872772216797
+    },
+    {
+      "name": "forward_2",
+      "family": "forward",
+      "goal": [
+        0.5,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.09884638339281082,
+        0.03774124011397362,
+        0.046813834458589554
+      ],
+      "mean_actual": [
+        0.5173746943473816,
+        0.025870423763990402,
+        -0.004941064398735762
+      ],
+      "duration_seconds": 4.2,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 37.34090042114258
+    },
+    {
+      "name": "forward_3",
+      "family": "forward",
+      "goal": [
+        0.7,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.13636940717697144,
+        0.03181716799736023,
+        0.12757550179958344
+      ],
+      "mean_actual": [
+        0.6325178146362305,
+        -1.3643884813063778e-05,
+        -0.08999734371900558
+      ],
+      "duration_seconds": 4.2,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 36.14569091796875
+    },
+    {
+      "name": "forward_4",
+      "family": "forward",
+      "goal": [
+        0.375,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.07766872644424438,
+        0.04175693541765213,
+        0.05723806470632553
+      ],
+      "mean_actual": [
+        0.3995901942253113,
+        0.029912689700722694,
+        -0.006660432554781437
+      ],
+      "duration_seconds": 4.2,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 36.24452590942383
+    },
+    {
+      "name": "backward_0",
+      "family": "backward",
+      "goal": [
+        -0.1,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.03685550019145012,
+        0.01306022610515356,
+        0.03624339774250984
+      ],
+      "mean_actual": [
+        -0.0678427666425705,
+        0.007412957493215799,
+        0.018958058208227158
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 67.73323822021484
+    },
+    {
+      "name": "backward_1",
+      "family": "backward",
+      "goal": [
+        -0.2,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.047743916511535645,
+        0.02557327039539814,
+        0.11950679868459702
+      ],
+      "mean_actual": [
+        -0.2224237024784088,
+        0.0044444650411605835,
+        0.028169801458716393
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 74.20186614990234
+    },
+    {
+      "name": "backward_2",
+      "family": "backward",
+      "goal": [
+        -0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.11331367492675781,
+        0.04027770087122917,
+        0.1890931874513626
+      ],
+      "mean_actual": [
+        -0.19981345534324646,
+        0.008328069001436234,
+        -0.073613740503788
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 75.23416137695312
+    },
+    {
+      "name": "backward_3",
+      "family": "backward",
+      "goal": [
+        -0.175,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.06690710037946701,
+        0.02508021704852581,
+        0.09106666594743729
+      ],
+      "mean_actual": [
+        -0.22484341263771057,
+        0.004438950680196285,
+        0.03305577486753464
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 71.65826416015625
+    },
+    {
+      "name": "left_0",
+      "family": "left",
+      "goal": [
+        0,
+        0.1,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.42035019397735596,
+        0.30336588621139526,
+        0.872393786907196
+      ],
+      "mean_actual": [
+        -0.17258673906326294,
+        0.24538826942443848,
+        0.01886872388422489
+      ],
+      "duration_seconds": 4.46,
+      "terminal_reason": "fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 7.085866928100586
+    },
+    {
+      "name": "left_1",
+      "family": "left",
+      "goal": [
+        0,
+        0.2,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.28525510430336,
+        0.3536436855792999,
+        1.3792665004730225
+      ],
+      "mean_actual": [
+        -0.15808041393756866,
+        0.39675384759902954,
+        0.301714152097702
+      ],
+      "duration_seconds": 8.9,
+      "terminal_reason": "boundary",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 6.943993091583252
+    },
+    {
+      "name": "left_2",
+      "family": "left",
+      "goal": [
+        0,
+        0.3,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.2684331238269806,
+        0.5908169150352478,
+        1.50945246219635
+      ],
+      "mean_actual": [
+        -0.15791480243206024,
+        0.7746300101280212,
+        0.046986646950244904
+      ],
+      "duration_seconds": 2.6,
+      "terminal_reason": "fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 0.23318658769130707
+    },
+    {
+      "name": "left_3",
+      "family": "left",
+      "goal": [
+        0,
+        0.175,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.26839306950569153,
+        0.3681568503379822,
+        1.1978445053100586
+      ],
+      "mean_actual": [
+        -0.0025764494203031063,
+        0.4391595125198364,
+        0.13641120493412018
+      ],
+      "duration_seconds": 2.34,
+      "terminal_reason": "fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 1.7310729026794434
+    },
+    {
+      "name": "right_0",
+      "family": "right",
+      "goal": [
+        0,
+        -0.1,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.02458483725786209,
+        0.10138610750436783,
+        0.05566750839352608
+      ],
+      "mean_actual": [
+        0.015267003327608109,
+        0.00016786481137387455,
+        -0.03534236550331116
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 63.33100128173828
+    },
+    {
+      "name": "right_1",
+      "family": "right",
+      "goal": [
+        0,
+        -0.2,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.03903522342443466,
+        0.18541237711906433,
+        0.08706442266702652
+      ],
+      "mean_actual": [
+        0.03075549378991127,
+        -0.015839876607060432,
+        -0.06381982564926147
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 62.077030181884766
+    },
+    {
+      "name": "right_2",
+      "family": "right",
+      "goal": [
+        0,
+        -0.3,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.09476590901613235,
+        0.2798159718513489,
+        0.18471230566501617
+      ],
+      "mean_actual": [
+        0.08006883412599564,
+        -0.025062106549739838,
+        -0.14802677929401398
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 51.41706466674805
+    },
+    {
+      "name": "right_3",
+      "family": "right",
+      "goal": [
+        0,
+        -0.175,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.030849914997816086,
+        0.16624023020267487,
+        0.06146203354001045
+      ],
+      "mean_actual": [
+        0.02199440449476242,
+        -0.010264341719448566,
+        -0.03790977969765663
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 63.01423645019531
+    },
+    {
+      "name": "yaw_left_0",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.2
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.026246773079037666,
+        0.028132451698184013,
+        0.09743951261043549
+      ],
+      "mean_actual": [
+        -0.0021680942736566067,
+        0.01411628257483244,
+        0.12305554747581482
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 71.35649108886719
+    },
+    {
+      "name": "yaw_left_1",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.35
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.0661226138472557,
+        0.05179538577795029,
+        0.2819148004055023
+      ],
+      "mean_actual": [
+        -0.04544757679104805,
+        0.031034378334879875,
+        0.1881711781024933
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 69.68065643310547
+    },
+    {
+      "name": "yaw_left_2",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.4
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.06904463469982147,
+        0.053732722997665405,
+        0.35462915897369385
+      ],
+      "mean_actual": [
+        -0.045521046966314316,
+        0.035074178129434586,
+        0.22238178551197052
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 69.20730590820312
+    },
+    {
+      "name": "yaw_left_3",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.6
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.059946026653051376,
+        0.07114686071872711,
+        0.5794529318809509
+      ],
+      "mean_actual": [
+        -0.006180635187774897,
+        0.05470975115895271,
+        0.385859876871109
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 63.64933776855469
+    },
+    {
+      "name": "yaw_left_4",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.475
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.07048633694648743,
+        0.05756484717130661,
+        0.4627518951892853
+      ],
+      "mean_actual": [
+        -0.03716868534684181,
+        0.04039014130830765,
+        0.28629404306411743
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 67.2131118774414
+    },
+    {
+      "name": "yaw_right_0",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.2
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.06075970456004143,
+        0.04712525010108948,
+        0.06894984096288681
+      ],
+      "mean_actual": [
+        0.042142774909734726,
+        0.02664906159043312,
+        -0.22398220002651215
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 72.17393493652344
+    },
+    {
+      "name": "yaw_right_1",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.35
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.024871883913874626,
+        0.017571350559592247,
+        0.06236345320940018
+      ],
+      "mean_actual": [
+        -0.017258701846003532,
+        0.004583028145134449,
+        -0.31624212861061096
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 83.54673767089844
+    },
+    {
+      "name": "yaw_right_2",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.4
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04188733920454979,
+        0.01878138817846775,
+        0.08731074631214142
+      ],
+      "mean_actual": [
+        -0.035977642983198166,
+        0.0030841375701129436,
+        -0.3374941349029541
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 84.64163208007812
+    },
+    {
+      "name": "yaw_right_3",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.6
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.11348745226860046,
+        0.08543870598077774,
+        0.35792040824890137
+      ],
+      "mean_actual": [
+        -0.08167268335819244,
+        -0.011555123142898083,
+        -0.5566178560256958
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 69.8900146484375
+    },
+    {
+      "name": "yaw_right_4",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.475
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.10309627652168274,
+        0.04651247709989548,
+        0.29631510376930237
+      ],
+      "mean_actual": [
+        -0.08887150883674622,
+        0.012116950936615467,
+        -0.39921626448631287
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 74.7857437133789
+    },
+    {
+      "name": "forward_yaw_0",
+      "family": "forward_yaw",
+      "goal": [
+        0.3,
+        0,
+        0.3
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04576679319143295,
+        0.04350041225552559,
+        0.0762481763958931
+      ],
+      "mean_actual": [
+        0.3141467571258545,
+        0.03676258772611618,
+        0.2367883175611496
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 70.29078674316406
+    },
+    {
+      "name": "forward_yaw_1",
+      "family": "forward_yaw",
+      "goal": [
+        0.3,
+        0,
+        -0.3
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04906444251537323,
+        0.020357556641101837,
+        0.06305766105651855
+      ],
+      "mean_actual": [
+        0.3292199969291687,
+        0.0024404898285865784,
+        -0.3215843141078949
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 73.13591766357422
+    },
+    {
+      "name": "forward_yaw_2",
+      "family": "forward_yaw",
+      "goal": [
+        0.45,
+        0,
+        0.35
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.09284418821334839,
+        0.04869468882679939,
+        0.064608134329319
+      ],
+      "mean_actual": [
+        0.46246224641799927,
+        0.04230591282248497,
+        0.3174433410167694
+      ],
+      "duration_seconds": 4.2,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 32.713043212890625
+    },
+    {
+      "name": "forward_yaw_3",
+      "family": "forward_yaw",
+      "goal": [
+        0.45,
+        0,
+        -0.35
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.07035110145807266,
+        0.0347621776163578,
+        0.09155707061290741
+      ],
+      "mean_actual": [
+        0.435959130525589,
+        -0.001889571431092918,
+        -0.33669525384902954
+      ],
+      "duration_seconds": 4.2,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 33.75242233276367
+    },
+    {
+      "name": "forward_lateral_0",
+      "family": "forward_lateral",
+      "goal": [
+        0.3,
+        0.1,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.09761206060647964,
+        0.1247086152434349,
+        0.187826007604599
+      ],
+      "mean_actual": [
+        0.3481040298938751,
+        0.21299798786640167,
+        -0.0985318273305893
+      ],
+      "duration_seconds": 7.8,
+      "terminal_reason": "boundary",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 30.715883255004883
+    },
+    {
+      "name": "forward_lateral_1",
+      "family": "forward_lateral",
+      "goal": [
+        0.3,
+        -0.1,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.0636114552617073,
+        0.10966155678033829,
+        0.12880422174930573
+      ],
+      "mean_actual": [
+        0.33896663784980774,
+        0.004375707358121872,
+        -0.09884000569581985
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 51.09939193725586
+    },
+    {
+      "name": "forward_lateral_2",
+      "family": "forward_lateral",
+      "goal": [
+        0.25,
+        0.175,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.47043606638908386,
+        0.642494261264801,
+        1.1791059970855713
+      ],
+      "mean_actual": [
+        0.011817806400358677,
+        0.6541495323181152,
+        -0.16070027649402618
+      ],
+      "duration_seconds": 3.42,
+      "terminal_reason": "fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": -5.86146354675293
+    },
+    {
+      "name": "forward_lateral_3",
+      "family": "forward_lateral",
+      "goal": [
+        0.25,
+        -0.175,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.05339398235082626,
+        0.1615818738937378,
+        0.08752597123384476
+      ],
+      "mean_actual": [
+        0.2868870198726654,
+        -0.015203253366053104,
+        -0.06607335060834885
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 50.45179748535156
+    },
+    {
+      "name": "lateral_yaw_0",
+      "family": "lateral_yaw",
+      "goal": [
+        0,
+        0.15,
+        0.4
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.16223737597465515,
+        0.5041434168815613,
+        1.1456525325775146
+      ],
+      "mean_actual": [
+        0.08800128847360611,
+        0.44849342107772827,
+        -0.05248545482754707
+      ],
+      "duration_seconds": 1.96,
+      "terminal_reason": "fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 2.0566656589508057
+    },
+    {
+      "name": "lateral_yaw_1",
+      "family": "lateral_yaw",
+      "goal": [
+        0,
+        -0.15,
+        -0.4
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.22151009738445282,
+        0.20765303075313568,
+        0.6096610426902771
+      ],
+      "mean_actual": [
+        -0.11705298721790314,
+        -0.01692333072423935,
+        -0.11945071816444397
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 24.922861099243164
+    },
+    {
+      "name": "lateral_yaw_2",
+      "family": "lateral_yaw",
+      "goal": [
+        0,
+        0.18,
+        -0.35
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.16729535162448883,
+        0.20888850092887878,
+        1.069440484046936
+      ],
+      "mean_actual": [
+        -0.0011009217705577612,
+        0.29149577021598816,
+        -0.48230475187301636
+      ],
+      "duration_seconds": 3.36,
+      "terminal_reason": "fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 6.153975963592529
+    },
+    {
+      "name": "lateral_yaw_3",
+      "family": "lateral_yaw",
+      "goal": [
+        0,
+        -0.18,
+        0.35
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.17504169046878815,
+        0.1770593374967575,
+        0.5419573783874512
+      ],
+      "mean_actual": [
+        0.12969599664211273,
+        -0.04131340608000755,
+        0.05773656815290451
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 28.599363327026367
+    },
+    {
+      "name": "start_stop",
+      "family": "switch",
+      "goal": [
+        0,
+        0,
+        0
+      ],
+      "sequence": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0.3,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.05587821453809738,
+        0.04020044207572937,
+        0.08337706327438354
+      ],
+      "mean_actual": [
+        0.15237189829349518,
+        0.023293083533644676,
+        -0.05026455596089363
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "boundary",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 88.45731353759766
+    },
+    {
+      "name": "forward_reverse",
+      "family": "switch",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "sequence": [
+        [
+          0.3,
+          0,
+          0
+        ],
+        [
+          -0.2,
+          0,
+          0
+        ]
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.18527953326702118,
+        0.07316324859857559,
+        0.11724183708429337
+      ],
+      "mean_actual": [
+        -0.044345173984766006,
+        0.029239453375339508,
+        -0.02197227068245411
+      ],
+      "duration_seconds": 8.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 52.91740417480469
+    },
+    {
+      "name": "lateral_reverse",
+      "family": "switch",
+      "goal": [
+        0,
+        0.2,
+        0
+      ],
+      "sequence": [
+        [
+          0,
+          0.2,
+          0
+        ],
+        [
+          0,
+          -0.2,
+          0
+        ]
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.2401854693889618,
+        0.2913789451122284,
+        0.3941877484321594
+      ],
+      "mean_actual": [
+        -0.0906553715467453,
+        0.2184000015258789,
+        -0.041264619678258896
+      ],
+      "duration_seconds": 8.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 30.424827575683594
+    },
+    {
+      "name": "yaw_reverse",
+      "family": "switch",
+      "goal": [
+        0,
+        0,
+        0.4
+      ],
+      "sequence": [
+        [
+          0,
+          0,
+          0.4
+        ],
+        [
+          0,
+          0,
+          -0.4
+        ]
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.06720742583274841,
+        0.06259030848741531,
+        0.22987867891788483
+      ],
+      "mean_actual": [
+        -0.018752584233880043,
+        0.016957513988018036,
+        -0.034547239542007446
+      ],
+      "duration_seconds": 8.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 60.20358657836914
+    },
+    {
+      "name": "forward_to_lateral",
+      "family": "switch",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "sequence": [
+        [
+          0.3,
+          0,
+          0
+        ],
+        [
+          0,
+          0.2,
+          0
+        ]
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.21111617982387543,
+        0.2509906589984894,
+        0.9930736422538757
+      ],
+      "mean_actual": [
+        0.213220477104187,
+        0.09867003560066223,
+        0.07429833710193634
+      ],
+      "duration_seconds": 5.8,
+      "terminal_reason": "fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 29.499174118041992
+    },
+    {
+      "name": "forward_to_turn",
+      "family": "switch",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "sequence": [
+        [
+          0.3,
+          0,
+          0
+        ],
+        [
+          0.3,
+          0,
+          0.4
+        ]
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.05570884048938751,
+        0.04206105321645737,
+        0.07363609224557877
+      ],
+      "mean_actual": [
+        0.33056914806365967,
+        0.03700793534517288,
+        0.16153095662593842
+      ],
+      "duration_seconds": 8.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 63.01411819458008
+    },
+    {
+      "name": "standing_0",
+      "family": "standing",
+      "goal": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.05863232910633087,
+        0.03100230172276497,
+        0.0971897691488266
+      ],
+      "mean_actual": [
+        0.03349446505308151,
+        0.015052961185574532,
+        -0.07913146167993546
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 92.60800170898438
+    },
+    {
+      "name": "forward_0",
+      "family": "forward",
+      "goal": [
+        0.1,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04085467383265495,
+        0.018870055675506592,
+        0.1086108535528183
+      ],
+      "mean_actual": [
+        0.13007023930549622,
+        0.006032983306795359,
+        -0.1002541035413742
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 65.9086685180664
+    },
+    {
+      "name": "forward_1",
+      "family": "forward",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.053127169609069824,
+        0.027762798592448235,
+        0.047695524990558624
+      ],
+      "mean_actual": [
+        0.33182424306869507,
+        0.018857676535844803,
+        0.0031021249014884233
+      ],
+      "duration_seconds": 9.620000000000001,
+      "terminal_reason": "boundary",
+      "initial_yaw_rad": 0.0,
+      "reward": 80.94380950927734
+    },
+    {
+      "name": "forward_2",
+      "family": "forward",
+      "goal": [
+        0.5,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.09688414633274078,
+        0.03987327963113785,
+        0.04896865785121918
+      ],
+      "mean_actual": [
+        0.5174651741981506,
+        0.027029234915971756,
+        -0.005928146652877331
+      ],
+      "duration_seconds": 4.2,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 37.317955017089844
+    },
+    {
+      "name": "forward_3",
+      "family": "forward",
+      "goal": [
+        0.7,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.13712845742702484,
+        0.03365574777126312,
+        0.12671789526939392
+      ],
+      "mean_actual": [
+        0.6355646848678589,
+        -0.0006334487115964293,
+        -0.09208238869905472
+      ],
+      "duration_seconds": 4.2,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 36.16170883178711
+    },
+    {
+      "name": "forward_4",
+      "family": "forward",
+      "goal": [
+        0.375,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.07715607434511185,
+        0.04228004440665245,
+        0.058251965790987015
+      ],
+      "mean_actual": [
+        0.3983789086341858,
+        0.030372990295290947,
+        -0.006189828272908926
+      ],
+      "duration_seconds": 4.2,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 36.256351470947266
+    },
+    {
+      "name": "backward_0",
+      "family": "backward",
+      "goal": [
+        -0.1,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.03669494017958641,
+        0.01359581109136343,
+        0.0388350635766983
+      ],
+      "mean_actual": [
+        -0.0676751658320427,
+        0.00734971696510911,
+        0.018968120217323303
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 67.67339324951172
+    },
+    {
+      "name": "backward_1",
+      "family": "backward",
+      "goal": [
+        -0.2,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.03851651772856712,
+        0.025391466915607452,
+        0.11663540452718735
+      ],
+      "mean_actual": [
+        -0.21704784035682678,
+        0.005056452937424183,
+        0.02834715135395527
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 74.66638946533203
+    },
+    {
+      "name": "backward_2",
+      "family": "backward",
+      "goal": [
+        -0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.10918819904327393,
+        0.03483303263783455,
+        0.17906659841537476
+      ],
+      "mean_actual": [
+        -0.20346574485301971,
+        0.0056914896704256535,
+        -0.07498665153980255
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 76.29783630371094
+    },
+    {
+      "name": "backward_3",
+      "family": "backward",
+      "goal": [
+        -0.175,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.05113510414958,
+        0.02915542759001255,
+        0.10080602020025253
+      ],
+      "mean_actual": [
+        -0.20681153237819672,
+        0.005598054733127356,
+        0.0321476086974144
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 72.0737075805664
+    },
+    {
+      "name": "left_0",
+      "family": "left",
+      "goal": [
+        0,
+        0.1,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.3742104470729828,
+        0.25310713052749634,
+        1.331102967262268
+      ],
+      "mean_actual": [
+        -0.07893264293670654,
+        0.21616274118423462,
+        -0.10335522145032883
+      ],
+      "duration_seconds": 3.5,
+      "terminal_reason": "fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 4.272622585296631
+    },
+    {
+      "name": "left_1",
+      "family": "left",
+      "goal": [
+        0,
+        0.2,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.5086718201637268,
+        0.5368884205818176,
+        1.1592439413070679
+      ],
+      "mean_actual": [
+        -0.2466757446527481,
+        0.5901421904563904,
+        0.003942196723073721
+      ],
+      "duration_seconds": 2.36,
+      "terminal_reason": "fall",
+      "initial_yaw_rad": 0.0,
+      "reward": -0.3379818797111511
+    },
+    {
+      "name": "left_2",
+      "family": "left",
+      "goal": [
+        0,
+        0.3,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.2717038094997406,
+        0.40438246726989746,
+        0.850039541721344
+      ],
+      "mean_actual": [
+        -0.052358705550432205,
+        0.6068682074546814,
+        0.08634767681360245
+      ],
+      "duration_seconds": 1.2,
+      "terminal_reason": "fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 2.7318429946899414
+    },
+    {
+      "name": "left_3",
+      "family": "left",
+      "goal": [
+        0,
+        0.175,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.36160075664520264,
+        0.43069446086883545,
+        1.3851898908615112
+      ],
+      "mean_actual": [
+        -0.1855439990758896,
+        0.25162267684936523,
+        0.2714103162288666
+      ],
+      "duration_seconds": 2.62,
+      "terminal_reason": "fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 0.7686479091644287
+    },
+    {
+      "name": "right_0",
+      "family": "right",
+      "goal": [
+        0,
+        -0.1,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.023130493238568306,
+        0.10088727623224258,
+        0.05563611537218094
+      ],
+      "mean_actual": [
+        0.013652254827320576,
+        -9.700937516754493e-05,
+        -0.034068357199430466
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 63.41233825683594
+    },
+    {
+      "name": "right_1",
+      "family": "right",
+      "goal": [
+        0,
+        -0.2,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.04157068207859993,
+        0.18473120033740997,
+        0.08949051052331924
+      ],
+      "mean_actual": [
+        0.03349187225103378,
+        -0.016714418306946754,
+        -0.06868454813957214
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 62.0128173828125
+    },
+    {
+      "name": "right_2",
+      "family": "right",
+      "goal": [
+        0,
+        -0.3,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.10511741042137146,
+        0.2782326936721802,
+        0.20013919472694397
+      ],
+      "mean_actual": [
+        0.08814429491758347,
+        -0.0266118124127388,
+        -0.15222205221652985
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 49.98870086669922
+    },
+    {
+      "name": "right_3",
+      "family": "right",
+      "goal": [
+        0,
+        -0.175,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.032133277505636215,
+        0.16624246537685394,
+        0.062271956354379654
+      ],
+      "mean_actual": [
+        0.023907030001282692,
+        -0.00991700030863285,
+        -0.040173787623643875
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 62.90446472167969
+    },
+    {
+      "name": "yaw_left_0",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.2
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.02506832219660282,
+        0.027985934168100357,
+        0.09229495376348495
+      ],
+      "mean_actual": [
+        -0.003523933934047818,
+        0.013428731821477413,
+        0.12470238655805588
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 71.5452651977539
+    },
+    {
+      "name": "yaw_left_1",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.35
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.066984161734581,
+        0.04563015326857567,
+        0.284557580947876
+      ],
+      "mean_actual": [
+        -0.04666381701827049,
+        0.028942137956619263,
+        0.1875903606414795
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 70.00666046142578
+    },
+    {
+      "name": "yaw_left_2",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.4
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.07086440920829773,
+        0.05501753091812134,
+        0.35364454984664917
+      ],
+      "mean_actual": [
+        -0.045746732503175735,
+        0.03424627333879471,
+        0.2253541648387909
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 69.22150421142578
+    },
+    {
+      "name": "yaw_left_3",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.6
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.06276895105838776,
+        0.07331783324480057,
+        0.5905840396881104
+      ],
+      "mean_actual": [
+        -0.010129675269126892,
+        0.05703505873680115,
+        0.3898698389530182
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 62.42715835571289
+    },
+    {
+      "name": "yaw_left_4",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.475
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.06637763977050781,
+        0.05860355123877525,
+        0.4553355276584625
+      ],
+      "mean_actual": [
+        -0.031921084970235825,
+        0.042017754167318344,
+        0.281644731760025
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 67.96205139160156
+    },
+    {
+      "name": "yaw_right_0",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.2
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04648490250110626,
+        0.02501186914741993,
+        0.05973312631249428
+      ],
+      "mean_actual": [
+        0.03815138712525368,
+        0.014981593005359173,
+        -0.22646765410900116
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 73.36077117919922
+    },
+    {
+      "name": "yaw_right_1",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.35
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.02634746953845024,
+        0.01768927089869976,
+        0.060281284153461456
+      ],
+      "mean_actual": [
+        -0.019470132887363434,
+        0.004330279305577278,
+        -0.3150118291378021
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 83.55077362060547
+    },
+    {
+      "name": "yaw_right_2",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.4
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.040114063769578934,
+        0.01721806824207306,
+        0.08837702125310898
+      ],
+      "mean_actual": [
+        -0.03422704339027405,
+        0.0024942492600530386,
+        -0.33592134714126587
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 84.70124816894531
+    },
+    {
+      "name": "yaw_right_3",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.6
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.10759875923395157,
+        0.08922085911035538,
+        0.3547520339488983
+      ],
+      "mean_actual": [
+        -0.07387606799602509,
+        -0.02444007247686386,
+        -0.5690481066703796
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 69.92963409423828
+    },
+    {
+      "name": "yaw_right_4",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.475
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.10422063618898392,
+        0.04416601359844208,
+        0.2832047939300537
+      ],
+      "mean_actual": [
+        -0.09176921099424362,
+        0.01338770892471075,
+        -0.42124834656715393
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 74.40931701660156
+    },
+    {
+      "name": "forward_yaw_0",
+      "family": "forward_yaw",
+      "goal": [
+        0.3,
+        0,
+        0.3
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04723314568400383,
+        0.044025253504514694,
+        0.07373072952032089
+      ],
+      "mean_actual": [
+        0.31844738125801086,
+        0.0381021685898304,
+        0.23973429203033447
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 70.20771026611328
+    },
+    {
+      "name": "forward_yaw_1",
+      "family": "forward_yaw",
+      "goal": [
+        0.3,
+        0,
+        -0.3
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.050829943269491196,
+        0.020696857944130898,
+        0.06284361332654953
+      ],
+      "mean_actual": [
+        0.3314349055290222,
+        0.0027225094381719828,
+        -0.322645366191864
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 73.06869506835938
+    },
+    {
+      "name": "forward_yaw_2",
+      "family": "forward_yaw",
+      "goal": [
+        0.45,
+        0,
+        0.35
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.09537603706121445,
+        0.050811924040317535,
+        0.0605124905705452
+      ],
+      "mean_actual": [
+        0.4632265269756317,
+        0.04233543202280998,
+        0.315518856048584
+      ],
+      "duration_seconds": 4.2,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 32.629756927490234
+    },
+    {
+      "name": "forward_yaw_3",
+      "family": "forward_yaw",
+      "goal": [
+        0.45,
+        0,
+        -0.35
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.07201879471540451,
+        0.03651583567261696,
+        0.09673499315977097
+      ],
+      "mean_actual": [
+        0.4401099681854248,
+        -0.0006448969943448901,
+        -0.33304908871650696
+      ],
+      "duration_seconds": 4.2,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 33.635589599609375
+    },
+    {
+      "name": "forward_lateral_0",
+      "family": "forward_lateral",
+      "goal": [
+        0.3,
+        0.1,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.11195136606693268,
+        0.14088930189609528,
+        0.20022660493850708
+      ],
+      "mean_actual": [
+        0.3762689232826233,
+        0.22523091733455658,
+        -0.08457513898611069
+      ],
+      "duration_seconds": 7.24,
+      "terminal_reason": "boundary",
+      "initial_yaw_rad": 0.0,
+      "reward": 25.851999282836914
+    },
+    {
+      "name": "forward_lateral_1",
+      "family": "forward_lateral",
+      "goal": [
+        0.3,
+        -0.1,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.05018184334039688,
+        0.10030845552682877,
+        0.11350218951702118
+      ],
+      "mean_actual": [
+        0.3243260979652405,
+        -0.002687047468498349,
+        -0.09001245349645615
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 53.561195373535156
+    },
+    {
+      "name": "forward_lateral_2",
+      "family": "forward_lateral",
+      "goal": [
+        0.25,
+        0.175,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.20887091755867004,
+        0.46329882740974426,
+        0.7765663862228394
+      ],
+      "mean_actual": [
+        0.2890106439590454,
+        0.5540618300437927,
+        0.0012439385754987597
+      ],
+      "duration_seconds": 4.16,
+      "terminal_reason": "fall",
+      "initial_yaw_rad": 0.0,
+      "reward": -2.7672319412231445
+    },
+    {
+      "name": "forward_lateral_3",
+      "family": "forward_lateral",
+      "goal": [
+        0.25,
+        -0.175,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.05917924642562866,
+        0.16183137893676758,
+        0.08203519135713577
+      ],
+      "mean_actual": [
+        0.2935294806957245,
+        -0.015007954090833664,
+        -0.06230638921260834
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 50.30569076538086
+    },
+    {
+      "name": "lateral_yaw_0",
+      "family": "lateral_yaw",
+      "goal": [
+        0,
+        0.15,
+        0.4
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.28550463914871216,
+        0.34950196743011475,
+        2.0291311740875244
+      ],
+      "mean_actual": [
+        -0.025641273707151413,
+        0.22654969990253448,
+        0.931087851524353
+      ],
+      "duration_seconds": 4.6000000000000005,
+      "terminal_reason": "fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 0.5237047672271729
+    },
+    {
+      "name": "lateral_yaw_1",
+      "family": "lateral_yaw",
+      "goal": [
+        0,
+        -0.15,
+        -0.4
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.27109667658805847,
+        0.2772334814071655,
+        1.5620824098587036
+      ],
+      "mean_actual": [
+        -0.10497640818357468,
+        0.012622230686247349,
+        0.03797578439116478
+      ],
+      "duration_seconds": 3.2600000000000002,
+      "terminal_reason": "fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 3.8864006996154785
+    },
+    {
+      "name": "lateral_yaw_2",
+      "family": "lateral_yaw",
+      "goal": [
+        0,
+        0.18,
+        -0.35
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.1517331600189209,
+        0.33755186200141907,
+        0.7386855483055115
+      ],
+      "mean_actual": [
+        0.03769185021519661,
+        0.4123075306415558,
+        -0.2480854094028473
+      ],
+      "duration_seconds": 3.5,
+      "terminal_reason": "fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 5.818379878997803
+    },
+    {
+      "name": "lateral_yaw_3",
+      "family": "lateral_yaw",
+      "goal": [
+        0,
+        -0.18,
+        0.35
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.1788470298051834,
+        0.2042713761329651,
+        0.5790362358093262
+      ],
+      "mean_actual": [
+        0.11928081512451172,
+        -0.10591617226600647,
+        0.10442742705345154
+      ],
+      "duration_seconds": 7.66,
+      "terminal_reason": "fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 23.551313400268555
+    },
+    {
+      "name": "start_stop",
+      "family": "switch",
+      "goal": [
+        0,
+        0,
+        0
+      ],
+      "sequence": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0.3,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.06643569469451904,
+        0.03585857152938843,
+        0.08679232746362686
+      ],
+      "mean_actual": [
+        0.15461891889572144,
+        0.02064702846109867,
+        -0.06202924624085426
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "boundary",
+      "initial_yaw_rad": 0.0,
+      "reward": 88.32330322265625
+    },
+    {
+      "name": "forward_reverse",
+      "family": "switch",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "sequence": [
+        [
+          0.3,
+          0,
+          0
+        ],
+        [
+          -0.2,
+          0,
+          0
+        ]
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.20026269555091858,
+        0.06931000202894211,
+        0.12648601830005646
+      ],
+      "mean_actual": [
+        -0.04527166485786438,
+        0.027610797435045242,
+        -0.01865021325647831
+      ],
+      "duration_seconds": 8.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 52.95088195800781
+    },
+    {
+      "name": "lateral_reverse",
+      "family": "switch",
+      "goal": [
+        0,
+        0.2,
+        0
+      ],
+      "sequence": [
+        [
+          0,
+          0.2,
+          0
+        ],
+        [
+          0,
+          -0.2,
+          0
+        ]
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.5086718201637268,
+        0.5368884205818176,
+        1.1592439413070679
+      ],
+      "mean_actual": [
+        -0.2466757446527481,
+        0.5901421904563904,
+        0.003942196723073721
+      ],
+      "duration_seconds": 2.36,
+      "terminal_reason": "fall",
+      "initial_yaw_rad": 0.0,
+      "reward": -0.3379818797111511
+    },
+    {
+      "name": "yaw_reverse",
+      "family": "switch",
+      "goal": [
+        0,
+        0,
+        0.4
+      ],
+      "sequence": [
+        [
+          0,
+          0,
+          0.4
+        ],
+        [
+          0,
+          0,
+          -0.4
+        ]
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.06809114664793015,
+        0.06222984939813614,
+        0.2326223999261856
+      ],
+      "mean_actual": [
+        -0.01895134150981903,
+        0.018763430416584015,
+        -0.039253853261470795
+      ],
+      "duration_seconds": 8.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 60.267669677734375
+    },
+    {
+      "name": "forward_to_lateral",
+      "family": "switch",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "sequence": [
+        [
+          0.3,
+          0,
+          0
+        ],
+        [
+          0,
+          0.2,
+          0
+        ]
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.17223306000232697,
+        0.2618066370487213,
+        1.2328500747680664
+      ],
+      "mean_actual": [
+        0.2168336808681488,
+        0.08721288293600082,
+        0.1835179179906845
+      ],
+      "duration_seconds": 5.66,
+      "terminal_reason": "fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 31.891483306884766
+    },
+    {
+      "name": "forward_to_turn",
+      "family": "switch",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "sequence": [
+        [
+          0.3,
+          0,
+          0
+        ],
+        [
+          0.3,
+          0,
+          0.4
+        ]
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.05427037924528122,
+        0.043950170278549194,
+        0.07148506492376328
+      ],
+      "mean_actual": [
+        0.3282654583454132,
+        0.0370013564825058,
+        0.1633242964744568
+      ],
+      "duration_seconds": 8.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 63.03828048706055
+    },
+    {
+      "name": "standing_0",
+      "family": "standing",
+      "goal": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.05606228485703468,
+        0.032306406646966934,
+        0.09682663530111313
+      ],
+      "mean_actual": [
+        0.035068631172180176,
+        0.014669632539153099,
+        -0.07970573753118515
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 92.60124969482422
+    },
+    {
+      "name": "forward_0",
+      "family": "forward",
+      "goal": [
+        0.1,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04399488493800163,
+        0.018986554816365242,
+        0.11004022508859634
+      ],
+      "mean_actual": [
+        0.1315711885690689,
+        0.006724342238157988,
+        -0.10100279748439789
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 65.73393249511719
+    },
+    {
+      "name": "forward_1",
+      "family": "forward",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.05437575280666351,
+        0.02875606343150139,
+        0.050149109214544296
+      ],
+      "mean_actual": [
+        0.33278125524520874,
+        0.019814269617199898,
+        0.0003287526487838477
+      ],
+      "duration_seconds": 9.6,
+      "terminal_reason": "boundary",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 80.6491470336914
+    },
+    {
+      "name": "forward_2",
+      "family": "forward",
+      "goal": [
+        0.5,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.09662135690450668,
+        0.03822223097085953,
+        0.04662996903061867
+      ],
+      "mean_actual": [
+        0.518295407295227,
+        0.023542266339063644,
+        -0.0017287536757066846
+      ],
+      "duration_seconds": 4.2,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 37.37672424316406
+    },
+    {
+      "name": "forward_3",
+      "family": "forward",
+      "goal": [
+        0.7,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.13465014100074768,
+        0.03485610708594322,
+        0.1274542361497879
+      ],
+      "mean_actual": [
+        0.6383422017097473,
+        -0.0033422023989260197,
+        -0.0905577763915062
+      ],
+      "duration_seconds": 4.2,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 36.13412857055664
+    },
+    {
+      "name": "forward_4",
+      "family": "forward",
+      "goal": [
+        0.375,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.07689855992794037,
+        0.041467390954494476,
+        0.05660520866513252
+      ],
+      "mean_actual": [
+        0.39620092511177063,
+        0.027792006731033325,
+        0.0007657765527255833
+      ],
+      "duration_seconds": 4.2,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 36.311744689941406
+    },
+    {
+      "name": "backward_0",
+      "family": "backward",
+      "goal": [
+        -0.1,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.03881976753473282,
+        0.013367751613259315,
+        0.038373783230781555
+      ],
+      "mean_actual": [
+        -0.06568016856908798,
+        0.007865116000175476,
+        0.018127866089344025
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 67.63931274414062
+    },
+    {
+      "name": "backward_1",
+      "family": "backward",
+      "goal": [
+        -0.2,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04684858396649361,
+        0.019858649000525475,
+        0.10961994528770447
+      ],
+      "mean_actual": [
+        -0.2277633100748062,
+        0.00413733534514904,
+        0.02827564999461174
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 74.76927185058594
+    },
+    {
+      "name": "backward_2",
+      "family": "backward",
+      "goal": [
+        -0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.10631443560123444,
+        0.04176866263151169,
+        0.18493333458900452
+      ],
+      "mean_actual": [
+        -0.20635735988616943,
+        0.009732881560921669,
+        -0.0764620453119278
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 76.18110656738281
+    },
+    {
+      "name": "backward_3",
+      "family": "backward",
+      "goal": [
+        -0.175,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.05963939428329468,
+        0.027895621955394745,
+        0.09254191815853119
+      ],
+      "mean_actual": [
+        -0.22050006687641144,
+        0.005700029898434877,
+        0.034603457897901535
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 71.94390869140625
+    },
+    {
+      "name": "left_0",
+      "family": "left",
+      "goal": [
+        0,
+        0.1,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.29269441962242126,
+        0.2365001142024994,
+        1.5390625
+      ],
+      "mean_actual": [
+        -0.1402045488357544,
+        0.22326765954494476,
+        0.3623838722705841
+      ],
+      "duration_seconds": 7.5200000000000005,
+      "terminal_reason": "fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 13.55291748046875
+    },
+    {
+      "name": "left_1",
+      "family": "left",
+      "goal": [
+        0,
+        0.2,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.35401931405067444,
+        0.32537564635276794,
+        1.4987878799438477
+      ],
+      "mean_actual": [
+        0.004877911414951086,
+        0.4110395014286041,
+        0.3992517292499542
+      ],
+      "duration_seconds": 1.8800000000000001,
+      "terminal_reason": "fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 0.7197503447532654
+    },
+    {
+      "name": "left_2",
+      "family": "left",
+      "goal": [
+        0,
+        0.3,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.3284672796726227,
+        0.3690965175628662,
+        1.8814548254013062
+      ],
+      "mean_actual": [
+        -0.1290716975927353,
+        0.4489728808403015,
+        0.3071150779724121
+      ],
+      "duration_seconds": 1.32,
+      "terminal_reason": "fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 1.1519099473953247
+    },
+    {
+      "name": "left_3",
+      "family": "left",
+      "goal": [
+        0,
+        0.175,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.25476375222206116,
+        0.36486902832984924,
+        1.5423568487167358
+      ],
+      "mean_actual": [
+        -0.04551704227924347,
+        0.2653639614582062,
+        0.2738621234893799
+      ],
+      "duration_seconds": 2.44,
+      "terminal_reason": "fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 2.760237455368042
+    },
+    {
+      "name": "right_0",
+      "family": "right",
+      "goal": [
+        0,
+        -0.1,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.023195596411824226,
+        0.10114489495754242,
+        0.05794026330113411
+      ],
+      "mean_actual": [
+        0.013818712905049324,
+        -0.0001844167709350586,
+        -0.03801164776086807
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 63.3383674621582
+    },
+    {
+      "name": "right_1",
+      "family": "right",
+      "goal": [
+        0,
+        -0.2,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.04112829640507698,
+        0.18713968992233276,
+        0.0845438614487648
+      ],
+      "mean_actual": [
+        0.033698055893182755,
+        -0.014465049840509892,
+        -0.06067413464188576
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 61.895084381103516
+    },
+    {
+      "name": "right_2",
+      "family": "right",
+      "goal": [
+        0,
+        -0.3,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.17401260137557983,
+        0.2966487407684326,
+        1.112448811531067
+      ],
+      "mean_actual": [
+        0.0820075124502182,
+        -0.024538319557905197,
+        0.07867645472288132
+      ],
+      "duration_seconds": 9.76,
+      "terminal_reason": "fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 40.658443450927734
+    },
+    {
+      "name": "right_3",
+      "family": "right",
+      "goal": [
+        0,
+        -0.175,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.030594589188694954,
+        0.1660272181034088,
+        0.06117086112499237
+      ],
+      "mean_actual": [
+        0.021861059591174126,
+        -0.010113000869750977,
+        -0.03809355944395065
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 63.01531982421875
+    },
+    {
+      "name": "yaw_left_0",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.2
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.028147835284471512,
+        0.027752600610256195,
+        0.0939367339015007
+      ],
+      "mean_actual": [
+        -0.0028972052969038486,
+        0.014216446317732334,
+        0.12409121543169022
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 71.48961639404297
+    },
+    {
+      "name": "yaw_left_1",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.35
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.06634441018104553,
+        0.04803472012281418,
+        0.28116875886917114
+      ],
+      "mean_actual": [
+        -0.047164157032966614,
+        0.03004053235054016,
+        0.1878005862236023
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 69.90132141113281
+    },
+    {
+      "name": "yaw_left_2",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.4
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.07167511433362961,
+        0.05376928299665451,
+        0.3536521792411804
+      ],
+      "mean_actual": [
+        -0.04618918523192406,
+        0.034879691898822784,
+        0.22523389756679535
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 69.20565795898438
+    },
+    {
+      "name": "yaw_left_3",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.6
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.06204747408628464,
+        0.06957108527421951,
+        0.5813736915588379
+      ],
+      "mean_actual": [
+        -0.011372112669050694,
+        0.05500456318259239,
+        0.38294506072998047
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 64.31709289550781
+    },
+    {
+      "name": "yaw_left_4",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.475
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.0675533264875412,
+        0.057366743683815,
+        0.4506063461303711
+      ],
+      "mean_actual": [
+        -0.03502383455634117,
+        0.04134282469749451,
+        0.2840321958065033
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 67.91294860839844
+    },
+    {
+      "name": "yaw_right_0",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.2
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04550100117921829,
+        0.03551289439201355,
+        0.05590861290693283
+      ],
+      "mean_actual": [
+        0.032504595816135406,
+        0.019904524087905884,
+        -0.21876005828380585
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 73.61275482177734
+    },
+    {
+      "name": "yaw_right_1",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.35
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.024777302518486977,
+        0.01737777143716812,
+        0.05900387465953827
+      ],
+      "mean_actual": [
+        -0.018569739535450935,
+        0.004351600538939238,
+        -0.3164658546447754
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 83.63065338134766
+    },
+    {
+      "name": "yaw_right_2",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.4
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.0415174663066864,
+        0.017667055130004883,
+        0.08869030326604843
+      ],
+      "mean_actual": [
+        -0.03498550131917,
+        0.002523634349927306,
+        -0.33518216013908386
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 84.64885711669922
+    },
+    {
+      "name": "yaw_right_3",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.6
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.112748883664608,
+        0.08437708020210266,
+        0.35762694478034973
+      ],
+      "mean_actual": [
+        -0.07024950534105301,
+        -0.0018715874757617712,
+        -0.5634477138519287
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 69.23811340332031
+    },
+    {
+      "name": "yaw_right_4",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.475
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.10044790059328079,
+        0.05066576227545738,
+        0.2774501442909241
+      ],
+      "mean_actual": [
+        -0.08648224920034409,
+        0.011609209701418877,
+        -0.40237849950790405
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 75.05528259277344
+    },
+    {
+      "name": "forward_yaw_0",
+      "family": "forward_yaw",
+      "goal": [
+        0.3,
+        0,
+        0.3
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.048220060765743256,
+        0.04357638210058212,
+        0.07561009377241135
+      ],
+      "mean_actual": [
+        0.3155466914176941,
+        0.03772597014904022,
+        0.23840387165546417
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 70.14396667480469
+    },
+    {
+      "name": "forward_yaw_1",
+      "family": "forward_yaw",
+      "goal": [
+        0.3,
+        0,
+        -0.3
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.052024178206920624,
+        0.02266470156610012,
+        0.06211593747138977
+      ],
+      "mean_actual": [
+        0.33169808983802795,
+        0.002892238087952137,
+        -0.32313811779022217
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 72.95386505126953
+    },
+    {
+      "name": "forward_yaw_2",
+      "family": "forward_yaw",
+      "goal": [
+        0.45,
+        0,
+        0.35
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.09653452038764954,
+        0.05010064318776131,
+        0.05838968604803085
+      ],
+      "mean_actual": [
+        0.46377745270729065,
+        0.04169592261314392,
+        0.3204123079776764
+      ],
+      "duration_seconds": 4.2,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 32.6177864074707
+    },
+    {
+      "name": "forward_yaw_3",
+      "family": "forward_yaw",
+      "goal": [
+        0.45,
+        0,
+        -0.35
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.07119937241077423,
+        0.0350562185049057,
+        0.09357572346925735
+      ],
+      "mean_actual": [
+        0.4409782886505127,
+        0.0004617880913428962,
+        -0.3359921872615814
+      ],
+      "duration_seconds": 4.2,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 33.704315185546875
+    },
+    {
+      "name": "forward_lateral_0",
+      "family": "forward_lateral",
+      "goal": [
+        0.3,
+        0.1,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.1089969351887703,
+        0.1437096893787384,
+        0.19447408616542816
+      ],
+      "mean_actual": [
+        0.3700031042098999,
+        0.23124957084655762,
+        -0.08268359303474426
+      ],
+      "duration_seconds": 7.38,
+      "terminal_reason": "boundary",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 26.338558197021484
+    },
+    {
+      "name": "forward_lateral_1",
+      "family": "forward_lateral",
+      "goal": [
+        0.3,
+        -0.1,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.059732288122177124,
+        0.10687519609928131,
+        0.11939394474029541
+      ],
+      "mean_actual": [
+        0.33511680364608765,
+        0.002344131702557206,
+        -0.09466905146837234
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 52.102210998535156
+    },
+    {
+      "name": "forward_lateral_2",
+      "family": "forward_lateral",
+      "goal": [
+        0.25,
+        0.175,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.28918057680130005,
+        0.5040850043296814,
+        0.8878492116928101
+      ],
+      "mean_actual": [
+        0.11922919005155563,
+        0.5207296013832092,
+        -0.20034877955913544
+      ],
+      "duration_seconds": 4.48,
+      "terminal_reason": "fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 2.41300106048584
+    },
+    {
+      "name": "forward_lateral_3",
+      "family": "forward_lateral",
+      "goal": [
+        0.25,
+        -0.175,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.06022588163614273,
+        0.1622961014509201,
+        0.08118733763694763
+      ],
+      "mean_actual": [
+        0.29568958282470703,
+        -0.014377863146364689,
+        -0.06201626732945442
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 50.18048095703125
+    },
+    {
+      "name": "lateral_yaw_0",
+      "family": "lateral_yaw",
+      "goal": [
+        0,
+        0.15,
+        0.4
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.35439348220825195,
+        0.3233809173107147,
+        1.5258294343948364
+      ],
+      "mean_actual": [
+        -0.04635363817214966,
+        0.3238477408885956,
+        -0.029599538072943687
+      ],
+      "duration_seconds": 2.44,
+      "terminal_reason": "fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": -0.5932227373123169
+    },
+    {
+      "name": "lateral_yaw_1",
+      "family": "lateral_yaw",
+      "goal": [
+        0,
+        -0.15,
+        -0.4
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.25061771273612976,
+        0.20287589728832245,
+        0.6171132922172546
+      ],
+      "mean_actual": [
+        -0.1338697373867035,
+        -0.007948769256472588,
+        -0.13652637600898743
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 26.204904556274414
+    },
+    {
+      "name": "lateral_yaw_2",
+      "family": "lateral_yaw",
+      "goal": [
+        0,
+        0.18,
+        -0.35
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.4387422800064087,
+        0.30752506852149963,
+        1.3183138370513916
+      ],
+      "mean_actual": [
+        -0.005189046263694763,
+        0.3112598657608032,
+        -0.20627109706401825
+      ],
+      "duration_seconds": 6.34,
+      "terminal_reason": "fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 3.2568883895874023
+    },
+    {
+      "name": "lateral_yaw_3",
+      "family": "lateral_yaw",
+      "goal": [
+        0,
+        -0.18,
+        0.35
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.15460708737373352,
+        0.1742503046989441,
+        0.5194900035858154
+      ],
+      "mean_actual": [
+        0.10155479609966278,
+        -0.03332570195198059,
+        0.06999462842941284
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 32.99327850341797
+    },
+    {
+      "name": "start_stop",
+      "family": "switch",
+      "goal": [
+        0,
+        0,
+        0
+      ],
+      "sequence": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0.3,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.06223808601498604,
+        0.03691574186086655,
+        0.0828547328710556
+      ],
+      "mean_actual": [
+        0.15317130088806152,
+        0.022447608411312103,
+        -0.05272848531603813
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "boundary",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 88.45768737792969
+    },
+    {
+      "name": "forward_reverse",
+      "family": "switch",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "sequence": [
+        [
+          0.3,
+          0,
+          0
+        ],
+        [
+          -0.2,
+          0,
+          0
+        ]
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.18701224029064178,
+        0.0751582458615303,
+        0.11490882188081741
+      ],
+      "mean_actual": [
+        -0.03468291833996773,
+        0.02504558116197586,
+        -0.03177510201931
+      ],
+      "duration_seconds": 8.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 53.46786117553711
+    },
+    {
+      "name": "lateral_reverse",
+      "family": "switch",
+      "goal": [
+        0,
+        0.2,
+        0
+      ],
+      "sequence": [
+        [
+          0,
+          0.2,
+          0
+        ],
+        [
+          0,
+          -0.2,
+          0
+        ]
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.35401931405067444,
+        0.32537564635276794,
+        1.4987878799438477
+      ],
+      "mean_actual": [
+        0.004877911414951086,
+        0.4110395014286041,
+        0.3992517292499542
+      ],
+      "duration_seconds": 1.8800000000000001,
+      "terminal_reason": "fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 0.7197505831718445
+    },
+    {
+      "name": "yaw_reverse",
+      "family": "switch",
+      "goal": [
+        0,
+        0,
+        0.4
+      ],
+      "sequence": [
+        [
+          0,
+          0,
+          0.4
+        ],
+        [
+          0,
+          0,
+          -0.4
+        ]
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.06920221447944641,
+        0.06456135213375092,
+        0.21983830630779266
+      ],
+      "mean_actual": [
+        -0.015183730982244015,
+        0.01984681375324726,
+        -0.0320185087621212
+      ],
+      "duration_seconds": 8.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 60.38212966918945
+    },
+    {
+      "name": "forward_to_lateral",
+      "family": "switch",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "sequence": [
+        [
+          0.3,
+          0,
+          0
+        ],
+        [
+          0,
+          0.2,
+          0
+        ]
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.15219368040561676,
+        0.27669450640678406,
+        0.6652154922485352
+      ],
+      "mean_actual": [
+        0.23928861320018768,
+        0.18521803617477417,
+        0.0002689144457690418
+      ],
+      "duration_seconds": 5.38,
+      "terminal_reason": "fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 32.70384979248047
+    },
+    {
+      "name": "forward_to_turn",
+      "family": "switch",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "sequence": [
+        [
+          0.3,
+          0,
+          0
+        ],
+        [
+          0.3,
+          0,
+          0.4
+        ]
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.051878273487091064,
+        0.04141416773200035,
+        0.07583703100681305
+      ],
+      "mean_actual": [
+        0.32250088453292847,
+        0.034247759729623795,
+        0.15950843691825867
+      ],
+      "duration_seconds": 8.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 63.33535385131836
+    }
+  ],
+  "pass_rates": {
+    "standing": 1.0,
+    "forward": 0.8,
+    "backward": 0.75,
+    "left": 0.0,
+    "right": 0.0,
+    "yaw_left": 0.2,
+    "yaw_right": 0.6,
+    "forward_yaw": 1.0,
+    "forward_lateral": 0.0,
+    "lateral_yaw": 0.0,
+    "coupled": 0.3333333333333333
+  },
+  "flat_pass_rate": 0.4,
+  "fall_rate": 0.19166666666666668,
+  "rmse": [
+    0.15755161228892942,
+    0.19296448949719675,
+    0.6164165661681656
+  ],
+  "switch_pass_rate": 0.16666666666666666,
+  "terrain_pass_rate": 0.0,
+  "standard_flat_rows": [
+    {
+      "name": "standing_0",
+      "family": "standing",
+      "goal": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.05182149261236191,
+        0.03881640359759331,
+        0.09094813466072083
+      ],
+      "mean_actual": [
+        0.03151887655258179,
+        0.015368900261819363,
+        -0.07119995355606079
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 92.7557601928711
+    },
+    {
+      "name": "forward_1",
+      "family": "forward",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.05339356139302254,
+        0.025505295023322105,
+        0.048718199133872986
+      ],
+      "mean_actual": [
+        0.3322833776473999,
+        0.019534533843398094,
+        0.004166289232671261
+      ],
+      "duration_seconds": 9.6,
+      "terminal_reason": "boundary",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 80.82872772216797
+    },
+    {
+      "name": "backward_1",
+      "family": "backward",
+      "goal": [
+        -0.2,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.047743916511535645,
+        0.02557327039539814,
+        0.11950679868459702
+      ],
+      "mean_actual": [
+        -0.2224237024784088,
+        0.0044444650411605835,
+        0.028169801458716393
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 74.20186614990234
+    },
+    {
+      "name": "left_1",
+      "family": "left",
+      "goal": [
+        0,
+        0.2,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.28525510430336,
+        0.3536436855792999,
+        1.3792665004730225
+      ],
+      "mean_actual": [
+        -0.15808041393756866,
+        0.39675384759902954,
+        0.301714152097702
+      ],
+      "duration_seconds": 8.9,
+      "terminal_reason": "boundary",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 6.943993091583252
+    },
+    {
+      "name": "right_1",
+      "family": "right",
+      "goal": [
+        0,
+        -0.2,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.03903522342443466,
+        0.18541237711906433,
+        0.08706442266702652
+      ],
+      "mean_actual": [
+        0.03075549378991127,
+        -0.015839876607060432,
+        -0.06381982564926147
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 62.077030181884766
+    },
+    {
+      "name": "yaw_left_1",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.35
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.0661226138472557,
+        0.05179538577795029,
+        0.2819148004055023
+      ],
+      "mean_actual": [
+        -0.04544757679104805,
+        0.031034378334879875,
+        0.1881711781024933
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 69.68065643310547
+    },
+    {
+      "name": "yaw_right_1",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.35
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.024871883913874626,
+        0.017571350559592247,
+        0.06236345320940018
+      ],
+      "mean_actual": [
+        -0.017258701846003532,
+        0.004583028145134449,
+        -0.31624212861061096
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 83.54673767089844
+    },
+    {
+      "name": "standing_0",
+      "family": "standing",
+      "goal": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.05863232910633087,
+        0.03100230172276497,
+        0.0971897691488266
+      ],
+      "mean_actual": [
+        0.03349446505308151,
+        0.015052961185574532,
+        -0.07913146167993546
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 92.60800170898438
+    },
+    {
+      "name": "forward_1",
+      "family": "forward",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.053127169609069824,
+        0.027762798592448235,
+        0.047695524990558624
+      ],
+      "mean_actual": [
+        0.33182424306869507,
+        0.018857676535844803,
+        0.0031021249014884233
+      ],
+      "duration_seconds": 9.620000000000001,
+      "terminal_reason": "boundary",
+      "initial_yaw_rad": 0.0,
+      "reward": 80.94380950927734
+    },
+    {
+      "name": "backward_1",
+      "family": "backward",
+      "goal": [
+        -0.2,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.03851651772856712,
+        0.025391466915607452,
+        0.11663540452718735
+      ],
+      "mean_actual": [
+        -0.21704784035682678,
+        0.005056452937424183,
+        0.02834715135395527
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 74.66638946533203
+    },
+    {
+      "name": "left_1",
+      "family": "left",
+      "goal": [
+        0,
+        0.2,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.5086718201637268,
+        0.5368884205818176,
+        1.1592439413070679
+      ],
+      "mean_actual": [
+        -0.2466757446527481,
+        0.5901421904563904,
+        0.003942196723073721
+      ],
+      "duration_seconds": 2.36,
+      "terminal_reason": "fall",
+      "initial_yaw_rad": 0.0,
+      "reward": -0.3379818797111511
+    },
+    {
+      "name": "right_1",
+      "family": "right",
+      "goal": [
+        0,
+        -0.2,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.04157068207859993,
+        0.18473120033740997,
+        0.08949051052331924
+      ],
+      "mean_actual": [
+        0.03349187225103378,
+        -0.016714418306946754,
+        -0.06868454813957214
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 62.0128173828125
+    },
+    {
+      "name": "yaw_left_1",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.35
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.066984161734581,
+        0.04563015326857567,
+        0.284557580947876
+      ],
+      "mean_actual": [
+        -0.04666381701827049,
+        0.028942137956619263,
+        0.1875903606414795
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 70.00666046142578
+    },
+    {
+      "name": "yaw_right_1",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.35
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.02634746953845024,
+        0.01768927089869976,
+        0.060281284153461456
+      ],
+      "mean_actual": [
+        -0.019470132887363434,
+        0.004330279305577278,
+        -0.3150118291378021
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 83.55077362060547
+    },
+    {
+      "name": "standing_0",
+      "family": "standing",
+      "goal": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.05606228485703468,
+        0.032306406646966934,
+        0.09682663530111313
+      ],
+      "mean_actual": [
+        0.035068631172180176,
+        0.014669632539153099,
+        -0.07970573753118515
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 92.60124969482422
+    },
+    {
+      "name": "forward_1",
+      "family": "forward",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.05437575280666351,
+        0.02875606343150139,
+        0.050149109214544296
+      ],
+      "mean_actual": [
+        0.33278125524520874,
+        0.019814269617199898,
+        0.0003287526487838477
+      ],
+      "duration_seconds": 9.6,
+      "terminal_reason": "boundary",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 80.6491470336914
+    },
+    {
+      "name": "backward_1",
+      "family": "backward",
+      "goal": [
+        -0.2,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04684858396649361,
+        0.019858649000525475,
+        0.10961994528770447
+      ],
+      "mean_actual": [
+        -0.2277633100748062,
+        0.00413733534514904,
+        0.02827564999461174
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 74.76927185058594
+    },
+    {
+      "name": "left_1",
+      "family": "left",
+      "goal": [
+        0,
+        0.2,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.35401931405067444,
+        0.32537564635276794,
+        1.4987878799438477
+      ],
+      "mean_actual": [
+        0.004877911414951086,
+        0.4110395014286041,
+        0.3992517292499542
+      ],
+      "duration_seconds": 1.8800000000000001,
+      "terminal_reason": "fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 0.7197503447532654
+    },
+    {
+      "name": "right_1",
+      "family": "right",
+      "goal": [
+        0,
+        -0.2,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.04112829640507698,
+        0.18713968992233276,
+        0.0845438614487648
+      ],
+      "mean_actual": [
+        0.033698055893182755,
+        -0.014465049840509892,
+        -0.06067413464188576
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 61.895084381103516
+    },
+    {
+      "name": "yaw_left_1",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.35
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.06634441018104553,
+        0.04803472012281418,
+        0.28116875886917114
+      ],
+      "mean_actual": [
+        -0.047164157032966614,
+        0.03004053235054016,
+        0.1878005862236023
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 69.90132141113281
+    },
+    {
+      "name": "yaw_right_1",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.35
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.024777302518486977,
+        0.01737777143716812,
+        0.05900387465953827
+      ],
+      "mean_actual": [
+        -0.018569739535450935,
+        0.004351600538939238,
+        -0.3164658546447754
+      ],
+      "duration_seconds": 10.0,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 83.63065338134766
+    }
+  ],
+  "iteration": 5518,
+  "training_seconds": 7073.821355756896,
+  "real_transitions": 56766464,
+  "stage_after_evaluation": {
+    "name": "flat_prior",
+    "max_stage": "flat_prior",
+    "auto_transition": true,
+    "consecutive_passes": 0,
+    "entered_at": 0.0,
+    "training_seconds": 7073.821355756896,
+    "ready_for_next_stage": false,
+    "terrain_review": true
+  }
+}

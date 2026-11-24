@@ -155,7 +155,55 @@ def main():
         action="store_true",
         help="Explicit user authorization: retain failed H8 directions as warnings, not admission veto",
     )
+    parser.add_argument(
+        "--profile", choices=("continuation", "motion_prior"), default="continuation"
+    )
+    parser.add_argument("--fresh", action="store_true")
+    parser.add_argument("--seconds", type=float, help="Motion prior training-loop budget")
+    parser.add_argument("--max-stage", choices=("flat_prior", "flat_autonomous", "terrain"))
+    parser.add_argument("--prior-weight", type=float)
+    parser.add_argument("--smoke-warmup", type=int, default=8)
+    parser.add_argument(
+        "--no-prior", action="store_true", help="Smoke only: disable the actor prior objective"
+    )
+    parser.add_argument("--gradient-diagnostics", action="store_true")
+    parser.add_argument("--profile-sections", action="store_true")
     args = parser.parse_args()
+    if args.profile == "motion_prior":
+        if args.fresh == bool(args.resume):
+            parser.error("Specify exactly one of --fresh and --resume")
+        if (
+            args.admission
+            or args.migrate_curriculum
+            or args.additional_seconds
+            or args.accept_direction_diagnostic
+        ):
+            parser.error("Continuation options do not apply to the motion prior profile")
+        if args.envs < 1 or args.iterations < 1 or args.smoke_warmup < 0:
+            parser.error("Invalid smoke dimensions")
+        if args.prior_weight is not None and (
+            not math.isfinite(args.prior_weight) or args.prior_weight < 0
+        ):
+            parser.error("Prior weight must be finite and nonnegative")
+        if args.mode == "formal":
+            if (
+                args.envs != 4096
+                or args.seconds is None
+                or not math.isfinite(args.seconds)
+                or args.seconds <= 0
+            ):
+                parser.error(
+                    "Formal motion prior runs require 4096 environments and a positive --seconds budget"
+                )
+            if args.no_prior or args.gradient_diagnostics or args.profile_sections:
+                parser.error("Use the ablation and frequent profiling options in smoke mode")
+            if args.fresh and args.max_stage not in (None, "flat_prior"):
+                parser.error("Fresh formal runs are bounded to flat_prior")
+        from tools.train_go2w_motion_prior import run
+
+        return run(args)
+    if args.fresh or args.seconds is not None or args.max_stage is not None:
+        parser.error("Fresh-run budget and stage options require --profile motion_prior")
     owner, cfg = configuration()
     if args.envs < 1 or args.iterations < 1:
         parser.error("Positive smoke dimensions required")

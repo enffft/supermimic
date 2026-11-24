@@ -47,6 +47,7 @@ class Go2WMixedAction(ActionTerm):
         self.executed_raw = torch.zeros_like(self._raw)
         self._target = torch.zeros_like(self._raw)
         self.collection_noise_std = 0.0
+        self.reference_mask = None
         from .contract import DEFAULT_Q, soft_limits
 
         self.default = self._raw.new_tensor(DEFAULT_Q)
@@ -71,6 +72,8 @@ class Go2WMixedAction(ActionTerm):
             if self.collection_noise_std > 0
             else 0.0
         )
+        if self.reference_mask is not None and self.collection_noise_std > 0:
+            noise = noise.masked_fill(self.reference_mask[:, None], 0.0)
         self.executed_raw.copy_((self._raw + noise).clamp(-1, 1))
         self._env.velocity_executed_action = self.executed_raw.detach().clone()
 
@@ -159,6 +162,7 @@ class VelocityCommand(CommandTerm):
         self.f = torch.zeros(self.num_envs, dtype=torch.long, device=env.device)
         self._origins = env.scene.env_origins(env.device).clone()
         self.curriculum = None
+        self.reference_collection = None
         if cfg.unified_curriculum:
             from .curriculum import UnifiedSampler
 
@@ -222,14 +226,29 @@ class VelocityCommand(CommandTerm):
             views["qvel"][:, self.v_indices],
         )
 
-    def _resample_command(self, mask):
+    def _resample_command(self, mask, *, reset=False):
+        collection = getattr(self, "reference_collection", None)
         level = (
             self.curriculum.terrain_level
             if self.curriculum is not None
             else torch.zeros_like(self.f)
         )
-        goal, mode, crossing, hold = self.sampler.sample(self.command_domain, level)
-        if getattr(self.cfg, "unified_curriculum", False) and self.curriculum is not None:
+        if collection is not None:
+            goal, mode, crossing, hold = collection.commands(self, mask, reset=reset)
+            if not reset:
+                ids = torch.arange(self.num_envs, device=self._device)
+                self.target_id.copy_(
+                    torch.where(
+                        mask, (self.command_counter + 1) * self.num_envs + ids, self.target_id
+                    )
+                )
+        else:
+            goal, mode, crossing, hold = self.sampler.sample(self.command_domain, level)
+        if (
+            collection is None
+            and getattr(self.cfg, "unified_curriculum", False)
+            and self.curriculum is not None
+        ):
             # Each signed flat skill uses its own command difficulty, including mixtures.
             axes = torch.arange(3, device=goal.device)[None]
             skills = 1 + axes * 2 + (goal < 0).long()
@@ -298,16 +317,21 @@ class VelocityCommand(CommandTerm):
         position = torch.cat(
             (self.mdp.default_q.expand(self.num_envs, 12), self.g.new_zeros(self.num_envs, 4)), -1
         )
+        velocity = torch.zeros_like(self.a_prev)
+        if self.reference_collection is not None:
+            self._resample_command(mask, reset=True)
+            self.reference_collection.reset_pose(self, ids, root, position, velocity)
         self.robot.write_motion_state_tensor_to_sim(
             root_state=root,
             position=position,
-            velocity=torch.zeros_like(self.a_prev),
+            velocity=velocity,
             reset_mask=mask,
         )
         self.a_prev[ids] = 0
         self.ep_step[ids] = 0
         self.f[ids] = 0
-        self._resample_command(mask)
+        if self.reference_collection is None:
+            self._resample_command(mask)
         if self.cfg.unified_curriculum:
             from .traversal import reset_targets
 
@@ -330,6 +354,8 @@ class VelocityCommand(CommandTerm):
         self.a_prev.copy_(torch.where(live[:, None], self._env.velocity_executed_action, 0.0))
         self.ep_step.add_(live.to(self.ep_step.dtype))
         self.f.add_(live.to(self.f.dtype))
+        if self.reference_collection is not None:
+            self.reference_collection.advance_command(self, live)
 
 
 def observation(env):
@@ -393,3 +419,10 @@ def fallen(env):
 
 def traversal_finished(env):
     return env.command_manager.get_term("velocity").success_event
+
+
+def motion_prior_timeout(env):
+    """Allow the longest stair traversals 18 s and retain 10 s for flat/rough."""
+    domain = env.command_manager.get_term("velocity").command_domain
+    steps = torch.where(domain >= 2, env.max_episode_length, round(10.0 / env.cfg.ctrl_dt))
+    return env.episode_length_buf >= steps

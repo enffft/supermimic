@@ -132,18 +132,8 @@ class UnifiedCurriculum:
         self.rng = torch.Generator(device=torch.device(device)).manual_seed(cfg.seed)
         self.enabled, self.phase = True, "skill"
         self.fixed_domain = command_domain
-        total = quotas(num_envs, cfg.domain_weights).tolist()
-        covered = quotas(
-            round(num_envs * cfg.coverage_fraction), (0, *cfg.domain_weights[1:])
-        ).tolist()
         self.coverage_level = torch.full((num_envs,), -1, device=device, dtype=torch.long)
-        offset = 0
-        for domain, (n, nc) in enumerate(zip(total, covered)):
-            if nc > n:
-                raise ValueError("Coverage exceeds domain quota")
-            self.fixed_domain[offset : offset + n] = domain
-            self.coverage_level[offset : offset + nc] = torch.arange(nc, device=device) % 10
-            offset += n
+        self.assign_domains(cfg.domain_weights, cfg.coverage_fraction)
         self.mastery = torch.zeros(num_envs, dtype=torch.long, device=device)
         self.terrain_level = self.mastery.clone()
         self.terrain_type = (self.fixed_domain - 1).clamp_min(0)
@@ -196,6 +186,33 @@ class UnifiedCurriculum:
                 "falls",
             )
         }
+
+    def assign_domains(self, weights, coverage_fraction):
+        """Apply new fixed quotas on the same atlas at an explicit reset boundary."""
+        count = len(self.fixed_domain)
+        total = quotas(count, weights).tolist()
+        eligible = count - total[0]
+        n_coverage = min(eligible, round(count * coverage_fraction))
+        covered = quotas(n_coverage, (0, *weights[1:])).tolist() if n_coverage else [0] * 8
+        self.coverage_level.fill_(-1)
+        offset = 0
+        for domain, (n, nc) in enumerate(zip(total, covered)):
+            self.fixed_domain[offset : offset + n] = domain
+            self.coverage_level[offset : offset + min(n, nc)] = (
+                torch.arange(min(n, nc), device=self.fixed_domain.device) % 10
+            )
+            offset += n
+
+    def reassign_domains(self, weights, coverage_fraction):
+        before = self.fixed_domain.clone()
+        self.assign_domains(weights, coverage_fraction)
+        changed = before != self.fixed_domain
+        self.mastery.masked_fill_(changed, 0)
+        self.terrain_level.masked_fill_(changed, 0)
+        self.flat_levels.masked_fill_(changed[:, None], 0)
+        self.terrain_type.copy_((self.fixed_domain - 1).clamp_min(0))
+        self.episode_ended.fill_(False)
+        self.clear_episodes(torch.arange(len(changed), device=changed.device))
 
     def observe(self, state, goal, fallen, heading=0.0, traversal=None):
         from unisupermimic.rl.algos.supermimic.geometry import matvec

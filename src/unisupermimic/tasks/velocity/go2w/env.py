@@ -160,6 +160,8 @@ class Go2WVelocityEnv(Go2VelocityEnv):
         else:
             contract["curriculum_protocol"] = "persistent_wm_eighth_domain_level_quotas"
         for reward in (contract["reward"], contract["commands"]["reward"]):
+            if tuple(reward["stair_axis_scale"]) == (0.60, 1.0, 1.0):
+                reward.pop("stair_axis_scale")
             if not cfg.commands["velocity"].unified_curriculum:
                 for key in (
                     "wheel_radius",

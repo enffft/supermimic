@@ -52,8 +52,11 @@ class VelocityRewardCfg:
     stair_progress: float = 0.0
     stair_success: float = 0.0
     progress_gamma: float = 0.99
+    stair_axis_scale: tuple[float, ...] = (0.60, 1.0, 1.0)
 
     def validate(self):
+        if len(self.stair_axis_scale) != 3 or any(x < 0 for x in self.stair_axis_scale):
+            raise ValueError("Expected three nonnegative stair tracking scales")
         import math
         from dataclasses import asdict
 
@@ -135,7 +138,11 @@ def velocity_reward_terms(
         if measured_torque is not None
         else mixed_torque(q, qd, a, control, default, limits)
     )
-    acceleration = (qd - previous[5]) / control.dt
+    acceleration = (
+        (qd - previous[5]) / control.dt
+        if (cfg.leg_joint_acceleration or cfg.wheel_joint_acceleration)
+        else None
+    )
     rate = a - previous_action.clamp(-1, 1)
     leg_rate = rate[..., :12]
     if cfg.physical_leg_action_rate:
@@ -163,16 +170,22 @@ def velocity_reward_terms(
         * F.relu(
             cfg.min_safe_height - (p[..., 2] if base_height is None else base_height)
         ).square(),
-        "leg_joint_deviation": deviation_weight * (q - default).square().sum(-1),
+        "leg_joint_deviation": deviation_weight * (q - default).square().sum(-1)
+        if any(cfg.leg_joint_deviation)
+        else torch.zeros_like(track[..., 0]),
         "leg_joint_limit": cfg.leg_joint_limit * (below.square() + above.square()).sum(-1),
         "leg_action_rate": cfg.leg_action_rate * leg_rate.square().sum(-1),
         "wheel_action_rate": cfg.wheel_action_rate * rate[..., 12:].square().sum(-1),
         "leg_torque": cfg.leg_torque * torque[..., :12].square().sum(-1),
         "wheel_torque": cfg.wheel_torque * torque[..., 12:].square().sum(-1),
         "leg_joint_acceleration": cfg.leg_joint_acceleration
-        * acceleration[..., :12].square().sum(-1),
+        * acceleration[..., :12].square().sum(-1)
+        if cfg.leg_joint_acceleration
+        else torch.zeros_like(track[..., 0]),
         "wheel_joint_acceleration": cfg.wheel_joint_acceleration
-        * acceleration[..., 12:].square().sum(-1),
+        * acceleration[..., 12:].square().sum(-1)
+        if cfg.wheel_joint_acceleration
+        else torch.zeros_like(track[..., 0]),
     }
     if any(cfg.tracking_error_cost):
         error = (observed - command) / sigma

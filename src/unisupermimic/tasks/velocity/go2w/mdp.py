@@ -135,27 +135,34 @@ class Go2WVelocityMdp(Go2VelocityMdp):
             cfg = self.reward_cfg
             stair = (domain >= 4).float()
             side = (goal[..., 1].abs() > 0.05) & (goal[..., 0].abs() < 0.08)
-            terms["track_vx"] *= 1 - 0.4 * stair
+            for key, scale in zip(("track_vx", "track_vy", "track_yaw"), cfg.stair_axis_scale):
+                terms[key] *= 1 - (1 - scale) * stair
             terms["leg_action_rate"] *= torch.where(side, 0.35, 1.0) * (1 - 0.6 * stair)
             terms["leg_joint_deviation"] *= torch.where(side, 0.35, 1.0) * (1 - 0.6 * stair)
             terms["terrain_alignment"] *= 1 - stair
-            body = matvec(state[1].transpose(-1, -2), state[2])
-            angular = matvec(state[1].transpose(-1, -2), state[3])
-            terms["side_drift"] = (
-                -cfg.side_drift * side * (body[..., 0].square() + angular[..., 2].square())
-            )
-            wheels = wheel_centers(state)
-            ground = self.terrain.ground_height(wheels[..., :2])
-            geometry_gate = torch.exp(
-                -((wheels[..., 2] - ground - cfg.wheel_radius) / 0.04).square()
-            ).mean(-1)
-            y = matvec(state[1].transpose(-1, -2).unsqueeze(-3), wheels - state[0][..., None, :])[
-                ..., 1
-            ]
-            target = (goal[..., 0, None] - goal[..., 2, None] * y) / cfg.wheel_radius
-            rolling = torch.exp(-((state[5][..., 12:] - target) / 3.0).square()).mean(-1)
-            gate = (domain == 0) * (~side) * geometry_gate
-            terms["wheel_drive_consistency"] = cfg.wheel_consistency * gate * rolling
+            if cfg.side_drift:
+                body = matvec(state[1].transpose(-1, -2), state[2])
+                angular = matvec(state[1].transpose(-1, -2), state[3])
+                terms["side_drift"] = (
+                    -cfg.side_drift * side * (body[..., 0].square() + angular[..., 2].square())
+                )
+            else:
+                terms["side_drift"] = torch.zeros_like(stair)
+            if cfg.wheel_consistency:
+                wheels = wheel_centers(state)
+                ground = self.terrain.ground_height(wheels[..., :2])
+                geometry_gate = torch.exp(
+                    -((wheels[..., 2] - ground - cfg.wheel_radius) / 0.04).square()
+                ).mean(-1)
+                y = matvec(
+                    state[1].transpose(-1, -2).unsqueeze(-3), wheels - state[0][..., None, :]
+                )[..., 1]
+                target = (goal[..., 0, None] - goal[..., 2, None] * y) / cfg.wheel_radius
+                rolling = torch.exp(-((state[5][..., 12:] - target) / 3.0).square()).mean(-1)
+                gate = (domain == 0) * (~side) * geometry_gate
+                terms["wheel_drive_consistency"] = cfg.wheel_consistency * gate * rolling
+            else:
+                terms["wheel_drive_consistency"] = torch.zeros_like(stair)
             terms.update(
                 reward_terms(
                     previous,

@@ -82,7 +82,8 @@ def main():
     torch.set_num_threads(1)
     saved = torch.load(args.checkpoint, map_location="cpu", weights_only=True, mmap=True)
     cfg = saved["args"]
-    env = make_go2w_env(load_config("train"), 1)
+    profile = "motion_prior" if "motion_prior" in saved else "train"
+    env = make_go2w_env(load_config(profile), 1)
     viewer = None
     records = []
     try:

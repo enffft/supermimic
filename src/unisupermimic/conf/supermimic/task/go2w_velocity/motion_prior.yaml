@@ -1,0 +1,84 @@
+# @package _global_
+defaults:
+  - /task/go2w_velocity/train
+  - _self_
+algo:
+  wm_only_iters: 250
+  critic_warmup_iters: 0
+  actor_lr_scale: 1.0
+  wm_lr_scale: 1.0
+  actor_ramp_iters: 250
+  profile: false
+  history_fraction: 0.5
+  actor_domain_weights: [1, 0, 0, 0, 0, 0, 0, 0]
+env:
+  max_episode_seconds: 18.0
+  terminations:
+    time_out:
+      func: unisupermimic.tasks.velocity.go2w.manager_terms.motion_prior_timeout
+      time_out: true
+  commands:
+    velocity:
+      sampler:
+        terrain_hold_seconds: 18.02
+      curriculum:
+        coverage_fraction: 0.0
+        domain_weights: [1, 0, 0, 0, 0, 0, 0, 0]
+      reward:
+        leg_joint_deviation: [0, 0, 0, 0, 0, 0]
+        leg_joint_acceleration: 0.0
+        wheel_joint_acceleration: 0.0
+        side_drift: 0.0
+        wheel_consistency: 0.0
+        stair_axis_scale: [1.0, 0.30, 0.30]
+stage:
+  initial: flat_prior
+  auto_transition: true
+  max_stage: flat_prior
+  consecutive_evaluations: 2
+  max_fall_rate: 0.05
+  switch_pass_rate: 0.75
+  terrain_review_pass_rate: 0.65
+  pass_rates:
+    standing: 0.95
+    forward: 0.90
+    backward: 0.90
+    left: 0.80
+    right: 0.80
+    yaw_left: 0.80
+    yaw_right: 0.80
+    coupled: 0.75
+motion_prior:
+  enabled: true
+  bank: data/go2w_motion_bank
+  horizon: 8
+  command_neighbors: 3
+  phase_samples: 48
+  command_scale: [0.75, 0.35, 0.80]
+  max_command_distance: 0.28
+  matching_weights: [1.0, 0.25, 0.25]
+  feature_scales: [0.25, 3.0, 5.0]
+  feature_weights: [1.0, 0.25, 0.50]
+  qualified_weight: 1.0
+  dynamic_candidate_weight: 0.5
+  lambda_prior: 0.60
+  reference_reset_fraction: 0.20
+  reference_guided_fraction: 0.10
+  motion_bank_command_fraction: 0.80
+  fade_seconds: 1800.0
+  autonomous_three_axis_weight: 0.20
+  flat_initial_bounds: [[-0.25, 0.50], [-0.20, 0.20], [-0.50, 0.50]]
+  terrain_bounds:
+    - [[-0.35, 0.75], [-0.35, 0.35], [-0.80, 0.80]]
+    - [[-0.25, 0.60], [-0.25, 0.25], [-0.60, 0.60]]
+    - [[0.20, 0.50], [0, 0], [0, 0]]
+    - [[0.15, 0.40], [0, 0], [0, 0]]
+    - [[0.15, 0.40], [0, 0], [0, 0]]
+    - [[0.15, 0.40], [0, 0], [0, 0]]
+    - [[0.15, 0.35], [0, 0], [0, 0]]
+    - [[0.15, 0.35], [0, 0], [0, 0]]
+  stair_yaw_degrees: [0, 3, 5, 10]
+  terrain_entry_weights: [0.60, 0.15, 0.07, 0.08, 0.03, 0.03, 0.02, 0.02]
+  terrain_weights: [0.40, 0.10, 0.05, 0.05, 0.12, 0.08, 0.12, 0.08]
+  terrain_actor_weights: [0.40, 0.10, 0.07, 0.07, 0.12, 0.08, 0.10, 0.06]
+  protected_success_fraction: 0.20

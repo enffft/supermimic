@@ -22,6 +22,7 @@ def load_config(profile="terrain"):
         "joint_range",
         "omni_v3",
         "train",
+        "motion_prior",
     ):
         raise ValueError("Unknown Go2W config owner")
     root = Path(__file__).resolve().parents[5]

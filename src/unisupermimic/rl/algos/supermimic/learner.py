@@ -301,6 +301,11 @@ class SuperMimicLearner:
                     "traversal": (10, torch.float32),
                     "target_id": ((), torch.long),
                     "success_peak": ((), torch.float32),
+                    **(
+                        {"traversal_success": ((), torch.bool)}
+                        if getattr(env, "reference_collection", None) is not None
+                        else {}
+                    ),
                 }
                 if getattr(self.mdp, "unified", False)
                 else None
@@ -329,6 +334,10 @@ class SuperMimicLearner:
             )
         ).to(self.device)
 
+        self.motion_prior = None
+        self.motion_prior_weight = 0.0
+        self.motion_prior_diagnostics = False
+        self.actor_domain_weights = cfg.actor_domain_weights
         self.on_iteration = None  # Optional validation/guard callback; one shared train loop.
         self.stop_requested = False
         self.extra_state = {}
@@ -664,6 +673,13 @@ class SuperMimicLearner:
             else:
                 action = self.pi(self.obs_hist, goal)
             bound = 1 if self.cfg.goal_mode == "direct" else 20
+            collection = getattr(self.env, "reference_collection", None)
+            if collection is not None:
+                term = self.env.command_manager.get_term("velocity")
+                mixed = self.env.action_manager.get_term("mixed")
+                action, mixed.reference_mask = collection.action(
+                    action.to(self.env_device), term, mixed
+                )
             if self.cfg.goal_mode == "direct" and hasattr(self.env, "set_collection_exploration"):
                 self.env.set_collection_exploration(self.cfg.action_noise)
                 action = action.clamp(-bound, bound)
@@ -677,6 +693,10 @@ class SuperMimicLearner:
                 else:
                     step_state = self.env.step(action)
             transition = step_state.info[SUPERMIMIC_TRANSITION_KEY]
+            if collection is not None:
+                collection.observe(transition, self.env.velocity_next_state)
+                strict_success = self.env.termination_manager.get_term("traversal_finished")
+                transition = {**transition, "traversal_success": strict_success.clone()}
             if self._bridged:
                 transition = {key: value.to(self.device) for key, value in transition.items()}
             if self.cfg.terrain_training:
@@ -746,6 +766,13 @@ class SuperMimicLearner:
             self.extra_state["wm_historical_error8"] = (
                 float(last_error[split:].detach().mean()) if split < len(last_error) else None
             )
+        if self.motion_prior is not None and self.update_counts["wm"] % self.cfg.wm_batches == 0:
+            with torch.no_grad():
+                h1 = self.wm.state_error(
+                    tuple(v[:, 0].detach() for v in predicted),
+                    self._unflatten_state(window["s1"][:, 0]),
+                )
+                self.extra_state["wm_h1_state_rmse"] = h1.square().mean().sqrt()
         mask = window["mask"][:, -1]
         mean_last_error = (last_error.detach() * mask).sum() / mask.sum().clamp(min=1)
         timing.__exit__(None, None, None)
@@ -754,14 +781,14 @@ class SuperMimicLearner:
     def _sample_valid_starts(
         self, batch_size: int
     ) -> tuple[dict[str, torch.Tensor], dict[str, torch.Tensor]]:
-        if self.cfg.actor_domain_weights is not None:
+        if self.actor_domain_weights is not None:
             # Validate frames BEFORE domain allocation; oversampling then truncating
             # would destroy the requested domain ratios.
             return self.buffer.sample_starts(
                 batch_size,
                 self.cfg.hist,
                 self.cfg.command_start_weights,
-                self.cfg.actor_domain_weights,
+                self.actor_domain_weights,
                 lambda frames: self.mdp.valid_imagination_start(frames, self.cfg.horizon),
             )
         if self.cfg.no_sync:
@@ -864,6 +891,12 @@ class SuperMimicLearner:
         )
         goal = initial_goal
         initial_state = state
+        matched = None
+        if update_actor and self.motion_prior is not None and self.motion_prior_weight:
+            with self.profile_section("reference_matching"):
+                matched = self.motion_prior.match(
+                    state, initial_goal[:, :3], start["command_domain"] == 0
+                )
         states, actions, previous_actions, all_frames, goals = [], [], [], [], []
         actor_timing = self.profile_section("actor_bptt")
         actor_timing.__enter__()
@@ -934,6 +967,63 @@ class SuperMimicLearner:
                     bootstrap * self._v_std + self._v_mean
                 )
             loss = -objective.mean()
+            if matched is not None:
+                with self.profile_section("prior_loss"):
+                    joint_states = (
+                        None,
+                        None,
+                        None,
+                        None,
+                        torch.stack([t[4] for t in states], dim=1),
+                        torch.stack([t[5] for t in states], dim=1),
+                    )
+                    prior, prior_stats = self.motion_prior.loss(joint_states, matched, alive)
+                    weighted = self.motion_prior_weight * prior
+                    prior_stats.update(
+                        loss=prior.detach(),
+                        weighted_loss=weighted.detach(),
+                        rl_objective=-loss.detach(),
+                        weight=self.motion_prior_weight,
+                    )
+                    if self.motion_prior_diagnostics:
+                        params = tuple(self.pi.parameters())
+                        rl_grad = torch.autograd.grad(loss, params, retain_graph=True)
+                        prior_grad = torch.autograd.grad(weighted, params, retain_graph=True)
+                        rl_norm = torch.stack([x.square().sum() for x in rl_grad]).sum().sqrt()
+                        prior_norm = (
+                            torch.stack([x.square().sum() for x in prior_grad]).sum().sqrt()
+                        )
+                        dot = torch.stack(
+                            [(a * b).sum() for a, b in zip(rl_grad, prior_grad)]
+                        ).sum()
+                        prior_stats.update(
+                            rl_gradient_norm=rl_norm,
+                            prior_gradient_norm=prior_norm,
+                            gradient_cosine=dot / (rl_norm * prior_norm).clamp_min(1e-12),
+                        )
+                    if self.iteration % self.cfg.log_every == 0:
+                        with torch.no_grad():
+                            from .geometry import matvec
+
+                            rotation = all_states[1].transpose(-1, -2)
+                            prediction = torch.cat(
+                                (
+                                    matvec(rotation, all_states[2])[..., :2],
+                                    matvec(rotation, all_states[3])[..., 2:3],
+                                ),
+                                -1,
+                            )
+                            delta = (
+                                (prediction - flatten(goals)[..., :3])
+                                .square()
+                                .view(self.cfg.horizon, batch_size, 3)
+                            )
+                            prior_stats["imagined_tracking_rmse"] = (
+                                (delta * continuation[..., None]).sum((0, 1))
+                                / continuation.sum().clamp_min(1)
+                            ).sqrt()
+                    self.extra_state["motion_prior_metrics"] = prior_stats
+                    loss = loss + weighted
             self.opt_pi.zero_grad(set_to_none=True)
             loss.backward()
             grad_norm = nn.utils.clip_grad_norm_(self.pi.parameters(), 1.0)
@@ -1112,6 +1202,18 @@ class SuperMimicLearner:
                 },
                 resume_semantics="weights_optimizers_replay_curriculum; fresh_environment; not_step_equivalent",
             )
+        collection = getattr(self.env, "reference_collection", None)
+        if collection is not None:
+            checkpoint["motion_prior"] = {
+                "bank_identity": collection.bank.identity,
+                "configuration": collection.cfg,
+            }
+            if include_optimizers:
+                self.extra_state["reference_collection"] = {
+                    "identity": collection.bank.identity,
+                    "rng": collection.rng.get_state(),
+                }
+                self.extra_state["training_stage"] = collection.stage.state_dict()
         if include_optimizers and self.cfg.checkpoint_replay:
             checkpoint["replay"] = self.buffer.state_dict()
             checkpoint["torch_rng"] = torch.get_rng_state()
@@ -1150,6 +1252,12 @@ class SuperMimicLearner:
             validate_resume(checkpoint_args, self.cfg)
         if checkpoint_args.get("goal_mode", "encoded") != self.cfg.goal_mode:
             raise ValueError("Cannot resume with a different goal_mode")
+        collection = getattr(self.env, "reference_collection", None)
+        if collection is not None and checkpoint.get("motion_prior") != {
+            "bank_identity": collection.bank.identity,
+            "configuration": collection.cfg,
+        }:
+            raise ValueError("Motion prior configuration or bank differs on resume")
         if self.cfg.goal_mode == "direct":
             old_contract = checkpoint.get("task_contract")
             new_contract = getattr(self.env, "supermimic_contract", None)
@@ -1248,6 +1356,13 @@ class SuperMimicLearner:
                 )
             if term is not None and "command_counter" in checkpoint:
                 term.command_counter.copy_(checkpoint["command_counter"])
+            collection = getattr(self.env, "reference_collection", None)
+            if collection is not None:
+                saved_collection = self.extra_state["reference_collection"]
+                if saved_collection["identity"] != collection.bank.identity:
+                    raise ValueError("Motion Bank identity differs on resume")
+                collection.rng.set_state(saved_collection["rng"].cpu())
+                collection.stage.restore(self.extra_state["training_stage"])
             self.env.reset()
             self.obs_hist.zero_()
             torch.set_rng_state(checkpoint["torch_rng"].cpu())

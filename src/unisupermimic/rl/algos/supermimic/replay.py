@@ -58,6 +58,9 @@ class ReplayBuffer:
         self.history_fraction = history_fraction
         self.history = None
         self.history_actual = [0, 0]
+        self.protected_success_fraction = 0.0
+        self.protected_actual = 0
+        self.actor_three_axis_weight = 0.0
         if history_capacity:
             from .history import HistoricalWindowBank
 
@@ -127,6 +130,7 @@ class ReplayBuffer:
         return {
             "history": None if self.history is None else self.history.state_dict(),
             "history_actual": self.history_actual,
+            "protected_actual": self.protected_actual,
             "wm_scope_counts": self.wm_scope_counts,
             "T": self.T,
             "N": self.N,
@@ -142,6 +146,7 @@ class ReplayBuffer:
         }
 
     def load_state_dict(self, values, *, infer_command_metadata=False):
+        self.protected_actual = int(values.get("protected_actual", 0))
         if self.history is not None:
             if values.get("history") is None:
                 raise ValueError("Missing historical bank")
@@ -271,14 +276,25 @@ class ReplayBuffer:
         if not len(ids):
             raise ValueError("No continuous WM windows available")
         historical = int(B * self.history_fraction) if self.history.size else 0
+        protected = 0
+        if historical and self.protected_success_fraction:
+            stored = self.history.protected[: self.history.size]
+            if stored.any():
+                protected = min(historical, int(B * self.protected_success_fraction))
+                if stored.all():
+                    historical = protected
         recent = B - historical
-        buckets = self.history.bucket({key: v[ids] for key, v in pool.items()})
+        buckets = self.history.sampling_bucket({key: v[ids] for key, v in pool.items()})
         counts = torch.bincount(buckets)
         selected = ids[torch.multinomial(1 / counts[buckets].float(), recent, replacement=True)]
         result = {key: value[selected] for key, value in pool.items()}
-        if historical:
-            old = self.history.sample(historical, self.device)
+        if historical > protected:
+            old = self.history.sample(historical - protected, self.device)
             result = {key: torch.cat((value, old[key]), 0) for key, value in result.items()}
+        if protected:
+            old = self.history.sample(protected, self.device, protected=True)
+            result = {key: torch.cat((value, old[key]), 0) for key, value in result.items()}
+        self.protected_actual += protected
         self.wm_level_counts.add_(
             torch.bincount(result["terrain_level"][:, 0], minlength=self.level_count)
         )
@@ -410,6 +426,7 @@ class ReplayBuffer:
         if valid_start_fn is not None:
             valid &= valid_start_fn(self.data["f"][rows, envs])
         ages, envs, domain, modes = ages[valid], envs[valid], domain[valid], modes[valid]
+        valid_goals = goal[valid]
         counts = torch.bincount(domain, minlength=self.domain_count)
         available = counts > 0
         effective = weights * available
@@ -426,8 +443,28 @@ class ReplayBuffer:
                 continue
             indices = (domain == d).nonzero().flatten()
             local_modes = modes[indices]
-            local_counts = torch.bincount(local_modes, minlength=6)
-            w = command_weights * (local_counts > 0)
+            if d == 0 and self.protected_success_fraction:
+                from unisupermimic.tasks.velocity.go2w.motion_prior import (
+                    CATEGORY_WEIGHTS,
+                    command_keys,
+                )
+
+                _, local_modes = command_keys(valid_goals[indices, :3])
+                signs = torch.arange(27, device=self.device)
+                bits = ((signs[:, None] // signs.new_tensor([1, 3, 9])) % 3) != 1
+                categories = (bits * signs.new_tensor([1, 2, 4])).sum(-1)
+                present = torch.bincount(local_modes, minlength=27) > 0
+                signs_per_category = torch.zeros(8, device=self.device).scatter_add_(
+                    0, categories, present.float()
+                )
+                desired = (*CATEGORY_WEIGHTS[:7], self.actor_three_axis_weight)
+                configured = goal.new_tensor(desired)[categories] / signs_per_category[
+                    categories
+                ].clamp_min(1)
+            else:
+                configured = command_weights
+            local_counts = torch.bincount(local_modes, minlength=len(configured))
+            w = configured * (local_counts > 0)
             use_fallback = bool(w.sum() <= 0)
             if use_fallback:
                 w = (local_counts > 0).float()

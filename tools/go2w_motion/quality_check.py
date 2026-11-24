@@ -1,10 +1,10 @@
 """Rebuild Go2W geometry and velocities from saved joint states and audit every frame."""
 
 import argparse
-from collections import Counter
 import csv
 import hashlib
 import json
+from collections import Counter
 from pathlib import Path
 from time import perf_counter
 from zipfile import BadZipFile
@@ -13,9 +13,16 @@ import mujoco
 import numpy as np
 import yaml
 
-from . import FIELDS, LEGS, MODEL, TRAIN, STANCE, ROLLING, SWING
-from .kinematics import Robot, UP, support_geometry
-from .trajectories import command_trace, derivative, heading_velocity, integrate, rotations, trapezoid_integral
+from . import DIAGONALS, FIELDS, LEGS, MODEL, ROLLING, STANCE, SWING, TRAIN
+from .kinematics import UP, Robot, support_geometry
+from .trajectories import (
+    command_trace,
+    derivative,
+    heading_velocity,
+    integrate,
+    rotations,
+    trapezoid_integral,
+)
 
 
 def rms(x, axis=None):
@@ -27,7 +34,7 @@ def load_clip(path):
         return dict(clip)
 
 
-def check_clip(clip, nominal, robot, config):
+def check_clip(clip, nominal, robot, config, gait="crawl"):
     hard, review = [], []
     dt = config["dt"]
     frames = round(config["motion_duration"]/dt) + 1
@@ -103,11 +110,25 @@ def check_clip(clip, nominal, robot, config):
     phase = clip["motion_phase"]
     contact = phase != SWING
     require(np.isin(phase, [STANCE, ROLLING, SWING]).all(), "invalid_contact_mode")
-    require(np.min(contact.sum(axis=1)) >= 3, "fewer_than_three_support_wheels")
+    min_contacts = 2 if gait == "diagonal" else 3
+    count = contact.sum(axis=1)
+    require(count.min() >= min_contacts, "insufficient_support_wheels")
     require(contact[[0, -1]].all(), "incomplete_swing")
     close("contact_mask", contact)
-    if np.min(contact.sum(axis=1)) < 3:
+    if count.min() < min_contacts:
         return {"quality_status": "rejected", "failure_reasons": hard}
+    diagonal = count == 2
+    if gait == "diagonal":
+        boundaries = np.flatnonzero(np.diff(np.r_[False, diagonal, False]))
+        pairs = [tuple(np.flatnonzero(~contact[start])) for start in boundaries[::2]]
+        require(all(pair in DIAGONALS for pair in pairs), "non_diagonal_pair")
+        require(all(a != b for a, b in zip(pairs, pairs[1:])), "diagonal_pairs_do_not_alternate")
+        require(all(np.all(contact[start:end] == contact[start])
+                    for start, end in boundaries.reshape(-1, 2)), "unsynchronized_diagonal_pair")
+        require(np.all((count == 2) | (count == 4)), "unsynchronized_diagonal_pair")
+        require(diagonal.any() or not np.any(np.asarray(nominal)[1:]), "missing_diagonal_steps", review)
+        if diagonal.any():
+            review.append("dynamic_diagonal_support")
 
     center = np.empty((frames, 4, 3))
     points = np.empty_like(center)
@@ -191,7 +212,10 @@ def check_clip(clip, nominal, robot, config):
     require(rolling_rms <= thresholds["rolling_rms"], "rolling_residual", review)
     require(lateral_rms <= thresholds["lateral_rms"], "lateral_residual", review)
     require(np.max(np.abs(lateral[contact]), initial=0) <= thresholds["lateral_peak"], "lateral_peak", review)
-    require(margins.min() >= thresholds["support_min"], "com_support_margin", review)
+    polygon_margin = margins[~diagonal].min()
+    line_distance = -margins[diagonal].min() if diagonal.any() else 0.
+    require(polygon_margin >= thresholds["support_min"], "com_support_margin", review)
+    require(line_distance <= thresholds.get("diagonal_com_distance", 0.08), "diagonal_com_distance", review)
     correction = np.linalg.norm(pos-nominal_pos, axis=1).max()
     require(correction <= thresholds["correction_max"] + state_atol, "base_correction", review)
 
@@ -217,7 +241,8 @@ def check_clip(clip, nominal, robot, config):
         first_ik_failure_frame=int(np.argmax(failed.any(axis=1))) if failed.any() else None,
         rolling_residual_rms=rolling_rms, rolling_residual_peak=np.max(np.abs(rolling[contact]), initial=0),
         lateral_residual_rms=lateral_rms, lateral_residual_peak=np.max(np.abs(lateral[contact]), initial=0),
-        min_support_margin=margins.min(), max_base_correction=correction,
+        min_support_margin=polygon_margin, max_base_correction=correction,
+        max_diagonal_com_distance=line_distance, diagonal_frames=int(diagonal.sum()),
         collision_count=sum(collisions.values()), collision_frames=collision_frames,
         worst_collision_distance=worst_collision, collision_pairs=dict(collisions),
         min_wheel_ground_gap=gap.min(), swing_frames=int((~contact).any(axis=1).sum()),
@@ -269,6 +294,9 @@ def audit_dataset(dataset, robot=None):
         if manifest.get(name) != expected:
             raise ValueError(f"Manifest {name} disagrees with the current schema or robot")
 
+    gait = manifest.get("gait", "crawl")
+    if gait not in ("crawl", "diagonal"):
+        raise ValueError(f"Unknown gait {gait}")
     rows, clips = [], {}
     for motion in manifest["motions"]:
         filename = (dataset / motion["file_path"]).resolve()
@@ -277,7 +305,7 @@ def audit_dataset(dataset, robot=None):
         nominal = np.asarray(motion["nominal_command"])
         try:
             clip = load_clip(filename)
-            check = check_clip(clip, nominal, robot, config)
+            check = check_clip(clip, nominal, robot, config, gait=gait)
             if "max_fk_error" in check:
                 clips[motion["motion_id"]] = clip
         except (OSError, ValueError, BadZipFile) as error:
@@ -309,7 +337,7 @@ def audit_dataset(dataset, robot=None):
     summary = dict(
         validation_level="kinematic_only", physics_validated=False,
         generated_at=manifest["generated_at"], generator_commit=manifest["generator_commit"],
-        categories=categories, generation_seconds=manifest["generation_seconds"],
+        gait=gait, categories=categories, generation_seconds=manifest["generation_seconds"],
         frame_count=sum(len(clip["time"]) for clip in clips.values()),
         space_bytes=sum(p.stat().st_size for p in (dataset / "motions").rglob("*.npz")),
         audited_frames=sum(len(clip["time"]) for clip in clips.values()),
@@ -347,7 +375,7 @@ def write_report(path, summary, rows):
         f"Generated {summary['frame_count']:,} audited frames in {duration:.2f} s "
         f"({summary['frame_count']/max(duration, 1e-6):.1f} frames/s). "
         f"NPZ size {summary['space_bytes']/2**20:.2f} MiB. Audit {summary['audit_seconds']:.2f} s.",
-        "Validation level `kinematic_only`. Physics validated `false`.", "",
+        f"Gait `{summary['gait']}`. Validation level `kinematic_only`. Physics validated `false`.", "",
         "| Category | Requested | Saved | Qualified | Candidate | Rejected | Generation (s) |",
         "|---|---:|---:|---:|---:|---:|---:|",
     ]

@@ -8,6 +8,7 @@ TRAIN = ROOT / "src/unisupermimic/conf/supermimic/task/go2w_velocity/train.yaml"
 CONFIG = Path(__file__).with_name("config.yaml")
 LEGS = ("FL", "FR", "RL", "RR")
 STANCE, ROLLING, SWING = range(3)
+DIAGONALS = ((0, 3), (1, 2))
 
 # Shape (T is frame count), units, coordinate system and provenance.
 FIELDS = {
@@ -34,5 +35,5 @@ FIELDS = {
     "ik_error": (("T", 4), "m", "target to FK distance"),
     "rolling_residual": (("T", 4), "m/s", "FK contact velocity along rolling direction"),
     "lateral_residual": (("T", 4), "m/s", "FK contact velocity along horizontal wheel axis"),
-    "support_margin": (("T",), "m", "signed CoM projection to support polygon edges"),
+    "support_margin": (("T",), "m", "signed CoM margin to polygon or negative distance to diagonal support segment"),
 }

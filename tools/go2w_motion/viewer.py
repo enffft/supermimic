@@ -1,9 +1,9 @@
 """Replay kinematic Go2W clips in MuJoCo. Press H to show the controls."""
 
 import argparse
-from collections.abc import Iterable
 import csv
 import json
+from collections.abc import Iterable
 from pathlib import Path
 from queue import SimpleQueue
 from time import perf_counter, sleep
@@ -31,6 +31,7 @@ class Playback:
         self.dataset = Path(dataset).resolve()
         manifest = json.loads((self.dataset / "manifest.json").read_text())
         self.dt = manifest["dt"]
+        self.gait = manifest.get("gait", "crawl")
         self.rows = manifest["motions"]
         robot = self.robot = Robot()
         if (manifest["quaternion_order"] != "wxyz"
@@ -130,7 +131,7 @@ class Playback:
             return " ".join(f"{v:+.3f}" for v in values)
         return (
             ("Motion", self.row["motion_id"]),
-            ("Category / quality", f"{self.row['motion_category']} / {self.row['quality_status']}"),
+            ("Category / quality", f"{self.row['motion_category']} / {self.row['quality_status']} / {self.gait}"),
             ("Selection", f"{self.index+1}/{len(self.matches)} | {self.category or 'all'} | {self.quality or 'all'}"),
             ("Frame / time", f"{i}/{len(self.yaw)-1}  {c['time'][i]:.2f} s  "
                              f"{self.speed:g}x  {'paused' if self.paused else 'playing'}"),
@@ -138,7 +139,9 @@ class Playback:
             ("Reference vx vy wz", number(self.reference[i])),
             ("Base xyz / yaw", f"{number(c['base_pos'][i])} m  {self.yaw[i]:+.3f} rad"),
             ("CoM xyz", number(c["com_pos"][i]) + " m"),
-            ("CoM support margin", f"{c['support_margin'][i]*1000:+.1f} mm"),
+            ("CoM to support line" if c["contact_mask"][i].sum() == 2 else "CoM support margin",
+             f"{abs(c['support_margin'][i])*1000:.1f} mm" if c["contact_mask"][i].sum() == 2
+             else f"{c['support_margin'][i]*1000:+.1f} mm"),
             ("FL FR RL RR", " ".join(MODES.get(mode, "?") for mode in c["motion_phase"][i])),
             ("IK error (mm)", number(1000*c["ik_error"][i])),
             ("Rolling / lateral (m/s)", number(c["rolling_residual"][i]) + " / " + number(c["lateral_residual"][i])),
@@ -191,6 +194,9 @@ def draw(scene, playback, offset=0):
         sphere(scene, c["com_pos"][i], COM_COLOR, .018)
     if "support" in options:
         support = hull(c["contact_point"][i, c["contact_mask"][i], :2])
+        if len(support) == 2:
+            vertices = np.column_stack((support, np.full(2, .008)))
+            line(scene, *vertices, SUPPORT_COLOR, 4)
         if len(support) >= 3:
             vertices = np.column_stack((support, np.full(len(support), .005)))
             for a, b in zip(vertices, np.roll(vertices, -1, axis=0)):

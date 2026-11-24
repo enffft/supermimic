@@ -1,22 +1,28 @@
 """Generate deterministic flat-ground Go2W kinematic reference clips."""
 
 import argparse
-from datetime import datetime
 import hashlib
 import json
-from pathlib import Path
 import subprocess
+from datetime import datetime
+from pathlib import Path
 from time import perf_counter
 
 import numpy as np
 import yaml
 
-from . import CONFIG, FIELDS, LEGS, MODEL, ROOT, TRAIN, STANCE, ROLLING, SWING
+from . import CONFIG, FIELDS, LEGS, MODEL, ROLLING, ROOT, STANCE, SWING, TRAIN
 from .contact_planner import plan, support_correction
-from .kinematics import Robot, UP, support_geometry, wheel_rates
-from .quality_check import check_clip, audit_dataset
-from .trajectories import command_trace, derivative, integrate, rotations, trapezoid_integral, yaw_quat
-
+from .kinematics import UP, Robot, support_geometry, wheel_rates
+from .quality_check import audit_dataset, check_clip
+from .trajectories import (
+    command_trace,
+    derivative,
+    integrate,
+    rotations,
+    trapezoid_integral,
+    yaw_quat,
+)
 
 MIRROR = np.array([1, -1, -1])
 PILOT_COMMANDS = (
@@ -63,7 +69,7 @@ def pose_geometry(robot, pos, quat, leg_q, wheel_q):
     return robot.geometry()
 
 
-def synthesize(robot, nominal, config, parameters, trace=None):
+def synthesize(robot, nominal, config, parameters, trace=None, gait="crawl"):
     dt = config["dt"]
     time = np.arange(round(config["motion_duration"]/dt) + 1) * dt
     if trace is None:
@@ -74,15 +80,15 @@ def synthesize(robot, nominal, config, parameters, trace=None):
     base = base_nominal.copy()
     rot, quat = rotations(yaw), yaw_quat(yaw)
     planner = config["planner"]
-    xy, lift, phase = plan(robot, base_nominal, rot, trace, dt, planner, parameters)
+    xy, lift, phase = plan(robot, base_nominal, rot, trace, dt, planner, parameters, gait)
     contact = phase != SWING
     still_wheel = np.zeros((len(time), 4))
-    correcting = np.any(~contact)
-    passes = planner["correction_passes"] if correcting else 0
+    has_swing = np.any(~contact)
+    passes = planner["correction_passes"] if has_swing and gait == "crawl" else 0
     for attempt in range(passes + 1):
         xy_local = (xy - base[:, None, :2]) @ rot[:, :2, :2]
         local, q, valid = robot.targets(xy_local, lift, base[:, 2],
-                                        compensate_camber=correcting)
+                                        compensate_camber=has_swing)
         if not valid.all():
             # Keep the last reachable pose for review and expose every failed target.
             previous = robot.stand_q.reshape(4, 3)
@@ -111,7 +117,7 @@ def synthesize(robot, nominal, config, parameters, trace=None):
         anchors = np.flatnonzero(contact[:, wheel])
         rates[:, wheel] = np.interp(time, time[anchors], rates[anchors, wheel])
     moving = np.abs(rates) * robot.wheel_radius > planner["stance_speed"]
-    if correcting:
+    if has_swing:
         phase[contact & moving] = ROLLING
     wheel_q = trapezoid_integral(rates, dt)
     center, points, axis, _, com = geometry(robot, base, quat, leg_q, wheel_q)
@@ -139,11 +145,12 @@ def candidate_score(row):
         {"qualified": 0, "candidate": 1, "rejected": 2}[row["quality_status"]],
         row["collision_count"], row["ik_failure_frames"],
         len(row["failure_reasons"]),
-        max(0., -row["min_support_margin"]) + row["lateral_residual_rms"] + row["vx_plateau_rmse"] + row["vy_plateau_rmse"],
+        max(0., -row["min_support_margin"]) + row["lateral_residual_rms"]
+        + row["vx_plateau_rmse"] + row["vy_plateau_rmse"],
     )
 
 
-def generate_dataset(output, config_path=CONFIG, category=None, pilot=False):
+def generate_dataset(output, config_path=CONFIG, category=None, pilot=False, gait="crawl"):
     config = yaml.safe_load(Path(config_path).read_text())
     jobs = list(commands(config))
     if pilot:
@@ -165,7 +172,8 @@ def generate_dataset(output, config_path=CONFIG, category=None, pilot=False):
             and 2*(config["rest_duration"] + config["ramp_duration"]) < config["motion_duration"]):
         raise ValueError("Expected an integral frame grid and a nonempty constant-speed interval")
 
-    candidates = config["planner"]["swing_candidates"]
+    key = "diagonal_swing_candidates" if gait == "diagonal" else "swing_candidates"
+    candidates = config["planner"][key]
     if not candidates or any(len(row) != 5 or row[0] < 4*config["dt"] or min(row) <= 0 for row in candidates):
         raise ValueError("Expected nonempty, positive five-column swing candidates on the frame grid")
     output = Path(output)
@@ -178,7 +186,7 @@ def generate_dataset(output, config_path=CONFIG, category=None, pilot=False):
     manifest = {
         "format": "go2w_kinematic_reference", "validation_level": "kinematic_only", "physics_validated": False,
         "generated_at": datetime.now().astimezone().isoformat(), "generator_commit": commit,
-        "seed": config["seed"], "dt": config["dt"], "quaternion_order": "wxyz",
+        "seed": config["seed"], "dt": config["dt"], "quaternion_order": "wxyz", "gait": gait,
         "leg_joint_names": robot.joint_names[:12], "wheel_joint_names": robot.joint_names[12:],
         "actuator_names": robot.actuator_names, "wheel_order": LEGS,
         "model": str(MODEL.relative_to(ROOT)), "model_sha256": hashlib.sha256(MODEL.read_bytes()).hexdigest(),
@@ -196,14 +204,14 @@ def generate_dataset(output, config_path=CONFIG, category=None, pilot=False):
         best = None
         trials = []
         for parameter in parameters:
-            clip = synthesize(robot, nominal, config, parameter)
-            assessment = check_clip(clip, nominal, robot, config)
+            clip = synthesize(robot, nominal, config, parameter, gait=gait)
+            assessment = check_clip(clip, nominal, robot, config, gait=gait)
             trials.append({"parameters": parameter, "quality_status": assessment["quality_status"],
                            "failure_reasons": assessment["failure_reasons"]})
             score = candidate_score(assessment)
             if best is None or score < best[0]:
                 best = score, clip, assessment, parameter
-            if assessment["quality_status"] == "qualified":
+            if assessment["quality_status"] == "qualified" or assessment["failure_reasons"] == ["dynamic_diagonal_support"]:
                 break
         _, clip, assessment, selected = best
         path = Path("motions") / group / f"{motion_id}.npz"
@@ -229,10 +237,11 @@ def main():
     parser.add_argument("--output-dir", required=True, type=Path)
     parser.add_argument("--config", type=Path, default=CONFIG)
     parser.add_argument("--pilot", action="store_true")
+    parser.add_argument("--gait", choices=("crawl", "diagonal"), default="crawl")
     parser.add_argument("--category", choices=[*yaml.safe_load(CONFIG.read_text())["commands"], "standing"])
     args = parser.parse_args()
     try:
-        generate_dataset(args.output_dir, args.config, args.category, args.pilot)
+        generate_dataset(args.output_dir, args.config, args.category, args.pilot, args.gait)
     except (FileExistsError, ValueError) as error:
         parser.error(str(error))
 

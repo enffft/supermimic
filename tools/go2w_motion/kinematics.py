@@ -34,7 +34,12 @@ def hull(points):
 
 def support_geometry(points, com):
     polygon = hull(points[:, :2])
-    if len(polygon) < 3:
+    if len(polygon) == 2:
+        segment = polygon[1] - polygon[0]
+        fraction = np.clip((com[:2] - polygon[0]) @ segment / (segment @ segment), 0., 1.)
+        distance = np.linalg.norm(com[:2] - (polygon[0] + fraction*segment))
+        return polygon, -distance, np.zeros(2)
+    if len(polygon) < 2:
         return polygon, -1., np.zeros(2)
     edges = np.roll(polygon, -1, axis=0) - polygon
     normals = np.column_stack((-edges[:, 1], edges[:, 0])) / np.linalg.norm(edges, axis=1)[:, None]

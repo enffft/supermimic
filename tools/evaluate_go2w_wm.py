@@ -5,8 +5,11 @@ import hashlib
 from pathlib import Path
 
 import torch
-from audit_go2w_warmstart import prediction_rmse
 
+if __package__:
+    from tools.audit_go2w_warmstart import prediction_rmse
+else:
+    from audit_go2w_warmstart import prediction_rmse
 from unisupermimic.rl.algos.supermimic.geometry import flatten_state, unflatten_state
 from unisupermimic.rl.algos.supermimic.networks import WorldModel
 from unisupermimic.tasks.velocity.go2w.config import load_config
@@ -78,7 +81,7 @@ def holdout(path):
 def evaluate(model_path, holdout_path, output):
     torch.set_num_threads(1)
     data = holdout(holdout_path)
-    env = make_go2w_env(load_config("train"), 1)
+    env = make_go2w_env(load_config(data.get("profile", "train")), 1)
     try:
         c = env.command_manager.get_term("velocity")
         if c.mdp.terrain.fingerprint != data["terrain_fingerprint"]:
@@ -99,7 +102,7 @@ def evaluate(model_path, holdout_path, output):
         s = unflatten_state(data["initial"], LAYOUT)
         rows = []
         with torch.no_grad():
-            for step in range(16):
+            for step in range(len(data["actions"])):
                 s = wm.step(
                     s,
                     data["actions"][step],
@@ -109,29 +112,53 @@ def evaluate(model_path, holdout_path, output):
                 if step + 1 not in (1, 8, 16):
                     continue
                 actual = unflatten_state(data["truth"][step], LAYOUT)
-                for domain in range(8):
-                    for phase in (0.0, 0.6, 2.8):
+                if data.get("profile") == "motion_prior":
+                    labels = [(x.get("source", "actor"), x["family"]) for x in data["cases"]]
+                    for source, group in dict.fromkeys(labels):
                         selected = (
-                            torch.tensor(
-                                [
-                                    x["domain"] == domain and x["offset"] == phase
-                                    for x in data["cases"]
-                                ]
-                            )
+                            torch.tensor([x == (source, group) for x in labels])
                             & data["valid"][step]
                         )
-                        row = dict(
-                            horizon=step + 1,
-                            domain=domain,
-                            phase_offset=phase,
-                            valid=int(selected.sum()),
-                            total=10,
-                        )
-                        if selected.any():
-                            row["rmse"] = prediction_rmse(
-                                tuple(t[selected] for t in s), tuple(t[selected] for t in actual)
+                        rows.append(
+                            dict(
+                                horizon=step + 1,
+                                source=source,
+                                family=group,
+                                valid=int(selected.sum()),
+                                total=labels.count((source, group)),
+                                rmse=prediction_rmse(
+                                    tuple(t[selected] for t in s),
+                                    tuple(t[selected] for t in actual),
+                                )
+                                if selected.any()
+                                else None,
                             )
-                        rows.append(row)
+                        )
+                else:
+                    for domain in range(8):
+                        for phase in (0.0, 0.6, 2.8):
+                            selected = (
+                                torch.tensor(
+                                    [
+                                        x["domain"] == domain and x["offset"] == phase
+                                        for x in data["cases"]
+                                    ]
+                                )
+                                & data["valid"][step]
+                            )
+                            row = dict(
+                                horizon=step + 1,
+                                domain=domain,
+                                phase_offset=phase,
+                                valid=int(selected.sum()),
+                                total=10,
+                            )
+                            if selected.any():
+                                row["rmse"] = prediction_rmse(
+                                    tuple(t[selected] for t in s),
+                                    tuple(t[selected] for t in actual),
+                                )
+                            rows.append(row)
         report = dict(
             model=str(model_path),
             wm_tensor_sha256=digest,

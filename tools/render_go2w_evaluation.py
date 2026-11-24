@@ -16,7 +16,7 @@ from unisupermimic.tasks.velocity.go2w.env import make_go2w_env
 def render(traces, output):
     torch.set_num_threads(1)
     saved = torch.load(traces, map_location="cpu", weights_only=True)
-    env = make_go2w_env(load_config("train"), 1)
+    env = make_go2w_env(load_config(saved.get("profile", "train")), 1)
     try:
         model = env.get_playback_model(0)
         data = mujoco.MjData(model)
@@ -47,6 +47,31 @@ def render(traces, output):
                 (6, "multi_stairs_up_level10"),
             ],
         }
+        if saved.get("profile") == "motion_prior":
+            groups = {
+                "flat": [
+                    (0, name)
+                    for name in (
+                        "standing_0",
+                        "forward_1",
+                        "backward_1",
+                        "left_1",
+                        "right_1",
+                        "yaw_left_1",
+                    )
+                ],
+                "coupled": [
+                    (0, name)
+                    for name in (
+                        "yaw_right_1",
+                        "forward_yaw_0",
+                        "forward_lateral_0",
+                        "lateral_yaw_0",
+                        "lateral_yaw_1",
+                        "forward_yaw_1",
+                    )
+                ],
+            }
         output.mkdir(parents=True, exist_ok=True)
         for label, group in groups.items():
             indices = [
@@ -61,7 +86,8 @@ def render(traces, output):
                 output / f"{label}.mp4", fps=25, codec="libx264", quality=7
             ) as writer:
                 last_valid = {i: 0 for i in indices}
-                for step in range(0, len(saved["qpos"]), 2):
+                dt = saved["dt"]
+                for step in range(0, len(saved["qpos"]), round(0.04 / dt)):
                     tiles = []
                     for i in indices:
                         if saved["active"][step, i]:
@@ -77,7 +103,7 @@ def render(traces, output):
                         row = saved["rows"][i]
                         draw.rectangle((0, 0, 400, 46), fill=(20, 20, 20))
                         draw.text((7, 5), f"{row['name']} | cmd {row['goal']}", fill="white")
-                        text = f"t={min(step * 0.02, row['duration_seconds']):.2f}s | "
+                        text = f"t={min(step * dt, row['duration_seconds']):.2f}s | "
                         text += "active" if saved["active"][step, i] else row["terminal_reason"]
                         text += f" | pass={row['passed']}"
                         draw.text((7, 25), text, fill="white")

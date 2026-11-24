@@ -363,7 +363,7 @@ def audit_dataset(dataset, robot=None):
         key for row in rows for key in row if key not in ("failure_reasons", "nominal_command")
     ]))
     with (report / "quality_report.csv").open("w", newline="") as stream:
-        writer = csv.DictWriter(stream, fieldnames=[*fieldnames, "failure_reason"])
+        writer = csv.DictWriter(stream, fieldnames=[*fieldnames, "failure_reason"], lineterminator="\n")
         writer.writeheader()
         for row in rows:
             writer.writerow({**{key: row[key] for key in fieldnames if key in row},

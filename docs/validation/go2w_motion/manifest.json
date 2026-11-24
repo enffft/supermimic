@@ -1,0 +1,4310 @@
+{
+  "format": "go2w_kinematic_reference",
+  "validation_level": "kinematic_only",
+  "physics_validated": false,
+  "generated_at": "2026-11-24T18:59:04.513809+08:00",
+  "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+  "seed": 42,
+  "dt": 0.02,
+  "quaternion_order": "wxyz",
+  "gait": "diagonal",
+  "leg_joint_names": [
+    "robot/FL_hip_joint",
+    "robot/FL_thigh_joint",
+    "robot/FL_calf_joint",
+    "robot/FR_hip_joint",
+    "robot/FR_thigh_joint",
+    "robot/FR_calf_joint",
+    "robot/RL_hip_joint",
+    "robot/RL_thigh_joint",
+    "robot/RL_calf_joint",
+    "robot/RR_hip_joint",
+    "robot/RR_thigh_joint",
+    "robot/RR_calf_joint"
+  ],
+  "wheel_joint_names": [
+    "robot/FL_wheel_joint",
+    "robot/FR_wheel_joint",
+    "robot/RL_wheel_joint",
+    "robot/RR_wheel_joint"
+  ],
+  "actuator_names": [
+    "robot/FL_hip_joint",
+    "robot/FL_thigh_joint",
+    "robot/FL_calf_joint",
+    "robot/FR_hip_joint",
+    "robot/FR_thigh_joint",
+    "robot/FR_calf_joint",
+    "robot/RL_hip_joint",
+    "robot/RL_thigh_joint",
+    "robot/RL_calf_joint",
+    "robot/RR_hip_joint",
+    "robot/RR_thigh_joint",
+    "robot/RR_calf_joint",
+    "robot/FL_wheel_joint",
+    "robot/FR_wheel_joint",
+    "robot/RL_wheel_joint",
+    "robot/RR_wheel_joint"
+  ],
+  "wheel_order": [
+    "FL",
+    "FR",
+    "RL",
+    "RR"
+  ],
+  "model": "src/unisupermimic/assets/robots/go2w/flat.xml",
+  "model_sha256": "2ae33b1635214cb1a0dd7ba32ea7550a259fefee5783a2140ab921adeb27d2b8",
+  "wheel_mesh_sha256": "51c95e80dcd41c0cf1a9575d4d7c2c89855848f7fa2c4bf28f2f10c2e3d639e2",
+  "control_config_sha256": "3c42c2400563aeb9e86a6d8f896529661f73e756f07463071ea9523eaba7a7e3",
+  "motion_phase": {
+    "STANCE": 0,
+    "ROLLING": 1,
+    "SWING": 2
+  },
+  "fields": {
+    "time": {
+      "shape": [
+        "T"
+      ],
+      "units": "s",
+      "description": "clip clock"
+    },
+    "command_nominal": {
+      "shape": [
+        3
+      ],
+      "units": "m/s, m/s, rad/s",
+      "description": "requested heading vx, vy, wz"
+    },
+    "command": {
+      "shape": [
+        "T",
+        3
+      ],
+      "units": "m/s, m/s, rad/s",
+      "description": "planned heading vx, vy, wz"
+    },
+    "base_pos_nominal": {
+      "shape": [
+        "T",
+        3
+      ],
+      "units": "m",
+      "description": "world, integrated command"
+    },
+    "base_pos": {
+      "shape": [
+        "T",
+        3
+      ],
+      "units": "m",
+      "description": "world, corrected reference"
+    },
+    "base_quat": {
+      "shape": [
+        "T",
+        4
+      ],
+      "units": "1",
+      "description": "world-from-base quaternion wxyz"
+    },
+    "base_lin_vel": {
+      "shape": [
+        "T",
+        3
+      ],
+      "units": "m/s",
+      "description": "world, derivative of reference position"
+    },
+    "base_ang_vel": {
+      "shape": [
+        "T",
+        3
+      ],
+      "units": "rad/s",
+      "description": "world, derivative of reference orientation"
+    },
+    "com_pos": {
+      "shape": [
+        "T",
+        3
+      ],
+      "units": "m",
+      "description": "world, FK subtree CoM"
+    },
+    "leg_q": {
+      "shape": [
+        "T",
+        12
+      ],
+      "units": "rad",
+      "description": "logical joint order, IK state"
+    },
+    "leg_qd": {
+      "shape": [
+        "T",
+        12
+      ],
+      "units": "rad/s",
+      "description": "logical joint order, derivative of IK state"
+    },
+    "wheel_q": {
+      "shape": [
+        "T",
+        4
+      ],
+      "units": "rad",
+      "description": "logical wheel order, unwrapped kinematic integral"
+    },
+    "wheel_qd": {
+      "shape": [
+        "T",
+        4
+      ],
+      "units": "rad/s",
+      "description": "logical wheel order, kinematic rolling estimate"
+    },
+    "wheel_center_target": {
+      "shape": [
+        "T",
+        4,
+        3
+      ],
+      "units": "m",
+      "description": "world, planned"
+    },
+    "wheel_center_fk": {
+      "shape": [
+        "T",
+        4,
+        3
+      ],
+      "units": "m",
+      "description": "world, rebuilt from reference pose"
+    },
+    "contact_point": {
+      "shape": [
+        "T",
+        4,
+        3
+      ],
+      "units": "m",
+      "description": "world, lowest wheel mesh point, including swing"
+    },
+    "contact_mask": {
+      "shape": [
+        "T",
+        4
+      ],
+      "units": "bool",
+      "description": "planned support"
+    },
+    "wheel_rate_valid": {
+      "shape": [
+        "T",
+        4
+      ],
+      "units": "bool",
+      "description": "support, within ground tolerance and valid IK"
+    },
+    "motion_phase": {
+      "shape": [
+        "T",
+        4
+      ],
+      "units": "enum",
+      "description": "planned STANCE=0, ROLLING=1, SWING=2"
+    },
+    "ik_failed": {
+      "shape": [
+        "T",
+        4
+      ],
+      "units": "bool",
+      "description": "analytic workspace/limit solver failure"
+    },
+    "ik_error": {
+      "shape": [
+        "T",
+        4
+      ],
+      "units": "m",
+      "description": "target to FK distance"
+    },
+    "rolling_residual": {
+      "shape": [
+        "T",
+        4
+      ],
+      "units": "m/s",
+      "description": "FK contact velocity along rolling direction"
+    },
+    "lateral_residual": {
+      "shape": [
+        "T",
+        4
+      ],
+      "units": "m/s",
+      "description": "FK contact velocity along horizontal wheel axis"
+    },
+    "support_margin": {
+      "shape": [
+        "T"
+      ],
+      "units": "m",
+      "description": "signed CoM margin to polygon or negative distance to diagonal support segment"
+    }
+  },
+  "motions": [
+    {
+      "motion_id": "backward_vx_035",
+      "motion_category": "forward_backward",
+      "nominal_command": [
+        -0.35,
+        0.0,
+        0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_backward/backward_vx_035.npz",
+      "quality_status": "qualified",
+      "failure_reasons": [],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.17218227201374248,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "qualified",
+          "failure_reasons": []
+        }
+      ]
+    },
+    {
+      "motion_id": "backward_vx_030",
+      "motion_category": "forward_backward",
+      "nominal_command": [
+        -0.3,
+        0.0,
+        0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_backward/backward_vx_030.npz",
+      "quality_status": "qualified",
+      "failure_reasons": [],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.17342360597103834,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "qualified",
+          "failure_reasons": []
+        }
+      ]
+    },
+    {
+      "motion_id": "backward_vx_025",
+      "motion_category": "forward_backward",
+      "nominal_command": [
+        -0.25,
+        0.0,
+        0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_backward/backward_vx_025.npz",
+      "quality_status": "qualified",
+      "failure_reasons": [],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.17441047698957846,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "qualified",
+          "failure_reasons": []
+        }
+      ]
+    },
+    {
+      "motion_id": "backward_vx_020",
+      "motion_category": "forward_backward",
+      "nominal_command": [
+        -0.2,
+        0.0,
+        0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_backward/backward_vx_020.npz",
+      "quality_status": "qualified",
+      "failure_reasons": [],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.17324821301735938,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "qualified",
+          "failure_reasons": []
+        }
+      ]
+    },
+    {
+      "motion_id": "backward_vx_015",
+      "motion_category": "forward_backward",
+      "nominal_command": [
+        -0.15,
+        0.0,
+        0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_backward/backward_vx_015.npz",
+      "quality_status": "qualified",
+      "failure_reasons": [],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.17309331998694688,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "qualified",
+          "failure_reasons": []
+        }
+      ]
+    },
+    {
+      "motion_id": "backward_vx_010",
+      "motion_category": "forward_backward",
+      "nominal_command": [
+        -0.1,
+        0.0,
+        0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_backward/backward_vx_010.npz",
+      "quality_status": "qualified",
+      "failure_reasons": [],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.17430851701647043,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "qualified",
+          "failure_reasons": []
+        }
+      ]
+    },
+    {
+      "motion_id": "backward_vx_005",
+      "motion_category": "forward_backward",
+      "nominal_command": [
+        -0.05,
+        0.0,
+        0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_backward/backward_vx_005.npz",
+      "quality_status": "qualified",
+      "failure_reasons": [],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.1726753269904293,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "qualified",
+          "failure_reasons": []
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_vx_005",
+      "motion_category": "forward_backward",
+      "nominal_command": [
+        0.05,
+        0.0,
+        0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_backward/forward_vx_005.npz",
+      "quality_status": "qualified",
+      "failure_reasons": [],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.17144937498960644,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "qualified",
+          "failure_reasons": []
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_vx_010",
+      "motion_category": "forward_backward",
+      "nominal_command": [
+        0.1,
+        0.0,
+        0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_backward/forward_vx_010.npz",
+      "quality_status": "qualified",
+      "failure_reasons": [],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.1735546079580672,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "qualified",
+          "failure_reasons": []
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_vx_015",
+      "motion_category": "forward_backward",
+      "nominal_command": [
+        0.15,
+        0.0,
+        0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_backward/forward_vx_015.npz",
+      "quality_status": "qualified",
+      "failure_reasons": [],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.17256273597013205,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "qualified",
+          "failure_reasons": []
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_vx_020",
+      "motion_category": "forward_backward",
+      "nominal_command": [
+        0.2,
+        0.0,
+        0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_backward/forward_vx_020.npz",
+      "quality_status": "qualified",
+      "failure_reasons": [],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.17226868105353788,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "qualified",
+          "failure_reasons": []
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_vx_025",
+      "motion_category": "forward_backward",
+      "nominal_command": [
+        0.25,
+        0.0,
+        0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_backward/forward_vx_025.npz",
+      "quality_status": "qualified",
+      "failure_reasons": [],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.17385918699437752,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "qualified",
+          "failure_reasons": []
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_vx_030",
+      "motion_category": "forward_backward",
+      "nominal_command": [
+        0.3,
+        0.0,
+        0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_backward/forward_vx_030.npz",
+      "quality_status": "qualified",
+      "failure_reasons": [],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.17332697502570227,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "qualified",
+          "failure_reasons": []
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_vx_035",
+      "motion_category": "forward_backward",
+      "nominal_command": [
+        0.35,
+        0.0,
+        0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_backward/forward_vx_035.npz",
+      "quality_status": "qualified",
+      "failure_reasons": [],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.17344628798309714,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "qualified",
+          "failure_reasons": []
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_vx_040",
+      "motion_category": "forward_backward",
+      "nominal_command": [
+        0.4,
+        0.0,
+        0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_backward/forward_vx_040.npz",
+      "quality_status": "qualified",
+      "failure_reasons": [],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.17326668504392728,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "qualified",
+          "failure_reasons": []
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_vx_045",
+      "motion_category": "forward_backward",
+      "nominal_command": [
+        0.45,
+        0.0,
+        0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_backward/forward_vx_045.npz",
+      "quality_status": "qualified",
+      "failure_reasons": [],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.17422413104213774,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "qualified",
+          "failure_reasons": []
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_vx_050",
+      "motion_category": "forward_backward",
+      "nominal_command": [
+        0.5,
+        0.0,
+        0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_backward/forward_vx_050.npz",
+      "quality_status": "qualified",
+      "failure_reasons": [],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.17305258999112993,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "qualified",
+          "failure_reasons": []
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_vx_055",
+      "motion_category": "forward_backward",
+      "nominal_command": [
+        0.55,
+        0.0,
+        0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_backward/forward_vx_055.npz",
+      "quality_status": "qualified",
+      "failure_reasons": [],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.17077329999301583,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "qualified",
+          "failure_reasons": []
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_vx_060",
+      "motion_category": "forward_backward",
+      "nominal_command": [
+        0.6,
+        0.0,
+        0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_backward/forward_vx_060.npz",
+      "quality_status": "qualified",
+      "failure_reasons": [],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.17055797501234338,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "qualified",
+          "failure_reasons": []
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_vx_065",
+      "motion_category": "forward_backward",
+      "nominal_command": [
+        0.65,
+        0.0,
+        0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_backward/forward_vx_065.npz",
+      "quality_status": "qualified",
+      "failure_reasons": [],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.1748615099932067,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "qualified",
+          "failure_reasons": []
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_vx_070",
+      "motion_category": "forward_backward",
+      "nominal_command": [
+        0.7,
+        0.0,
+        0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_backward/forward_vx_070.npz",
+      "quality_status": "qualified",
+      "failure_reasons": [],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.17364427796564996,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "qualified",
+          "failure_reasons": []
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_vx_075",
+      "motion_category": "forward_backward",
+      "nominal_command": [
+        0.75,
+        0.0,
+        0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_backward/forward_vx_075.npz",
+      "quality_status": "qualified",
+      "failure_reasons": [],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.1711925530107692,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "qualified",
+          "failure_reasons": []
+        }
+      ]
+    },
+    {
+      "motion_id": "yaw_right_wz_080",
+      "motion_category": "yaw",
+      "nominal_command": [
+        0.0,
+        0.0,
+        -0.8
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/yaw/yaw_right_wz_080.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.17984774702927098,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "yaw_right_wz_070",
+      "motion_category": "yaw",
+      "nominal_command": [
+        0.0,
+        0.0,
+        -0.7
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/yaw/yaw_right_wz_070.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.1807227609679103,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "yaw_right_wz_060",
+      "motion_category": "yaw",
+      "nominal_command": [
+        0.0,
+        0.0,
+        -0.6
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/yaw/yaw_right_wz_060.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18312050902750343,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "yaw_right_wz_050",
+      "motion_category": "yaw",
+      "nominal_command": [
+        0.0,
+        0.0,
+        -0.5
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/yaw/yaw_right_wz_050.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.1810594709822908,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "yaw_right_wz_040",
+      "motion_category": "yaw",
+      "nominal_command": [
+        0.0,
+        0.0,
+        -0.4
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/yaw/yaw_right_wz_040.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18237433501053602,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "yaw_right_wz_030",
+      "motion_category": "yaw",
+      "nominal_command": [
+        0.0,
+        0.0,
+        -0.3
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/yaw/yaw_right_wz_030.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18366223498014733,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "yaw_right_wz_020",
+      "motion_category": "yaw",
+      "nominal_command": [
+        0.0,
+        0.0,
+        -0.2
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/yaw/yaw_right_wz_020.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18549211497884244,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "yaw_right_wz_010",
+      "motion_category": "yaw",
+      "nominal_command": [
+        0.0,
+        0.0,
+        -0.1
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/yaw/yaw_right_wz_010.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18585649400483817,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "yaw_left_wz_010",
+      "motion_category": "yaw",
+      "nominal_command": [
+        0.0,
+        0.0,
+        0.1
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/yaw/yaw_left_wz_010.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18814143404597417,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "yaw_left_wz_020",
+      "motion_category": "yaw",
+      "nominal_command": [
+        0.0,
+        0.0,
+        0.2
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/yaw/yaw_left_wz_020.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.1850552880205214,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "yaw_left_wz_030",
+      "motion_category": "yaw",
+      "nominal_command": [
+        0.0,
+        0.0,
+        0.3
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/yaw/yaw_left_wz_030.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18430663197068498,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "yaw_left_wz_040",
+      "motion_category": "yaw",
+      "nominal_command": [
+        0.0,
+        0.0,
+        0.4
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/yaw/yaw_left_wz_040.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18277068698080257,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "yaw_left_wz_050",
+      "motion_category": "yaw",
+      "nominal_command": [
+        0.0,
+        0.0,
+        0.5
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/yaw/yaw_left_wz_050.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18311570602236316,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "yaw_left_wz_060",
+      "motion_category": "yaw",
+      "nominal_command": [
+        0.0,
+        0.0,
+        0.6
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/yaw/yaw_left_wz_060.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18236494500888512,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "yaw_left_wz_070",
+      "motion_category": "yaw",
+      "nominal_command": [
+        0.0,
+        0.0,
+        0.7
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/yaw/yaw_left_wz_070.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.1840690430253744,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "yaw_left_wz_080",
+      "motion_category": "yaw",
+      "nominal_command": [
+        0.0,
+        0.0,
+        0.8
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/yaw/yaw_left_wz_080.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18279808899387717,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "lateral_right_vy_035",
+      "motion_category": "lateral",
+      "nominal_command": [
+        0.0,
+        -0.35,
+        0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/lateral/lateral_right_vy_035.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18265699001494795,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "lateral_right_vy_030",
+      "motion_category": "lateral",
+      "nominal_command": [
+        0.0,
+        -0.3,
+        0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/lateral/lateral_right_vy_030.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18334043002687395,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "lateral_right_vy_025",
+      "motion_category": "lateral",
+      "nominal_command": [
+        0.0,
+        -0.25,
+        0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/lateral/lateral_right_vy_025.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18307772098341957,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "lateral_right_vy_020",
+      "motion_category": "lateral",
+      "nominal_command": [
+        0.0,
+        -0.2,
+        0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/lateral/lateral_right_vy_020.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.1838372410275042,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "lateral_right_vy_015",
+      "motion_category": "lateral",
+      "nominal_command": [
+        0.0,
+        -0.15,
+        0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/lateral/lateral_right_vy_015.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18347332201665267,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "lateral_right_vy_010",
+      "motion_category": "lateral",
+      "nominal_command": [
+        0.0,
+        -0.1,
+        0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/lateral/lateral_right_vy_010.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18261726101627573,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "lateral_right_vy_005",
+      "motion_category": "lateral",
+      "nominal_command": [
+        0.0,
+        -0.05,
+        0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/lateral/lateral_right_vy_005.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18331780197331682,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "lateral_left_vy_005",
+      "motion_category": "lateral",
+      "nominal_command": [
+        0.0,
+        0.05,
+        0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/lateral/lateral_left_vy_005.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.1853392319753766,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "lateral_left_vy_010",
+      "motion_category": "lateral",
+      "nominal_command": [
+        0.0,
+        0.1,
+        0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/lateral/lateral_left_vy_010.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18271974503295496,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "lateral_left_vy_015",
+      "motion_category": "lateral",
+      "nominal_command": [
+        0.0,
+        0.15,
+        0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/lateral/lateral_left_vy_015.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.1805945829837583,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "lateral_left_vy_020",
+      "motion_category": "lateral",
+      "nominal_command": [
+        0.0,
+        0.2,
+        0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/lateral/lateral_left_vy_020.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18279445898951963,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "lateral_left_vy_025",
+      "motion_category": "lateral",
+      "nominal_command": [
+        0.0,
+        0.25,
+        0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/lateral/lateral_left_vy_025.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.1807462580036372,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "lateral_left_vy_030",
+      "motion_category": "lateral",
+      "nominal_command": [
+        0.0,
+        0.3,
+        0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/lateral/lateral_left_vy_030.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18216990702785552,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "lateral_left_vy_035",
+      "motion_category": "lateral",
+      "nominal_command": [
+        0.0,
+        0.35,
+        0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/lateral/lateral_left_vy_035.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18374367599608377,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_yaw_001",
+      "motion_category": "forward_yaw",
+      "nominal_command": [
+        0.1,
+        0,
+        0.2
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_yaw/forward_yaw_001.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18694475997472182,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_yaw_002",
+      "motion_category": "forward_yaw",
+      "nominal_command": [
+        0.2,
+        0,
+        0.4
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_yaw/forward_yaw_002.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.1833494239836,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_yaw_003",
+      "motion_category": "forward_yaw",
+      "nominal_command": [
+        0.3,
+        0,
+        0.6
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_yaw/forward_yaw_003.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18421917298110202,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_yaw_004",
+      "motion_category": "forward_yaw",
+      "nominal_command": [
+        0.4,
+        0,
+        0.3
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_yaw/forward_yaw_004.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18311702302889898,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_yaw_005",
+      "motion_category": "forward_yaw",
+      "nominal_command": [
+        0.5,
+        0,
+        0.2
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_yaw/forward_yaw_005.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18177063000621274,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_yaw_006",
+      "motion_category": "forward_yaw",
+      "nominal_command": [
+        0.6,
+        0,
+        0.4
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_yaw/forward_yaw_006.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18074571603210643,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_yaw_007",
+      "motion_category": "forward_yaw",
+      "nominal_command": [
+        0.7,
+        0,
+        0.3
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_yaw/forward_yaw_007.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18100111500825733,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_yaw_008",
+      "motion_category": "forward_yaw",
+      "nominal_command": [
+        0.25,
+        0,
+        0.7
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_yaw/forward_yaw_008.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18147612299071625,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_yaw_009",
+      "motion_category": "forward_yaw",
+      "nominal_command": [
+        0.1,
+        -0.0,
+        -0.2
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_yaw/forward_yaw_009.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18517203896772116,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_yaw_010",
+      "motion_category": "forward_yaw",
+      "nominal_command": [
+        0.2,
+        -0.0,
+        -0.4
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_yaw/forward_yaw_010.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18525999604025856,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_yaw_011",
+      "motion_category": "forward_yaw",
+      "nominal_command": [
+        0.3,
+        -0.0,
+        -0.6
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_yaw/forward_yaw_011.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.1856710219872184,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_yaw_012",
+      "motion_category": "forward_yaw",
+      "nominal_command": [
+        0.4,
+        -0.0,
+        -0.3
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_yaw/forward_yaw_012.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.1860768090118654,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_yaw_013",
+      "motion_category": "forward_yaw",
+      "nominal_command": [
+        0.5,
+        -0.0,
+        -0.2
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_yaw/forward_yaw_013.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.19374238699674606,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_yaw_014",
+      "motion_category": "forward_yaw",
+      "nominal_command": [
+        0.6,
+        -0.0,
+        -0.4
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_yaw/forward_yaw_014.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18380875897128135,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_yaw_015",
+      "motion_category": "forward_yaw",
+      "nominal_command": [
+        0.7,
+        -0.0,
+        -0.3
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_yaw/forward_yaw_015.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18477837496902794,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_yaw_016",
+      "motion_category": "forward_yaw",
+      "nominal_command": [
+        0.25,
+        -0.0,
+        -0.7
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_yaw/forward_yaw_016.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18215075903572142,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_lateral_001",
+      "motion_category": "forward_lateral",
+      "nominal_command": [
+        0.1,
+        0.05,
+        0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_lateral/forward_lateral_001.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18546168599277735,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_lateral_002",
+      "motion_category": "forward_lateral",
+      "nominal_command": [
+        0.15,
+        0.15,
+        0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_lateral/forward_lateral_002.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18466094898758456,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_lateral_003",
+      "motion_category": "forward_lateral",
+      "nominal_command": [
+        0.2,
+        0.25,
+        0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_lateral/forward_lateral_003.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18292760604526848,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_lateral_004",
+      "motion_category": "forward_lateral",
+      "nominal_command": [
+        0.3,
+        0.1,
+        0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_lateral/forward_lateral_004.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.19930899300379679,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_lateral_005",
+      "motion_category": "forward_lateral",
+      "nominal_command": [
+        0.4,
+        0.2,
+        0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_lateral/forward_lateral_005.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18338453100295737,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_lateral_006",
+      "motion_category": "forward_lateral",
+      "nominal_command": [
+        0.5,
+        0.1,
+        0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_lateral/forward_lateral_006.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18343364400789142,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_lateral_007",
+      "motion_category": "forward_lateral",
+      "nominal_command": [
+        0.6,
+        0.15,
+        0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_lateral/forward_lateral_007.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18535659898770973,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_lateral_008",
+      "motion_category": "forward_lateral",
+      "nominal_command": [
+        0.25,
+        0.3,
+        0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_lateral/forward_lateral_008.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.1832089620293118,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_lateral_009",
+      "motion_category": "forward_lateral",
+      "nominal_command": [
+        0.1,
+        -0.05,
+        -0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_lateral/forward_lateral_009.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18551405402831733,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_lateral_010",
+      "motion_category": "forward_lateral",
+      "nominal_command": [
+        0.15,
+        -0.15,
+        -0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_lateral/forward_lateral_010.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18478228896856308,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_lateral_011",
+      "motion_category": "forward_lateral",
+      "nominal_command": [
+        0.2,
+        -0.25,
+        -0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_lateral/forward_lateral_011.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.184262984956149,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_lateral_012",
+      "motion_category": "forward_lateral",
+      "nominal_command": [
+        0.3,
+        -0.1,
+        -0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_lateral/forward_lateral_012.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18497360299807042,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_lateral_013",
+      "motion_category": "forward_lateral",
+      "nominal_command": [
+        0.4,
+        -0.2,
+        -0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_lateral/forward_lateral_013.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18300843803444877,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_lateral_014",
+      "motion_category": "forward_lateral",
+      "nominal_command": [
+        0.5,
+        -0.1,
+        -0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_lateral/forward_lateral_014.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.1820683979894966,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_lateral_015",
+      "motion_category": "forward_lateral",
+      "nominal_command": [
+        0.6,
+        -0.15,
+        -0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_lateral/forward_lateral_015.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18364219600334764,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "forward_lateral_016",
+      "motion_category": "forward_lateral",
+      "nominal_command": [
+        0.25,
+        -0.3,
+        -0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/forward_lateral/forward_lateral_016.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18449481402058154,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "lateral_yaw_001",
+      "motion_category": "lateral_yaw",
+      "nominal_command": [
+        0,
+        0.05,
+        0.2
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/lateral_yaw/lateral_yaw_001.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.1843194550019689,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "lateral_yaw_002",
+      "motion_category": "lateral_yaw",
+      "nominal_command": [
+        0,
+        0.1,
+        -0.3
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/lateral_yaw/lateral_yaw_002.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18460513500031084,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "lateral_yaw_003",
+      "motion_category": "lateral_yaw",
+      "nominal_command": [
+        0,
+        0.15,
+        0.4
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/lateral_yaw/lateral_yaw_003.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18456623196834698,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "lateral_yaw_004",
+      "motion_category": "lateral_yaw",
+      "nominal_command": [
+        0,
+        0.2,
+        -0.5
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/lateral_yaw/lateral_yaw_004.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18479849799769,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "lateral_yaw_005",
+      "motion_category": "lateral_yaw",
+      "nominal_command": [
+        0,
+        0.25,
+        0.2
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/lateral_yaw/lateral_yaw_005.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.182119958975818,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "lateral_yaw_006",
+      "motion_category": "lateral_yaw",
+      "nominal_command": [
+        0,
+        0.3,
+        -0.3
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/lateral_yaw/lateral_yaw_006.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.1814000160084106,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "lateral_yaw_007",
+      "motion_category": "lateral_yaw",
+      "nominal_command": [
+        0,
+        0.15,
+        0.7
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/lateral_yaw/lateral_yaw_007.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18106458004331216,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "lateral_yaw_008",
+      "motion_category": "lateral_yaw",
+      "nominal_command": [
+        0,
+        0.1,
+        -0.7
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/lateral_yaw/lateral_yaw_008.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18077508499845862,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "lateral_yaw_009",
+      "motion_category": "lateral_yaw",
+      "nominal_command": [
+        0.0,
+        -0.05,
+        -0.2
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/lateral_yaw/lateral_yaw_009.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18251343694282696,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "lateral_yaw_010",
+      "motion_category": "lateral_yaw",
+      "nominal_command": [
+        0.0,
+        -0.1,
+        0.3
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/lateral_yaw/lateral_yaw_010.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18303895904682577,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "lateral_yaw_011",
+      "motion_category": "lateral_yaw",
+      "nominal_command": [
+        0.0,
+        -0.15,
+        -0.4
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/lateral_yaw/lateral_yaw_011.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.181046920013614,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "lateral_yaw_012",
+      "motion_category": "lateral_yaw",
+      "nominal_command": [
+        0.0,
+        -0.2,
+        0.5
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/lateral_yaw/lateral_yaw_012.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.17995102202985436,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "lateral_yaw_013",
+      "motion_category": "lateral_yaw",
+      "nominal_command": [
+        0.0,
+        -0.25,
+        -0.2
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/lateral_yaw/lateral_yaw_013.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18189072899986058,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "lateral_yaw_014",
+      "motion_category": "lateral_yaw",
+      "nominal_command": [
+        0.0,
+        -0.3,
+        0.3
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/lateral_yaw/lateral_yaw_014.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.1830953390453942,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "lateral_yaw_015",
+      "motion_category": "lateral_yaw",
+      "nominal_command": [
+        0.0,
+        -0.15,
+        -0.7
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/lateral_yaw/lateral_yaw_015.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.1864163390127942,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "lateral_yaw_016",
+      "motion_category": "lateral_yaw",
+      "nominal_command": [
+        0.0,
+        -0.1,
+        0.7
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/lateral_yaw/lateral_yaw_016.npz",
+      "quality_status": "candidate",
+      "failure_reasons": [
+        "dynamic_diagonal_support"
+      ],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.18461717601167038,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "candidate",
+          "failure_reasons": [
+            "dynamic_diagonal_support"
+          ]
+        }
+      ]
+    },
+    {
+      "motion_id": "standing",
+      "motion_category": "standing",
+      "nominal_command": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "duration": 6.0,
+      "frame_count": 301,
+      "file_path": "motions/standing/standing.npz",
+      "quality_status": "qualified",
+      "failure_reasons": [],
+      "generator_commit": "8d823e4374701a820d60419988cb58b4371d01f0",
+      "seed": 42,
+      "generation_time": 0.17214669298846275,
+      "planning_parameters": [
+        0.26,
+        0.04,
+        0.2,
+        0.05,
+        0.18
+      ],
+      "attempts": [
+        {
+          "parameters": [
+            0.26,
+            0.04,
+            0.2,
+            0.05,
+            0.18
+          ],
+          "quality_status": "qualified",
+          "failure_reasons": []
+        }
+      ]
+    }
+  ],
+  "generation_seconds": 18.30969558999641
+}

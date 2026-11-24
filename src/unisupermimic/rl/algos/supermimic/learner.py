@@ -13,6 +13,7 @@ from typing import Any, cast
 
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 from torch.optim.swa_utils import AveragedModel, get_ema_multi_avg_fn
 from unilab.base.contracts.env import EnvProtocol
 
@@ -66,7 +67,7 @@ class SuperMimicConfig:
     wm_only_iters: int = 500
     lr_decay_iters: int = 250_000
     ckpt_every: int = 2000
-    numbered_ckpt_every: int = 0  # 0 retains the original checkpoint cadence
+    numbered_ckpt_every: int | None = 0  # None disables numbered copies.
     log_every: int = 50
     log_backend: str = "tensorboard"
     seed: int = 0
@@ -302,7 +303,14 @@ class SuperMimicLearner:
                     "target_id": ((), torch.long),
                     "success_peak": ((), torch.float32),
                     **(
-                        {"traversal_success": ((), torch.bool)}
+                        {
+                            "traversal_success": ((), torch.bool),
+                            "collection_source": ((), torch.int8),
+                            "reference_clip": ((), torch.int16),
+                            "reference_phase": ((), torch.int8),
+                            "reference_finished": ((), torch.bool),
+                            "actor_skill_success": ((), torch.bool),
+                        }
                         if getattr(env, "reference_collection", None) is not None
                         else {}
                     ),
@@ -677,9 +685,10 @@ class SuperMimicLearner:
             if collection is not None:
                 term = self.env.command_manager.get_term("velocity")
                 mixed = self.env.action_manager.get_term("mixed")
-                action, mixed.reference_mask = collection.action(
-                    action.to(self.env_device), term, mixed
-                )
+                with self.profile_section("reference_collection"):
+                    action, mixed.reference_mask = collection.action(
+                        action.to(self.env_device), term, mixed
+                    )
             if self.cfg.goal_mode == "direct" and hasattr(self.env, "set_collection_exploration"):
                 self.env.set_collection_exploration(self.cfg.action_noise)
                 action = action.clamp(-bound, bound)
@@ -694,14 +703,23 @@ class SuperMimicLearner:
                     step_state = self.env.step(action)
             transition = step_state.info[SUPERMIMIC_TRANSITION_KEY]
             if collection is not None:
-                collection.observe(transition, self.env.velocity_next_state)
+                collection.observe(
+                    transition,
+                    self.env.velocity_next_state,
+                    self.env.termination_manager.get_term("fallen"),
+                )
                 strict_success = self.env.termination_manager.get_term("traversal_finished")
                 transition = {**transition, "traversal_success": strict_success.clone()}
+            completed_skills = (
+                transition["actor_skill_success"].nonzero().flatten()
+                if collection is not None
+                else None
+            )
             if self._bridged:
                 transition = {key: value.to(self.device) for key, value in transition.items()}
             if self.cfg.terrain_training:
                 self.buffer.mark_reset_boundary(transition["ep_step"] == 0)
-            self.buffer.add(transition)
+            self.buffer.add(transition, completed_skills=completed_skills)
             initial = self._unflatten_state(transition["s"])
             next_state = self._unflatten_state(transition["s1"])
             self.wm.in_norm.update(
@@ -729,7 +747,8 @@ class SuperMimicLearner:
     def wm_update(self) -> tuple[torch.Tensor, torch.Tensor]:
         timing = self.profile_section("wm_fit")
         timing.__enter__()
-        window = self.buffer.sample_windows(self.cfg.wm_batch, self.cfg.wm_window)
+        with self.profile_section("replay_sampling"):
+            window = self.buffer.sample_windows(self.cfg.wm_batch, self.cfg.wm_window)
         predicted = self._wm_rollout_fn(window["s"], window["a"], window["xi"])
         loss, last_error = self._wm_err_fn(predicted, window["s1"], window["mask"])
         self.opt_wm.zero_grad(set_to_none=True)
@@ -773,6 +792,15 @@ class SuperMimicLearner:
                     self._unflatten_state(window["s1"][:, 0]),
                 )
                 self.extra_state["wm_h1_state_rmse"] = h1.square().mean().sqrt()
+                self.extra_state["wm_h8_state_rmse"] = (
+                    self.wm.state_error(
+                        tuple(v[:, -1].detach() for v in predicted),
+                        self._unflatten_state(window["s1"][:, -1]),
+                    )
+                    .square()
+                    .mean()
+                    .sqrt()
+                )
         mask = window["mask"][:, -1]
         mean_last_error = (last_error.detach() * mask).sum() / mask.sum().clamp(min=1)
         timing.__exit__(None, None, None)
@@ -854,7 +882,19 @@ class SuperMimicLearner:
                             minlength=self.buffer.domain_count * scope_levels,
                         )
                     )
-        if update_actor and "command_speed_level" in start:
+        if update_actor and "collection_source" in start:
+            from unisupermimic.tasks.velocity.go2w.motion_prior import (
+                command_keys,
+                command_speed_bins,
+            )
+
+            _, signed = command_keys(start["g"][:, :3])
+            self.extra_state["actor_start_distribution"] = torch.bincount(
+                (start["collection_source"].long() * 27 + signed) * 3
+                + command_speed_bins(start["g"][:, :3]),
+                minlength=4 * 27 * 3,
+            ).view(4, 27, 3)
+        if update_actor and "command_speed_level" in start and "collection_source" not in start:
             levels = self.env.command_manager.get_term("velocity").cfg.terrain_max_level + 1
             # Last speed slot is explicitly UNKNOWN for replay predating metadata.
             speed = torch.where(start["command_speed_level"] < 0, 4, start["command_speed_level"])
@@ -895,7 +935,13 @@ class SuperMimicLearner:
         if update_actor and self.motion_prior is not None and self.motion_prior_weight:
             with self.profile_section("reference_matching"):
                 matched = self.motion_prior.match(
-                    state, initial_goal[:, :3], start["command_domain"] == 0
+                    state,
+                    initial_goal[:, :3],
+                    start["command_domain"] == 0,
+                    start.get("reference_clip"),
+                    torch.where(start["collection_source"] == 2, start["reference_phase"], -1)
+                    if "collection_source" in start
+                    else None,
                 )
         states, actions, previous_actions, all_frames, goals = [], [], [], [], []
         actor_timing = self.profile_section("actor_bptt")
@@ -956,6 +1002,8 @@ class SuperMimicLearner:
                 self.cfg.horizon, device=self.device, dtype=torch.float32
             ).unsqueeze(-1)
             objective = (discount * continuation * rewards).sum(0)
+            reward_loss = -objective.mean()
+            critic_loss = objective.new_zeros(())
             survival = alive[-1]
             reward_sum = (continuation * rewards).detach().sum(0)
             detached_rewards, detached_dones = rewards.detach(), dones.detach()
@@ -963,10 +1011,11 @@ class SuperMimicLearner:
                 bootstrap = self.critic(
                     self._critic_input_fn(state, frames, normalized_context, goal)
                 )
-                objective = objective + (self.cfg.gamma**self.cfg.horizon) * survival * (
-                    bootstrap * self._v_std + self._v_mean
+                critic_loss = (
+                    -(self.cfg.gamma**self.cfg.horizon)
+                    * (survival * (bootstrap * self._v_std + self._v_mean)).mean()
                 )
-            loss = -objective.mean()
+            loss = reward_loss + critic_loss
             if matched is not None:
                 with self.profile_section("prior_loss"):
                     joint_states = (
@@ -984,23 +1033,83 @@ class SuperMimicLearner:
                         weighted_loss=weighted.detach(),
                         rl_objective=-loss.detach(),
                         weight=self.motion_prior_weight,
+                        **self.motion_prior.match_metrics,
                     )
-                    if self.motion_prior_diagnostics:
-                        params = tuple(self.pi.parameters())
-                        rl_grad = torch.autograd.grad(loss, params, retain_graph=True)
-                        prior_grad = torch.autograd.grad(weighted, params, retain_graph=True)
-                        rl_norm = torch.stack([x.square().sum() for x in rl_grad]).sum().sqrt()
-                        prior_norm = (
-                            torch.stack([x.square().sum() for x in prior_grad]).sum().sqrt()
-                        )
-                        dot = torch.stack(
-                            [(a * b).sum() for a, b in zip(rl_grad, prior_grad)]
-                        ).sum()
+                    interval = self.motion_prior_diagnostics
+                    if interval and (self.update_counts["actor"] % interval == 0):
+                        parameters = tuple(self.pi.parameters())
+                        gradients = []
+                        for component in (reward_loss, critic_loss, weighted):
+                            flat = (
+                                torch.cat(
+                                    [
+                                        g.flatten()
+                                        for g in torch.autograd.grad(
+                                            component, parameters, retain_graph=True
+                                        )
+                                    ]
+                                )
+                                if component.requires_grad
+                                else None
+                            )
+                            gradients.append(flat)
+                        reward_grad, critic_grad, prior_grad = gradients
+                        if critic_grad is None:
+                            critic_grad = torch.zeros_like(reward_grad)
+                        reward_norm, critic_norm, prior_norm = [
+                            v.norm() for v in (reward_grad, critic_grad, prior_grad)
+                        ]
+                        task_norm = (reward_grad + critic_grad).norm()
                         prior_stats.update(
-                            rl_gradient_norm=rl_norm,
+                            reward_gradient_norm=reward_norm,
+                            rl_gradient_norm=task_norm,
+                            critic_gradient_norm=critic_norm,
                             prior_gradient_norm=prior_norm,
-                            gradient_cosine=dot / (rl_norm * prior_norm).clamp_min(1e-12),
+                            prior_to_reward_gradient_ratio=prior_norm
+                            / reward_norm.clamp_min(1e-12),
+                            prior_to_task_gradient_ratio=prior_norm / task_norm.clamp_min(1e-12),
+                            critic_to_reward_gradient_ratio=critic_norm
+                            / reward_norm.clamp_min(1e-12),
+                            cosine_reward_prior=F.cosine_similarity(reward_grad, prior_grad, dim=0),
+                            cosine_critic_prior=F.cosine_similarity(critic_grad, prior_grad, dim=0),
+                            cosine_reward_critic=F.cosine_similarity(
+                                reward_grad, critic_grad, dim=0
+                            ),
                         )
+                        _, _, _, _, usable, _, _, _ = matched
+                        command = initial_goal[:, :3]
+                        for axis, name in ((1, "lateral"), (2, "yaw")):
+                            single_axis = (command != 0).sum(-1) == 1
+                            for sign, direction in ((1, "positive"), (-1, "negative")):
+                                subset = usable & single_axis & (sign * command[:, axis] > 0)
+                                if not subset.any():
+                                    continue
+                                q, qd, wheels, weights, _, distance, candidate, categories = matched
+                                directed_match = (
+                                    q,
+                                    qd,
+                                    wheels,
+                                    weights * subset,
+                                    subset,
+                                    distance,
+                                    candidate,
+                                    categories,
+                                )
+                                directed_loss, _ = self.motion_prior.loss(
+                                    joint_states, directed_match, alive
+                                )
+                                directed_grad = torch.autograd.grad(
+                                    self.motion_prior_weight * directed_loss,
+                                    parameters,
+                                    retain_graph=True,
+                                )
+                                prior_stats[f"prior_gradient_norm_{name}_{direction}"] = torch.cat(
+                                    [gradient.flatten() for gradient in directed_grad]
+                                ).norm()
+                        prior_stats["actor_saturation_fraction"] = (
+                            (flatten(actions).detach().abs() >= 0.98).float().mean()
+                        )
+                        self.extra_state["motion_prior_gradient_metrics"] = prior_stats.copy()
                     if self.iteration % self.cfg.log_every == 0:
                         with torch.no_grad():
                             from .geometry import matvec
@@ -1212,6 +1321,7 @@ class SuperMimicLearner:
                 self.extra_state["reference_collection"] = {
                     "identity": collection.bank.identity,
                     "rng": collection.rng.get_state(),
+                    "skill_streak": collection.streak.clone(),
                 }
                 self.extra_state["training_stage"] = collection.stage.state_dict()
         if include_optimizers and self.cfg.checkpoint_replay:
@@ -1362,6 +1472,8 @@ class SuperMimicLearner:
                 if saved_collection["identity"] != collection.bank.identity:
                     raise ValueError("Motion Bank identity differs on resume")
                 collection.rng.set_state(saved_collection["rng"].cpu())
+                if "skill_streak" in saved_collection:
+                    collection.streak.copy_(saved_collection["skill_streak"])
                 collection.stage.restore(self.extra_state["training_stage"])
             self.env.reset()
             self.obs_hist.zero_()
@@ -1572,9 +1684,10 @@ class SuperMimicLearner:
                         or self.stop_requested
                     ):
                         self.save()
-                        if (
-                            not self.cfg.numbered_ckpt_every
-                            or self.iteration % self.cfg.numbered_ckpt_every == 0
+                        cadence = self.cfg.numbered_ckpt_every
+                        if cadence is not None and (
+                            cadence == 0
+                            or self.iteration % cadence == 0
                             or self.iteration == self.cfg.iterations
                             or self.stop_requested
                         ):

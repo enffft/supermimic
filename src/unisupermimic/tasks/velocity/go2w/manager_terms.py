@@ -305,8 +305,14 @@ class VelocityCommand(CommandTerm):
         mask = self._reset_mask_buffer.resolve(ids, owner="Go2WVelocity")
         if ids.numel() == 0:
             return {}
+        if self.reference_collection is not None:
+            self.reference_collection.finish_curriculum(self, ids)
         if self.curriculum is not None:
-            self._origins[ids] = self.curriculum.reset(ids, self._rng)
+            self._origins[ids] = (
+                self.curriculum.reset(ids, self._rng)
+                if self.reference_collection is None
+                else self.curriculum.reset(ids, self._rng, track_flat=False)
+            )
         root = self.g.new_zeros(self.num_envs, 13)
         root[:, :3] = self._origins
         if self.mdp.terrain is not None:
@@ -379,6 +385,19 @@ def reward(env):
                 else {}
             ),
         )
+    collection = c.reference_collection
+    if collection is not None:
+        tags = env.velocity_terrain_tags
+        flat = tags["command_domain"] == 0
+        collection.record_tracking(pre["goal"][:, :3], env.velocity_next_state, flat)
+        tags["actor_skill_success"] = (
+            flat
+            & (tags["collection_source"] == 0)
+            & env.termination_manager.get_term("time_out")
+            & ~env.termination_manager.get_term("flat_domain_boundary")
+            & ~c.curriculum.episode_fall
+            & collection.skill_quality(pre["goal"][:, :3])
+        )
     views = env.scene.read_plan.sensor_tensor_views(c.robot, c.tensor_sensor_names)
     torque = torch.cat([views.values[name] for name in c.tensor_sensor_names], -1)
     env.velocity_measured_torque = torque.detach().clone()
@@ -423,6 +442,13 @@ def traversal_finished(env):
 
 def motion_prior_timeout(env):
     """Allow the longest stair traversals 18 s and retain 10 s for flat/rough."""
-    domain = env.command_manager.get_term("velocity").command_domain
+    term = env.command_manager.get_term("velocity")
+    domain = term.command_domain
     steps = torch.where(domain >= 2, env.max_episode_length, round(10.0 / env.cfg.ctrl_dt))
-    return env.episode_length_buf >= steps
+    expired = env.episode_length_buf >= steps
+    collection = term.reference_collection
+    if collection is None:
+        return expired
+    finished = collection.finished(term)
+    env.velocity_terrain_tags["reference_finished"] = finished
+    return expired | finished

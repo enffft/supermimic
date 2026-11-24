@@ -62,13 +62,16 @@ def run(args):
     cfg.log_backend = "none"
     cfg.log_every = (1 if args.gradient_diagnostics else 10) if args.mode == "smoke" else 50
     cfg.ckpt_every = 2**31 - 1
-    cfg.numbered_ckpt_every = 2**31 - 1
+    cfg.numbered_ckpt_every = None
     if cfg.init_wm_from or cfg.init_actor_from or raw["resume"]:
         raise ValueError("Injected pretrained model weights are forbidden in this profile")
     if cfg.horizon != prior_cfg["horizon"]:
         raise ValueError("Prior and imagination horizons differ")
     stage = TrainingStage(
-        stage_cfg["initial"], stage_cfg["max_stage"], stage_cfg["auto_transition"]
+        stage_cfg["initial"],
+        stage_cfg["max_stage"],
+        stage_cfg["auto_transition"],
+        wm_only_iters=cfg.wm_only_iters,
     )
     if not torch.cuda.is_available():
         raise RuntimeError("The Go2W training learner requires CUDA")
@@ -113,7 +116,9 @@ def run(args):
         env.reset()
         learner = SuperMimicLearner(env, cfg, args.output, device="cuda:0", backend="mujoco")
         learner.motion_prior = bank if prior_cfg["enabled"] else None
-        learner.motion_prior_diagnostics = args.gradient_diagnostics
+        learner.motion_prior_diagnostics = (
+            1 if args.gradient_diagnostics else prior_cfg["gradient_diagnostic_every"]
+        )
         learner.buffer.protected_success_fraction = prior_cfg["protected_success_fraction"]
         learner.buffer.history.protection_enabled = True
         if args.resume:
@@ -145,10 +150,9 @@ def run(args):
         target = base_seconds + args.seconds if args.seconds is not None else None
         process = psutil.Process()
         process.cpu_percent()
-        assess_period = 1800.0
         last_assessment = base_seconds
         last_recovery = base_seconds
-        best_score = float(learner.extra_state.get("flat_best_score", -1.0))
+        best_scores = learner.extra_state.setdefault("stage_best_scores", {})
         evaluation = args.output / "evaluation"
         evaluation.mkdir()
         stopped_by_signal = False
@@ -167,8 +171,14 @@ def run(args):
                 else None
             )
 
-        def assess(label):
-            nonlocal best_score
+        def assess(label, *, advance=False, full=False):
+            assessment_stage = stage.name
+            protocol = (
+                "motion_prior_basic"
+                if assessment_stage == "flat_prior" and not full
+                else "motion_prior_flat"
+            )
+            evaluation_start = time.monotonic()
             checkpoint = learner.save(evaluation / f"{label}.pt", include_optimizers=False)
             path = evaluation / f"{label}.json"
             command = [
@@ -180,7 +190,7 @@ def run(args):
                 "--output",
                 str(path),
                 "--protocol",
-                "motion_prior",
+                protocol,
                 "--seeds",
                 "2026",
                 "2027",
@@ -193,7 +203,7 @@ def run(args):
                     "--holdout",
                     str(evaluation / "holdout.pt"),
                 ]
-            if stage.name == "flat_autonomous" or label == "final":
+            if protocol == "motion_prior_flat":
                 command.append("--switches")
             if stage.name == "terrain":
                 command.append("--terrain-review")
@@ -202,11 +212,24 @@ def run(args):
                     command, cwd=ROOT, stdout=stream, stderr=subprocess.STDOUT, check=True
                 )
             metrics = json.loads(path.read_text())
-            old_review = stage.terrain_review
-            transitioned = stage.assess(metrics, stage_cfg | prior_cfg)
-            if transitioned or stage.terrain_review != old_review:
-                apply_stage(learner, stage, prior_cfg, reset=True)
             metrics["iteration"] = learner.iteration
+            metrics["evaluation_seconds"] = time.monotonic() - evaluation_start
+            metrics["active_reference_environments"] = int((collection.source != 0).sum())
+            old_review = stage.terrain_review
+            if advance and stage.assess(metrics, stage_cfg | prior_cfg):
+                write_json(
+                    evaluation / f"{label}_transition.json",
+                    {
+                        "from": assessment_stage,
+                        "to": stage.name,
+                        "iteration": learner.iteration,
+                        "seconds": learner.wall_time,
+                    },
+                )
+                apply_stage(learner, stage, prior_cfg, reset=True)
+                learner.save()
+            elif stage.terrain_review != old_review:
+                apply_stage(learner, stage, prior_cfg, reset=True)
             metrics["training_seconds"] = learner.wall_time
             metrics["real_transitions"] = learner.sim_steps
             metrics["stage_after_evaluation"] = stage.state_dict()
@@ -216,15 +239,29 @@ def run(args):
                 - 0.05 * metrics["fall_rate"]
                 - 0.01 * sum(metrics["rmse"])
             )
-            if score > best_score:
-                best_score = score
-                learner.extra_state["flat_best_score"] = score
-                temp = args.output / "best.pt.tmp"
-                shutil.copyfile(checkpoint, temp)
-                temp.replace(args.output / "best.pt")
+            if assessment_stage == "flat_autonomous":
+                score += 0.25 * metrics["switch_pass_rate"]
+            elif assessment_stage == "terrain":
+                score = 0.5 * (score + metrics["terrain_pass_rate"])
+            key = f"{assessment_stage}:{protocol}"
+            selects_best = not (assessment_stage == "flat_prior" and full)
+            if selects_best and (
+                score > best_scores.get(key, -2.0) or not (args.output / "best.pt").exists()
+            ):
+                best_scores[key] = score
+                for name in ("best.pt", f"best_{assessment_stage}.pt"):
+                    target_path = args.output / name
+                    temp = target_path.with_suffix(".pt.tmp")
+                    shutil.copyfile(checkpoint, temp)
+                    temp.replace(target_path)
                 write_json(
                     args.output / "best_selection.json",
-                    {"checkpoint": str(checkpoint), "score": score},
+                    {
+                        "checkpoint": str(checkpoint),
+                        "score": score,
+                        "stage": assessment_stage,
+                        "protocol": protocol,
+                    },
                 )
             return metrics
 
@@ -242,6 +279,7 @@ def run(args):
             if warmup_wall is None:
                 warmup_wall = time.monotonic() - process_start - (seconds - base_seconds)
             stage.training_seconds = seconds
+            stage.iteration = current.iteration
             apply_stage(current, stage, prior_cfg)
             if target is not None and seconds >= target:
                 current.stop_requested = True
@@ -264,7 +302,17 @@ def run(args):
                     updates=current.update_counts,
                     domains=domain.tolist(),
                     collection=collection.metrics(),
-                    prior=detached(current.extra_state.get("motion_prior_metrics")),
+                    stage_elapsed_seconds=seconds - stage.entered_at,
+                    ready_for_next_stage=stage.ready_for_next_stage,
+                    prior=detached(current.extra_state.get("motion_prior_metrics"))
+                    if current.motion_prior_weight
+                    else None,
+                    gradient=detached(current.extra_state.get("motion_prior_gradient_metrics")),
+                    wm_sources=detached(getattr(current.buffer, "last_wm_sources", None)),
+                    actor_sources_signed_speed=detached(
+                        current.extra_state.get("actor_start_distribution")
+                    ),
+                    flat_skill_levels=term.curriculum.flat_levels.float().mean(0).tolist(),
                     history_size=current.buffer.history.size,
                     wm_pool=[recent, old - protected, protected],
                     wm_scopes=detached(current.buffer.wm_scope_counts),
@@ -274,37 +322,49 @@ def run(args):
                         term.curriculum.terrain_level, minlength=10
                     ).tolist(),
                     wm_h1_state_rmse=detached(current.extra_state.get("wm_h1_state_rmse")),
+                    wm_h8_state_rmse=detached(current.extra_state.get("wm_h8_state_rmse")),
                     gpu_peak_MiB=torch.cuda.max_memory_allocated() / 2**20,
                     gpu_allocated_MiB=torch.cuda.memory_allocated() / 2**20,
                     gpu_reserved_MiB=torch.cuda.memory_reserved() / 2**20,
                     cpu_percent=process.cpu_percent(),
                     gpu_utilization=gpu_utilization()
-                    if current.iteration % 200 == 0 or current.stop_requested
+                    if current.iteration <= 1
+                    or current.iteration % 200 == 0
+                    or current.stop_requested
                     else None,
                 )
-                if current.profile_ms:
-                    status["profile_ms_per_call"] = {
-                        key: sum(values) / len(values) for key, values in current.profile_ms.items()
-                    }
                 write_json(args.output / "progress.json", status)
                 with (args.output / "system_metrics.jsonl").open("a") as log:
                     log.write(json.dumps(status) + "\n")
             # No evaluation or checkpoint elapsed time is counted in learner.wall_time.
             if args.mode == "formal" and not current.stop_requested:
-                if seconds - last_assessment >= assess_period:
-                    assess(f"iteration_{current.iteration:06d}")
+                period = (
+                    stage_cfg["basic_assessment_seconds"]
+                    if stage.name == "flat_prior"
+                    else stage_cfg["assessment_seconds"]
+                )
+                if seconds - last_assessment >= period:
+                    label = f"iteration_{current.iteration:06d}"
+                    full_due = int(seconds / stage_cfg["assessment_seconds"]) > int(
+                        last_assessment / stage_cfg["assessment_seconds"]
+                    )
+                    if stage.name == "flat_prior" and full_due:
+                        assess(f"{label}_flat", full=True)
+                    assess(label, advance=True)
                     last_assessment = seconds
-                if seconds - last_recovery >= 1800.0:
+                if seconds - last_recovery >= stage_cfg["recovery_seconds"]:
                     current.save()
                     last_recovery = seconds
 
         learner.on_iteration = observe
-        if args.mode == "formal":
+        if args.mode == "formal" and not stopped_by_signal:
             assess("initial")
         summary = learner.train()
         peak = torch.cuda.max_memory_allocated() / 2**20
         if args.mode == "formal" and not stopped_by_signal:
-            assess("final")
+            if stage.name == "flat_prior":
+                assess("final_basic")
+            assess("final", full=True)
             learner.save()
         summary.update(
             completed_budget=target is not None and learner.wall_time >= target,

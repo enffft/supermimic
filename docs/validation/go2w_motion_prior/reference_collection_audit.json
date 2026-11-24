@@ -1,0 +1,4282 @@
+{
+  "bank_identity": "6f8a5567085bb4e2502954cd01e15ef0bb69457fbecaf7b33d2b34e7263f493d",
+  "dt": 0.02,
+  "rows": [
+    {
+      "name": "standing_rollout_100",
+      "domain": 0,
+      "category": "standing",
+      "command": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "goal": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "collection_type": "standing_rollout",
+      "start_frame": 0,
+      "requested_steps": 300,
+      "mean_actual": [
+        -0.16378112137317657,
+        -0.3102119266986847,
+        0.445360004901886
+      ],
+      "plateau_mean_actual": [
+        -0.16378112137317657,
+        -0.3102119266986847,
+        0.445360004901886
+      ],
+      "plateau_samples": 28,
+      "tracking_rmse": [
+        0.3076288104057312,
+        0.5476107001304626,
+        1.2879797220230103
+      ],
+      "joint_position_rmse": 0.6881550550460815,
+      "wheel_velocity_rmse": 20.751998901367188,
+      "leg_action_perturbation_rms": 0.0,
+      "survival_time": 0.56,
+      "duration_seconds": 0.56,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 26,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.1383928507566452
+    },
+    {
+      "name": "standing_rollout_8",
+      "domain": 0,
+      "category": "forward_backward",
+      "command": [
+        0.10000000149011612,
+        0.0,
+        0.0
+      ],
+      "goal": [
+        0.10000000149011612,
+        0.0,
+        0.0
+      ],
+      "collection_type": "standing_rollout",
+      "start_frame": 0,
+      "requested_steps": 300,
+      "mean_actual": [
+        -0.15483064949512482,
+        -0.2985387146472931,
+        0.4081587493419647
+      ],
+      "plateau_mean_actual": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "plateau_samples": 0,
+      "tracking_rmse": [
+        0.30868521332740784,
+        0.5246109962463379,
+        1.2541762590408325
+      ],
+      "joint_position_rmse": 0.6821066737174988,
+      "wheel_velocity_rmse": 20.9522647857666,
+      "leg_action_perturbation_rms": 0.0,
+      "survival_time": 0.56,
+      "duration_seconds": 0.56,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 22,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.1383928507566452
+    },
+    {
+      "name": "standing_rollout_10",
+      "domain": 0,
+      "category": "forward_backward",
+      "command": [
+        0.20000000298023224,
+        0.0,
+        0.0
+      ],
+      "goal": [
+        0.20000000298023224,
+        0.0,
+        0.0
+      ],
+      "collection_type": "standing_rollout",
+      "start_frame": 0,
+      "requested_steps": 300,
+      "mean_actual": [
+        -0.16144952178001404,
+        -0.30272871255874634,
+        0.4343891739845276
+      ],
+      "plateau_mean_actual": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "plateau_samples": 0,
+      "tracking_rmse": [
+        0.34742847084999084,
+        0.5322418212890625,
+        1.323807716369629
+      ],
+      "joint_position_rmse": 0.679563045501709,
+      "wheel_velocity_rmse": 20.64105987548828,
+      "leg_action_perturbation_rms": 0.0,
+      "survival_time": 0.56,
+      "duration_seconds": 0.56,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 22,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.1383928507566452
+    },
+    {
+      "name": "standing_rollout_5",
+      "domain": 0,
+      "category": "forward_backward",
+      "command": [
+        -0.10000000149011612,
+        0.0,
+        0.0
+      ],
+      "goal": [
+        -0.10000000149011612,
+        0.0,
+        0.0
+      ],
+      "collection_type": "standing_rollout",
+      "start_frame": 0,
+      "requested_steps": 300,
+      "mean_actual": [
+        -0.15096183121204376,
+        -0.3013099133968353,
+        0.35065799951553345
+      ],
+      "plateau_mean_actual": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "plateau_samples": 0,
+      "tracking_rmse": [
+        0.27777451276779175,
+        0.5302667617797852,
+        1.1798436641693115
+      ],
+      "joint_position_rmse": 0.6796968579292297,
+      "wheel_velocity_rmse": 20.786060333251953,
+      "leg_action_perturbation_rms": 0.0,
+      "survival_time": 0.56,
+      "duration_seconds": 0.56,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 26,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.140625
+    },
+    {
+      "name": "standing_rollout_3",
+      "domain": 0,
+      "category": "forward_backward",
+      "command": [
+        -0.20000000298023224,
+        0.0,
+        0.0
+      ],
+      "goal": [
+        -0.20000000298023224,
+        0.0,
+        0.0
+      ],
+      "collection_type": "standing_rollout",
+      "start_frame": 0,
+      "requested_steps": 300,
+      "mean_actual": [
+        -0.1543012410402298,
+        -0.301006555557251,
+        0.34305694699287415
+      ],
+      "plateau_mean_actual": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "plateau_samples": 0,
+      "tracking_rmse": [
+        0.2648269832134247,
+        0.5304734110832214,
+        1.1769903898239136
+      ],
+      "joint_position_rmse": 0.6755671501159668,
+      "wheel_velocity_rmse": 21.25241470336914,
+      "leg_action_perturbation_rms": 0.0,
+      "survival_time": 0.56,
+      "duration_seconds": 0.56,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 26,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.140625
+    },
+    {
+      "name": "standing_rollout_45",
+      "domain": 0,
+      "category": "lateral",
+      "command": [
+        0.0,
+        0.05000000074505806,
+        0.0
+      ],
+      "goal": [
+        0.0,
+        0.05000000074505806,
+        0.0
+      ],
+      "collection_type": "standing_rollout",
+      "start_frame": 0,
+      "requested_steps": 300,
+      "mean_actual": [
+        -0.16664429008960724,
+        -0.29367098212242126,
+        0.371048241853714
+      ],
+      "plateau_mean_actual": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "plateau_samples": 0,
+      "tracking_rmse": [
+        0.3074699938297272,
+        0.5246323943138123,
+        1.3330267667770386
+      ],
+      "joint_position_rmse": 0.6943317651748657,
+      "wheel_velocity_rmse": 21.34969711303711,
+      "leg_action_perturbation_rms": 0.0,
+      "survival_time": 0.56,
+      "duration_seconds": 0.56,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 22,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.1383928507566452
+    },
+    {
+      "name": "standing_rollout_44",
+      "domain": 0,
+      "category": "lateral",
+      "command": [
+        0.0,
+        -0.05000000074505806,
+        0.0
+      ],
+      "goal": [
+        0.0,
+        -0.05000000074505806,
+        0.0
+      ],
+      "collection_type": "standing_rollout",
+      "start_frame": 0,
+      "requested_steps": 300,
+      "mean_actual": [
+        -0.14815065264701843,
+        -0.29212453961372375,
+        0.38478711247444153
+      ],
+      "plateau_mean_actual": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "plateau_samples": 0,
+      "tracking_rmse": [
+        0.28051459789276123,
+        0.5075821280479431,
+        1.2417269945144653
+      ],
+      "joint_position_rmse": 0.6584775447845459,
+      "wheel_velocity_rmse": 20.209238052368164,
+      "leg_action_perturbation_rms": 0.0,
+      "survival_time": 0.56,
+      "duration_seconds": 0.56,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 26,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.1294642835855484
+    },
+    {
+      "name": "standing_rollout_46",
+      "domain": 0,
+      "category": "lateral",
+      "command": [
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "goal": [
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "collection_type": "standing_rollout",
+      "start_frame": 0,
+      "requested_steps": 300,
+      "mean_actual": [
+        -0.1729506552219391,
+        -0.2813315987586975,
+        0.18074484169483185
+      ],
+      "plateau_mean_actual": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "plateau_samples": 0,
+      "tracking_rmse": [
+        0.3257042467594147,
+        0.5283446311950684,
+        1.2281056642532349
+      ],
+      "joint_position_rmse": 0.6359254717826843,
+      "wheel_velocity_rmse": 17.351058959960938,
+      "leg_action_perturbation_rms": 0.0,
+      "survival_time": 0.54,
+      "duration_seconds": 0.54,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 24,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.12268518656492233
+    },
+    {
+      "name": "standing_rollout_43",
+      "domain": 0,
+      "category": "lateral",
+      "command": [
+        0.0,
+        -0.10000000149011612,
+        0.0
+      ],
+      "goal": [
+        0.0,
+        -0.10000000149011612,
+        0.0
+      ],
+      "collection_type": "standing_rollout",
+      "start_frame": 0,
+      "requested_steps": 300,
+      "mean_actual": [
+        -0.1584807187318802,
+        -0.29572802782058716,
+        0.35665836930274963
+      ],
+      "plateau_mean_actual": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "plateau_samples": 0,
+      "tracking_rmse": [
+        0.3075258433818817,
+        0.508951723575592,
+        1.166046380996704
+      ],
+      "joint_position_rmse": 0.6387155652046204,
+      "wheel_velocity_rmse": 20.503068923950195,
+      "leg_action_perturbation_rms": 0.0,
+      "survival_time": 0.56,
+      "duration_seconds": 0.56,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 24,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.1160714253783226
+    },
+    {
+      "name": "standing_rollout_47",
+      "domain": 0,
+      "category": "lateral",
+      "command": [
+        0.0,
+        0.15000000596046448,
+        0.0
+      ],
+      "goal": [
+        0.0,
+        0.15000000596046448,
+        0.0
+      ],
+      "collection_type": "standing_rollout",
+      "start_frame": 0,
+      "requested_steps": 300,
+      "mean_actual": [
+        -0.17844785749912262,
+        -0.29294970631599426,
+        0.2557320296764374
+      ],
+      "plateau_mean_actual": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "plateau_samples": 0,
+      "tracking_rmse": [
+        0.33454713225364685,
+        0.5605996251106262,
+        1.1314678192138672
+      ],
+      "joint_position_rmse": 0.6473944187164307,
+      "wheel_velocity_rmse": 17.644651412963867,
+      "leg_action_perturbation_rms": 0.0,
+      "survival_time": 0.54,
+      "duration_seconds": 0.54,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 24,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.12268518656492233
+    },
+    {
+      "name": "standing_rollout_42",
+      "domain": 0,
+      "category": "lateral",
+      "command": [
+        0.0,
+        -0.15000000596046448,
+        0.0
+      ],
+      "goal": [
+        0.0,
+        -0.15000000596046448,
+        0.0
+      ],
+      "collection_type": "standing_rollout",
+      "start_frame": 0,
+      "requested_steps": 300,
+      "mean_actual": [
+        -0.15225563943386078,
+        -0.30975595116615295,
+        0.46687036752700806
+      ],
+      "plateau_mean_actual": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "plateau_samples": 0,
+      "tracking_rmse": [
+        0.30698490142822266,
+        0.5053737759590149,
+        1.485939860343933
+      ],
+      "joint_position_rmse": 0.696476936340332,
+      "wheel_velocity_rmse": 23.285022735595703,
+      "leg_action_perturbation_rms": 0.0,
+      "survival_time": 0.58,
+      "duration_seconds": 0.58,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 24,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.13362069427967072
+    },
+    {
+      "name": "standing_rollout_31",
+      "domain": 0,
+      "category": "yaw",
+      "command": [
+        0.0,
+        0.0,
+        0.20000000298023224
+      ],
+      "goal": [
+        0.0,
+        0.0,
+        0.20000000298023224
+      ],
+      "collection_type": "standing_rollout",
+      "start_frame": 0,
+      "requested_steps": 300,
+      "mean_actual": [
+        -0.16373321413993835,
+        -0.30251309275627136,
+        0.40819495916366577
+      ],
+      "plateau_mean_actual": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "plateau_samples": 0,
+      "tracking_rmse": [
+        0.31037768721580505,
+        0.5318576097488403,
+        1.2925043106079102
+      ],
+      "joint_position_rmse": 0.6931789517402649,
+      "wheel_velocity_rmse": 23.005266189575195,
+      "leg_action_perturbation_rms": 0.0,
+      "survival_time": 0.56,
+      "duration_seconds": 0.56,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 24,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.140625
+    },
+    {
+      "name": "standing_rollout_28",
+      "domain": 0,
+      "category": "yaw",
+      "command": [
+        0.0,
+        0.0,
+        -0.20000000298023224
+      ],
+      "goal": [
+        0.0,
+        0.0,
+        -0.20000000298023224
+      ],
+      "collection_type": "standing_rollout",
+      "start_frame": 0,
+      "requested_steps": 300,
+      "mean_actual": [
+        -0.15556271374225616,
+        -0.30129075050354004,
+        0.19761662185192108
+      ],
+      "plateau_mean_actual": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "plateau_samples": 0,
+      "tracking_rmse": [
+        0.2976040542125702,
+        0.5318400859832764,
+        1.1876614093780518
+      ],
+      "joint_position_rmse": 0.6625080704689026,
+      "wheel_velocity_rmse": 17.915861129760742,
+      "leg_action_perturbation_rms": 0.0,
+      "survival_time": 0.56,
+      "duration_seconds": 0.56,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 22,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.125
+    },
+    {
+      "name": "standing_rollout_33",
+      "domain": 0,
+      "category": "yaw",
+      "command": [
+        0.0,
+        0.0,
+        0.4000000059604645
+      ],
+      "goal": [
+        0.0,
+        0.0,
+        0.4000000059604645
+      ],
+      "collection_type": "standing_rollout",
+      "start_frame": 0,
+      "requested_steps": 300,
+      "mean_actual": [
+        -0.13985362648963928,
+        -0.337820440530777,
+        0.6009252667427063
+      ],
+      "plateau_mean_actual": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "plateau_samples": 0,
+      "tracking_rmse": [
+        0.2997913062572479,
+        0.6088399887084961,
+        1.4575144052505493
+      ],
+      "joint_position_rmse": 0.7253203988075256,
+      "wheel_velocity_rmse": 26.410629272460938,
+      "leg_action_perturbation_rms": 0.0,
+      "survival_time": 0.56,
+      "duration_seconds": 0.56,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 22,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.1540178507566452
+    },
+    {
+      "name": "standing_rollout_26",
+      "domain": 0,
+      "category": "yaw",
+      "command": [
+        0.0,
+        0.0,
+        -0.4000000059604645
+      ],
+      "goal": [
+        0.0,
+        0.0,
+        -0.4000000059604645
+      ],
+      "collection_type": "standing_rollout",
+      "start_frame": 0,
+      "requested_steps": 300,
+      "mean_actual": [
+        -0.16812856495380402,
+        -0.2898287773132324,
+        0.13651002943515778
+      ],
+      "plateau_mean_actual": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "plateau_samples": 0,
+      "tracking_rmse": [
+        0.3102400004863739,
+        0.5098965764045715,
+        1.19942307472229
+      ],
+      "joint_position_rmse": 0.6363542079925537,
+      "wheel_velocity_rmse": 14.444230079650879,
+      "leg_action_perturbation_rms": 0.0,
+      "survival_time": 0.56,
+      "duration_seconds": 0.56,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 20,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.1138392835855484
+    },
+    {
+      "name": "standing_rollout_68",
+      "domain": 0,
+      "category": "forward_lateral",
+      "command": [
+        0.10000000149011612,
+        0.05000000074505806,
+        0.0
+      ],
+      "goal": [
+        0.10000000149011612,
+        0.05000000074505806,
+        0.0
+      ],
+      "collection_type": "standing_rollout",
+      "start_frame": 0,
+      "requested_steps": 300,
+      "mean_actual": [
+        -0.1898622363805771,
+        -0.30598965287208557,
+        0.3716581165790558
+      ],
+      "plateau_mean_actual": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "plateau_samples": 0,
+      "tracking_rmse": [
+        0.38002750277519226,
+        0.5453850626945496,
+        1.4629559516906738
+      ],
+      "joint_position_rmse": 0.7055059671401978,
+      "wheel_velocity_rmse": 21.820581436157227,
+      "leg_action_perturbation_rms": 0.0,
+      "survival_time": 0.56,
+      "duration_seconds": 0.56,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 24,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.1383928507566452
+    },
+    {
+      "name": "standing_rollout_76",
+      "domain": 0,
+      "category": "forward_lateral",
+      "command": [
+        0.10000000149011612,
+        -0.05000000074505806,
+        -0.0
+      ],
+      "goal": [
+        0.10000000149011612,
+        -0.05000000074505806,
+        -0.0
+      ],
+      "collection_type": "standing_rollout",
+      "start_frame": 0,
+      "requested_steps": 300,
+      "mean_actual": [
+        -0.1662670373916626,
+        -0.30443891882896423,
+        0.5134111046791077
+      ],
+      "plateau_mean_actual": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "plateau_samples": 0,
+      "tracking_rmse": [
+        0.3240774869918823,
+        0.5332600474357605,
+        1.2794328927993774
+      ],
+      "joint_position_rmse": 0.6741412281990051,
+      "wheel_velocity_rmse": 20.396991729736328,
+      "leg_action_perturbation_rms": 0.0,
+      "survival_time": 0.56,
+      "duration_seconds": 0.56,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 26,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.1316964328289032
+    },
+    {
+      "name": "standing_rollout_52",
+      "domain": 0,
+      "category": "forward_yaw",
+      "command": [
+        0.10000000149011612,
+        0.0,
+        0.20000000298023224
+      ],
+      "goal": [
+        0.10000000149011612,
+        0.0,
+        0.20000000298023224
+      ],
+      "collection_type": "standing_rollout",
+      "start_frame": 0,
+      "requested_steps": 300,
+      "mean_actual": [
+        -0.1461821347475052,
+        -0.32105740904808044,
+        0.4079436659812927
+      ],
+      "plateau_mean_actual": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "plateau_samples": 0,
+      "tracking_rmse": [
+        0.3095601499080658,
+        0.5721709132194519,
+        1.3747633695602417
+      ],
+      "joint_position_rmse": 0.708850085735321,
+      "wheel_velocity_rmse": 23.27959442138672,
+      "leg_action_perturbation_rms": 0.0,
+      "survival_time": 0.56,
+      "duration_seconds": 0.56,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 22,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.1450892835855484
+    },
+    {
+      "name": "standing_rollout_60",
+      "domain": 0,
+      "category": "forward_yaw",
+      "command": [
+        0.10000000149011612,
+        -0.0,
+        -0.20000000298023224
+      ],
+      "goal": [
+        0.10000000149011612,
+        -0.0,
+        -0.20000000298023224
+      ],
+      "collection_type": "standing_rollout",
+      "start_frame": 0,
+      "requested_steps": 300,
+      "mean_actual": [
+        -0.16651029884815216,
+        -0.30025169253349304,
+        0.21568965911865234
+      ],
+      "plateau_mean_actual": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "plateau_samples": 0,
+      "tracking_rmse": [
+        0.3327840566635132,
+        0.5281363725662231,
+        1.1415666341781616
+      ],
+      "joint_position_rmse": 0.6718189716339111,
+      "wheel_velocity_rmse": 17.912302017211914,
+      "leg_action_perturbation_rms": 0.0,
+      "survival_time": 0.56,
+      "duration_seconds": 0.56,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 24,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.1294642835855484
+    },
+    {
+      "name": "rsi_rollout_100",
+      "domain": 0,
+      "category": "standing",
+      "command": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "goal": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "collection_type": "rsi_rollout",
+      "start_frame": 75,
+      "requested_steps": 225,
+      "mean_actual": [
+        -0.14067459106445312,
+        -0.2623400390148163,
+        0.2029150128364563
+      ],
+      "plateau_mean_actual": [
+        -0.14067459106445312,
+        -0.2623400390148163,
+        0.2029150128364563
+      ],
+      "plateau_samples": 31,
+      "tracking_rmse": [
+        0.2721382677555084,
+        0.479958176612854,
+        0.8978258967399597
+      ],
+      "joint_position_rmse": 0.5979074239730835,
+      "wheel_velocity_rmse": 14.244424819946289,
+      "leg_action_perturbation_rms": 0.0,
+      "survival_time": 0.62,
+      "duration_seconds": 0.62,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 30,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.10080645233392715
+    },
+    {
+      "name": "rsi_rollout_8",
+      "domain": 0,
+      "category": "forward_backward",
+      "command": [
+        0.10000000149011612,
+        0.0,
+        0.0
+      ],
+      "goal": [
+        0.10000000149011612,
+        0.0,
+        0.0
+      ],
+      "collection_type": "rsi_rollout",
+      "start_frame": 94,
+      "requested_steps": 206,
+      "mean_actual": [
+        -0.137900248169899,
+        -0.30500051379203796,
+        0.008584939874708652
+      ],
+      "plateau_mean_actual": [
+        -0.137900248169899,
+        -0.30500051379203796,
+        0.008584939874708652
+      ],
+      "plateau_samples": 26,
+      "tracking_rmse": [
+        0.3469758629798889,
+        0.519252598285675,
+        1.5741424560546875
+      ],
+      "joint_position_rmse": 0.6668168306350708,
+      "wheel_velocity_rmse": 17.48987579345703,
+      "leg_action_perturbation_rms": 0.0,
+      "survival_time": 0.52,
+      "duration_seconds": 0.52,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 20,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.1274038404226303
+    },
+    {
+      "name": "rsi_rollout_10",
+      "domain": 0,
+      "category": "forward_backward",
+      "command": [
+        0.20000000298023224,
+        0.0,
+        0.0
+      ],
+      "goal": [
+        0.20000000298023224,
+        0.0,
+        0.0
+      ],
+      "collection_type": "rsi_rollout",
+      "start_frame": 94,
+      "requested_steps": 206,
+      "mean_actual": [
+        0.00822544377297163,
+        -0.41888949275016785,
+        1.5772705078125
+      ],
+      "plateau_mean_actual": [
+        0.00822544377297163,
+        -0.41888949275016785,
+        1.5772705078125
+      ],
+      "plateau_samples": 23,
+      "tracking_rmse": [
+        0.3311079144477844,
+        0.6525874137878418,
+        2.945164680480957
+      ],
+      "joint_position_rmse": 0.9385886192321777,
+      "wheel_velocity_rmse": 43.15085983276367,
+      "leg_action_perturbation_rms": 0.0,
+      "survival_time": 0.46,
+      "duration_seconds": 0.46,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 22,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.26358696818351746
+    },
+    {
+      "name": "rsi_rollout_5",
+      "domain": 0,
+      "category": "forward_backward",
+      "command": [
+        -0.10000000149011612,
+        0.0,
+        0.0
+      ],
+      "goal": [
+        -0.10000000149011612,
+        0.0,
+        0.0
+      ],
+      "collection_type": "rsi_rollout",
+      "start_frame": 94,
+      "requested_steps": 206,
+      "mean_actual": [
+        0.2631272077560425,
+        0.10197380185127258,
+        0.37395355105400085
+      ],
+      "plateau_mean_actual": [
+        0.2631272077560425,
+        0.10197380185127258,
+        0.37395355105400085
+      ],
+      "plateau_samples": 159,
+      "tracking_rmse": [
+        0.5488854050636292,
+        0.40496325492858887,
+        1.12126624584198
+      ],
+      "joint_position_rmse": 1.6397541761398315,
+      "wheel_velocity_rmse": 118.52740478515625,
+      "leg_action_perturbation_rms": 0.0,
+      "survival_time": 3.18,
+      "duration_seconds": 3.18,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 52,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.7586477994918823
+    },
+    {
+      "name": "rsi_rollout_3",
+      "domain": 0,
+      "category": "forward_backward",
+      "command": [
+        -0.20000000298023224,
+        0.0,
+        0.0
+      ],
+      "goal": [
+        -0.20000000298023224,
+        0.0,
+        0.0
+      ],
+      "collection_type": "rsi_rollout",
+      "start_frame": 94,
+      "requested_steps": 206,
+      "mean_actual": [
+        0.2742000222206116,
+        -0.608199417591095,
+        -1.5865107774734497
+      ],
+      "plateau_mean_actual": [
+        0.27910590171813965,
+        -0.5939242243766785,
+        -1.182506799697876
+      ],
+      "plateau_samples": 167,
+      "tracking_rmse": [
+        0.6356335878372192,
+        0.8724862933158875,
+        2.2136502265930176
+      ],
+      "joint_position_rmse": 1.683820128440857,
+      "wheel_velocity_rmse": 120.95990753173828,
+      "leg_action_perturbation_rms": 0.0,
+      "survival_time": 4.12,
+      "duration_seconds": 4.12,
+      "fall": false,
+      "passed": true,
+      "terminal_reason": "completed",
+      "contact_transition_count": 58,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.7973300814628601
+    },
+    {
+      "name": "rsi_rollout_45",
+      "domain": 0,
+      "category": "lateral",
+      "command": [
+        0.0,
+        0.05000000074505806,
+        0.0
+      ],
+      "goal": [
+        0.0,
+        0.05000000074505806,
+        0.0
+      ],
+      "collection_type": "rsi_rollout",
+      "start_frame": 88,
+      "requested_steps": 212,
+      "mean_actual": [
+        -0.251773864030838,
+        0.3597615361213684,
+        -0.7984079122543335
+      ],
+      "plateau_mean_actual": [
+        -0.251773864030838,
+        0.3597615361213684,
+        -0.7984079122543335
+      ],
+      "plateau_samples": 14,
+      "tracking_rmse": [
+        0.427837997674942,
+        0.4554142951965332,
+        1.1817348003387451
+      ],
+      "joint_position_rmse": 0.6841846704483032,
+      "wheel_velocity_rmse": 5.847023963928223,
+      "leg_action_perturbation_rms": 0.0,
+      "survival_time": 0.28,
+      "duration_seconds": 0.28,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 10,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.1473214328289032
+    },
+    {
+      "name": "rsi_rollout_44",
+      "domain": 0,
+      "category": "lateral",
+      "command": [
+        0.0,
+        -0.05000000074505806,
+        0.0
+      ],
+      "goal": [
+        0.0,
+        -0.05000000074505806,
+        0.0
+      ],
+      "collection_type": "rsi_rollout",
+      "start_frame": 88,
+      "requested_steps": 212,
+      "mean_actual": [
+        -0.27195480465888977,
+        -0.36476796865463257,
+        0.9133374094963074
+      ],
+      "plateau_mean_actual": [
+        -0.27195480465888977,
+        -0.36476796865463257,
+        0.9133374094963074
+      ],
+      "plateau_samples": 14,
+      "tracking_rmse": [
+        0.46338579058647156,
+        0.4695139527320862,
+        1.3130013942718506
+      ],
+      "joint_position_rmse": 0.7106099128723145,
+      "wheel_velocity_rmse": 6.525178909301758,
+      "leg_action_perturbation_rms": 0.0,
+      "survival_time": 0.28,
+      "duration_seconds": 0.28,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 14,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.15625
+    },
+    {
+      "name": "rsi_rollout_46",
+      "domain": 0,
+      "category": "lateral",
+      "command": [
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "goal": [
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "collection_type": "rsi_rollout",
+      "start_frame": 89,
+      "requested_steps": 211,
+      "mean_actual": [
+        -0.31752026081085205,
+        0.45329341292381287,
+        -0.8797757625579834
+      ],
+      "plateau_mean_actual": [
+        -0.31752026081085205,
+        0.45329341292381287,
+        -0.8797757625579834
+      ],
+      "plateau_samples": 11,
+      "tracking_rmse": [
+        0.5093569159507751,
+        0.47383037209510803,
+        1.2912458181381226
+      ],
+      "joint_position_rmse": 0.7768387198448181,
+      "wheel_velocity_rmse": 7.7565741539001465,
+      "leg_action_perturbation_rms": 0.0,
+      "survival_time": 0.22,
+      "duration_seconds": 0.22,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 8,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.1931818127632141
+    },
+    {
+      "name": "rsi_rollout_43",
+      "domain": 0,
+      "category": "lateral",
+      "command": [
+        0.0,
+        -0.10000000149011612,
+        0.0
+      ],
+      "goal": [
+        0.0,
+        -0.10000000149011612,
+        0.0
+      ],
+      "collection_type": "rsi_rollout",
+      "start_frame": 89,
+      "requested_steps": 211,
+      "mean_actual": [
+        -0.3216082453727722,
+        -0.4557237923145294,
+        0.8895143270492554
+      ],
+      "plateau_mean_actual": [
+        -0.3216082453727722,
+        -0.4557237923145294,
+        0.8895143270492554
+      ],
+      "plateau_samples": 11,
+      "tracking_rmse": [
+        0.5110484957695007,
+        0.47430023550987244,
+        1.3027855157852173
+      ],
+      "joint_position_rmse": 0.7851921916007996,
+      "wheel_velocity_rmse": 8.418937683105469,
+      "leg_action_perturbation_rms": 0.0,
+      "survival_time": 0.22,
+      "duration_seconds": 0.22,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 8,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.19886364042758942
+    },
+    {
+      "name": "rsi_rollout_47",
+      "domain": 0,
+      "category": "lateral",
+      "command": [
+        0.0,
+        0.15000000596046448,
+        0.0
+      ],
+      "goal": [
+        0.0,
+        0.15000000596046448,
+        0.0
+      ],
+      "collection_type": "rsi_rollout",
+      "start_frame": 97,
+      "requested_steps": 203,
+      "mean_actual": [
+        -0.16577789187431335,
+        0.5376465320587158,
+        0.09222164750099182
+      ],
+      "plateau_mean_actual": [
+        -0.16577789187431335,
+        0.5376465320587158,
+        0.09222164750099182
+      ],
+      "plateau_samples": 13,
+      "tracking_rmse": [
+        0.2670470178127289,
+        0.5222147703170776,
+        0.7972227931022644
+      ],
+      "joint_position_rmse": 0.6621434092521667,
+      "wheel_velocity_rmse": 15.348002433776855,
+      "leg_action_perturbation_rms": 0.0,
+      "survival_time": 0.26,
+      "duration_seconds": 0.26,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 14,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.1875
+    },
+    {
+      "name": "rsi_rollout_42",
+      "domain": 0,
+      "category": "lateral",
+      "command": [
+        0.0,
+        -0.15000000596046448,
+        0.0
+      ],
+      "goal": [
+        0.0,
+        -0.15000000596046448,
+        0.0
+      ],
+      "collection_type": "rsi_rollout",
+      "start_frame": 97,
+      "requested_steps": 203,
+      "mean_actual": [
+        -0.12604545056819916,
+        -0.5186150074005127,
+        -0.27454298734664917
+      ],
+      "plateau_mean_actual": [
+        -0.12604545056819916,
+        -0.5186150074005127,
+        -0.27454298734664917
+      ],
+      "plateau_samples": 13,
+      "tracking_rmse": [
+        0.2087918221950531,
+        0.5064697861671448,
+        0.7348282933235168
+      ],
+      "joint_position_rmse": 0.6419610381126404,
+      "wheel_velocity_rmse": 12.913304328918457,
+      "leg_action_perturbation_rms": 0.0,
+      "survival_time": 0.26,
+      "duration_seconds": 0.26,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 12,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.17307692766189575
+    },
+    {
+      "name": "rsi_rollout_31",
+      "domain": 0,
+      "category": "yaw",
+      "command": [
+        0.0,
+        0.0,
+        0.20000000298023224
+      ],
+      "goal": [
+        0.0,
+        0.0,
+        0.20000000298023224
+      ],
+      "collection_type": "rsi_rollout",
+      "start_frame": 87,
+      "requested_steps": 213,
+      "mean_actual": [
+        -0.13167844712734222,
+        0.23178637027740479,
+        0.004576998297125101
+      ],
+      "plateau_mean_actual": [
+        -0.13167844712734222,
+        0.23178637027740479,
+        0.004576998297125101
+      ],
+      "plateau_samples": 14,
+      "tracking_rmse": [
+        0.196207195520401,
+        0.33078309893608093,
+        1.8521629571914673
+      ],
+      "joint_position_rmse": 0.7308264374732971,
+      "wheel_velocity_rmse": 22.57657241821289,
+      "leg_action_perturbation_rms": 0.0,
+      "survival_time": 0.28,
+      "duration_seconds": 0.28,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 9,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.1964285671710968
+    },
+    {
+      "name": "rsi_rollout_28",
+      "domain": 0,
+      "category": "yaw",
+      "command": [
+        0.0,
+        0.0,
+        -0.20000000298023224
+      ],
+      "goal": [
+        0.0,
+        0.0,
+        -0.20000000298023224
+      ],
+      "collection_type": "rsi_rollout",
+      "start_frame": 87,
+      "requested_steps": 213,
+      "mean_actual": [
+        -0.13367833197116852,
+        -0.23457427322864532,
+        -0.1434258222579956
+      ],
+      "plateau_mean_actual": [
+        -0.13367833197116852,
+        -0.23457427322864532,
+        -0.1434258222579956
+      ],
+      "plateau_samples": 14,
+      "tracking_rmse": [
+        0.1945614069700241,
+        0.3338679373264313,
+        1.9966638088226318
+      ],
+      "joint_position_rmse": 0.7202906012535095,
+      "wheel_velocity_rmse": 23.07500648498535,
+      "leg_action_perturbation_rms": 0.0,
+      "survival_time": 0.28,
+      "duration_seconds": 0.28,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 14,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.1919642835855484
+    },
+    {
+      "name": "rsi_rollout_33",
+      "domain": 0,
+      "category": "yaw",
+      "command": [
+        0.0,
+        0.0,
+        0.4000000059604645
+      ],
+      "goal": [
+        0.0,
+        0.0,
+        0.4000000059604645
+      ],
+      "collection_type": "rsi_rollout",
+      "start_frame": 88,
+      "requested_steps": 212,
+      "mean_actual": [
+        -0.15363043546676636,
+        -0.15076857805252075,
+        -0.03403002396225929
+      ],
+      "plateau_mean_actual": [
+        -0.15955035388469696,
+        -0.09619740396738052,
+        -0.01794092357158661
+      ],
+      "plateau_samples": 173,
+      "tracking_rmse": [
+        0.5066515803337097,
+        0.6385244727134705,
+        1.6322968006134033
+      ],
+      "joint_position_rmse": 1.6911133527755737,
+      "wheel_velocity_rmse": 126.61732482910156,
+      "leg_action_perturbation_rms": 0.0,
+      "survival_time": 3.66,
+      "duration_seconds": 3.66,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 47,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.7991803288459778
+    },
+    {
+      "name": "rsi_rollout_26",
+      "domain": 0,
+      "category": "yaw",
+      "command": [
+        0.0,
+        0.0,
+        -0.4000000059604645
+      ],
+      "goal": [
+        0.0,
+        0.0,
+        -0.4000000059604645
+      ],
+      "collection_type": "rsi_rollout",
+      "start_frame": 88,
+      "requested_steps": 212,
+      "mean_actual": [
+        -0.13763555884361267,
+        -0.07258102297782898,
+        1.364635705947876
+      ],
+      "plateau_mean_actual": [
+        -0.13763555884361267,
+        -0.07258102297782898,
+        1.364635705947876
+      ],
+      "plateau_samples": 53,
+      "tracking_rmse": [
+        0.216179758310318,
+        0.33066225051879883,
+        2.9621739387512207
+      ],
+      "joint_position_rmse": 1.4668328762054443,
+      "wheel_velocity_rmse": 88.76933288574219,
+      "leg_action_perturbation_rms": 0.0,
+      "survival_time": 1.06,
+      "duration_seconds": 1.06,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 16,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.5966981053352356
+    },
+    {
+      "name": "rsi_rollout_68",
+      "domain": 0,
+      "category": "forward_lateral",
+      "command": [
+        0.10000000149011612,
+        0.05000000074505806,
+        0.0
+      ],
+      "goal": [
+        0.10000000149011612,
+        0.05000000074505806,
+        0.0
+      ],
+      "collection_type": "rsi_rollout",
+      "start_frame": 88,
+      "requested_steps": 212,
+      "mean_actual": [
+        -0.2369716465473175,
+        0.3657688796520233,
+        -0.6767359375953674
+      ],
+      "plateau_mean_actual": [
+        -0.2369716465473175,
+        0.3657688796520233,
+        -0.6767359375953674
+      ],
+      "plateau_samples": 14,
+      "tracking_rmse": [
+        0.5401170253753662,
+        0.4562634825706482,
+        1.1806873083114624
+      ],
+      "joint_position_rmse": 0.738086998462677,
+      "wheel_velocity_rmse": 11.250322341918945,
+      "leg_action_perturbation_rms": 0.0,
+      "survival_time": 0.28,
+      "duration_seconds": 0.28,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 8,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.1696428507566452
+    },
+    {
+      "name": "rsi_rollout_76",
+      "domain": 0,
+      "category": "forward_lateral",
+      "command": [
+        0.10000000149011612,
+        -0.05000000074505806,
+        -0.0
+      ],
+      "goal": [
+        0.10000000149011612,
+        -0.05000000074505806,
+        -0.0
+      ],
+      "collection_type": "rsi_rollout",
+      "start_frame": 88,
+      "requested_steps": 212,
+      "mean_actual": [
+        -0.1988534927368164,
+        -0.3774474263191223,
+        0.6214998960494995
+      ],
+      "plateau_mean_actual": [
+        -0.1988534927368164,
+        -0.3774474263191223,
+        0.6214998960494995
+      ],
+      "plateau_samples": 14,
+      "tracking_rmse": [
+        0.4663578271865845,
+        0.47332531213760376,
+        1.099108099937439
+      ],
+      "joint_position_rmse": 0.7311885952949524,
+      "wheel_velocity_rmse": 10.292522430419922,
+      "leg_action_perturbation_rms": 0.0,
+      "survival_time": 0.28,
+      "duration_seconds": 0.28,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 16,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.1741071492433548
+    },
+    {
+      "name": "rsi_rollout_52",
+      "domain": 0,
+      "category": "forward_yaw",
+      "command": [
+        0.10000000149011612,
+        0.0,
+        0.20000000298023224
+      ],
+      "goal": [
+        0.10000000149011612,
+        0.0,
+        0.20000000298023224
+      ],
+      "collection_type": "rsi_rollout",
+      "start_frame": 99,
+      "requested_steps": 201,
+      "mean_actual": [
+        -0.09803050011396408,
+        -0.27526047825813293,
+        2.143528461456299
+      ],
+      "plateau_mean_actual": [
+        -0.09803050011396408,
+        -0.27526047825813293,
+        2.143528461456299
+      ],
+      "plateau_samples": 16,
+      "tracking_rmse": [
+        0.2934309244155884,
+        0.4397090971469879,
+        3.11214542388916
+      ],
+      "joint_position_rmse": 0.8179863691329956,
+      "wheel_velocity_rmse": 31.048179626464844,
+      "leg_action_perturbation_rms": 0.0,
+      "survival_time": 0.32,
+      "duration_seconds": 0.32,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 15,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.234375
+    },
+    {
+      "name": "rsi_rollout_60",
+      "domain": 0,
+      "category": "forward_yaw",
+      "command": [
+        0.10000000149011612,
+        -0.0,
+        -0.20000000298023224
+      ],
+      "goal": [
+        0.10000000149011612,
+        -0.0,
+        -0.20000000298023224
+      ],
+      "collection_type": "rsi_rollout",
+      "start_frame": 99,
+      "requested_steps": 201,
+      "mean_actual": [
+        -0.06600487232208252,
+        0.2500113248825073,
+        -1.625567078590393
+      ],
+      "plateau_mean_actual": [
+        -0.06600487232208252,
+        0.2500113248825073,
+        -1.625567078590393
+      ],
+      "plateau_samples": 16,
+      "tracking_rmse": [
+        0.28118306398391724,
+        0.422703355550766,
+        2.26216459274292
+      ],
+      "joint_position_rmse": 0.7733152508735657,
+      "wheel_velocity_rmse": 23.13197135925293,
+      "leg_action_perturbation_rms": 0.0,
+      "survival_time": 0.32,
+      "duration_seconds": 0.32,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 13,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.1953125
+    },
+    {
+      "name": "local_8_100",
+      "domain": 0,
+      "category": "standing",
+      "command": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "goal": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "collection_type": "local_8",
+      "start_frame": 75,
+      "requested_steps": 8,
+      "mean_actual": [
+        -0.02645268477499485,
+        -0.002727410290390253,
+        -0.002638033125549555
+      ],
+      "plateau_mean_actual": [
+        -0.02645268477499485,
+        -0.002727410290390253,
+        -0.002638033125549555
+      ],
+      "plateau_samples": 8,
+      "tracking_rmse": [
+        0.032547447830438614,
+        0.005555209703743458,
+        0.012710116803646088
+      ],
+      "joint_position_rmse": 0.06298000365495682,
+      "wheel_velocity_rmse": 0.4373447895050049,
+      "leg_action_perturbation_rms": 0.015232517383992672,
+      "survival_time": 0.16,
+      "duration_seconds": 0.16,
+      "fall": false,
+      "passed": true,
+      "terminal_reason": "completed",
+      "contact_transition_count": 5,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.0
+    },
+    {
+      "name": "local_8_8",
+      "domain": 0,
+      "category": "forward_backward",
+      "command": [
+        0.10000000149011612,
+        0.0,
+        0.0
+      ],
+      "goal": [
+        0.10000000149011612,
+        0.0,
+        0.0
+      ],
+      "collection_type": "local_8",
+      "start_frame": 94,
+      "requested_steps": 8,
+      "mean_actual": [
+        0.05757436901330948,
+        0.09744014590978622,
+        -0.1611860692501068
+      ],
+      "plateau_mean_actual": [
+        0.05757436901330948,
+        0.09744014590978622,
+        -0.1611860692501068
+      ],
+      "plateau_samples": 8,
+      "tracking_rmse": [
+        0.05047774687409401,
+        0.13324618339538574,
+        0.2156265676021576
+      ],
+      "joint_position_rmse": 0.0752721056342125,
+      "wheel_velocity_rmse": 2.7349045276641846,
+      "leg_action_perturbation_rms": 0.01602194271981716,
+      "survival_time": 0.16,
+      "duration_seconds": 0.16,
+      "fall": false,
+      "passed": true,
+      "terminal_reason": "completed",
+      "contact_transition_count": 7,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.0
+    },
+    {
+      "name": "local_8_10",
+      "domain": 0,
+      "category": "forward_backward",
+      "command": [
+        0.20000000298023224,
+        0.0,
+        0.0
+      ],
+      "goal": [
+        0.20000000298023224,
+        0.0,
+        0.0
+      ],
+      "collection_type": "local_8",
+      "start_frame": 94,
+      "requested_steps": 8,
+      "mean_actual": [
+        0.1240478903055191,
+        -0.08994854986667633,
+        0.0646384209394455
+      ],
+      "plateau_mean_actual": [
+        0.1240478903055191,
+        -0.08994854986667633,
+        0.0646384209394455
+      ],
+      "plateau_samples": 8,
+      "tracking_rmse": [
+        0.08976384997367859,
+        0.11202792078256607,
+        0.08289802074432373
+      ],
+      "joint_position_rmse": 0.07109598070383072,
+      "wheel_velocity_rmse": 1.6476246118545532,
+      "leg_action_perturbation_rms": 0.013410856947302818,
+      "survival_time": 0.16,
+      "duration_seconds": 0.16,
+      "fall": false,
+      "passed": true,
+      "terminal_reason": "completed",
+      "contact_transition_count": 9,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.0
+    },
+    {
+      "name": "local_8_5",
+      "domain": 0,
+      "category": "forward_backward",
+      "command": [
+        -0.10000000149011612,
+        0.0,
+        0.0
+      ],
+      "goal": [
+        -0.10000000149011612,
+        0.0,
+        0.0
+      ],
+      "collection_type": "local_8",
+      "start_frame": 94,
+      "requested_steps": 8,
+      "mean_actual": [
+        -0.11085955798625946,
+        0.008721770718693733,
+        0.11459003388881683
+      ],
+      "plateau_mean_actual": [
+        -0.11085955798625946,
+        0.008721770718693733,
+        0.11459003388881683
+      ],
+      "plateau_samples": 8,
+      "tracking_rmse": [
+        0.01656813733279705,
+        0.010293453931808472,
+        0.14849109947681427
+      ],
+      "joint_position_rmse": 0.06551911681890488,
+      "wheel_velocity_rmse": 2.0062475204467773,
+      "leg_action_perturbation_rms": 0.014558982104063034,
+      "survival_time": 0.16,
+      "duration_seconds": 0.16,
+      "fall": false,
+      "passed": true,
+      "terminal_reason": "completed",
+      "contact_transition_count": 4,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.0
+    },
+    {
+      "name": "local_8_3",
+      "domain": 0,
+      "category": "forward_backward",
+      "command": [
+        -0.20000000298023224,
+        0.0,
+        0.0
+      ],
+      "goal": [
+        -0.20000000298023224,
+        0.0,
+        0.0
+      ],
+      "collection_type": "local_8",
+      "start_frame": 94,
+      "requested_steps": 8,
+      "mean_actual": [
+        -0.21003060042858124,
+        0.03997953608632088,
+        0.012832967564463615
+      ],
+      "plateau_mean_actual": [
+        -0.21003060042858124,
+        0.03997953608632088,
+        0.012832967564463615
+      ],
+      "plateau_samples": 8,
+      "tracking_rmse": [
+        0.01601887121796608,
+        0.05143290013074875,
+        0.09511463344097137
+      ],
+      "joint_position_rmse": 0.0692320242524147,
+      "wheel_velocity_rmse": 4.05294942855835,
+      "leg_action_perturbation_rms": 0.012115176767110825,
+      "survival_time": 0.16,
+      "duration_seconds": 0.16,
+      "fall": false,
+      "passed": true,
+      "terminal_reason": "completed",
+      "contact_transition_count": 15,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.0
+    },
+    {
+      "name": "local_8_45",
+      "domain": 0,
+      "category": "lateral",
+      "command": [
+        0.0,
+        0.05000000074505806,
+        0.0
+      ],
+      "goal": [
+        0.0,
+        0.05000000074505806,
+        0.0
+      ],
+      "collection_type": "local_8",
+      "start_frame": 88,
+      "requested_steps": 8,
+      "mean_actual": [
+        -0.018793534487485886,
+        0.12128734588623047,
+        -0.0025805048644542694
+      ],
+      "plateau_mean_actual": [
+        -0.018793534487485886,
+        0.12128734588623047,
+        -0.0025805048644542694
+      ],
+      "plateau_samples": 8,
+      "tracking_rmse": [
+        0.025225428864359856,
+        0.10454389452934265,
+        0.08383946865797043
+      ],
+      "joint_position_rmse": 0.07570020109415054,
+      "wheel_velocity_rmse": 6.925713539123535,
+      "leg_action_perturbation_rms": 0.014550846070051193,
+      "survival_time": 0.16,
+      "duration_seconds": 0.16,
+      "fall": false,
+      "passed": true,
+      "terminal_reason": "completed",
+      "contact_transition_count": 9,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.0
+    },
+    {
+      "name": "local_8_44",
+      "domain": 0,
+      "category": "lateral",
+      "command": [
+        0.0,
+        -0.05000000074505806,
+        0.0
+      ],
+      "goal": [
+        0.0,
+        -0.05000000074505806,
+        0.0
+      ],
+      "collection_type": "local_8",
+      "start_frame": 88,
+      "requested_steps": 8,
+      "mean_actual": [
+        -0.03382544219493866,
+        -0.17262780666351318,
+        0.4749969244003296
+      ],
+      "plateau_mean_actual": [
+        -0.03382544219493866,
+        -0.17262780666351318,
+        0.4749969244003296
+      ],
+      "plateau_samples": 8,
+      "tracking_rmse": [
+        0.04856326803565025,
+        0.18020941317081451,
+        0.7786856889724731
+      ],
+      "joint_position_rmse": 0.09119495749473572,
+      "wheel_velocity_rmse": 0.6394458413124084,
+      "leg_action_perturbation_rms": 0.01880076341331005,
+      "survival_time": 0.16,
+      "duration_seconds": 0.16,
+      "fall": false,
+      "passed": true,
+      "terminal_reason": "completed",
+      "contact_transition_count": 5,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.0
+    },
+    {
+      "name": "local_8_46",
+      "domain": 0,
+      "category": "lateral",
+      "command": [
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "goal": [
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "collection_type": "local_8",
+      "start_frame": 89,
+      "requested_steps": 8,
+      "mean_actual": [
+        -0.0710744857788086,
+        0.44546908140182495,
+        -0.8864549398422241
+      ],
+      "plateau_mean_actual": [
+        -0.0710744857788086,
+        0.44546908140182495,
+        -0.8864549398422241
+      ],
+      "plateau_samples": 8,
+      "tracking_rmse": [
+        0.14255264401435852,
+        0.47068196535110474,
+        1.2548186779022217
+      ],
+      "joint_position_rmse": 0.3833199143409729,
+      "wheel_velocity_rmse": 4.730733871459961,
+      "leg_action_perturbation_rms": 0.015559499152004719,
+      "survival_time": 0.16,
+      "duration_seconds": 0.16,
+      "fall": false,
+      "passed": true,
+      "terminal_reason": "completed",
+      "contact_transition_count": 10,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.078125
+    },
+    {
+      "name": "local_8_43",
+      "domain": 0,
+      "category": "lateral",
+      "command": [
+        0.0,
+        -0.10000000149011612,
+        0.0
+      ],
+      "goal": [
+        0.0,
+        -0.10000000149011612,
+        0.0
+      ],
+      "collection_type": "local_8",
+      "start_frame": 89,
+      "requested_steps": 8,
+      "mean_actual": [
+        -0.06292977929115295,
+        -0.4020651578903198,
+        0.932141125202179
+      ],
+      "plateau_mean_actual": [
+        -0.06292977929115295,
+        -0.4020651578903198,
+        0.932141125202179
+      ],
+      "plateau_samples": 8,
+      "tracking_rmse": [
+        0.10366268455982208,
+        0.4343043863773346,
+        1.2952587604522705
+      ],
+      "joint_position_rmse": 0.32411232590675354,
+      "wheel_velocity_rmse": 2.64436411857605,
+      "leg_action_perturbation_rms": 0.013689315877854824,
+      "survival_time": 0.16,
+      "duration_seconds": 0.16,
+      "fall": false,
+      "passed": true,
+      "terminal_reason": "completed",
+      "contact_transition_count": 10,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.0625
+    },
+    {
+      "name": "local_8_47",
+      "domain": 0,
+      "category": "lateral",
+      "command": [
+        0.0,
+        0.15000000596046448,
+        0.0
+      ],
+      "goal": [
+        0.0,
+        0.15000000596046448,
+        0.0
+      ],
+      "collection_type": "local_8",
+      "start_frame": 97,
+      "requested_steps": 8,
+      "mean_actual": [
+        -0.041732057929039,
+        0.25974807143211365,
+        0.5360751152038574
+      ],
+      "plateau_mean_actual": [
+        -0.041732057929039,
+        0.25974807143211365,
+        0.5360751152038574
+      ],
+      "plateau_samples": 8,
+      "tracking_rmse": [
+        0.04950331524014473,
+        0.20024922490119934,
+        0.720513105392456
+      ],
+      "joint_position_rmse": 0.10832110047340393,
+      "wheel_velocity_rmse": 2.8474955558776855,
+      "leg_action_perturbation_rms": 0.011622542515397072,
+      "survival_time": 0.16,
+      "duration_seconds": 0.16,
+      "fall": false,
+      "passed": true,
+      "terminal_reason": "completed",
+      "contact_transition_count": 12,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.0
+    },
+    {
+      "name": "local_8_42",
+      "domain": 0,
+      "category": "lateral",
+      "command": [
+        0.0,
+        -0.15000000596046448,
+        0.0
+      ],
+      "goal": [
+        0.0,
+        -0.15000000596046448,
+        0.0
+      ],
+      "collection_type": "local_8",
+      "start_frame": 97,
+      "requested_steps": 8,
+      "mean_actual": [
+        -0.03560555726289749,
+        -0.2894341051578522,
+        -0.276195228099823
+      ],
+      "plateau_mean_actual": [
+        -0.03560555726289749,
+        -0.2894341051578522,
+        -0.276195228099823
+      ],
+      "plateau_samples": 8,
+      "tracking_rmse": [
+        0.04322023689746857,
+        0.22835156321525574,
+        0.4043196141719818
+      ],
+      "joint_position_rmse": 0.11518124490976334,
+      "wheel_velocity_rmse": 3.492427349090576,
+      "leg_action_perturbation_rms": 0.014641075395047665,
+      "survival_time": 0.16,
+      "duration_seconds": 0.16,
+      "fall": false,
+      "passed": true,
+      "terminal_reason": "completed",
+      "contact_transition_count": 9,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.0
+    },
+    {
+      "name": "local_8_31",
+      "domain": 0,
+      "category": "yaw",
+      "command": [
+        0.0,
+        0.0,
+        0.20000000298023224
+      ],
+      "goal": [
+        0.0,
+        0.0,
+        0.20000000298023224
+      ],
+      "collection_type": "local_8",
+      "start_frame": 87,
+      "requested_steps": 8,
+      "mean_actual": [
+        -0.002066394779831171,
+        -0.00897852424532175,
+        -0.24260297417640686
+      ],
+      "plateau_mean_actual": [
+        -0.002066394779831171,
+        -0.00897852424532175,
+        -0.24260297417640686
+      ],
+      "plateau_samples": 8,
+      "tracking_rmse": [
+        0.02002630941569805,
+        0.01086434442549944,
+        0.5186889171600342
+      ],
+      "joint_position_rmse": 0.09429049491882324,
+      "wheel_velocity_rmse": 5.836512565612793,
+      "leg_action_perturbation_rms": 0.01587614230811596,
+      "survival_time": 0.16,
+      "duration_seconds": 0.16,
+      "fall": false,
+      "passed": true,
+      "terminal_reason": "completed",
+      "contact_transition_count": 12,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.0
+    },
+    {
+      "name": "local_8_28",
+      "domain": 0,
+      "category": "yaw",
+      "command": [
+        0.0,
+        0.0,
+        -0.20000000298023224
+      ],
+      "goal": [
+        0.0,
+        0.0,
+        -0.20000000298023224
+      ],
+      "collection_type": "local_8",
+      "start_frame": 87,
+      "requested_steps": 8,
+      "mean_actual": [
+        -0.04352012276649475,
+        -0.10569873452186584,
+        0.8783184885978699
+      ],
+      "plateau_mean_actual": [
+        -0.04352012276649475,
+        -0.10569873452186584,
+        0.8783184885978699
+      ],
+      "plateau_samples": 8,
+      "tracking_rmse": [
+        0.06954368948936462,
+        0.16880115866661072,
+        1.46272873878479
+      ],
+      "joint_position_rmse": 0.14522473514080048,
+      "wheel_velocity_rmse": 1.0687261819839478,
+      "leg_action_perturbation_rms": 0.013124563731253147,
+      "survival_time": 0.16,
+      "duration_seconds": 0.16,
+      "fall": false,
+      "passed": true,
+      "terminal_reason": "completed",
+      "contact_transition_count": 13,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.0078125
+    },
+    {
+      "name": "local_8_33",
+      "domain": 0,
+      "category": "yaw",
+      "command": [
+        0.0,
+        0.0,
+        0.4000000059604645
+      ],
+      "goal": [
+        0.0,
+        0.0,
+        0.4000000059604645
+      ],
+      "collection_type": "local_8",
+      "start_frame": 88,
+      "requested_steps": 8,
+      "mean_actual": [
+        -0.06223847717046738,
+        -0.19138941168785095,
+        0.7528754472732544
+      ],
+      "plateau_mean_actual": [
+        -0.06223847717046738,
+        -0.19138941168785095,
+        0.7528754472732544
+      ],
+      "plateau_samples": 8,
+      "tracking_rmse": [
+        0.11348800361156464,
+        0.26379314064979553,
+        0.8512759804725647
+      ],
+      "joint_position_rmse": 0.1630977988243103,
+      "wheel_velocity_rmse": 20.49690818786621,
+      "leg_action_perturbation_rms": 0.012379748746752739,
+      "survival_time": 0.16,
+      "duration_seconds": 0.16,
+      "fall": false,
+      "passed": true,
+      "terminal_reason": "completed",
+      "contact_transition_count": 9,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.0546875
+    },
+    {
+      "name": "local_8_26",
+      "domain": 0,
+      "category": "yaw",
+      "command": [
+        0.0,
+        0.0,
+        -0.4000000059604645
+      ],
+      "goal": [
+        0.0,
+        0.0,
+        -0.4000000059604645
+      ],
+      "collection_type": "local_8",
+      "start_frame": 88,
+      "requested_steps": 8,
+      "mean_actual": [
+        -0.05685262382030487,
+        0.11588747799396515,
+        -0.19744917750358582
+      ],
+      "plateau_mean_actual": [
+        -0.05685262382030487,
+        0.11588747799396515,
+        -0.19744917750358582
+      ],
+      "plateau_samples": 8,
+      "tracking_rmse": [
+        0.0736241415143013,
+        0.1603415161371231,
+        0.33638063073158264
+      ],
+      "joint_position_rmse": 0.1393991857767105,
+      "wheel_velocity_rmse": 15.931407928466797,
+      "leg_action_perturbation_rms": 0.010527428239583969,
+      "survival_time": 0.16,
+      "duration_seconds": 0.16,
+      "fall": false,
+      "passed": true,
+      "terminal_reason": "completed",
+      "contact_transition_count": 8,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.03125
+    },
+    {
+      "name": "local_8_68",
+      "domain": 0,
+      "category": "forward_lateral",
+      "command": [
+        0.10000000149011612,
+        0.05000000074505806,
+        0.0
+      ],
+      "goal": [
+        0.10000000149011612,
+        0.05000000074505806,
+        0.0
+      ],
+      "collection_type": "local_8",
+      "start_frame": 88,
+      "requested_steps": 8,
+      "mean_actual": [
+        0.021533634513616562,
+        0.2292591631412506,
+        -0.5035588145256042
+      ],
+      "plateau_mean_actual": [
+        0.021533634513616562,
+        0.2292591631412506,
+        -0.5035588145256042
+      ],
+      "plateau_samples": 8,
+      "tracking_rmse": [
+        0.10139427334070206,
+        0.24935086071491241,
+        0.8203489780426025
+      ],
+      "joint_position_rmse": 0.10327798128128052,
+      "wheel_velocity_rmse": 0.844193160533905,
+      "leg_action_perturbation_rms": 0.014828522689640522,
+      "survival_time": 0.16,
+      "duration_seconds": 0.16,
+      "fall": false,
+      "passed": true,
+      "terminal_reason": "completed",
+      "contact_transition_count": 11,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.0
+    },
+    {
+      "name": "local_8_76",
+      "domain": 0,
+      "category": "forward_lateral",
+      "command": [
+        0.10000000149011612,
+        -0.05000000074505806,
+        -0.0
+      ],
+      "goal": [
+        0.10000000149011612,
+        -0.05000000074505806,
+        -0.0
+      ],
+      "collection_type": "local_8",
+      "start_frame": 88,
+      "requested_steps": 8,
+      "mean_actual": [
+        0.07986196130514145,
+        -0.11087009310722351,
+        0.21429723501205444
+      ],
+      "plateau_mean_actual": [
+        0.07986196130514145,
+        -0.11087009310722351,
+        0.21429723501205444
+      ],
+      "plateau_samples": 8,
+      "tracking_rmse": [
+        0.02884557656943798,
+        0.09414825588464737,
+        0.4599314033985138
+      ],
+      "joint_position_rmse": 0.08199679106473923,
+      "wheel_velocity_rmse": 7.215503215789795,
+      "leg_action_perturbation_rms": 0.014084720984101295,
+      "survival_time": 0.16,
+      "duration_seconds": 0.16,
+      "fall": false,
+      "passed": true,
+      "terminal_reason": "completed",
+      "contact_transition_count": 9,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.0
+    },
+    {
+      "name": "local_8_52",
+      "domain": 0,
+      "category": "forward_yaw",
+      "command": [
+        0.10000000149011612,
+        0.0,
+        0.20000000298023224
+      ],
+      "goal": [
+        0.10000000149011612,
+        0.0,
+        0.20000000298023224
+      ],
+      "collection_type": "local_8",
+      "start_frame": 99,
+      "requested_steps": 8,
+      "mean_actual": [
+        0.06267451494932175,
+        -0.06513457000255585,
+        0.4364781379699707
+      ],
+      "plateau_mean_actual": [
+        0.06267451494932175,
+        -0.06513457000255585,
+        0.4364781379699707
+      ],
+      "plateau_samples": 8,
+      "tracking_rmse": [
+        0.0494099035859108,
+        0.09367205202579498,
+        0.5600924491882324
+      ],
+      "joint_position_rmse": 0.07491789758205414,
+      "wheel_velocity_rmse": 1.5905845165252686,
+      "leg_action_perturbation_rms": 0.014478717930614948,
+      "survival_time": 0.16,
+      "duration_seconds": 0.16,
+      "fall": false,
+      "passed": true,
+      "terminal_reason": "completed",
+      "contact_transition_count": 10,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.0
+    },
+    {
+      "name": "local_8_60",
+      "domain": 0,
+      "category": "forward_yaw",
+      "command": [
+        0.10000000149011612,
+        -0.0,
+        -0.20000000298023224
+      ],
+      "goal": [
+        0.10000000149011612,
+        -0.0,
+        -0.20000000298023224
+      ],
+      "collection_type": "local_8",
+      "start_frame": 99,
+      "requested_steps": 8,
+      "mean_actual": [
+        0.046493418514728546,
+        -0.0341775082051754,
+        -0.3710140585899353
+      ],
+      "plateau_mean_actual": [
+        0.046493418514728546,
+        -0.0341775082051754,
+        -0.3710140585899353
+      ],
+      "plateau_samples": 8,
+      "tracking_rmse": [
+        0.0719856321811676,
+        0.04271911457180977,
+        0.5284082889556885
+      ],
+      "joint_position_rmse": 0.07930590957403183,
+      "wheel_velocity_rmse": 7.482062816619873,
+      "leg_action_perturbation_rms": 0.013530952855944633,
+      "survival_time": 0.16,
+      "duration_seconds": 0.16,
+      "fall": false,
+      "passed": true,
+      "terminal_reason": "completed",
+      "contact_transition_count": 11,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.0
+    },
+    {
+      "name": "local_16_100",
+      "domain": 0,
+      "category": "standing",
+      "command": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "goal": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "collection_type": "local_16",
+      "start_frame": 75,
+      "requested_steps": 16,
+      "mean_actual": [
+        -0.21777746081352234,
+        0.5018301010131836,
+        -0.7535167336463928
+      ],
+      "plateau_mean_actual": [
+        -0.21777746081352234,
+        0.5018301010131836,
+        -0.7535167336463928
+      ],
+      "plateau_samples": 16,
+      "tracking_rmse": [
+        0.3658890128135681,
+        0.6645409464836121,
+        2.3183884620666504
+      ],
+      "joint_position_rmse": 0.9467778205871582,
+      "wheel_velocity_rmse": 31.948209762573242,
+      "leg_action_perturbation_rms": 0.01642213575541973,
+      "survival_time": 0.32,
+      "duration_seconds": 0.32,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 10,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.26953125
+    },
+    {
+      "name": "local_16_8",
+      "domain": 0,
+      "category": "forward_backward",
+      "command": [
+        0.10000000149011612,
+        0.0,
+        0.0
+      ],
+      "goal": [
+        0.10000000149011612,
+        0.0,
+        0.0
+      ],
+      "collection_type": "local_16",
+      "start_frame": 94,
+      "requested_steps": 16,
+      "mean_actual": [
+        -0.06280538439750671,
+        -0.4514387249946594,
+        0.8680536150932312
+      ],
+      "plateau_mean_actual": [
+        -0.06280538439750671,
+        -0.4514387249946594,
+        0.8680536150932312
+      ],
+      "plateau_samples": 16,
+      "tracking_rmse": [
+        0.32169467210769653,
+        0.6410291790962219,
+        1.7114557027816772
+      ],
+      "joint_position_rmse": 0.8337313532829285,
+      "wheel_velocity_rmse": 33.82670211791992,
+      "leg_action_perturbation_rms": 0.017315447330474854,
+      "survival_time": 0.32,
+      "duration_seconds": 0.32,
+      "fall": false,
+      "passed": true,
+      "terminal_reason": "completed",
+      "contact_transition_count": 16,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.2421875
+    },
+    {
+      "name": "local_16_10",
+      "domain": 0,
+      "category": "forward_backward",
+      "command": [
+        0.20000000298023224,
+        0.0,
+        0.0
+      ],
+      "goal": [
+        0.20000000298023224,
+        0.0,
+        0.0
+      ],
+      "collection_type": "local_16",
+      "start_frame": 94,
+      "requested_steps": 16,
+      "mean_actual": [
+        0.07432953268289566,
+        -0.5082998275756836,
+        1.7295044660568237
+      ],
+      "plateau_mean_actual": [
+        0.07432953268289566,
+        -0.5082998275756836,
+        1.7295044660568237
+      ],
+      "plateau_samples": 16,
+      "tracking_rmse": [
+        0.4247513711452484,
+        0.7098621726036072,
+        3.1364986896514893
+      ],
+      "joint_position_rmse": 0.9893326759338379,
+      "wheel_velocity_rmse": 46.52280044555664,
+      "leg_action_perturbation_rms": 0.014940665103495121,
+      "survival_time": 0.32,
+      "duration_seconds": 0.32,
+      "fall": false,
+      "passed": true,
+      "terminal_reason": "completed",
+      "contact_transition_count": 16,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.31640625
+    },
+    {
+      "name": "local_16_5",
+      "domain": 0,
+      "category": "forward_backward",
+      "command": [
+        -0.10000000149011612,
+        0.0,
+        0.0
+      ],
+      "goal": [
+        -0.10000000149011612,
+        0.0,
+        0.0
+      ],
+      "collection_type": "local_16",
+      "start_frame": 94,
+      "requested_steps": 16,
+      "mean_actual": [
+        -0.292487770318985,
+        0.2707133889198303,
+        -0.3017527759075165
+      ],
+      "plateau_mean_actual": [
+        -0.292487770318985,
+        0.2707133889198303,
+        -0.3017527759075165
+      ],
+      "plateau_samples": 16,
+      "tracking_rmse": [
+        0.33980727195739746,
+        0.44221168756484985,
+        2.8575215339660645
+      ],
+      "joint_position_rmse": 0.40977126359939575,
+      "wheel_velocity_rmse": 29.70746421813965,
+      "leg_action_perturbation_rms": 0.017312748357653618,
+      "survival_time": 0.32,
+      "duration_seconds": 0.32,
+      "fall": false,
+      "passed": true,
+      "terminal_reason": "completed",
+      "contact_transition_count": 16,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.12109375
+    },
+    {
+      "name": "local_16_3",
+      "domain": 0,
+      "category": "forward_backward",
+      "command": [
+        -0.20000000298023224,
+        0.0,
+        0.0
+      ],
+      "goal": [
+        -0.20000000298023224,
+        0.0,
+        0.0
+      ],
+      "collection_type": "local_16",
+      "start_frame": 94,
+      "requested_steps": 16,
+      "mean_actual": [
+        -0.1909017562866211,
+        0.14104613661766052,
+        -0.9660836458206177
+      ],
+      "plateau_mean_actual": [
+        -0.1909017562866211,
+        0.14104613661766052,
+        -0.9660836458206177
+      ],
+      "plateau_samples": 16,
+      "tracking_rmse": [
+        0.44536834955215454,
+        0.4155844748020172,
+        2.1979312896728516
+      ],
+      "joint_position_rmse": 0.960353434085846,
+      "wheel_velocity_rmse": 51.69346237182617,
+      "leg_action_perturbation_rms": 0.017001111060380936,
+      "survival_time": 0.32,
+      "duration_seconds": 0.32,
+      "fall": false,
+      "passed": true,
+      "terminal_reason": "completed",
+      "contact_transition_count": 21,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.3125
+    },
+    {
+      "name": "local_16_45",
+      "domain": 0,
+      "category": "lateral",
+      "command": [
+        0.0,
+        0.05000000074505806,
+        0.0
+      ],
+      "goal": [
+        0.0,
+        0.05000000074505806,
+        0.0
+      ],
+      "collection_type": "local_16",
+      "start_frame": 88,
+      "requested_steps": 16,
+      "mean_actual": [
+        -0.2716992199420929,
+        0.4217607080936432,
+        -0.9028874635696411
+      ],
+      "plateau_mean_actual": [
+        -0.2716992199420929,
+        0.4217607080936432,
+        -0.9028874635696411
+      ],
+      "plateau_samples": 14,
+      "tracking_rmse": [
+        0.49283450841903687,
+        0.5246564745903015,
+        1.2988274097442627
+      ],
+      "joint_position_rmse": 0.7251979112625122,
+      "wheel_velocity_rmse": 13.784899711608887,
+      "leg_action_perturbation_rms": 0.015552292577922344,
+      "survival_time": 0.28,
+      "duration_seconds": 0.28,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 10,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.1696428507566452
+    },
+    {
+      "name": "local_16_44",
+      "domain": 0,
+      "category": "lateral",
+      "command": [
+        0.0,
+        -0.05000000074505806,
+        0.0
+      ],
+      "goal": [
+        0.0,
+        -0.05000000074505806,
+        0.0
+      ],
+      "collection_type": "local_16",
+      "start_frame": 88,
+      "requested_steps": 16,
+      "mean_actual": [
+        -0.022220535203814507,
+        -0.33274251222610474,
+        -0.02876235544681549
+      ],
+      "plateau_mean_actual": [
+        -0.022220535203814507,
+        -0.33274251222610474,
+        -0.02876235544681549
+      ],
+      "plateau_samples": 16,
+      "tracking_rmse": [
+        0.08461888879537582,
+        0.4241299629211426,
+        1.190643310546875
+      ],
+      "joint_position_rmse": 0.6271668672561646,
+      "wheel_velocity_rmse": 28.7821102142334,
+      "leg_action_perturbation_rms": 0.013967499136924744,
+      "survival_time": 0.32,
+      "duration_seconds": 0.32,
+      "fall": false,
+      "passed": true,
+      "terminal_reason": "completed",
+      "contact_transition_count": 14,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.15625
+    },
+    {
+      "name": "local_16_46",
+      "domain": 0,
+      "category": "lateral",
+      "command": [
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "goal": [
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "collection_type": "local_16",
+      "start_frame": 89,
+      "requested_steps": 16,
+      "mean_actual": [
+        -0.31853482127189636,
+        0.49066615104675293,
+        -0.6494173407554626
+      ],
+      "plateau_mean_actual": [
+        -0.31853482127189636,
+        0.49066615104675293,
+        -0.6494173407554626
+      ],
+      "plateau_samples": 12,
+      "tracking_rmse": [
+        0.5257654786109924,
+        0.5200343132019043,
+        1.718793272972107
+      ],
+      "joint_position_rmse": 0.9261307716369629,
+      "wheel_velocity_rmse": 19.469539642333984,
+      "leg_action_perturbation_rms": 0.013369941152632236,
+      "survival_time": 0.24,
+      "duration_seconds": 0.24,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 8,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.234375
+    },
+    {
+      "name": "local_16_43",
+      "domain": 0,
+      "category": "lateral",
+      "command": [
+        0.0,
+        -0.10000000149011612,
+        0.0
+      ],
+      "goal": [
+        0.0,
+        -0.10000000149011612,
+        0.0
+      ],
+      "collection_type": "local_16",
+      "start_frame": 89,
+      "requested_steps": 16,
+      "mean_actual": [
+        -0.2797708809375763,
+        -0.4759034216403961,
+        0.6297473311424255
+      ],
+      "plateau_mean_actual": [
+        -0.2797708809375763,
+        -0.4759034216403961,
+        0.6297473311424255
+      ],
+      "plateau_samples": 11,
+      "tracking_rmse": [
+        0.43755078315734863,
+        0.4949170649051666,
+        1.6295045614242554
+      ],
+      "joint_position_rmse": 0.864987313747406,
+      "wheel_velocity_rmse": 21.68661117553711,
+      "leg_action_perturbation_rms": 0.014385437592864037,
+      "survival_time": 0.22,
+      "duration_seconds": 0.22,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 10,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.23863635957241058
+    },
+    {
+      "name": "local_16_47",
+      "domain": 0,
+      "category": "lateral",
+      "command": [
+        0.0,
+        0.15000000596046448,
+        0.0
+      ],
+      "goal": [
+        0.0,
+        0.15000000596046448,
+        0.0
+      ],
+      "collection_type": "local_16",
+      "start_frame": 97,
+      "requested_steps": 16,
+      "mean_actual": [
+        -0.24240541458129883,
+        0.5879316926002502,
+        0.27718454599380493
+      ],
+      "plateau_mean_actual": [
+        -0.24240541458129883,
+        0.5879316926002502,
+        0.27718454599380493
+      ],
+      "plateau_samples": 13,
+      "tracking_rmse": [
+        0.34730228781700134,
+        0.5704312920570374,
+        1.187553882598877
+      ],
+      "joint_position_rmse": 0.7425554394721985,
+      "wheel_velocity_rmse": 18.04167366027832,
+      "leg_action_perturbation_rms": 0.013841827400028706,
+      "survival_time": 0.26,
+      "duration_seconds": 0.26,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 12,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.2211538404226303
+    },
+    {
+      "name": "local_16_42",
+      "domain": 0,
+      "category": "lateral",
+      "command": [
+        0.0,
+        -0.15000000596046448,
+        0.0
+      ],
+      "goal": [
+        0.0,
+        -0.15000000596046448,
+        0.0
+      ],
+      "collection_type": "local_16",
+      "start_frame": 97,
+      "requested_steps": 16,
+      "mean_actual": [
+        -0.133064866065979,
+        -0.5936891436576843,
+        -0.03643280267715454
+      ],
+      "plateau_mean_actual": [
+        -0.133064866065979,
+        -0.5936891436576843,
+        -0.03643280267715454
+      ],
+      "plateau_samples": 12,
+      "tracking_rmse": [
+        0.2116532325744629,
+        0.5670974254608154,
+        0.6285877823829651
+      ],
+      "joint_position_rmse": 0.6894124746322632,
+      "wheel_velocity_rmse": 11.293647766113281,
+      "leg_action_perturbation_rms": 0.017139259725809097,
+      "survival_time": 0.24,
+      "duration_seconds": 0.24,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 10,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.2083333283662796
+    },
+    {
+      "name": "local_16_31",
+      "domain": 0,
+      "category": "yaw",
+      "command": [
+        0.0,
+        0.0,
+        0.20000000298023224
+      ],
+      "goal": [
+        0.0,
+        0.0,
+        0.20000000298023224
+      ],
+      "collection_type": "local_16",
+      "start_frame": 87,
+      "requested_steps": 16,
+      "mean_actual": [
+        -0.11625037342309952,
+        -0.20924259722232819,
+        0.36291831731796265
+      ],
+      "plateau_mean_actual": [
+        -0.11625037342309952,
+        -0.20924259722232819,
+        0.36291831731796265
+      ],
+      "plateau_samples": 16,
+      "tracking_rmse": [
+        0.19498176872730255,
+        0.3356994092464447,
+        0.8524171113967896
+      ],
+      "joint_position_rmse": 0.606780469417572,
+      "wheel_velocity_rmse": 37.00606155395508,
+      "leg_action_perturbation_rms": 0.015578851103782654,
+      "survival_time": 0.32,
+      "duration_seconds": 0.32,
+      "fall": false,
+      "passed": true,
+      "terminal_reason": "completed",
+      "contact_transition_count": 23,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.17578125
+    },
+    {
+      "name": "local_16_28",
+      "domain": 0,
+      "category": "yaw",
+      "command": [
+        0.0,
+        0.0,
+        -0.20000000298023224
+      ],
+      "goal": [
+        0.0,
+        0.0,
+        -0.20000000298023224
+      ],
+      "collection_type": "local_16",
+      "start_frame": 87,
+      "requested_steps": 16,
+      "mean_actual": [
+        -0.1736464500427246,
+        0.41788917779922485,
+        -0.6477940678596497
+      ],
+      "plateau_mean_actual": [
+        -0.1736464500427246,
+        0.41788917779922485,
+        -0.6477940678596497
+      ],
+      "plateau_samples": 16,
+      "tracking_rmse": [
+        0.26416316628456116,
+        0.5886315703392029,
+        1.3346105813980103
+      ],
+      "joint_position_rmse": 0.8807235956192017,
+      "wheel_velocity_rmse": 44.6862907409668,
+      "leg_action_perturbation_rms": 0.01543184369802475,
+      "survival_time": 0.32,
+      "duration_seconds": 0.32,
+      "fall": false,
+      "passed": true,
+      "terminal_reason": "completed",
+      "contact_transition_count": 18,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.2734375
+    },
+    {
+      "name": "local_16_33",
+      "domain": 0,
+      "category": "yaw",
+      "command": [
+        0.0,
+        0.0,
+        0.4000000059604645
+      ],
+      "goal": [
+        0.0,
+        0.0,
+        0.4000000059604645
+      ],
+      "collection_type": "local_16",
+      "start_frame": 88,
+      "requested_steps": 16,
+      "mean_actual": [
+        -0.12385335564613342,
+        0.22242189943790436,
+        0.7975772023200989
+      ],
+      "plateau_mean_actual": [
+        -0.12385335564613342,
+        0.22242189943790436,
+        0.7975772023200989
+      ],
+      "plateau_samples": 13,
+      "tracking_rmse": [
+        0.19509537518024445,
+        0.32854095101356506,
+        2.4152626991271973
+      ],
+      "joint_position_rmse": 0.7044849991798401,
+      "wheel_velocity_rmse": 29.89604949951172,
+      "leg_action_perturbation_rms": 0.013409228064119816,
+      "survival_time": 0.26,
+      "duration_seconds": 0.26,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 13,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.23557692766189575
+    },
+    {
+      "name": "local_16_26",
+      "domain": 0,
+      "category": "yaw",
+      "command": [
+        0.0,
+        0.0,
+        -0.4000000059604645
+      ],
+      "goal": [
+        0.0,
+        0.0,
+        -0.4000000059604645
+      ],
+      "collection_type": "local_16",
+      "start_frame": 88,
+      "requested_steps": 16,
+      "mean_actual": [
+        -0.17863696813583374,
+        -0.3050557076931,
+        0.038942236453294754
+      ],
+      "plateau_mean_actual": [
+        -0.17863696813583374,
+        -0.3050557076931,
+        0.038942236453294754
+      ],
+      "plateau_samples": 12,
+      "tracking_rmse": [
+        0.2715905010700226,
+        0.4083140194416046,
+        1.864235758781433
+      ],
+      "joint_position_rmse": 0.7300673723220825,
+      "wheel_velocity_rmse": 20.77495002746582,
+      "leg_action_perturbation_rms": 0.015152894891798496,
+      "survival_time": 0.24,
+      "duration_seconds": 0.24,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 14,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.21875
+    },
+    {
+      "name": "local_16_68",
+      "domain": 0,
+      "category": "forward_lateral",
+      "command": [
+        0.10000000149011612,
+        0.05000000074505806,
+        0.0
+      ],
+      "goal": [
+        0.10000000149011612,
+        0.05000000074505806,
+        0.0
+      ],
+      "collection_type": "local_16",
+      "start_frame": 88,
+      "requested_steps": 16,
+      "mean_actual": [
+        -0.2525468170642853,
+        0.3606660068035126,
+        -0.5476536154747009
+      ],
+      "plateau_mean_actual": [
+        -0.2525468170642853,
+        0.3606660068035126,
+        -0.5476536154747009
+      ],
+      "plateau_samples": 14,
+      "tracking_rmse": [
+        0.5207394957542419,
+        0.45289528369903564,
+        1.0775400400161743
+      ],
+      "joint_position_rmse": 0.6919346451759338,
+      "wheel_velocity_rmse": 2.901113271713257,
+      "leg_action_perturbation_rms": 0.017908822745084763,
+      "survival_time": 0.28,
+      "duration_seconds": 0.28,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 18,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.1517857164144516
+    },
+    {
+      "name": "local_16_76",
+      "domain": 0,
+      "category": "forward_lateral",
+      "command": [
+        0.10000000149011612,
+        -0.05000000074505806,
+        -0.0
+      ],
+      "goal": [
+        0.10000000149011612,
+        -0.05000000074505806,
+        -0.0
+      ],
+      "collection_type": "local_16",
+      "start_frame": 88,
+      "requested_steps": 16,
+      "mean_actual": [
+        -0.1936071664094925,
+        -0.3838549554347992,
+        0.8187541961669922
+      ],
+      "plateau_mean_actual": [
+        -0.1936071664094925,
+        -0.3838549554347992,
+        0.8187541961669922
+      ],
+      "plateau_samples": 14,
+      "tracking_rmse": [
+        0.4437803328037262,
+        0.4832999110221863,
+        1.2169151306152344
+      ],
+      "joint_position_rmse": 0.7363348007202148,
+      "wheel_velocity_rmse": 7.168997287750244,
+      "leg_action_perturbation_rms": 0.012985790148377419,
+      "survival_time": 0.28,
+      "duration_seconds": 0.28,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 15,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.1607142835855484
+    },
+    {
+      "name": "local_16_52",
+      "domain": 0,
+      "category": "forward_yaw",
+      "command": [
+        0.10000000149011612,
+        0.0,
+        0.20000000298023224
+      ],
+      "goal": [
+        0.10000000149011612,
+        0.0,
+        0.20000000298023224
+      ],
+      "collection_type": "local_16",
+      "start_frame": 99,
+      "requested_steps": 16,
+      "mean_actual": [
+        -0.03180185705423355,
+        -0.24837030470371246,
+        1.7587183713912964
+      ],
+      "plateau_mean_actual": [
+        -0.03180185705423355,
+        -0.24837030470371246,
+        1.7587183713912964
+      ],
+      "plateau_samples": 15,
+      "tracking_rmse": [
+        0.2504364848136902,
+        0.40758615732192993,
+        2.295274019241333
+      ],
+      "joint_position_rmse": 0.7970534563064575,
+      "wheel_velocity_rmse": 29.398590087890625,
+      "leg_action_perturbation_rms": 0.015934163704514503,
+      "survival_time": 0.3,
+      "duration_seconds": 0.3,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 11,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.23749999701976776
+    },
+    {
+      "name": "local_16_60",
+      "domain": 0,
+      "category": "forward_yaw",
+      "command": [
+        0.10000000149011612,
+        -0.0,
+        -0.20000000298023224
+      ],
+      "goal": [
+        0.10000000149011612,
+        -0.0,
+        -0.20000000298023224
+      ],
+      "collection_type": "local_16",
+      "start_frame": 99,
+      "requested_steps": 16,
+      "mean_actual": [
+        -0.08793924748897552,
+        0.21049900352954865,
+        -1.380589485168457
+      ],
+      "plateau_mean_actual": [
+        -0.08793924748897552,
+        0.21049900352954865,
+        -1.380589485168457
+      ],
+      "plateau_samples": 16,
+      "tracking_rmse": [
+        0.2995162606239319,
+        0.41114291548728943,
+        1.9198343753814697
+      ],
+      "joint_position_rmse": 0.5300934910774231,
+      "wheel_velocity_rmse": 10.498093605041504,
+      "leg_action_perturbation_rms": 0.017310140654444695,
+      "survival_time": 0.32,
+      "duration_seconds": 0.32,
+      "fall": false,
+      "passed": true,
+      "terminal_reason": "completed",
+      "contact_transition_count": 16,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.1171875
+    },
+    {
+      "name": "local_32_100",
+      "domain": 0,
+      "category": "standing",
+      "command": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "goal": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "collection_type": "local_32",
+      "start_frame": 75,
+      "requested_steps": 32,
+      "mean_actual": [
+        -0.08214475214481354,
+        0.3611978590488434,
+        0.16704536974430084
+      ],
+      "plateau_mean_actual": [
+        -0.08214475214481354,
+        0.3611978590488434,
+        0.16704536974430084
+      ],
+      "plateau_samples": 19,
+      "tracking_rmse": [
+        0.1651526689529419,
+        0.5281407237052917,
+        1.084640383720398
+      ],
+      "joint_position_rmse": 0.5482836961746216,
+      "wheel_velocity_rmse": 10.001786231994629,
+      "leg_action_perturbation_rms": 0.01756560429930687,
+      "survival_time": 0.38,
+      "duration_seconds": 0.38,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 16,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.1184210553765297
+    },
+    {
+      "name": "local_32_8",
+      "domain": 0,
+      "category": "forward_backward",
+      "command": [
+        0.10000000149011612,
+        0.0,
+        0.0
+      ],
+      "goal": [
+        0.10000000149011612,
+        0.0,
+        0.0
+      ],
+      "collection_type": "local_32",
+      "start_frame": 94,
+      "requested_steps": 32,
+      "mean_actual": [
+        -0.10319937020540237,
+        -0.5286845564842224,
+        1.6636534929275513
+      ],
+      "plateau_mean_actual": [
+        -0.10319937020540237,
+        -0.5286845564842224,
+        1.6636534929275513
+      ],
+      "plateau_samples": 22,
+      "tracking_rmse": [
+        0.4458911716938019,
+        0.7871502041816711,
+        2.793452024459839
+      ],
+      "joint_position_rmse": 1.0488622188568115,
+      "wheel_velocity_rmse": 46.92136764526367,
+      "leg_action_perturbation_rms": 0.015292217954993248,
+      "survival_time": 0.44,
+      "duration_seconds": 0.44,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 18,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.31534090638160706
+    },
+    {
+      "name": "local_32_10",
+      "domain": 0,
+      "category": "forward_backward",
+      "command": [
+        0.20000000298023224,
+        0.0,
+        0.0
+      ],
+      "goal": [
+        0.20000000298023224,
+        0.0,
+        0.0
+      ],
+      "collection_type": "local_32",
+      "start_frame": 94,
+      "requested_steps": 32,
+      "mean_actual": [
+        0.08451282232999802,
+        0.41867631673812866,
+        -0.2658887207508087
+      ],
+      "plateau_mean_actual": [
+        0.08451282232999802,
+        0.41867631673812866,
+        -0.2658887207508087
+      ],
+      "plateau_samples": 19,
+      "tracking_rmse": [
+        0.2563400864601135,
+        0.5945377349853516,
+        1.4962230920791626
+      ],
+      "joint_position_rmse": 0.7948915362358093,
+      "wheel_velocity_rmse": 48.42940902709961,
+      "leg_action_perturbation_rms": 0.016476985067129135,
+      "survival_time": 0.38,
+      "duration_seconds": 0.38,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 14,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.26644736528396606
+    },
+    {
+      "name": "local_32_5",
+      "domain": 0,
+      "category": "forward_backward",
+      "command": [
+        -0.10000000149011612,
+        0.0,
+        0.0
+      ],
+      "goal": [
+        -0.10000000149011612,
+        0.0,
+        0.0
+      ],
+      "collection_type": "local_32",
+      "start_frame": 94,
+      "requested_steps": 32,
+      "mean_actual": [
+        0.17438067495822906,
+        -0.00939217023551464,
+        0.42419713735580444
+      ],
+      "plateau_mean_actual": [
+        0.17438067495822906,
+        -0.00939217023551464,
+        0.42419713735580444
+      ],
+      "plateau_samples": 28,
+      "tracking_rmse": [
+        0.4696144759654999,
+        0.2754537761211395,
+        1.5759847164154053
+      ],
+      "joint_position_rmse": 1.0155856609344482,
+      "wheel_velocity_rmse": 70.06539154052734,
+      "leg_action_perturbation_rms": 0.015891753137111664,
+      "survival_time": 0.56,
+      "duration_seconds": 0.56,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 23,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.3839285671710968
+    },
+    {
+      "name": "local_32_3",
+      "domain": 0,
+      "category": "forward_backward",
+      "command": [
+        -0.20000000298023224,
+        0.0,
+        0.0
+      ],
+      "goal": [
+        -0.20000000298023224,
+        0.0,
+        0.0
+      ],
+      "collection_type": "local_32",
+      "start_frame": 94,
+      "requested_steps": 32,
+      "mean_actual": [
+        -0.14763791859149933,
+        -0.0034620389342308044,
+        -2.0579493045806885
+      ],
+      "plateau_mean_actual": [
+        -0.14763791859149933,
+        -0.0034620389342308044,
+        -2.0579493045806885
+      ],
+      "plateau_samples": 32,
+      "tracking_rmse": [
+        0.4171152114868164,
+        0.5228064060211182,
+        2.5392072200775146
+      ],
+      "joint_position_rmse": 1.4560701847076416,
+      "wheel_velocity_rmse": 91.00418853759766,
+      "leg_action_perturbation_rms": 0.017329448834061623,
+      "survival_time": 0.64,
+      "duration_seconds": 0.64,
+      "fall": false,
+      "passed": true,
+      "terminal_reason": "completed",
+      "contact_transition_count": 26,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.607421875
+    },
+    {
+      "name": "local_32_45",
+      "domain": 0,
+      "category": "lateral",
+      "command": [
+        0.0,
+        0.05000000074505806,
+        0.0
+      ],
+      "goal": [
+        0.0,
+        0.05000000074505806,
+        0.0
+      ],
+      "collection_type": "local_32",
+      "start_frame": 88,
+      "requested_steps": 32,
+      "mean_actual": [
+        -0.3292258381843567,
+        0.3213452696800232,
+        -1.1498204469680786
+      ],
+      "plateau_mean_actual": [
+        -0.3292258381843567,
+        0.3213452696800232,
+        -1.1498204469680786
+      ],
+      "plateau_samples": 16,
+      "tracking_rmse": [
+        0.5430134534835815,
+        0.41336947679519653,
+        1.5580382347106934
+      ],
+      "joint_position_rmse": 0.7664861083030701,
+      "wheel_velocity_rmse": 4.787864685058594,
+      "leg_action_perturbation_rms": 0.017546024173498154,
+      "survival_time": 0.32,
+      "duration_seconds": 0.32,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 16,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.1640625
+    },
+    {
+      "name": "local_32_44",
+      "domain": 0,
+      "category": "lateral",
+      "command": [
+        0.0,
+        -0.05000000074505806,
+        0.0
+      ],
+      "goal": [
+        0.0,
+        -0.05000000074505806,
+        0.0
+      ],
+      "collection_type": "local_32",
+      "start_frame": 88,
+      "requested_steps": 32,
+      "mean_actual": [
+        -0.14768630266189575,
+        -0.23859503865242004,
+        0.7097086310386658
+      ],
+      "plateau_mean_actual": [
+        -0.14768630266189575,
+        -0.23859503865242004,
+        0.7097086310386658
+      ],
+      "plateau_samples": 18,
+      "tracking_rmse": [
+        0.2183770388364792,
+        0.360576331615448,
+        1.493950605392456
+      ],
+      "joint_position_rmse": 0.8438288569450378,
+      "wheel_velocity_rmse": 39.33566665649414,
+      "leg_action_perturbation_rms": 0.01752011850476265,
+      "survival_time": 0.36,
+      "duration_seconds": 0.36,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 14,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.2291666716337204
+    },
+    {
+      "name": "local_32_46",
+      "domain": 0,
+      "category": "lateral",
+      "command": [
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "goal": [
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "collection_type": "local_32",
+      "start_frame": 89,
+      "requested_steps": 32,
+      "mean_actual": [
+        -0.35988354682922363,
+        0.45229634642601013,
+        -1.004349708557129
+      ],
+      "plateau_mean_actual": [
+        -0.35988354682922363,
+        0.45229634642601013,
+        -1.004349708557129
+      ],
+      "plateau_samples": 12,
+      "tracking_rmse": [
+        0.5707914233207703,
+        0.4836021065711975,
+        1.3681071996688843
+      ],
+      "joint_position_rmse": 0.8628180623054504,
+      "wheel_velocity_rmse": 9.416789054870605,
+      "leg_action_perturbation_rms": 0.015211577527225018,
+      "survival_time": 0.24,
+      "duration_seconds": 0.24,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 10,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.2135416716337204
+    },
+    {
+      "name": "local_32_43",
+      "domain": 0,
+      "category": "lateral",
+      "command": [
+        0.0,
+        -0.10000000149011612,
+        0.0
+      ],
+      "goal": [
+        0.0,
+        -0.10000000149011612,
+        0.0
+      ],
+      "collection_type": "local_32",
+      "start_frame": 89,
+      "requested_steps": 32,
+      "mean_actual": [
+        -0.380709707736969,
+        -0.4362439811229706,
+        1.4620130062103271
+      ],
+      "plateau_mean_actual": [
+        -0.380709707736969,
+        -0.4362439811229706,
+        1.4620130062103271
+      ],
+      "plateau_samples": 13,
+      "tracking_rmse": [
+        0.5257887840270996,
+        0.45091956853866577,
+        1.8899511098861694
+      ],
+      "joint_position_rmse": 0.9113398790359497,
+      "wheel_velocity_rmse": 25.99060821533203,
+      "leg_action_perturbation_rms": 0.01532449945807457,
+      "survival_time": 0.26,
+      "duration_seconds": 0.26,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 14,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.2548076808452606
+    },
+    {
+      "name": "local_32_47",
+      "domain": 0,
+      "category": "lateral",
+      "command": [
+        0.0,
+        0.15000000596046448,
+        0.0
+      ],
+      "goal": [
+        0.0,
+        0.15000000596046448,
+        0.0
+      ],
+      "collection_type": "local_32",
+      "start_frame": 97,
+      "requested_steps": 32,
+      "mean_actual": [
+        -0.00790850818157196,
+        0.4096522629261017,
+        1.6630269289016724
+      ],
+      "plateau_mean_actual": [
+        -0.00790850818157196,
+        0.4096522629261017,
+        1.6630269289016724
+      ],
+      "plateau_samples": 32,
+      "tracking_rmse": [
+        0.26025861501693726,
+        0.6148556470870972,
+        3.3918235301971436
+      ],
+      "joint_position_rmse": 1.2695688009262085,
+      "wheel_velocity_rmse": 87.41635131835938,
+      "leg_action_perturbation_rms": 0.01534359809011221,
+      "survival_time": 0.64,
+      "duration_seconds": 0.64,
+      "fall": false,
+      "passed": true,
+      "terminal_reason": "completed",
+      "contact_transition_count": 10,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.546875
+    },
+    {
+      "name": "local_32_42",
+      "domain": 0,
+      "category": "lateral",
+      "command": [
+        0.0,
+        -0.15000000596046448,
+        0.0
+      ],
+      "goal": [
+        0.0,
+        -0.15000000596046448,
+        0.0
+      ],
+      "collection_type": "local_32",
+      "start_frame": 97,
+      "requested_steps": 32,
+      "mean_actual": [
+        -0.27559491991996765,
+        -0.6100878119468689,
+        -0.034206271171569824
+      ],
+      "plateau_mean_actual": [
+        -0.27559491991996765,
+        -0.6100878119468689,
+        -0.034206271171569824
+      ],
+      "plateau_samples": 12,
+      "tracking_rmse": [
+        0.4354143738746643,
+        0.5877659320831299,
+        1.6550811529159546
+      ],
+      "joint_position_rmse": 0.7649998664855957,
+      "wheel_velocity_rmse": 18.314455032348633,
+      "leg_action_perturbation_rms": 0.019236264750361443,
+      "survival_time": 0.24,
+      "duration_seconds": 0.24,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 10,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.2291666716337204
+    },
+    {
+      "name": "local_32_31",
+      "domain": 0,
+      "category": "yaw",
+      "command": [
+        0.0,
+        0.0,
+        0.20000000298023224
+      ],
+      "goal": [
+        0.0,
+        0.0,
+        0.20000000298023224
+      ],
+      "collection_type": "local_32",
+      "start_frame": 87,
+      "requested_steps": 32,
+      "mean_actual": [
+        -0.14069750905036926,
+        0.28742626309394836,
+        -0.008631706237792969
+      ],
+      "plateau_mean_actual": [
+        -0.14069750905036926,
+        0.28742626309394836,
+        -0.008631706237792969
+      ],
+      "plateau_samples": 13,
+      "tracking_rmse": [
+        0.20136933028697968,
+        0.3880893290042877,
+        1.7266018390655518
+      ],
+      "joint_position_rmse": 0.6997005939483643,
+      "wheel_velocity_rmse": 19.513687133789062,
+      "leg_action_perturbation_rms": 0.013291626237332821,
+      "survival_time": 0.26,
+      "duration_seconds": 0.26,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 13,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.18269230425357819
+    },
+    {
+      "name": "local_32_28",
+      "domain": 0,
+      "category": "yaw",
+      "command": [
+        0.0,
+        0.0,
+        -0.20000000298023224
+      ],
+      "goal": [
+        0.0,
+        0.0,
+        -0.20000000298023224
+      ],
+      "collection_type": "local_32",
+      "start_frame": 87,
+      "requested_steps": 32,
+      "mean_actual": [
+        -0.16383542120456696,
+        -0.18499861657619476,
+        -0.008386759087443352
+      ],
+      "plateau_mean_actual": [
+        -0.16383542120456696,
+        -0.18499861657619476,
+        -0.008386759087443352
+      ],
+      "plateau_samples": 13,
+      "tracking_rmse": [
+        0.2882079482078552,
+        0.30623194575309753,
+        2.203944206237793
+      ],
+      "joint_position_rmse": 0.5890388488769531,
+      "wheel_velocity_rmse": 23.405681610107422,
+      "leg_action_perturbation_rms": 0.01354954019188881,
+      "survival_time": 0.26,
+      "duration_seconds": 0.26,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 14,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.18269230425357819
+    },
+    {
+      "name": "local_32_33",
+      "domain": 0,
+      "category": "yaw",
+      "command": [
+        0.0,
+        0.0,
+        0.4000000059604645
+      ],
+      "goal": [
+        0.0,
+        0.0,
+        0.4000000059604645
+      ],
+      "collection_type": "local_32",
+      "start_frame": 88,
+      "requested_steps": 32,
+      "mean_actual": [
+        0.09107028692960739,
+        0.12877003848552704,
+        -0.8095403909683228
+      ],
+      "plateau_mean_actual": [
+        0.09107028692960739,
+        0.12877003848552704,
+        -0.8095403909683228
+      ],
+      "plateau_samples": 32,
+      "tracking_rmse": [
+        0.3455565571784973,
+        0.3941524028778076,
+        2.270629644393921
+      ],
+      "joint_position_rmse": 1.3714141845703125,
+      "wheel_velocity_rmse": 92.93276977539062,
+      "leg_action_perturbation_rms": 0.018266644328832626,
+      "survival_time": 0.64,
+      "duration_seconds": 0.64,
+      "fall": false,
+      "passed": true,
+      "terminal_reason": "completed",
+      "contact_transition_count": 14,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.583984375
+    },
+    {
+      "name": "local_32_26",
+      "domain": 0,
+      "category": "yaw",
+      "command": [
+        0.0,
+        0.0,
+        -0.4000000059604645
+      ],
+      "goal": [
+        0.0,
+        0.0,
+        -0.4000000059604645
+      ],
+      "collection_type": "local_32",
+      "start_frame": 88,
+      "requested_steps": 32,
+      "mean_actual": [
+        0.30838742852211,
+        -0.07968868315219879,
+        0.32587483525276184
+      ],
+      "plateau_mean_actual": [
+        0.30838742852211,
+        -0.07968868315219879,
+        0.32587483525276184
+      ],
+      "plateau_samples": 32,
+      "tracking_rmse": [
+        0.4708741307258606,
+        0.2450186014175415,
+        2.252214193344116
+      ],
+      "joint_position_rmse": 1.2620351314544678,
+      "wheel_velocity_rmse": 88.64913940429688,
+      "leg_action_perturbation_rms": 0.01750366948544979,
+      "survival_time": 0.64,
+      "duration_seconds": 0.64,
+      "fall": false,
+      "passed": true,
+      "terminal_reason": "completed",
+      "contact_transition_count": 16,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.546875
+    },
+    {
+      "name": "local_32_68",
+      "domain": 0,
+      "category": "forward_lateral",
+      "command": [
+        0.10000000149011612,
+        0.05000000074505806,
+        0.0
+      ],
+      "goal": [
+        0.10000000149011612,
+        0.05000000074505806,
+        0.0
+      ],
+      "collection_type": "local_32",
+      "start_frame": 88,
+      "requested_steps": 32,
+      "mean_actual": [
+        -0.08941655606031418,
+        0.40971606969833374,
+        -0.7566556334495544
+      ],
+      "plateau_mean_actual": [
+        -0.08941655606031418,
+        0.40971606969833374,
+        -0.7566556334495544
+      ],
+      "plateau_samples": 15,
+      "tracking_rmse": [
+        0.3136705756187439,
+        0.4965457618236542,
+        1.9205220937728882
+      ],
+      "joint_position_rmse": 0.910913348197937,
+      "wheel_velocity_rmse": 31.416690826416016,
+      "leg_action_perturbation_rms": 0.015550031326711178,
+      "survival_time": 0.3,
+      "duration_seconds": 0.3,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 14,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.25833332538604736
+    },
+    {
+      "name": "local_32_76",
+      "domain": 0,
+      "category": "forward_lateral",
+      "command": [
+        0.10000000149011612,
+        -0.05000000074505806,
+        -0.0
+      ],
+      "goal": [
+        0.10000000149011612,
+        -0.05000000074505806,
+        -0.0
+      ],
+      "collection_type": "local_32",
+      "start_frame": 88,
+      "requested_steps": 32,
+      "mean_actual": [
+        -0.16077746450901031,
+        -0.4427424669265747,
+        0.5143135786056519
+      ],
+      "plateau_mean_actual": [
+        -0.16077746450901031,
+        -0.4427424669265747,
+        0.5143135786056519
+      ],
+      "plateau_samples": 13,
+      "tracking_rmse": [
+        0.4328348636627197,
+        0.5276430249214172,
+        1.2067844867706299
+      ],
+      "joint_position_rmse": 0.7355208396911621,
+      "wheel_velocity_rmse": 29.517866134643555,
+      "leg_action_perturbation_rms": 0.014757517725229263,
+      "survival_time": 0.26,
+      "duration_seconds": 0.26,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 15,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.23076923191547394
+    },
+    {
+      "name": "local_32_52",
+      "domain": 0,
+      "category": "forward_yaw",
+      "command": [
+        0.10000000149011612,
+        0.0,
+        0.20000000298023224
+      ],
+      "goal": [
+        0.10000000149011612,
+        0.0,
+        0.20000000298023224
+      ],
+      "collection_type": "local_32",
+      "start_frame": 99,
+      "requested_steps": 32,
+      "mean_actual": [
+        -0.10553939640522003,
+        0.42247000336647034,
+        2.439408540725708
+      ],
+      "plateau_mean_actual": [
+        -0.10553939640522003,
+        0.42247000336647034,
+        2.439408540725708
+      ],
+      "plateau_samples": 19,
+      "tracking_rmse": [
+        0.3232315182685852,
+        0.5824173092842102,
+        3.1793384552001953
+      ],
+      "joint_position_rmse": 0.6888325810432434,
+      "wheel_velocity_rmse": 42.4816780090332,
+      "leg_action_perturbation_rms": 0.01730963960289955,
+      "survival_time": 0.38,
+      "duration_seconds": 0.38,
+      "fall": true,
+      "passed": false,
+      "terminal_reason": "fall",
+      "contact_transition_count": 19,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.20394736528396606
+    },
+    {
+      "name": "local_32_60",
+      "domain": 0,
+      "category": "forward_yaw",
+      "command": [
+        0.10000000149011612,
+        -0.0,
+        -0.20000000298023224
+      ],
+      "goal": [
+        0.10000000149011612,
+        -0.0,
+        -0.20000000298023224
+      ],
+      "collection_type": "local_32",
+      "start_frame": 99,
+      "requested_steps": 32,
+      "mean_actual": [
+        0.10227739065885544,
+        0.20056398212909698,
+        -3.9315762519836426
+      ],
+      "plateau_mean_actual": [
+        0.10227739065885544,
+        0.20056398212909698,
+        -3.9315762519836426
+      ],
+      "plateau_samples": 32,
+      "tracking_rmse": [
+        0.3577573299407959,
+        0.448576420545578,
+        4.5332722663879395
+      ],
+      "joint_position_rmse": 1.4533277750015259,
+      "wheel_velocity_rmse": 89.70880889892578,
+      "leg_action_perturbation_rms": 0.015711380168795586,
+      "survival_time": 0.64,
+      "duration_seconds": 0.64,
+      "fall": false,
+      "passed": true,
+      "terminal_reason": "completed",
+      "contact_transition_count": 15,
+      "action_clipping_fraction": 0.0,
+      "torque_saturation_fraction": 0.59765625
+    }
+  ],
+  "contact_measurement": "Native MuJoCo collision query at each controlled post-step pose"
+}

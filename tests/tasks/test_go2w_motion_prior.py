@@ -95,6 +95,34 @@ def test_motion_bank_admission_match_and_horizon(prior, tmp_path):
     assert zero == 0
 
 
+def test_reference_command_and_phase_priority(prior):
+    _, _, bank, _ = prior
+    goal = torch.tensor([[0.0, 0.2, 0.0], [0.0, 0.0, 0.0], [0.0, 0.01, 0.0]])
+    clip = (bank.nominal == goal[0]).all(-1).nonzero().item()
+    steady = bank.phase_starts[clip, 20]
+    slow_clip = (bank.nominal == torch.tensor([0.0, 0.05, 0.0])).all(-1).nonzero().item()
+    wrong_pose = bank.positions[slow_clip, steady].expand(3, -1)
+    wrong_vel = bank.velocity[slow_clip, steady].expand(3, -1)
+    velocity = torch.tensor([[0.0, 0.0, 0.0], [0.0, 0.2, 0.0], [0.0, 0.0, 0.0]])
+    state = (
+        None,
+        torch.eye(3).expand(3, -1, -1),
+        velocity,
+        torch.zeros_like(velocity),
+        wrong_pose,
+        wrong_vel,
+    )
+    q, _, _, weight, usable, distance, _, _ = bank.match(
+        state, goal, torch.ones(3, dtype=torch.bool)
+    )
+    assert usable.tolist() == [True, True, False]
+    assert distance[0] == 0 and weight[-1] == 0
+    for index, phase in enumerate((0, 2)):
+        starts = bank.windows[clip, phase]
+        candidates = bank.positions[clip, starts[:, None] + torch.arange(1, 9)]
+        assert (candidates == q[index]).all(dim=(1, 2)).any()
+
+
 def test_stage_readiness_must_survive_limit(prior):
     _, cfg, _, settings = prior
     stage = TrainingStage()
@@ -107,7 +135,11 @@ def test_stage_readiness_must_survive_limit(prior):
     assert restored.assess(good, settings | cfg) and restored.name == "flat_autonomous"
     assert restored.fraction(cfg) == 1
     restored.training_seconds = cfg["fade_seconds"]
+    good["pass_rates"] = settings["autonomous"]["pass_rates"]
+    good["iteration"] = 1
     assert not restored.assess(good, settings | cfg)
+    assert not restored.assess(good, settings | cfg)
+    good["iteration"] = 2
     assert restored.assess(good, settings | cfg) and restored.name == "terrain"
 
 
@@ -125,7 +157,7 @@ def test_physical_reset_collection_gradient_and_reassignment(prior, tmp_path):
         assert not term.command_domain.any()
         assert (term.curriculum.coverage_level == -1).all()
         selected = guide.source > 0
-        assert selected.sum() <= 4 and selected.any()
+        assert selected.sum() <= 9 and selected.any()
         assert not term.a_prev.any() and not term.ep_step.any()
         position, rotation, linear, angular, q, qd = term.state()
         expected = bank.velocity[guide.clip[selected], guide.frame[selected]]
@@ -201,6 +233,24 @@ def test_physical_reset_collection_gradient_and_reassignment(prior, tmp_path):
         torch.testing.assert_close(data["s1"][15], flatten_state(env.velocity_next_state))
         torch.testing.assert_close(data["a"][15], env.velocity_executed_action)
         assert not data["command_domain"][:16].any()
+        assert (data["collection_source"][:16] == 3).any()
+        finished = data["reference_finished"][:16] & ~data["term"][:16]
+        assert finished.any() and data["done"][:16][finished].all()
+        assert not data["actor_skill_success"][:16][data["collection_source"][:16] != 0].any()
+        valid_windows = learner.buffer.sample_windows(32, 8)
+        assert (valid_windows["target_id"] == valid_windows["target_id"][:, :1]).all()
+        assert (
+            valid_windows["collection_source"] == valid_windows["collection_source"][:, :1]
+        ).all()
+        assert (valid_windows["ep_step"].diff(dim=1) == 1).all()
+        assert not valid_windows["done"][:, :-1].any()
+        expected_source = guide.source.clone()
+        actions = torch.zeros_like(term.a_prev)
+        proposed, mask = guide.action(actions, term, mixed)
+        local = expected_source == 3
+        assert torch.equal(mask, local) and local.any()
+        torch.testing.assert_close(proposed[local], guide.noise[local])
+        torch.testing.assert_close(proposed[~local], actions[~local])
         learner.wm_update()
         actor_before = [p.detach().clone() for p in learner.pi.parameters()]
         wm_before = [p.detach().clone() for p in learner.wm.parameters()]
@@ -211,6 +261,18 @@ def test_physical_reset_collection_gradient_and_reassignment(prior, tmp_path):
 
         learner.motion_prior = None
         learner.policy_update()
+        stage.name = "flat_autonomous"
+        stage.training_seconds = cfg["fade_seconds"]
+        apply_stage(learner, stage, cfg, reset=True)
+        assert not guide.source.any()
+        previous_target = term.target_id.clone()
+        term.time_left.fill_(0)
+        env.step(torch.zeros(16, 16))
+        assert (term.target_id != previous_target).all()
+        previous_target = term.target_id.clone()
+        term.time_left.fill_(0)
+        env.step(torch.zeros(16, 16))
+        assert (term.target_id != previous_target).all()
         stage.name = "terrain"
         apply_stage(learner, stage, cfg, reset=True)
         assert term.command_domain.any()
@@ -256,11 +318,18 @@ def test_historical_success_is_balanced_and_protected():
         traversal_success=z.bool(),
         ep_step=torch.arange(k).expand(n, -1),
     )
+    window["collection_source"] = torch.ones_like(z, dtype=torch.int8) * 3
+    window["actor_skill_success"] = z.bool()
+    history.add(window)
+    assert not history.protected.any()
+    window["actor_skill_success"] = ~z.bool()
+    window["collection_source"].zero_()
     history.add(window)
     assert history.protected.any()
     window["s1"][..., 8] = -0.3
+    window["actor_skill_success"].zero_()
     history.add(window)
     trained = history.sample(16, "cpu", protected=True)
     assert (trained["s1"][..., 8] == 0.2).all()
     plain = history.sample(16, "cpu")
-    assert (plain["s1"][..., 8] == -0.3).all()
+    assert not plain["actor_skill_success"].any()

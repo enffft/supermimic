@@ -40,10 +40,19 @@ class HistoricalWindowBank:
             sign = torch.where(goal.abs() >= 0.025, goal.sign(), 0).long()
             signed_goal = ((sign + 1) * sign.new_tensor([1, 3, 9])).sum(-1)
             bucket = bucket * 27 + signed_goal
+            if "collection_source" in window:
+                from unisupermimic.tasks.velocity.go2w.motion_prior import command_speed_bins
+
+                bucket = 3 * bucket + command_speed_bins(goal)
         return bucket
 
     @staticmethod
     def successful(windows):
+        if "actor_skill_success" in windows:
+            domain = windows["command_domain"][:, 0]
+            flat = (domain == 0) & windows["actor_skill_success"].all(-1)
+            crossing = (domain >= 4) & windows["traversal_success"][:, -1]
+            return (flat | crossing) & ~windows["term"].any(-1)
         state = windows["s1"]
         # Go2W compact state packs world position, wxyz, world linear/angular and joints.
         rotation = quat_to_mat(state[..., 3:7]).transpose(-1, -2)
@@ -71,6 +80,9 @@ class HistoricalWindowBank:
         valid &= (windows["ep_step"][:, 1:] - windows["ep_step"][:, :-1] == 1).all(-1)
         if "target_id" in windows:
             valid &= (windows["target_id"] == windows["target_id"][:, :1]).all(-1)
+        if "collection_source" in windows:
+            sources = windows["collection_source"]
+            valid &= (sources == sources[:, :1]).all(-1)
         cpu = {k: v[valid].detach().cpu() for k, v in windows.items()}
         n = len(cpu["s"])
         if not n:

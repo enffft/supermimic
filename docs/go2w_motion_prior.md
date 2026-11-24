@@ -1,30 +1,33 @@
 # Go2W Motion Prior 与训练阶段
 
-本次从 `174c6c11` 的 Go2W 对角步态 Motion Bank 开始。使用 23 条 Qualified 参考（含站立），以及 78 条唯一质量标记为 `dynamic_diagonal_support` 的动态 Candidate。两类的模仿权重为 1.0 和 0.5。Motion Bank 的原始质量报告保留，训练进程记录实际读取的 manifest 和 NPZ 联合 SHA-256。数据约 3 万帧，按字段转为连续张量，训练和仿真设备各持有一份。 [Motion Bank 文档](go2w_motion_generation.md)
+速度跟踪是 Go2W 的任务目标。Actor 在 SuperMimic 的 H8 imagination 中同时优化任务回报、Critic bootstrap 和逐帧运动状态模仿。101 条运动学参考（23 条 Qualified、78 条动态 Candidate）用于提供前期可探索的关节运动。Qualified 和 Candidate 的基础权重分别为 1.0 和 0.5。Actor 使用 50D 本体历史 × 5 加 7D goal，部署时根据当前速度目标和本体历史控制。 [Motion Bank 数据说明](go2w_motion_generation.md)
 
-## SuperMimic 接入
+## 参考跟踪与真实采集
 
-Actor 保持 50D 本体历史×5 和 7D goal，输出 16D 混合 PD 的归一化动作。参考选择先比较命令活跃轴及符号，再在同类的最多 3 个近邻命令所对应的恒速段，用腿位置、腿速度和有效轮速度匹配相位。每条参考均预计算可用于 H8 的连续起点。一次 Actor update 只匹配一次，预测的第一步和匹配相位的下一帧比较。距离过大的命令逐步减弱到零，三轴同时非零的命令继续用任务回报。
+精确命令优先。连续命令在相同活跃轴和方向内选择最近的名义速度，随后只在选中的轨迹内匹配相位。启动、恒速、减速分别预计算连续 H8 起点。匹配通过腿位置、腿速度和有效轮速衡量状态，预测第一步比较匹配相位的下一帧。启动时 Actor 持有固定的目标速度。停车时参考选择使用当前运动速度，静止时使用站立参考。缺少匹配的三轴命令由任务奖励训练。
 
-Actor Loss 为现有负回报加固定权重乘运动状态 Smooth L1。腿位置、腿速度、轮速度尺度为 0.25 rad、3 rad/s、5 rad/s，其内部权重为 1.0、0.25、0.5。轮速按参考接地有效位掩码，存活掩码沿用 imagination 的 soft termination。用于模仿的存活权重从梯度图分离，任务回报的原有终止梯度和 Critic bootstrap 继续生效。Actor 更新期间 WM 和 Critic 冻结参数，梯度经过 WM 的状态预测到达 Actor。Critic target 仍由任务奖励生成。单次匹配、标定与回归在现有 `SuperMimicLearner` 完成。
+模仿使用按 0.25 rad、3 rad/s 和 5 rad/s 归一化的 Smooth L1，三项权重为 1.0、0.25、0.50。参考接地有效位掩码应用于轮速，imagination 存活概率用于加权。Actor 更新时冻结 WM 和 Critic 参数，模仿梯度经 WM 状态预测传给 Actor。Critic 目标是任务奖励。初始 `lambda_prior=0.60`，约 60 分钟内逐渐降至 0.21，Stage 2 内延续淡出到零。
 
-## 物理采集和 Replay
+| 时期 | 普通 Actor | RSI Actor | 连续参考 PD | RSI 短程 Actor |
+|---|---:|---:|---:|---:|
+| WM-only | 40% | 10% | 0% | 50% |
+| Actor 学习初期 | 50% | 20% | 0% | 30% |
+| Stage 1 后期 | 75% | 15% | 0% | 10% |
+| Stage 2 淡出完成 | 100% | 0% | 0% | 0% |
 
-默认活动环境并发配额约为普通 Actor 70%、RSI Actor 20%、参考 PD 10%。按 episode reset 划分控制来源，按并发人数封顶以免较长 episode 过度代表参考控制。RSI 从四轮支撑的恒速帧取样，用相对地高和世界速度重锚到该环境出生点。根四元数按 wxyz 写入 UniLab 接口，MuJoCo 自由根 qvel 所需 body-frame 角速度由接口转换。真实 reset 观测填充 Actor 历史。引导步使用参考的下一帧腿位置与轮速命令，通过现有默认中心非对称满量程 PD 逆映射得到动作。轨迹结束后在末帧停稳阶段保持目标。物理 Replay 的 action 和 next-state 由真实 `env.step()` 提供。
+采集来源以并发环境配额分派，episode 内保持来源。RSI 在 reset 时一次写入四轮支撑状态。短程采集持续 8 或 16 个控制步，由 Actor 动作加时间相关扰动，普通探索噪声在这些环境静默。到期触发 timeout，真实的终止前状态、实际执行动作和真实后继状态进入 Replay。WM Loss 和动力学 normalizer 只读取这些真实物理转移。参考 PD 的执行诊断见训练准备报告。 [训练准备与验证报告](validation/go2w_motion_prior/training_readiness.md)
 
-Recent 和 Historical Window Bank 继续共用现有 Replay。WM 目标配额为 50% 近期、30% 普通历史、20% 受保护成功窗口。成功窗口依据生存、命令方向和真实速度误差选取，台阶楼梯依据严格 `traversal_finished`。保护项不足时回退到近期或普通历史数据。窗口保持 episode、连续步和目标 ID 一致。Actor 起点继续使用 Recent Replay 的真实状态，并按平地命令类别及符号采样。Terrain 阶段平地名义起点配额为 40%，实际缺额记录在指标中。
+WM 使用 Recent Replay 和有界 Historical Window Bank，目标配额为 50% 近期、30% 普通历史、20% 受保护成功经验。WM-only 时增采参考附近的真实窗口。受保护项采用普通 Actor 完成的成功平地命令和严格越障结果，失败窗口仍留在普通池。Actor 使用 Recent Replay 的真实历史栈，按方向和速度分箱均衡，最多 20% 复习已成功的自主状态。Terrain 阶段平地 Actor 起点目标占 40%。
 
-## 阶段、奖励和课程
+## 课程与评测
 
-- `flat_prior` 使用纯平地配额和零非平地 coverage。速度按 signed 平地技能掌握程度在配置速度上限内插值，配合较低速度复习。采样保留站立、正反向直行、左右移、正反旋转及三类耦合运动，默认 80% 离散 Motion Bank 命令。参考初始化时命令与参考帧一致。
-- `flat_autonomous` 继续纯平地。RSI、引导、参考权重在配置的 1800 秒内逐渐退出，采样加入定时命令切换和三轴命令。需脱离参考后通过平地和切换协议。
-- `terrain` 按配置的两个八地形配比分配物理环境。切换复用已编译地形 atlas，清除重新分配环境的 mastery 和 episode 状态，使用完整批量 reset，显式闭合旧 Replay 边界。Actor、WM、Critic、优化器、normalizer 和真实历史经验继承。坡面与台阶使用配置中的正向速度，台阶与楼梯可按掌握程度加入初始 yaw 扰动。crossing direction 保持与地形同向。多级楼梯目标距出生点 2.8 m，最终区域要求轮足越过约 2 m 边界。坡面、台阶和楼梯使用 18 秒时限，楼梯采样下界还按轮足通过距离和起步余量修正，平地保持 10 秒及原有边界保护。
+- `flat_prior` 从纯平地开始。初始 vx、vy、wz 范围分别为 `[-0.15, 0.25]`、`[-0.10, 0.10]`、`[-0.20, 0.20]`，用十档向 `[-0.35, 0.75]`、`[-0.35, 0.35]`、`[-0.80, 0.80]` 扩张。普通 Actor 的单轴跟踪表现推进对应技能，速度等级与地形等级分别记录。15 分钟运行基础评测，30 分钟运行完整评测。
+- `flat_autonomous` 在 1800 秒内淡出参考来源与模仿，增加耦合、三轴随机命令和 2–5 秒命令重采样。按 30 分钟完整物理评测检查分方向、切换和跌倒率。
+- `terrain` 保留平地训练并引入八地形课程。切换时按配置更新配额、显式闭合 Replay 边界，再批量 reset。坡面、台阶与楼梯的向前命令、楼梯 18 秒时限和 ±3°、±5°、±10° 初始 yaw 扰动由地形课程配置。模型、优化器、normalizer 和经验池继续使用。
 
-阶段依据两次连续固定 MuJoCo 评测的分方向通过率决定。首轮将 `max_stage` 设为 `flat_prior`，达标时记录 `ready_for_next_stage`。平地课程和真实物理评测同时检查速度误差、正确方向的运动及跌倒。较高速评测在 4.2 秒内完成以适应平地 tile 尺寸。
+阶段由两个不同训练迭代的连续达标评测推进。初始和收尾评测用于报告。新版平地命令独立运行统一 4 秒窗口，切换使用每段 2 秒。提前触及平地边界的评测记录为无效，物理跌倒单独统计。历史协议仍可通过 `--protocol motion_prior` 调用。阈值、实际通过数及运行证据见准备报告。 [训练准备与验证报告](validation/go2w_motion_prior/training_readiness.md)
 
-本 profile 将默认姿态偏差、腿和轮加速度、side drift 及轮速一致性权重设为零。共用 Reward 逻辑在这些项关闭时跳过相应计算。保留速度跟踪、站立、地形对齐、关节限位和较小的动作变化及力矩惩罚。楼梯跟踪权重为平地的 100%／30%／30%，保留越障进度和成功奖励。训练的任务奖励语义在阶段间一致。早期 profile 的 checkpoint 契约和原配置兼容。
-
-## 运行
+## 十小时训练与恢复
 
 ```bash
 source ~/miniconda3/etc/profile.d/conda.sh
@@ -32,40 +35,44 @@ conda activate go2_unilab
 cd /home/yifeiy/ws_go2_unilab/Uni-SuperMimic-motion-prior
 export PYTHONPATH=.:src:../UniLab/src
 export OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1
+run=runs/go2w_motion_prior_long
 
 python tools/train_go2w.py --mode formal --profile motion_prior --fresh \
-    --envs 4096 --seconds 10800 --max-stage flat_prior --output runs/go2w_motion_prior
-
-tail -f runs/go2w_motion_prior/train_log.csv
-cat runs/go2w_motion_prior/progress.json
-
-python -m tools.evaluate_go2w --protocol motion_prior \
-    --checkpoint runs/go2w_motion_prior/best.pt --output runs/go2w_motion_prior/best_recheck.json --switches
-python -m tools.evaluate_go2w --protocol motion_prior \
-    --checkpoint runs/go2w_motion_prior/last.pt --output runs/go2w_motion_prior/last_recheck.json --switches
-
-python tools/play_go2w.py --checkpoint runs/go2w_motion_prior/best.pt --vx 0 --vy 0.20
-python tools/play_go2w.py --checkpoint runs/go2w_motion_prior/best.pt --vx 0 --wz -0.40
-
-python tools/train_go2w.py --mode formal --profile motion_prior \
-    --resume runs/go2w_motion_prior/last.pt --envs 4096 --seconds 10800 \
-    --max-stage terrain --output runs/go2w_motion_prior_continued
+  --envs 4096 --seconds 36000 --max-stage terrain --output "$run"
 ```
 
-`last.pt` 保存优化器、模型、Replay、课程、阶段和随机数状态。恢复在新建物理环境上进行，Replay 重新闭合边界。约每 30 分钟保存推理 checkpoint 并完成真实 MuJoCo 评测，根据平地通过率和跟踪误差选择推理用 `best.pt`。三小时按实际训练循环计，预采集、外部评测和 checkpoint 写盘单独统计。
+预算按训练循环计时。环境初始化、预采集、独立物理评测和 checkpoint 写盘各自发生在预算外。输出目录必须尚未创建。
 
-## 性能和验证
+```bash
+run=runs/go2w_motion_prior_long
+tail -F "$run/train_log.csv"
+python -c 'import json,sys; x=json.load(open(sys.argv[1])); print(x["stage"]); print(x["flat_skill_levels"]); print(x["domains"])' "$run/progress.json"
+kill -TERM "$(python -c 'import json,sys; print(json.load(open(sys.argv[1]))["pid"])' "$run/launch.json")"
+```
 
-实际后端为 `unisim.backend.mujoco.backend.MuJoCoBackend`，当前使用 20 个原生 MuJoCo CPU 线程，RTX 4070 SUPER 上运行 CUDA Learner。短测使用正式模型宽度、H8、Batch 2048 和十次 WM 更新。
+在前台终端也可按 Ctrl-C，在 iteration 边界停止并保存 `last.pt`。恢复命令的 `--seconds` 指额外循环时间。以下按十小时总预算算出剩余时间，并写入独立目录。
 
-| 条件 | 训练循环 steps/s | s/iteration | 峰值分配 MiB |
-|---|---:|---:|---:|
-| 2048 环境，先验 | 5522 | 0.927 | 2881 |
-| 4096 环境，关闭先验 Loss | 8918 | 1.148 | 4075 |
-| 4096 环境，先验 | 9030 | 1.134 | 4077 |
-| 4096 环境，先验且同步 profiling | 8911 | 1.149 | 4077 |
+```bash
+run=runs/go2w_motion_prior_long
+remaining=$(python -c 'import sys,torch; x=torch.load(sys.argv[1],map_location="cpu",weights_only=True,mmap=True); print(max(0,36000-x["wall_time"]))' "$run/last.pt")
+python tools/train_go2w.py --mode formal --profile motion_prior \
+  --resume "$run/last.pt" --envs 4096 --seconds "$remaining" \
+  --max-stage terrain --output runs/go2w_motion_prior_long_resumed
+```
 
-短测时间包含真实采集和更新。启用先验后的差异落在短程整机吞吐波动范围内，同步 profiling 比同配置非同步低约 1.3%。固定梯度诊断在 4096 环境、`lambda_prior=0.25` 时分别观察到任务梯度的 14.8% 和 12.2%，与任务 Loss 梯度余弦为 0.33 和 0.98。以同批诊断线性换算后选定正式 `lambda_prior=0.60`，对应约 36% 和 29%。短测与正式运行的采集占比约 70%／20%／10%。测试包括参考窗口、动力学采集、WM 参数冻结、课程实地重分配和 checkpoint 恢复。
+每小时更新完整恢复文件，阶段切换后及安全停止时也写入 `last.pt`。恢复会加载模型、优化器、课程、Replay、阶段和学习用 RNG，然后批量重新采样物理环境并闭合原 episode 边界。阶段最佳推理权重同时保存在 `best_<stage>.pt`。完成预算后可使用以下方式独立评测和播放。
+
+```bash
+run=runs/go2w_motion_prior_long
+for checkpoint in best last; do
+  python -m tools.evaluate_go2w --protocol motion_prior_flat \
+    --checkpoint "$run/$checkpoint.pt" --output "$run/${checkpoint}_flat.json" \
+    --switches --seeds 2026 2027 2028
+done
+python tools/play_go2w.py --checkpoint "$run/best.pt" --vx 0 --vy 0.15
+python tools/play_go2w.py --checkpoint "$run/best.pt" --vx 0 --wz -0.40
+python tools/play_go2w.py --checkpoint "$run/best.pt" --terrain single_step_up --level 1 --vx 0.30
+```
 
 ## 首轮信息和结果
 

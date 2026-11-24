@@ -86,6 +86,8 @@ class Go2WVelocityEnv(Go2VelocityEnv):
                 target_id=c.target_id.clone(),
                 success_peak=c.success_peak.clone(),
             )
+        if c.reference_collection is not None:
+            self.velocity_terrain_tags.update(c.reference_collection.tags(c))
         return result
 
     @staticmethod

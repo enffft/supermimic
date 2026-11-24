@@ -197,8 +197,6 @@ def main():
                 )
             if args.no_prior or args.gradient_diagnostics or args.profile_sections:
                 parser.error("Use the ablation and frequent profiling options in smoke mode")
-            if args.fresh and args.max_stage not in (None, "flat_prior"):
-                parser.error("Fresh formal runs are bounded to flat_prior")
         from tools.train_go2w_motion_prior import run
 
         return run(args)

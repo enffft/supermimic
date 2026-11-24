@@ -16,7 +16,8 @@ from unisupermimic.tasks.velocity.go2w.env import make_go2w_env
 def render(traces, output):
     torch.set_num_threads(1)
     saved = torch.load(traces, map_location="cpu", weights_only=True)
-    env = make_go2w_env(load_config(saved.get("profile", "train")), 1)
+    profile = saved.get("profile", "train")
+    env = make_go2w_env(load_config("motion_prior" if profile == "reference_audit" else profile), 1)
     try:
         model = env.get_playback_model(0)
         data = mujoco.MjData(model)
@@ -71,6 +72,10 @@ def render(traces, output):
                         "forward_yaw_1",
                     )
                 ],
+            }
+        if profile == "reference_audit":
+            groups = {
+                "reference_pd": [(case["domain"], case["name"]) for case in saved["cases"][:6]]
             }
         output.mkdir(parents=True, exist_ok=True)
         for label, group in groups.items():

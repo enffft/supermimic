@@ -278,13 +278,13 @@ class UnifiedCurriculum:
             ) & (state[0][:, 2] - traversal[:, 7] >= 0.22)
             self.curriculum_crossed_obstacle |= (domain >= 4) & safe & beyond & height
 
-    def _mastery(self, ids):
+    def _mastery(self, ids, *, track_flat=True):
         valid = (
             self.episode_ended[ids]
             & (self.steps[ids] >= self.cfg.min_steps)
             & (self.coverage_level[ids] < 0)
         )
-        ids = ids[valid]
+        ids = ids[valid & ((self.fixed_domain[ids] != 0) | track_flat)]
         if not len(ids):
             return
         domain = self.fixed_domain[ids]
@@ -405,9 +405,9 @@ class UnifiedCurriculum:
         self.in_channel[ids] = True
         self.skill_episode_level[ids] = -1
 
-    def reset(self, ids, rng):
+    def reset(self, ids, rng, *, track_flat=True):
         if self.enabled:
-            self._mastery(ids)
+            self._mastery(ids, track_flat=track_flat)
             ceiling = self.mastery[ids]
             covered = self.coverage_level[ids] >= 0
             review = (

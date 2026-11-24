@@ -359,12 +359,16 @@ def main():
         action="store_true",
         help="Collect weighted per-term physical reward contributions",
     )
-    parser.add_argument("--protocol", choices=("unified", "motion_prior"), default="unified")
+    parser.add_argument(
+        "--protocol",
+        choices=("unified", "motion_prior", "motion_prior_basic", "motion_prior_flat"),
+        default="unified",
+    )
     parser.add_argument("--switches", action="store_true")
     parser.add_argument("--terrain-review", action="store_true")
     parser.add_argument("--holdout", type=Path)
     args = parser.parse_args()
-    if args.protocol == "motion_prior":
+    if args.protocol.startswith("motion_prior"):
         from tools.evaluate_go2w_motion_prior import evaluate as evaluate_motion_prior
 
         report = evaluate_motion_prior(
@@ -375,6 +379,7 @@ def main():
             args.holdout,
             args.switches,
             args.terrain_review,
+            protocol=args.protocol,
         )
         print(json.dumps(report["pass_rates"], indent=2))
         return

@@ -11,7 +11,7 @@ from unisupermimic.tasks.velocity.go2w.env import make_go2w_env
 from unisupermimic.tasks.velocity.go2w.experiment import write_json
 
 
-def fixed_cases(seeds, switches=False, terrain=False):
+def fixed_cases(seeds, switches=False, terrain=False, *, basic=False):
     families = {
         "standing": [(0.0, 0.0, 0.0)],
         "forward": [(v, 0, 0) for v in (0.10, 0.30, 0.50, 0.70, 0.375)],
@@ -24,6 +24,16 @@ def fixed_cases(seeds, switches=False, terrain=False):
         "forward_lateral": [(0.3, 0.1, 0), (0.3, -0.1, 0), (0.25, 0.175, 0), (0.25, -0.175, 0)],
         "lateral_yaw": [(0, 0.15, 0.4), (0, -0.15, -0.4), (0, 0.18, -0.35), (0, -0.18, 0.35)],
     }
+    if basic:
+        families = {
+            "standing": [(0, 0, 0)],
+            "forward": [(0.10, 0, 0), (0.20, 0, 0)],
+            "backward": [(-0.10, 0, 0), (-0.20, 0, 0)],
+            "left": [(0, 0.10, 0), (0, 0.15, 0)],
+            "right": [(0, -0.10, 0), (0, -0.15, 0)],
+            "yaw_left": [(0, 0, 0.20), (0, 0, 0.40)],
+            "yaw_right": [(0, 0, -0.20), (0, 0, -0.40)],
+        }
     cases = []
     for seed in seeds:
         for group, goals in families.items():
@@ -67,10 +77,20 @@ def fixed_cases(seeds, switches=False, terrain=False):
 
 
 def evaluate(
-    checkpoint, output, seeds, trace_output=None, holdout=None, switches=False, terrain=False
+    checkpoint,
+    output,
+    seeds,
+    trace_output=None,
+    holdout=None,
+    switches=False,
+    terrain=False,
+    *,
+    protocol="motion_prior",
 ):
     torch.set_num_threads(1)
-    cases = fixed_cases(seeds, switches, terrain)
+    legacy = protocol == "motion_prior"
+    cases = fixed_cases(seeds, switches, terrain, basic=protocol == "motion_prior_basic")
+    segment_steps = 200 if legacy else 100
     saved = torch.load(checkpoint, map_location="cpu", weights_only=True, mmap=True)
     profile = "motion_prior" if "motion_prior" in saved else "train"
     cfg, contract = saved["args"], saved["task_contract"]
@@ -125,8 +145,10 @@ def evaluate(
             [
                 900
                 if r["domain"]
-                else 200 * len(r["sequence"])
+                else segment_steps * len(r["sequence"])
                 if "sequence" in r
+                else 200
+                if not legacy
                 else 500
                 if max(abs(r["goal"][0]), abs(r["goal"][1])) <= 0.30
                 else 210
@@ -139,17 +161,20 @@ def evaluate(
         active = torch.ones(n, dtype=torch.bool)
         elapsed = torch.zeros(n)
         fall, strict_success = torch.zeros_like(active), torch.zeros_like(active)
+        boundary = torch.zeros_like(active)
+        timed_out = torch.zeros_like(active)
         errors = torch.zeros(n, 3)
         sums = torch.zeros(n, 3)
         segment_errors = torch.zeros(3, n, 3)
         segment_seen = torch.zeros(3, n)
+        segment_sums = torch.zeros(3, n, 3)
         latest_reward = torch.zeros(n)
         holdout_rows = {k: [] for k in ("before", "actions", "after", "active")}
         save_ids = torch.arange(n)
         max_steps = int(durations.max())
         with torch.inference_mode():
             for step in range(max_steps):
-                segment = min(step // 200, 2)
+                segment = min(step // segment_steps, 2)
                 goal = segments[segment].clone()
                 term.g[:, :3] = goal
                 state = term.state()
@@ -181,10 +206,13 @@ def evaluate(
                 sums += actual * active[:, None]
                 elapsed += active
                 latest_reward += result.reward * active
-                eligible = (step % 200 >= 50) & active
+                eligible = (step % segment_steps >= (50 if legacy else 25)) & active
                 segment_errors[segment] += delta * eligible[:, None]
+                segment_sums[segment] += actual * eligible[:, None]
                 segment_seen[segment] += eligible
                 fall |= active & term.mdp.hard_termination(after)
+                boundary |= active & env.termination_manager.get_term("flat_domain_boundary")
+                timed_out |= active & env.termination_manager.get_term("time_out")
                 strict_success |= active & env.termination_manager.get_term("traversal_finished")
                 if holdout:
                     holdout_rows["after"].append(flatten_state(after)[save_ids].clone())
@@ -203,10 +231,25 @@ def evaluate(
             passed = bool(
                 not fall[i] and elapsed[i] >= durations[i] - 1 and rmse[i].max() < 0.15 and moving
             )
+            complete = elapsed[i] >= durations[i] - int(legacy)
+            invalid = bool(not legacy and boundary[i] and not fall[i] and not complete)
+            if not legacy:
+                limit = torch.maximum(g.new_tensor([0.05, 0.05, 0.10]), 0.35 * g.abs())
+                moving = ((g == 0) | (g * mean[i] >= 0.4 * g.square())).all()
+                passed = bool(not fall[i] and complete and (rmse[i] <= limit).all() and moving)
+                if case["domain"]:
+                    passed = bool(not fall[i] and complete and rmse[i].max() < 0.15)
             if "sequence" in case:
                 k = len(case["sequence"])
                 shot = (segment_errors[:k, i] / segment_seen[:k, i, None].clamp_min(1)).sqrt()
-                passed = bool(not fall[i] and elapsed[i] >= durations[i] - 1 and shot.max() < 0.18)
+                if legacy:
+                    passed = bool(not fall[i] and complete and shot.max() < 0.18)
+                else:
+                    seq = segments[:k, i]
+                    actual = segment_sums[:k, i] / segment_seen[:k, i, None].clamp_min(1)
+                    moving = ((seq == 0) | (seq * actual >= 0.4 * seq.square())).all()
+                    limit = torch.maximum(seq.new_tensor([0.06, 0.06, 0.12]), 0.40 * seq.abs())
+                    passed = bool(not fall[i] and complete and (shot <= limit).all() and moving)
             if case["domain"] >= 4:
                 passed = bool(strict_success[i] and not fall[i])
             duration = float(elapsed[i]) * 0.02
@@ -218,11 +261,16 @@ def evaluate(
                     "rmse": rmse[i].tolist(),
                     "mean_actual": mean[i].tolist(),
                     "duration_seconds": duration,
-                    "terminal_reason": "fall"
+                    "valid": not invalid,
+                    "terminal_reason": ("fall" if legacy else "physical_fall")
                     if fall[i]
                     else "completed"
-                    if elapsed[i] >= durations[i] - 1
-                    else "boundary",
+                    if complete or (strict_success[i] and case["domain"] >= 4)
+                    else ("boundary" if legacy else "flat_boundary")
+                    if boundary[i]
+                    else "time_limit"
+                    if timed_out[i]
+                    else "incomplete",
                     "initial_yaw_rad": float(yaw[i]),
                     "reward": float(latest_reward[i]),
                 }
@@ -256,6 +304,17 @@ def evaluate(
         }
         report = dict(
             rows=rows,
+            protocol=protocol,
+            flat_window_seconds=4.0 if not legacy else None,
+            switch_segment_seconds=segment_steps * 0.02,
+            invalid_count=sum(not r["valid"] for r in rows),
+            pass_counts={
+                family: {
+                    "passed": sum(r["passed"] for r in rows if r["family"] == family),
+                    "attempts": sum(r["family"] == family for r in rows),
+                }
+                for family in dict.fromkeys(r["family"] for r in rows)
+            },
             pass_rates=pass_rates,
             flat_pass_rate=fraction(ordinary, "passed"),
             fall_rate=fraction(ordinary, "fall"),
@@ -288,7 +347,8 @@ def evaluate(
             sample_start = torch.arange(0, max(0, len(batches["active"]) - 7), 25)
             windows = sample_start[:, None] + torch.arange(8)
             ids = batches["active"][windows].all(1) & (
-                sample_start[:, None] // 200 == (sample_start[:, None] + 7) // 200
+                sample_start[:, None] // segment_steps
+                == (sample_start[:, None] + 7) // segment_steps
             )
             start, index = ids.nonzero(as_tuple=True)
             initial = batches["before"][sample_start[start], index]

@@ -34,25 +34,37 @@ env:
 stage:
   initial: flat_prior
   auto_transition: true
-  max_stage: flat_prior
+  max_stage: terrain
   consecutive_evaluations: 2
-  max_fall_rate: 0.05
+  max_fall_rate: 0.15
+  basic_assessment_seconds: 900
+  assessment_seconds: 1800
+  recovery_seconds: 3600
   switch_pass_rate: 0.75
   terrain_review_pass_rate: 0.65
   pass_rates:
-    standing: 0.95
-    forward: 0.90
-    backward: 0.90
-    left: 0.80
-    right: 0.80
-    yaw_left: 0.80
-    yaw_right: 0.80
-    coupled: 0.75
+    standing: 0.90
+    forward: 0.80
+    backward: 0.80
+    left: 0.60
+    right: 0.60
+    yaw_left: 0.70
+    yaw_right: 0.70
+  autonomous:
+    max_fall_rate: 0.08
+    pass_rates:
+      standing: 0.95
+      forward: 0.90
+      backward: 0.90
+      left: 0.80
+      right: 0.80
+      yaw_left: 0.80
+      yaw_right: 0.80
+      coupled: 0.70
 motion_prior:
   enabled: true
   bank: data/go2w_motion_bank
   horizon: 8
-  command_neighbors: 3
   phase_samples: 48
   command_scale: [0.75, 0.35, 0.80]
   max_command_distance: 0.28
@@ -62,12 +74,24 @@ motion_prior:
   qualified_weight: 1.0
   dynamic_candidate_weight: 0.5
   lambda_prior: 0.60
-  reference_reset_fraction: 0.20
-  reference_guided_fraction: 0.10
+  # Per-environment quotas in RSI Actor, continuous PD, local Actor order.
+  warmup_collection: [0.10, 0.0, 0.50]
+  early_collection: [0.20, 0.0, 0.30]
+  late_collection: [0.15, 0.0, 0.10]
+  local_steps: [8, 16]
+  local_reference_blend: 0.0
+  local_correlation: 0.8
+  local_leg_std: 0.01
+  local_wheel_std: 0.03
+  prior_taper_seconds: 3600
+  late_prior_fraction: 0.35
+  late_bank_fraction: 0.50
+  gradient_diagnostic_every: 250
+  flat_success_steps: 100
   motion_bank_command_fraction: 0.80
   fade_seconds: 1800.0
   autonomous_three_axis_weight: 0.20
-  flat_initial_bounds: [[-0.25, 0.50], [-0.20, 0.20], [-0.50, 0.50]]
+  flat_initial_bounds: [[-0.15, 0.25], [-0.10, 0.10], [-0.20, 0.20]]
   terrain_bounds:
     - [[-0.35, 0.75], [-0.35, 0.35], [-0.80, 0.80]]
     - [[-0.25, 0.60], [-0.25, 0.25], [-0.60, 0.60]]

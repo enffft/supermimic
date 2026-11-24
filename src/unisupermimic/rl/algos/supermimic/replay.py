@@ -61,6 +61,9 @@ class ReplayBuffer:
         self.protected_success_fraction = 0.0
         self.protected_actual = 0
         self.actor_three_axis_weight = 0.0
+        self.actor_review_fraction = 0.0
+        self.actor_ordinary_bias = 0.0
+        self.wm_reference_bias = 0.0
         if history_capacity:
             from .history import HistoricalWindowBank
 
@@ -115,7 +118,7 @@ class ReplayBuffer:
         if self.size:
             self.data["done"][(self.ptr - 1) % self.T].logical_or_(reset_mask)
 
-    def add(self, transition: dict[str, torch.Tensor]) -> None:
+    def add(self, transition: dict[str, torch.Tensor], *, completed_skills=None) -> None:
         for key in self.fields:
             if key == "command_speed_level" and key not in transition:
                 self.data[key][self.ptr].fill_(-1)  # Explicit unknown historical label.
@@ -123,6 +126,20 @@ class ReplayBuffer:
                 self.data[key][self.ptr] = transition[key]
         self.ptr = (self.ptr + 1) % self.T
         self.size = min(self.size + 1, self.T)
+        if completed_skills is not None and completed_skills.numel():
+            # Only rows of the completed target and episode may receive skill credit.
+            env = completed_skills.to(self.device)
+            age = torch.arange(min(self.size, 900), device=self.device)[:, None]
+            row = (self.ptr - 1 - age) % self.T
+            step = transition["ep_step"][env]
+            target = transition["target_id"][env]
+            valid = (
+                (self.data["target_id"][row, env] == target)
+                & (self.data["ep_step"][row, env] == step - age)
+                & (age <= step)
+                & (self.data["collection_source"][row, env] == 0)
+            )
+            self.data["actor_skill_success"][row, env] |= valid
         if self.history is not None and self.size >= self.history.k and self.ptr % 16 == 0:
             self.history.add(self._sample_recent_windows(256, self.history.k, record=False))
 
@@ -272,6 +289,8 @@ class ReplayBuffer:
         valid &= (pool["ep_step"][:, 1:] - pool["ep_step"][:, :-1] == 1).all(-1)
         if "target_id" in pool:
             valid &= (pool["target_id"] == pool["target_id"][:, :1]).all(-1)
+        if "collection_source" in pool:
+            valid &= (pool["collection_source"] == pool["collection_source"][:, :1]).all(-1)
         ids = valid.nonzero().flatten()
         if not len(ids):
             raise ValueError("No continuous WM windows available")
@@ -286,7 +305,10 @@ class ReplayBuffer:
         recent = B - historical
         buckets = self.history.sampling_bucket({key: v[ids] for key, v in pool.items()})
         counts = torch.bincount(buckets)
-        selected = ids[torch.multinomial(1 / counts[buckets].float(), recent, replacement=True)]
+        weights = 1 / counts[buckets].float()
+        if "collection_source" in pool:
+            weights *= 1 + self.wm_reference_bias * (pool["collection_source"][ids, 0] >= 2)
+        selected = ids[torch.multinomial(weights, recent, replacement=True)]
         result = {key: value[selected] for key, value in pool.items()}
         if historical > protected:
             old = self.history.sample(historical - protected, self.device)
@@ -312,6 +334,10 @@ class ReplayBuffer:
                 torch.bincount(scopes, minlength=self.domain_count * self.level_count)
             )
         self.last_history_split = recent
+        if "collection_source" in result:
+            self.last_wm_sources = torch.bincount(
+                result["collection_source"][:, 0].long(), minlength=4
+            )
         return result
 
     def sample_starts(
@@ -447,6 +473,7 @@ class ReplayBuffer:
                 from unisupermimic.tasks.velocity.go2w.motion_prior import (
                     CATEGORY_WEIGHTS,
                     command_keys,
+                    command_speed_bins,
                 )
 
                 _, local_modes = command_keys(valid_goals[indices, :3])
@@ -473,6 +500,27 @@ class ReplayBuffer:
             selected = torch.argsort(local_modes)[
                 offsets[target] + (torch.rand(n, device=self.device) * local_counts[target]).long()
             ]
+            if d == 0 and "collection_source" in self.fields:
+                row, env = self._row(ages[indices]), envs[indices]
+                source = self.data["collection_source"][row, env]
+                success = self.data["actor_skill_success"][row, env]
+                speed = command_speed_bins(valid_goals[indices, :3])
+                buckets = local_modes * 3 + speed
+                sizes = torch.bincount(buckets, minlength=len(configured) * 3)
+                present = (sizes > 0).view(-1, 3).sum(-1)
+                sample_weights = w[local_modes] / (sizes[buckets] * present[local_modes]).clamp_min(
+                    1
+                )
+                sample_weights *= 1 + self.actor_ordinary_bias * (source == 0)
+                selected = torch.multinomial(sample_weights, n, replacement=True)
+                review_n = int(n * self.actor_review_fraction)
+                review = success & (source == 0)
+                if review_n and review.any():
+                    review_counts = torch.bincount(buckets[review], minlength=len(sizes))
+                    review_weights = review.float() / review_counts[buckets].clamp_min(1)
+                    selected[:review_n] = torch.multinomial(
+                        review_weights, review_n, replacement=True
+                    )
             chosen.append(indices[selected])
             fallback.append(d if use_fallback else -1)
         chosen = torch.cat(chosen)
@@ -524,6 +572,10 @@ class ReplayBuffer:
             "traversal",
             "target_id",
             "success_peak",
+            "reference_clip",
+            "reference_phase",
+            "collection_source",
+            "actor_skill_success",
         ):
             if key in self.fields:
                 start[key] = self.data[key][row, env]

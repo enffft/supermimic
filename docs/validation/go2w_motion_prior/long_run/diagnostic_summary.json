@@ -1,0 +1,90 @@
+{
+  "transitions": [
+    {
+      "from": "flat_prior",
+      "to": "flat_autonomous",
+      "reason": "assessment",
+      "iteration": 5876,
+      "seconds": 7205.313251668995
+    },
+    {
+      "from": "flat_autonomous",
+      "to": "terrain",
+      "reason": "flat_time_limit",
+      "iteration": 11486,
+      "seconds": 14400.344688303361
+    }
+  ],
+  "sampled_domain_allocations": [
+    {
+      "iteration": 1,
+      "training_seconds": 1.146561308996752,
+      "domains": [
+        4096,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "iteration": 11486,
+      "training_seconds": 14400.344688303361,
+      "domains": [
+        2457,
+        614,
+        287,
+        328,
+        123,
+        123,
+        82,
+        82
+      ]
+    },
+    {
+      "iteration": 20200,
+      "training_seconds": 25235.973157761444,
+      "domains": [
+        1638,
+        410,
+        205,
+        205,
+        491,
+        328,
+        491,
+        328
+      ]
+    }
+  ],
+  "highest_lateral_curriculum_level": {
+    "flat_prior": {
+      "left": 1,
+      "right": 1
+    },
+    "full_run": {
+      "left": 2,
+      "right": 1
+    }
+  },
+  "final_recent_replay_pure_lateral": {
+    "left": {
+      "transitions": 173774,
+      "max_command_m_s": 0.09999650716781616,
+      "autonomous_success_transitions": 0
+    },
+    "right": {
+      "transitions": 182134,
+      "max_command_m_s": 0.09993323683738708,
+      "autonomous_success_transitions": 0
+    }
+  },
+  "gradient_sample_count": 28,
+  "median_gradient_ratios": {
+    "prior_to_task_gradient_ratio": 0.0715843103826046,
+    "prior_to_reward_gradient_ratio": 0.1691562607884407,
+    "critic_to_reward_gradient_ratio": 1.6528137922286987
+  }
+}

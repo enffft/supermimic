@@ -1,0 +1,7413 @@
+{
+  "rows": [
+    {
+      "name": "standing_0",
+      "family": "standing",
+      "goal": [
+        0,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.029326019808650017,
+        0.013745068572461605,
+        0.023771077394485474
+      ],
+      "mean_actual": [
+        0.026273082941770554,
+        -0.010226244106888771,
+        -0.01123814843595028
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 38.54829406738281
+    },
+    {
+      "name": "forward_0",
+      "family": "forward",
+      "goal": [
+        0.1,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.03718080371618271,
+        0.023852581158280373,
+        0.0275427158921957
+      ],
+      "mean_actual": [
+        0.13106511533260345,
+        0.021057777106761932,
+        -0.006297055631875992
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 27.114362716674805
+    },
+    {
+      "name": "forward_1",
+      "family": "forward",
+      "goal": [
+        0.2,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.03901023045182228,
+        0.01654592715203762,
+        0.02801084890961647
+      ],
+      "mean_actual": [
+        0.22908444702625275,
+        0.008680066093802452,
+        -0.005742079112678766
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 30.946821212768555
+    },
+    {
+      "name": "backward_0",
+      "family": "backward",
+      "goal": [
+        -0.1,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.08907052874565125,
+        0.016577674075961113,
+        0.03202934190630913
+      ],
+      "mean_actual": [
+        -0.011619623750448227,
+        -0.008035528473556042,
+        0.00988191831856966
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 26.180137634277344
+    },
+    {
+      "name": "backward_1",
+      "family": "backward",
+      "goal": [
+        -0.2,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.15484853088855743,
+        0.024461526423692703,
+        0.04896537587046623
+      ],
+      "mean_actual": [
+        -0.046029504388570786,
+        0.007143152412027121,
+        0.0006613715086132288
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 27.23768424987793
+    },
+    {
+      "name": "left_0",
+      "family": "left",
+      "goal": [
+        0,
+        0.1,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.042249929159879684,
+        0.08262022584676743,
+        0.042049579322338104
+      ],
+      "mean_actual": [
+        0.03901178389787674,
+        0.02813735418021679,
+        0.023986177518963814
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 25.172731399536133
+    },
+    {
+      "name": "left_1",
+      "family": "left",
+      "goal": [
+        0,
+        0.15,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.11285629868507385,
+        0.10944530367851257,
+        0.32461974024772644
+      ],
+      "mean_actual": [
+        0.09316451847553253,
+        0.06486773490905762,
+        -0.05794980004429817
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 21.00812530517578
+    },
+    {
+      "name": "right_0",
+      "family": "right",
+      "goal": [
+        0,
+        -0.1,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.24511143565177917,
+        0.23338733613491058,
+        0.9969679117202759
+      ],
+      "mean_actual": [
+        0.10049610584974289,
+        -0.10477036237716675,
+        0.07350791990756989
+      ],
+      "duration_seconds": 2.6,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 7.239907264709473
+    },
+    {
+      "name": "right_1",
+      "family": "right",
+      "goal": [
+        0,
+        -0.15,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.7401980757713318,
+        0.6054396629333496,
+        2.5816829204559326
+      ],
+      "mean_actual": [
+        0.23606009781360626,
+        0.09990762919187546,
+        -1.0730328559875488
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": -11.035759925842285
+    },
+    {
+      "name": "yaw_left_0",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.2
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.06756400316953659,
+        0.023779667913913727,
+        0.09248914569616318
+      ],
+      "mean_actual": [
+        0.06266447901725769,
+        0.011619338765740395,
+        0.11162946373224258
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 28.441261291503906
+    },
+    {
+      "name": "yaw_left_1",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.4
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.06823388487100601,
+        0.0282219797372818,
+        0.2117675095796585
+      ],
+      "mean_actual": [
+        0.06142484024167061,
+        -0.007539331912994385,
+        0.1995452493429184
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 30.119075775146484
+    },
+    {
+      "name": "yaw_right_0",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.2
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.07123580574989319,
+        0.023087162524461746,
+        0.06530530005693436
+      ],
+      "mean_actual": [
+        0.06759347021579742,
+        -0.018414536491036415,
+        -0.1693306565284729
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 29.16236114501953
+    },
+    {
+      "name": "yaw_right_1",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.4
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.39632076025009155,
+        0.20553603768348694,
+        0.6404088139533997
+      ],
+      "mean_actual": [
+        0.2347642332315445,
+        0.03386843949556351,
+        -0.3599221706390381
+      ],
+      "duration_seconds": 3.38,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 17.59853744506836
+    },
+    {
+      "name": "standing_0",
+      "family": "standing",
+      "goal": [
+        0,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.026768766343593597,
+        0.012357757426798344,
+        0.022912653163075447
+      ],
+      "mean_actual": [
+        0.023873524740338326,
+        -0.008613706566393375,
+        -0.008423471823334694
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 38.60430908203125
+    },
+    {
+      "name": "forward_0",
+      "family": "forward",
+      "goal": [
+        0.1,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.0344754122197628,
+        0.022478744387626648,
+        0.029171550646424294
+      ],
+      "mean_actual": [
+        0.1290178894996643,
+        0.020234940573573112,
+        -0.005071124527603388
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 27.17350959777832
+    },
+    {
+      "name": "forward_1",
+      "family": "forward",
+      "goal": [
+        0.2,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.042599741369485855,
+        0.017433520406484604,
+        0.026637138798832893
+      ],
+      "mean_actual": [
+        0.23397767543792725,
+        0.01018957607448101,
+        -0.0060533182695508
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 30.894197463989258
+    },
+    {
+      "name": "backward_0",
+      "family": "backward",
+      "goal": [
+        -0.1,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.08856703341007233,
+        0.018256597220897675,
+        0.032833099365234375
+      ],
+      "mean_actual": [
+        -0.012018773704767227,
+        -0.007345176301896572,
+        0.012401019223034382
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 26.16762351989746
+    },
+    {
+      "name": "backward_1",
+      "family": "backward",
+      "goal": [
+        -0.2,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.15465375781059265,
+        0.023350045084953308,
+        0.0533110685646534
+      ],
+      "mean_actual": [
+        -0.046056777238845825,
+        0.007791451178491116,
+        0.0015267032431438565
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 27.241573333740234
+    },
+    {
+      "name": "left_0",
+      "family": "left",
+      "goal": [
+        0,
+        0.1,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.0408211350440979,
+        0.08095195144414902,
+        0.04429136961698532
+      ],
+      "mean_actual": [
+        0.03746669366955757,
+        0.030207285657525063,
+        0.02449360117316246
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 25.280071258544922
+    },
+    {
+      "name": "left_1",
+      "family": "left",
+      "goal": [
+        0,
+        0.15,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.22255223989486694,
+        0.24994157254695892,
+        1.0326639413833618
+      ],
+      "mean_actual": [
+        0.10109635442495346,
+        0.17123070359230042,
+        -0.3791986107826233
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 13.529358863830566
+    },
+    {
+      "name": "right_0",
+      "family": "right",
+      "goal": [
+        0,
+        -0.1,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.23885178565979004,
+        0.12163987010717392,
+        1.474123477935791
+      ],
+      "mean_actual": [
+        0.07579699903726578,
+        -0.1162436231970787,
+        -0.26994070410728455
+      ],
+      "duration_seconds": 2.6,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 8.897481918334961
+    },
+    {
+      "name": "right_1",
+      "family": "right",
+      "goal": [
+        0,
+        -0.15,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.5133352875709534,
+        0.547680139541626,
+        2.517961025238037
+      ],
+      "mean_actual": [
+        -0.07430397719144821,
+        -0.13242585957050323,
+        -1.0229887962341309
+      ],
+      "duration_seconds": 3.7800000000000002,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": -12.741560935974121
+    },
+    {
+      "name": "yaw_left_0",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.2
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.07052469998598099,
+        0.029416602104902267,
+        0.08980289846658707
+      ],
+      "mean_actual": [
+        0.06655003875494003,
+        0.014825630933046341,
+        0.11460372805595398
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 28.259458541870117
+    },
+    {
+      "name": "yaw_left_1",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.4
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.06625379621982574,
+        0.026063222438097,
+        0.2100735753774643
+      ],
+      "mean_actual": [
+        0.05792653560638428,
+        -0.007920721545815468,
+        0.20066200196743011
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 30.260847091674805
+    },
+    {
+      "name": "yaw_right_0",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.2
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.07224608212709427,
+        0.02236536331474781,
+        0.05945686250925064
+      ],
+      "mean_actual": [
+        0.06799978762865067,
+        -0.01707131415605545,
+        -0.16953054070472717
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 29.209383010864258
+    },
+    {
+      "name": "yaw_right_1",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.4
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.4727967083454132,
+        0.19917389750480652,
+        1.4013159275054932
+      ],
+      "mean_actual": [
+        0.24337512254714966,
+        -0.044012244790792465,
+        -0.09541099518537521
+      ],
+      "duration_seconds": 3.58,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 12.755805969238281
+    },
+    {
+      "name": "standing_0",
+      "family": "standing",
+      "goal": [
+        0,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.0330083966255188,
+        0.013020047917962074,
+        0.02630319446325302
+      ],
+      "mean_actual": [
+        0.029592983424663544,
+        -0.009875121526420116,
+        -0.013225216418504715
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 38.493263244628906
+    },
+    {
+      "name": "forward_0",
+      "family": "forward",
+      "goal": [
+        0.1,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.033608853816986084,
+        0.02269134670495987,
+        0.0299169160425663
+      ],
+      "mean_actual": [
+        0.12973879277706146,
+        0.020623795688152313,
+        -0.006039475090801716
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 27.177099227905273
+    },
+    {
+      "name": "forward_1",
+      "family": "forward",
+      "goal": [
+        0.2,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04256269335746765,
+        0.017508098855614662,
+        0.025876691564917564
+      ],
+      "mean_actual": [
+        0.23387958109378815,
+        0.008881418034434319,
+        -0.005574408918619156
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 30.89246368408203
+    },
+    {
+      "name": "backward_0",
+      "family": "backward",
+      "goal": [
+        -0.1,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.08957939594984055,
+        0.01685432530939579,
+        0.03126605227589607
+      ],
+      "mean_actual": [
+        -0.010988075286149979,
+        -0.006848729215562344,
+        0.011819864623248577
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 26.16335678100586
+    },
+    {
+      "name": "backward_1",
+      "family": "backward",
+      "goal": [
+        -0.2,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.15639185905456543,
+        0.022266412153840065,
+        0.05282404646277428
+      ],
+      "mean_actual": [
+        -0.04428984597325325,
+        0.008378397673368454,
+        0.0011128198821097612
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 27.186595916748047
+    },
+    {
+      "name": "left_0",
+      "family": "left",
+      "goal": [
+        0,
+        0.1,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.03985023498535156,
+        0.0836479440331459,
+        0.04408179968595505
+      ],
+      "mean_actual": [
+        0.03608503192663193,
+        0.02717231586575508,
+        0.024371683597564697
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 25.160799026489258
+    },
+    {
+      "name": "left_1",
+      "family": "left",
+      "goal": [
+        0,
+        0.15,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.3050727844238281,
+        0.4048287272453308,
+        0.8941396474838257
+      ],
+      "mean_actual": [
+        0.16512511670589447,
+        -0.023506715893745422,
+        0.09879269450902939
+      ],
+      "duration_seconds": 3.16,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 9.414350509643555
+    },
+    {
+      "name": "right_0",
+      "family": "right",
+      "goal": [
+        0,
+        -0.1,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.5699657797813416,
+        0.4740216135978699,
+        2.0297658443450928
+      ],
+      "mean_actual": [
+        -0.20763233304023743,
+        -0.15052330493927002,
+        0.22830505669116974
+      ],
+      "duration_seconds": 3.64,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": -2.6245288848876953
+    },
+    {
+      "name": "right_1",
+      "family": "right",
+      "goal": [
+        0,
+        -0.15,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.610502302646637,
+        0.4136430621147156,
+        1.5345045328140259
+      ],
+      "mean_actual": [
+        0.23240256309509277,
+        -0.2430390864610672,
+        0.24869824945926666
+      ],
+      "duration_seconds": 3.44,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 0.34461936354637146
+    },
+    {
+      "name": "yaw_left_0",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.2
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.06787747144699097,
+        0.024804649874567986,
+        0.09139534085988998
+      ],
+      "mean_actual": [
+        0.06441202014684677,
+        0.01147415116429329,
+        0.11241792887449265
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 28.405439376831055
+    },
+    {
+      "name": "yaw_left_1",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.4
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.07032682001590729,
+        0.02736687660217285,
+        0.21068622171878815
+      ],
+      "mean_actual": [
+        0.06392823904752731,
+        -0.0073328278958797455,
+        0.1995334029197693
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 30.08389663696289
+    },
+    {
+      "name": "yaw_right_0",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.2
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.07445864379405975,
+        0.022179879248142242,
+        0.06008907034993172
+      ],
+      "mean_actual": [
+        0.06975840032100677,
+        -0.01745864935219288,
+        -0.1700030118227005
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 29.15266227722168
+    },
+    {
+      "name": "yaw_right_1",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.4
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.4115748405456543,
+        0.4322350323200226,
+        1.26266348361969
+      ],
+      "mean_actual": [
+        0.23675769567489624,
+        0.17048387229442596,
+        -0.6471422910690308
+      ],
+      "duration_seconds": 3.22,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 11.258807182312012
+    },
+    {
+      "name": "terrain_1_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 1,
+      "level": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.05099620670080185,
+        0.018057677894830704,
+        0.08467685431241989
+      ],
+      "mean_actual": [
+        0.34111183881759644,
+        0.000891396717634052,
+        0.026198890060186386
+      ],
+      "duration_seconds": 10.0,
+      "valid": true,
+      "terminal_reason": "time_limit",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 83.88497924804688
+    },
+    {
+      "name": "terrain_1_1",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 1,
+      "level": 1,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.055653661489486694,
+        0.03156393766403198,
+        0.08547387272119522
+      ],
+      "mean_actual": [
+        0.31720367074012756,
+        0.001909063896164298,
+        0.02655325084924698
+      ],
+      "duration_seconds": 10.0,
+      "valid": true,
+      "terminal_reason": "time_limit",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 82.99435424804688
+    },
+    {
+      "name": "terrain_1_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 1,
+      "level": 2,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.08654188364744186,
+        0.043517038226127625,
+        0.08418204635381699
+      ],
+      "mean_actual": [
+        0.26993536949157715,
+        0.008086171001195908,
+        0.019764335826039314
+      ],
+      "duration_seconds": 10.0,
+      "valid": true,
+      "terminal_reason": "time_limit",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 80.66007232666016
+    },
+    {
+      "name": "terrain_1_3",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 1,
+      "level": 3,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.09319610148668289,
+        0.048460766673088074,
+        0.09496975690126419
+      ],
+      "mean_actual": [
+        0.26235321164131165,
+        0.019737768918275833,
+        -0.01367296651005745
+      ],
+      "duration_seconds": 10.0,
+      "valid": true,
+      "terminal_reason": "time_limit",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 78.84548950195312
+    },
+    {
+      "name": "terrain_1_4",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 1,
+      "level": 4,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.09872352331876755,
+        0.06040787696838379,
+        0.1109897792339325
+      ],
+      "mean_actual": [
+        0.2593647241592407,
+        0.025946127250790596,
+        -0.03270316496491432
+      ],
+      "duration_seconds": 10.0,
+      "valid": true,
+      "terminal_reason": "time_limit",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 75.8583755493164
+    },
+    {
+      "name": "terrain_1_5",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 1,
+      "level": 5,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.15068107843399048,
+        0.06448348611593246,
+        0.12704116106033325
+      ],
+      "mean_actual": [
+        0.20779353380203247,
+        0.017277562990784645,
+        -0.013411114923655987
+      ],
+      "duration_seconds": 10.0,
+      "valid": true,
+      "terminal_reason": "time_limit",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 70.77810668945312
+    },
+    {
+      "name": "terrain_1_6",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 1,
+      "level": 6,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.12970313429832458,
+        0.06228918954730034,
+        0.10737483948469162
+      ],
+      "mean_actual": [
+        0.2162201702594757,
+        0.027386488392949104,
+        -0.023385103791952133
+      ],
+      "duration_seconds": 10.0,
+      "valid": true,
+      "terminal_reason": "time_limit",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 73.37361145019531
+    },
+    {
+      "name": "terrain_1_7",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 1,
+      "level": 7,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.23402395844459534,
+        0.14051811397075653,
+        0.6939569711685181
+      ],
+      "mean_actual": [
+        0.1876688003540039,
+        0.0181319247931242,
+        0.07422205805778503
+      ],
+      "duration_seconds": 5.14,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 26.9434871673584
+    },
+    {
+      "name": "terrain_1_8",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 1,
+      "level": 8,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.2764832675457001,
+        0.2052944004535675,
+        0.7507323622703552
+      ],
+      "mean_actual": [
+        0.16806571185588837,
+        0.06052680313587189,
+        -0.1106887236237526
+      ],
+      "duration_seconds": 9.68,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 41.58792495727539
+    },
+    {
+      "name": "terrain_1_9",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 1,
+      "level": 9,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.2811654508113861,
+        0.21386073529720306,
+        1.003186821937561
+      ],
+      "mean_actual": [
+        0.20361971855163574,
+        0.08160313218832016,
+        -0.16908031702041626
+      ],
+      "duration_seconds": 6.12,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 28.545915603637695
+    },
+    {
+      "name": "terrain_2_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 2,
+      "level": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.034952592104673386,
+        0.015468277968466282,
+        0.07184585183858871
+      ],
+      "mean_actual": [
+        0.3030795753002167,
+        -0.004442050587385893,
+        0.040061913430690765
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 152.15379333496094
+    },
+    {
+      "name": "terrain_2_1",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 2,
+      "level": 1,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.03594395890831947,
+        0.016101643443107605,
+        0.07436120510101318
+      ],
+      "mean_actual": [
+        0.3094102740287781,
+        -0.0024024532176554203,
+        0.018039299175143242
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 151.34701538085938
+    },
+    {
+      "name": "terrain_2_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 2,
+      "level": 2,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.045461077243089676,
+        0.018693165853619576,
+        0.07291096448898315
+      ],
+      "mean_actual": [
+        0.3261927664279938,
+        -0.004994233604520559,
+        0.007406278513371944
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 150.05419921875
+    },
+    {
+      "name": "terrain_2_3",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 2,
+      "level": 3,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04926466569304466,
+        0.023647969588637352,
+        0.07269333302974701
+      ],
+      "mean_actual": [
+        0.32970505952835083,
+        -0.006561336573213339,
+        0.003959677182137966
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 149.22265625
+    },
+    {
+      "name": "terrain_2_4",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 2,
+      "level": 4,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04911494627594948,
+        0.026130516082048416,
+        0.07184635102748871
+      ],
+      "mean_actual": [
+        0.3310801386833191,
+        -0.008274353109300137,
+        0.0014046613359823823
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 148.82232666015625
+    },
+    {
+      "name": "terrain_2_5",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 2,
+      "level": 5,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.057112839072942734,
+        0.04139163717627525,
+        0.07788664102554321
+      ],
+      "mean_actual": [
+        0.3223588466644287,
+        -0.010843044146895409,
+        0.0025263740681111813
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 146.2330322265625
+    },
+    {
+      "name": "terrain_2_6",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 2,
+      "level": 6,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.06301714479923248,
+        0.05092666670680046,
+        0.09009292721748352
+      ],
+      "mean_actual": [
+        0.30357038974761963,
+        -0.011212285608053207,
+        -0.006131420843303204
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 143.80210876464844
+    },
+    {
+      "name": "terrain_2_7",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 2,
+      "level": 7,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.06553811579942703,
+        0.05326675996184349,
+        0.0960826426744461
+      ],
+      "mean_actual": [
+        0.2969854772090912,
+        -0.012499888427555561,
+        -0.0027705926913768053
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 142.51171875
+    },
+    {
+      "name": "terrain_2_8",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 2,
+      "level": 8,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.9642511606216431,
+        0.5107561945915222,
+        1.2388523817062378
+      ],
+      "mean_actual": [
+        0.5349117517471313,
+        -0.028146497905254364,
+        -0.2739720046520233
+      ],
+      "duration_seconds": 8.02,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 20.251434326171875
+    },
+    {
+      "name": "terrain_2_9",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 2,
+      "level": 9,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.21075357496738434,
+        0.1832154542207718,
+        0.7491616010665894
+      ],
+      "mean_actual": [
+        0.2779131233692169,
+        0.03353307396173477,
+        -0.2456781268119812
+      ],
+      "duration_seconds": 5.74,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 32.481502532958984
+    },
+    {
+      "name": "terrain_3_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 3,
+      "level": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04702902212738991,
+        0.015521664172410965,
+        0.07338563352823257
+      ],
+      "mean_actual": [
+        0.3371084928512573,
+        -0.003947029821574688,
+        0.04204802215099335
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 151.6033935546875
+    },
+    {
+      "name": "terrain_3_1",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 3,
+      "level": 1,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04925352334976196,
+        0.014072059653699398,
+        0.0704353004693985
+      ],
+      "mean_actual": [
+        0.34018775820732117,
+        -0.0052318754605948925,
+        0.043172355741262436
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 151.61753845214844
+    },
+    {
+      "name": "terrain_3_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 3,
+      "level": 2,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.05536189675331116,
+        0.015557627193629742,
+        0.06849560141563416
+      ],
+      "mean_actual": [
+        0.34629034996032715,
+        -0.00380654726177454,
+        0.04036414250731468
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 151.24856567382812
+    },
+    {
+      "name": "terrain_3_3",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 3,
+      "level": 3,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.05837872624397278,
+        0.014689148403704166,
+        0.06609271466732025
+      ],
+      "mean_actual": [
+        0.34792768955230713,
+        -0.0032791011035442352,
+        0.03595884144306183
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 151.21527099609375
+    },
+    {
+      "name": "terrain_3_4",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 3,
+      "level": 4,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.06110457330942154,
+        0.013631260022521019,
+        0.06426966190338135
+      ],
+      "mean_actual": [
+        0.35061055421829224,
+        -0.002494519343599677,
+        0.03502112254500389
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 151.1066436767578
+    },
+    {
+      "name": "terrain_3_5",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 3,
+      "level": 5,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.0645875558257103,
+        0.014301575720310211,
+        0.061110369861125946
+      ],
+      "mean_actual": [
+        0.3535968065261841,
+        -0.0017876490019261837,
+        0.029918422922492027
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 150.9921112060547
+    },
+    {
+      "name": "terrain_3_6",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 3,
+      "level": 6,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.06403155624866486,
+        0.014243829064071178,
+        0.0580056793987751
+      ],
+      "mean_actual": [
+        0.35278069972991943,
+        -0.002967189997434616,
+        0.03183014690876007
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 151.14891052246094
+    },
+    {
+      "name": "terrain_3_7",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 3,
+      "level": 7,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.0676274448633194,
+        0.014534080401062965,
+        0.05997106805443764
+      ],
+      "mean_actual": [
+        0.3551265001296997,
+        -0.0004053005832247436,
+        0.027532609179615974
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 150.737548828125
+    },
+    {
+      "name": "terrain_3_8",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 3,
+      "level": 8,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.06574002653360367,
+        0.015849588438868523,
+        0.06063027307391167
+      ],
+      "mean_actual": [
+        0.35338786244392395,
+        0.0009631959837861359,
+        0.022533798590302467
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 150.91065979003906
+    },
+    {
+      "name": "terrain_3_9",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 3,
+      "level": 9,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.06667541712522507,
+        0.016134409233927727,
+        0.05886848270893097
+      ],
+      "mean_actual": [
+        0.35345375537872314,
+        0.00045779114589095116,
+        0.022278686985373497
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 150.82345581054688
+    },
+    {
+      "name": "terrain_4_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 4,
+      "level": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04923601821064949,
+        0.0251194816082716,
+        0.0628112405538559
+      ],
+      "mean_actual": [
+        0.3099120259284973,
+        0.007610454689711332,
+        -0.03196857124567032
+      ],
+      "duration_seconds": 4.48,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 18.196273803710938
+    },
+    {
+      "name": "terrain_4_1",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 4,
+      "level": 1,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.15618453919887543,
+        0.02624206617474556,
+        0.13726451992988586
+      ],
+      "mean_actual": [
+        0.22661174833774567,
+        0.0050542703829705715,
+        -0.04707218334078789
+      ],
+      "duration_seconds": 6.16,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 19.604999542236328
+    },
+    {
+      "name": "terrain_4_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 4,
+      "level": 2,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.33365222811698914,
+        0.18548597395420074,
+        1.0149980783462524
+      ],
+      "mean_actual": [
+        0.12836234271526337,
+        0.05859487131237984,
+        -0.2940577268600464
+      ],
+      "duration_seconds": 3.96,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 4.946783542633057
+    },
+    {
+      "name": "terrain_4_3",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 4,
+      "level": 3,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.5960562825202942,
+        0.3503420948982239,
+        1.5141154527664185
+      ],
+      "mean_actual": [
+        -0.03235768899321556,
+        -0.12991732358932495,
+        -0.1867079883813858
+      ],
+      "duration_seconds": 6.5200000000000005,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": -6.583567142486572
+    },
+    {
+      "name": "terrain_4_4",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 4,
+      "level": 4,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.3149436414241791,
+        0.19466035068035126,
+        0.8612497448921204
+      ],
+      "mean_actual": [
+        0.30604317784309387,
+        0.0011770669370889664,
+        -0.288764625787735
+      ],
+      "duration_seconds": 3.84,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 3.8743491172790527
+    },
+    {
+      "name": "terrain_4_5",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 4,
+      "level": 5,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.15130867063999176,
+        0.20342877507209778,
+        0.8609943985939026
+      ],
+      "mean_actual": [
+        0.22845672070980072,
+        -0.07771018147468567,
+        -0.01881232298910618
+      ],
+      "duration_seconds": 3.48,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 6.2185468673706055
+    },
+    {
+      "name": "terrain_4_6",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 4,
+      "level": 6,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.4259430766105652,
+        0.27191853523254395,
+        1.295967936515808
+      ],
+      "mean_actual": [
+        0.12585440278053284,
+        -0.06885610520839691,
+        -0.265382319688797
+      ],
+      "duration_seconds": 3.74,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 0.45255833864212036
+    },
+    {
+      "name": "terrain_4_7",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 4,
+      "level": 7,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.5181505680084229,
+        0.29147836565971375,
+        1.4017165899276733
+      ],
+      "mean_actual": [
+        -0.015451827086508274,
+        -0.06816763430833817,
+        -0.2006676346063614
+      ],
+      "duration_seconds": 7.140000000000001,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": -5.477940082550049
+    },
+    {
+      "name": "terrain_4_8",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 4,
+      "level": 8,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.269598126411438,
+        0.24689488112926483,
+        0.9559033513069153
+      ],
+      "mean_actual": [
+        0.14459241926670074,
+        -0.0644335076212883,
+        0.13439613580703735
+      ],
+      "duration_seconds": 4.2,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 3.2950029373168945
+    },
+    {
+      "name": "terrain_4_9",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 4,
+      "level": 9,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.2979610562324524,
+        0.17143140733242035,
+        0.747991681098938
+      ],
+      "mean_actual": [
+        0.11720645427703857,
+        0.0007189576863311231,
+        0.03517647087574005
+      ],
+      "duration_seconds": 4.72,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 6.288516998291016
+    },
+    {
+      "name": "terrain_5_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 5,
+      "level": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.037811972200870514,
+        0.024534286931157112,
+        0.0748709887266159
+      ],
+      "mean_actual": [
+        0.32105574011802673,
+        -0.0017854213947430253,
+        -0.02847934700548649
+      ],
+      "duration_seconds": 4.3,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 17.596389770507812
+    },
+    {
+      "name": "terrain_5_1",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 5,
+      "level": 1,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04017054662108421,
+        0.027683723717927933,
+        0.08698494732379913
+      ],
+      "mean_actual": [
+        0.32126209139823914,
+        -0.0003240839287173003,
+        -0.036235127598047256
+      ],
+      "duration_seconds": 4.32,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 17.48980140686035
+    },
+    {
+      "name": "terrain_5_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 5,
+      "level": 2,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.038917724043130875,
+        0.030626656487584114,
+        0.09704280644655228
+      ],
+      "mean_actual": [
+        0.31701064109802246,
+        0.0011905638966709375,
+        -0.03754176199436188
+      ],
+      "duration_seconds": 4.36,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 17.629039764404297
+    },
+    {
+      "name": "terrain_5_3",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 5,
+      "level": 3,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.044354505836963654,
+        0.034612298011779785,
+        0.11751263588666916
+      ],
+      "mean_actual": [
+        0.3233307898044586,
+        0.0006817082758061588,
+        -0.049026187509298325
+      ],
+      "duration_seconds": 4.48,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 17.850074768066406
+    },
+    {
+      "name": "terrain_5_4",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 5,
+      "level": 4,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.33242955803871155,
+        0.19298648834228516,
+        0.535884439945221
+      ],
+      "mean_actual": [
+        0.4379896819591522,
+        0.07681126147508621,
+        -0.1542395055294037
+      ],
+      "duration_seconds": 5.36,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 12.159348487854004
+    },
+    {
+      "name": "terrain_5_5",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 5,
+      "level": 5,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.19254323840141296,
+        0.20991770923137665,
+        0.8565175533294678
+      ],
+      "mean_actual": [
+        0.3234591484069824,
+        0.07516268640756607,
+        -0.30864259600639343
+      ],
+      "duration_seconds": 5.1000000000000005,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 12.578045845031738
+    },
+    {
+      "name": "terrain_5_6",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 5,
+      "level": 6,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.05737045034766197,
+        0.08737685531377792,
+        0.33004286885261536
+      ],
+      "mean_actual": [
+        0.31207075715065,
+        0.02979048527777195,
+        -0.08711645752191544
+      ],
+      "duration_seconds": 4.22,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 14.760682106018066
+    },
+    {
+      "name": "terrain_5_7",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 5,
+      "level": 7,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.5098616480827332,
+        0.2700995206832886,
+        0.5216172933578491
+      ],
+      "mean_actual": [
+        0.5927364826202393,
+        0.11404553055763245,
+        -0.21693892776966095
+      ],
+      "duration_seconds": 2.7,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 4.618703365325928
+    },
+    {
+      "name": "terrain_5_8",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 5,
+      "level": 8,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.5277136564254761,
+        0.21488156914710999,
+        1.1882468461990356
+      ],
+      "mean_actual": [
+        0.5670626759529114,
+        0.0448799692094326,
+        -0.3962171673774719
+      ],
+      "duration_seconds": 2.7600000000000002,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 3.803206443786621
+    },
+    {
+      "name": "terrain_5_9",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 5,
+      "level": 9,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.5310124754905701,
+        0.20808109641075134,
+        1.1431248188018799
+      ],
+      "mean_actual": [
+        0.5561414361000061,
+        0.031718797981739044,
+        -0.4113183915615082
+      ],
+      "duration_seconds": 2.88,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 3.567861795425415
+    },
+    {
+      "name": "terrain_6_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 6,
+      "level": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.06827911734580994,
+        0.02506110817193985,
+        0.06560365110635757
+      ],
+      "mean_actual": [
+        0.30403247475624084,
+        -0.0037604982499033213,
+        -0.029816288501024246
+      ],
+      "duration_seconds": 8.6,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 30.96999740600586
+    },
+    {
+      "name": "terrain_6_1",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 6,
+      "level": 1,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.07379922270774841,
+        0.026970308274030685,
+        0.06806447356939316
+      ],
+      "mean_actual": [
+        0.2995156943798065,
+        -0.003279304364696145,
+        -0.030524590983986855
+      ],
+      "duration_seconds": 8.72,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 31.07933807373047
+    },
+    {
+      "name": "terrain_6_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 6,
+      "level": 2,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.06506790220737457,
+        0.02505619265139103,
+        0.06020255386829376
+      ],
+      "mean_actual": [
+        0.3046850264072418,
+        -0.00317341648042202,
+        -0.027111971750855446
+      ],
+      "duration_seconds": 8.56,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 31.19728660583496
+    },
+    {
+      "name": "terrain_6_3",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 6,
+      "level": 3,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.08184643089771271,
+        0.027222219854593277,
+        0.07247866690158844
+      ],
+      "mean_actual": [
+        0.2966781258583069,
+        -0.003123196540400386,
+        -0.03259497880935669
+      ],
+      "duration_seconds": 8.84,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 30.96731185913086
+    },
+    {
+      "name": "terrain_6_4",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 6,
+      "level": 4,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.2786944508552551,
+        0.18318647146224976,
+        0.8994762897491455
+      ],
+      "mean_actual": [
+        0.3931063413619995,
+        -0.0023706357460469007,
+        -0.30411192774772644
+      ],
+      "duration_seconds": 3.66,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 5.611928462982178
+    },
+    {
+      "name": "terrain_6_5",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 6,
+      "level": 5,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.21921579539775848,
+        0.3020276427268982,
+        1.3650662899017334
+      ],
+      "mean_actual": [
+        0.21773549914360046,
+        -0.04479250684380531,
+        -0.45503199100494385
+      ],
+      "duration_seconds": 4.12,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 1.115480899810791
+    },
+    {
+      "name": "terrain_6_6",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 6,
+      "level": 6,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.20900516211986542,
+        0.12476656585931778,
+        1.0323359966278076
+      ],
+      "mean_actual": [
+        0.2549477517604828,
+        -0.03812864422798157,
+        -0.21733345091342926
+      ],
+      "duration_seconds": 3.16,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 5.883442401885986
+    },
+    {
+      "name": "terrain_6_7",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 6,
+      "level": 7,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.6396965384483337,
+        0.3375694751739502,
+        1.153314471244812
+      ],
+      "mean_actual": [
+        -0.023138277232646942,
+        -0.15853989124298096,
+        -0.20085181295871735
+      ],
+      "duration_seconds": 3.54,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 0.8313449621200562
+    },
+    {
+      "name": "terrain_6_8",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 6,
+      "level": 8,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.2744073271751404,
+        0.16995079815387726,
+        0.9108214378356934
+      ],
+      "mean_actual": [
+        0.1664673388004303,
+        -0.07665647566318512,
+        0.20336276292800903
+      ],
+      "duration_seconds": 3.36,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 5.188374042510986
+    },
+    {
+      "name": "terrain_6_9",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 6,
+      "level": 9,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.20995494723320007,
+        0.240851029753685,
+        0.9631416201591492
+      ],
+      "mean_actual": [
+        0.18427041172981262,
+        -0.04555978998541832,
+        -0.1868353933095932
+      ],
+      "duration_seconds": 3.42,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 3.587716579437256
+    },
+    {
+      "name": "terrain_7_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 7,
+      "level": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04271823912858963,
+        0.03145449981093407,
+        0.10021887719631195
+      ],
+      "mean_actual": [
+        0.3271550238132477,
+        -0.002025805413722992,
+        -0.03950152546167374
+      ],
+      "duration_seconds": 8.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 29.316680908203125
+    },
+    {
+      "name": "terrain_7_1",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 7,
+      "level": 1,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04077552258968353,
+        0.02748381718993187,
+        0.09244506061077118
+      ],
+      "mean_actual": [
+        0.32494252920150757,
+        -0.0022247659508138895,
+        -0.03600906580686569
+      ],
+      "duration_seconds": 8.040000000000001,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 29.766437530517578
+    },
+    {
+      "name": "terrain_7_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 7,
+      "level": 2,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04266081005334854,
+        0.03211606293916702,
+        0.10231910645961761
+      ],
+      "mean_actual": [
+        0.3284858763217926,
+        -0.0006642808439210057,
+        -0.035577625036239624
+      ],
+      "duration_seconds": 7.94,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 29.19074058532715
+    },
+    {
+      "name": "terrain_7_3",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 7,
+      "level": 3,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04068998247385025,
+        0.028861166909337044,
+        0.09251926839351654
+      ],
+      "mean_actual": [
+        0.3239269256591797,
+        -0.001567802974022925,
+        -0.03429240360856056
+      ],
+      "duration_seconds": 8.06,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 29.8740234375
+    },
+    {
+      "name": "terrain_7_4",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 7,
+      "level": 4,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.0529206283390522,
+        0.048068754374980927,
+        0.15665538609027863
+      ],
+      "mean_actual": [
+        0.3331100344657898,
+        0.0009742811089381576,
+        -0.047883372753858566
+      ],
+      "duration_seconds": 7.84,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 27.487558364868164
+    },
+    {
+      "name": "terrain_7_5",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 7,
+      "level": 5,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.04224719479680061,
+        0.037336740642786026,
+        0.14499814808368683
+      ],
+      "mean_actual": [
+        0.31246915459632874,
+        0.0002961473655886948,
+        -0.04842264950275421
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 62.7913932800293
+    },
+    {
+      "name": "terrain_7_6",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 7,
+      "level": 6,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.27871179580688477,
+        0.3121446669101715,
+        0.9648401737213135
+      ],
+      "mean_actual": [
+        0.4087037742137909,
+        0.09786243736743927,
+        -0.21661576628684998
+      ],
+      "duration_seconds": 4.76,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 11.235617637634277
+    },
+    {
+      "name": "terrain_7_7",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 7,
+      "level": 7,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.416198194026947,
+        0.13822895288467407,
+        0.6700860261917114
+      ],
+      "mean_actual": [
+        0.4326559901237488,
+        0.04224435240030289,
+        -0.02120285853743553
+      ],
+      "duration_seconds": 4.72,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 10.53554630279541
+    },
+    {
+      "name": "terrain_7_8",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 7,
+      "level": 8,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.2085091769695282,
+        0.11228036880493164,
+        0.3798806667327881
+      ],
+      "mean_actual": [
+        0.36427560448646545,
+        0.04657279700040817,
+        -0.08023832738399506
+      ],
+      "duration_seconds": 4.5600000000000005,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 12.223589897155762
+    },
+    {
+      "name": "terrain_7_9",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 7,
+      "level": 9,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.24460038542747498,
+        0.12689171731472015,
+        0.43258607387542725
+      ],
+      "mean_actual": [
+        0.40154561400413513,
+        0.05438629537820816,
+        -0.03344620391726494
+      ],
+      "duration_seconds": 4.3,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 10.406216621398926
+    },
+    {
+      "name": "terrain_1_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 1,
+      "level": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.05605124309659004,
+        0.017662877216935158,
+        0.08314068615436554
+      ],
+      "mean_actual": [
+        0.34717127680778503,
+        0.00147686165291816,
+        0.02620064467191696
+      ],
+      "duration_seconds": 10.0,
+      "valid": true,
+      "terminal_reason": "time_limit",
+      "initial_yaw_rad": 0.0,
+      "reward": 83.60464477539062
+    },
+    {
+      "name": "terrain_1_1",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 1,
+      "level": 1,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.05756096914410591,
+        0.033357806503772736,
+        0.09034038335084915
+      ],
+      "mean_actual": [
+        0.315927118062973,
+        0.0006773013155907393,
+        0.02145416848361492
+      ],
+      "duration_seconds": 10.0,
+      "valid": true,
+      "terminal_reason": "time_limit",
+      "initial_yaw_rad": 0.0,
+      "reward": 82.6099853515625
+    },
+    {
+      "name": "terrain_1_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 1,
+      "level": 2,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.07362353056669235,
+        0.039983246475458145,
+        0.0963388979434967
+      ],
+      "mean_actual": [
+        0.2846124470233917,
+        0.006753146182745695,
+        0.016729218885302544
+      ],
+      "duration_seconds": 10.0,
+      "valid": true,
+      "terminal_reason": "time_limit",
+      "initial_yaw_rad": 0.0,
+      "reward": 81.1042709350586
+    },
+    {
+      "name": "terrain_1_3",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 1,
+      "level": 3,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.08121300488710403,
+        0.04481353610754013,
+        0.09129151701927185
+      ],
+      "mean_actual": [
+        0.2786117196083069,
+        0.013726956211030483,
+        -0.019958682358264923
+      ],
+      "duration_seconds": 10.0,
+      "valid": true,
+      "terminal_reason": "time_limit",
+      "initial_yaw_rad": 0.0,
+      "reward": 79.82542419433594
+    },
+    {
+      "name": "terrain_1_4",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 1,
+      "level": 4,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.11355113238096237,
+        0.05107179656624794,
+        0.10931901633739471
+      ],
+      "mean_actual": [
+        0.24536745250225067,
+        0.018653277307748795,
+        -0.03162312135100365
+      ],
+      "duration_seconds": 10.0,
+      "valid": true,
+      "terminal_reason": "time_limit",
+      "initial_yaw_rad": 0.0,
+      "reward": 76.09581756591797
+    },
+    {
+      "name": "terrain_1_5",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 1,
+      "level": 5,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.13897140324115753,
+        0.05701567977666855,
+        0.11114944517612457
+      ],
+      "mean_actual": [
+        0.22178339958190918,
+        0.010262498632073402,
+        -0.018238643184304237
+      ],
+      "duration_seconds": 10.0,
+      "valid": true,
+      "terminal_reason": "time_limit",
+      "initial_yaw_rad": 0.0,
+      "reward": 73.92239379882812
+    },
+    {
+      "name": "terrain_1_6",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 1,
+      "level": 6,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.23541560769081116,
+        0.059883810579776764,
+        0.10017639398574829
+      ],
+      "mean_actual": [
+        0.12000168859958649,
+        0.006324420683085918,
+        -0.004195070825517178
+      ],
+      "duration_seconds": 10.0,
+      "valid": true,
+      "terminal_reason": "time_limit",
+      "initial_yaw_rad": 0.0,
+      "reward": 66.32548522949219
+    },
+    {
+      "name": "terrain_1_7",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 1,
+      "level": 7,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.42991018295288086,
+        0.2928541600704193,
+        1.2898499965667725
+      ],
+      "mean_actual": [
+        0.08087532222270966,
+        0.01607045717537403,
+        -0.20383043587207794
+      ],
+      "duration_seconds": 7.78,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 27.01071548461914
+    },
+    {
+      "name": "terrain_1_8",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 1,
+      "level": 8,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.16887831687927246,
+        0.07564623653888702,
+        0.21809302270412445
+      ],
+      "mean_actual": [
+        0.19186650216579437,
+        0.01896829530596733,
+        -0.0014283173950389028
+      ],
+      "duration_seconds": 10.0,
+      "valid": true,
+      "terminal_reason": "time_limit",
+      "initial_yaw_rad": 0.0,
+      "reward": 66.02508544921875
+    },
+    {
+      "name": "terrain_1_9",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 1,
+      "level": 9,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.3736957609653473,
+        0.2185562252998352,
+        0.6055868268013
+      ],
+      "mean_actual": [
+        0.17880579829216003,
+        0.020193418487906456,
+        0.025853190571069717
+      ],
+      "duration_seconds": 5.0200000000000005,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 23.692861557006836
+    },
+    {
+      "name": "terrain_2_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 2,
+      "level": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.035717107355594635,
+        0.015772588551044464,
+        0.07235933840274811
+      ],
+      "mean_actual": [
+        0.3081345856189728,
+        -0.004238266497850418,
+        0.0392739400267601
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 152.0952606201172
+    },
+    {
+      "name": "terrain_2_1",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 2,
+      "level": 1,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.03837452828884125,
+        0.01578466407954693,
+        0.0741870328783989
+      ],
+      "mean_actual": [
+        0.2992666959762573,
+        -0.0037150245625525713,
+        0.03647367283701897
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 151.60194396972656
+    },
+    {
+      "name": "terrain_2_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 2,
+      "level": 2,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04859460890293121,
+        0.018860289826989174,
+        0.07081632316112518
+      ],
+      "mean_actual": [
+        0.32734382152557373,
+        -0.004221380688250065,
+        0.007869432680308819
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 149.93797302246094
+    },
+    {
+      "name": "terrain_2_3",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 2,
+      "level": 3,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.05287443473935127,
+        0.030208205804228783,
+        0.07663451135158539
+      ],
+      "mean_actual": [
+        0.3293292224407196,
+        -0.007631869986653328,
+        0.003731261473149061
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 148.17852783203125
+    },
+    {
+      "name": "terrain_2_4",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 2,
+      "level": 4,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.05314159393310547,
+        0.030178437009453773,
+        0.07677898555994034
+      ],
+      "mean_actual": [
+        0.3305915594100952,
+        -0.007608216721564531,
+        0.004575961735099554
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 147.9615478515625
+    },
+    {
+      "name": "terrain_2_5",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 2,
+      "level": 5,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.05801679939031601,
+        0.04602349177002907,
+        0.08237104117870331
+      ],
+      "mean_actual": [
+        0.32636702060699463,
+        -0.012509074062108994,
+        0.003569674678146839
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 145.47938537597656
+    },
+    {
+      "name": "terrain_2_6",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 2,
+      "level": 6,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.06563626974821091,
+        0.04656534269452095,
+        0.08904080092906952
+      ],
+      "mean_actual": [
+        0.3077771067619324,
+        -0.009998254477977753,
+        -0.002888858551159501
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 144.12591552734375
+    },
+    {
+      "name": "terrain_2_7",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 2,
+      "level": 7,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.2760103642940521,
+        0.39691615104675293,
+        1.0040690898895264
+      ],
+      "mean_actual": [
+        0.21319617331027985,
+        -0.13029809296131134,
+        -0.2132023721933365
+      ],
+      "duration_seconds": 17.36,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 74.05479431152344
+    },
+    {
+      "name": "terrain_2_8",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 2,
+      "level": 8,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.2821487784385681,
+        0.2060985267162323,
+        0.7806644439697266
+      ],
+      "mean_actual": [
+        0.21845535933971405,
+        0.006163503043353558,
+        -0.03254472464323044
+      ],
+      "duration_seconds": 7.5200000000000005,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 41.4158935546875
+    },
+    {
+      "name": "terrain_2_9",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 2,
+      "level": 9,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.2320561707019806,
+        0.17998428642749786,
+        0.6553449034690857
+      ],
+      "mean_actual": [
+        0.20307432115077972,
+        -0.011829090304672718,
+        -0.05407949909567833
+      ],
+      "duration_seconds": 11.84,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 68.93635559082031
+    },
+    {
+      "name": "terrain_3_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 3,
+      "level": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04314803704619408,
+        0.01482254359871149,
+        0.0712837427854538
+      ],
+      "mean_actual": [
+        0.33377978205680847,
+        -0.003941266797482967,
+        0.04280069097876549
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 152.0043487548828
+    },
+    {
+      "name": "terrain_3_1",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 3,
+      "level": 1,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.05118580162525177,
+        0.014977112412452698,
+        0.07090505212545395
+      ],
+      "mean_actual": [
+        0.3413856327533722,
+        -0.004330722149461508,
+        0.04302525147795677
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 151.4076385498047
+    },
+    {
+      "name": "terrain_3_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 3,
+      "level": 2,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.05381837859749794,
+        0.014690089970827103,
+        0.0695992112159729
+      ],
+      "mean_actual": [
+        0.34479930996894836,
+        -0.004017092287540436,
+        0.04093535244464874
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 151.3223876953125
+    },
+    {
+      "name": "terrain_3_3",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 3,
+      "level": 3,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.059329524636268616,
+        0.01490103080868721,
+        0.06576333194971085
+      ],
+      "mean_actual": [
+        0.3491247594356537,
+        -0.0036810217425227165,
+        0.038723137229681015
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 151.0669708251953
+    },
+    {
+      "name": "terrain_3_4",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 3,
+      "level": 4,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.06282826513051987,
+        0.01470582839101553,
+        0.0644150897860527
+      ],
+      "mean_actual": [
+        0.35295602679252625,
+        -0.002258491003885865,
+        0.03509756177663803
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 150.85885620117188
+    },
+    {
+      "name": "terrain_3_5",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 3,
+      "level": 5,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.0636865571141243,
+        0.014352749101817608,
+        0.061299216002225876
+      ],
+      "mean_actual": [
+        0.3540530502796173,
+        -0.0023381472565233707,
+        0.033889733254909515
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 150.984130859375
+    },
+    {
+      "name": "terrain_3_6",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 3,
+      "level": 6,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.06448732316493988,
+        0.015053587034344673,
+        0.060552675276994705
+      ],
+      "mean_actual": [
+        0.35328853130340576,
+        -0.0021832918282598257,
+        0.031456973403692245
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 150.94590759277344
+    },
+    {
+      "name": "terrain_3_7",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 3,
+      "level": 7,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.06671838462352753,
+        0.015421402640640736,
+        0.05846486613154411
+      ],
+      "mean_actual": [
+        0.35513007640838623,
+        -0.0005004534032195807,
+        0.02923773042857647
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 150.8151092529297
+    },
+    {
+      "name": "terrain_3_8",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 3,
+      "level": 8,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.0665854811668396,
+        0.01571643352508545,
+        0.062355611473321915
+      ],
+      "mean_actual": [
+        0.35521507263183594,
+        0.0007294653332792222,
+        0.023817330598831177
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 150.69749450683594
+    },
+    {
+      "name": "terrain_3_9",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 3,
+      "level": 9,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.06710177659988403,
+        0.015930481255054474,
+        0.058468014001846313
+      ],
+      "mean_actual": [
+        0.3545485734939575,
+        9.862238948699087e-05,
+        0.025088930502533913
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 150.77285766601562
+    },
+    {
+      "name": "terrain_4_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 4,
+      "level": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04833439737558365,
+        0.022686393931508064,
+        0.06121039018034935
+      ],
+      "mean_actual": [
+        0.30596691370010376,
+        0.006429721601307392,
+        -0.03174716979265213
+      ],
+      "duration_seconds": 4.5200000000000005,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 18.445615768432617
+    },
+    {
+      "name": "terrain_4_1",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 4,
+      "level": 1,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.14768895506858826,
+        0.025312412530183792,
+        0.1279524266719818
+      ],
+      "mean_actual": [
+        0.2337823510169983,
+        0.0063269915990531445,
+        -0.045307792723178864
+      ],
+      "duration_seconds": 5.92,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 19.4679012298584
+    },
+    {
+      "name": "terrain_4_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 4,
+      "level": 2,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.3122072219848633,
+        0.2719774544239044,
+        1.129245638847351
+      ],
+      "mean_actual": [
+        0.1451013833284378,
+        -0.0533987395465374,
+        -0.21714282035827637
+      ],
+      "duration_seconds": 9.120000000000001,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 0.7666053771972656
+    },
+    {
+      "name": "terrain_4_3",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 4,
+      "level": 3,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.36221495270729065,
+        0.37633317708969116,
+        1.8972978591918945
+      ],
+      "mean_actual": [
+        0.3153606951236725,
+        -0.052003659307956696,
+        -0.7901380062103271
+      ],
+      "duration_seconds": 3.8000000000000003,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 0.9061703681945801
+    },
+    {
+      "name": "terrain_4_4",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 4,
+      "level": 4,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.2296585738658905,
+        0.2753453850746155,
+        0.9616134166717529
+      ],
+      "mean_actual": [
+        0.2218037098646164,
+        -0.03027397394180298,
+        0.09866592288017273
+      ],
+      "duration_seconds": 3.9,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 5.4806647300720215
+    },
+    {
+      "name": "terrain_4_5",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 4,
+      "level": 5,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.17929522693157196,
+        0.22781063616275787,
+        0.9103386998176575
+      ],
+      "mean_actual": [
+        0.20756638050079346,
+        -0.054997947067022324,
+        -0.16418005526065826
+      ],
+      "duration_seconds": 3.48,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 5.217103004455566
+    },
+    {
+      "name": "terrain_4_6",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 4,
+      "level": 6,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.3835171163082123,
+        0.2647697329521179,
+        1.3315321207046509
+      ],
+      "mean_actual": [
+        0.11127733439207077,
+        -0.13469237089157104,
+        -0.36841487884521484
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 2.631915330886841
+    },
+    {
+      "name": "terrain_4_7",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 4,
+      "level": 7,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.3521783649921417,
+        0.47013771533966064,
+        2.3178653717041016
+      ],
+      "mean_actual": [
+        0.10497350245714188,
+        -0.17402242124080658,
+        -0.5289300680160522
+      ],
+      "duration_seconds": 4.62,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": -3.64690899848938
+    },
+    {
+      "name": "terrain_4_8",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 4,
+      "level": 8,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.19819089770317078,
+        0.21029211580753326,
+        0.5244998335838318
+      ],
+      "mean_actual": [
+        0.18366287648677826,
+        -0.07198678702116013,
+        -0.10565132647752762
+      ],
+      "duration_seconds": 3.6,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 5.4897356033325195
+    },
+    {
+      "name": "terrain_4_9",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 4,
+      "level": 9,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.4114021956920624,
+        0.37451085448265076,
+        0.876105785369873
+      ],
+      "mean_actual": [
+        0.06988487392663956,
+        -0.15129528939723969,
+        -0.1541195660829544
+      ],
+      "duration_seconds": 3.92,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 1.5312854051589966
+    },
+    {
+      "name": "terrain_5_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 5,
+      "level": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.03883714601397514,
+        0.02297949604690075,
+        0.07422858476638794
+      ],
+      "mean_actual": [
+        0.32397162914276123,
+        -0.0013546018162742257,
+        -0.030232444405555725
+      ],
+      "duration_seconds": 4.24,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 17.406721115112305
+    },
+    {
+      "name": "terrain_5_1",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 5,
+      "level": 1,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.037242889404296875,
+        0.02624240703880787,
+        0.08460439741611481
+      ],
+      "mean_actual": [
+        0.31998345255851746,
+        -0.0005237817531451583,
+        -0.032647810876369476
+      ],
+      "duration_seconds": 4.3,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 17.56351661682129
+    },
+    {
+      "name": "terrain_5_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 5,
+      "level": 2,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04060443118214607,
+        0.025639010593295097,
+        0.08887720853090286
+      ],
+      "mean_actual": [
+        0.3242638409137726,
+        0.00010727596236392856,
+        -0.03790713846683502
+      ],
+      "duration_seconds": 4.26,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 17.319623947143555
+    },
+    {
+      "name": "terrain_5_3",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 5,
+      "level": 3,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04307551681995392,
+        0.03240831196308136,
+        0.1265731006860733
+      ],
+      "mean_actual": [
+        0.32092392444610596,
+        0.0008486013975925744,
+        -0.04692649841308594
+      ],
+      "duration_seconds": 4.5200000000000005,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 18.16883659362793
+    },
+    {
+      "name": "terrain_5_4",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 5,
+      "level": 4,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.27058979868888855,
+        0.21488243341445923,
+        0.7327563762664795
+      ],
+      "mean_actual": [
+        0.39519670605659485,
+        0.06052115559577942,
+        -0.2132607251405716
+      ],
+      "duration_seconds": 5.0600000000000005,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 14.872415542602539
+    },
+    {
+      "name": "terrain_5_5",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 5,
+      "level": 5,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.21297183632850647,
+        0.18281026184558868,
+        0.9248592853546143
+      ],
+      "mean_actual": [
+        0.3414859473705292,
+        0.06938982009887695,
+        -0.23957127332687378
+      ],
+      "duration_seconds": 5.04,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 13.539963722229004
+    },
+    {
+      "name": "terrain_5_6",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 5,
+      "level": 6,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.25178852677345276,
+        0.20702329277992249,
+        0.6172024607658386
+      ],
+      "mean_actual": [
+        0.3874209225177765,
+        0.08552176505327225,
+        -0.23729495704174042
+      ],
+      "duration_seconds": 4.94,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 11.249102592468262
+    },
+    {
+      "name": "terrain_5_7",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 5,
+      "level": 7,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.5724939107894897,
+        0.271942675113678,
+        0.6754422187805176
+      ],
+      "mean_actual": [
+        0.5669468641281128,
+        0.1335599422454834,
+        -0.23038752377033234
+      ],
+      "duration_seconds": 2.74,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 3.400702714920044
+    },
+    {
+      "name": "terrain_5_8",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 5,
+      "level": 8,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.631010890007019,
+        0.2774386405944824,
+        1.1170612573623657
+      ],
+      "mean_actual": [
+        0.644303560256958,
+        0.09073466062545776,
+        -0.3621463477611542
+      ],
+      "duration_seconds": 2.5,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 4.137291431427002
+    },
+    {
+      "name": "terrain_5_9",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 5,
+      "level": 9,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.47360286116600037,
+        0.2669471800327301,
+        1.1874159574508667
+      ],
+      "mean_actual": [
+        0.4842848777770996,
+        0.03841511905193329,
+        -0.42360058426856995
+      ],
+      "duration_seconds": 3.3000000000000003,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 3.6118783950805664
+    },
+    {
+      "name": "terrain_6_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 6,
+      "level": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.07439009845256805,
+        0.024862686172127724,
+        0.07718739658594131
+      ],
+      "mean_actual": [
+        0.2992812395095825,
+        -0.0020843090023845434,
+        -0.032552119344472885
+      ],
+      "duration_seconds": 8.72,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 31.19498634338379
+    },
+    {
+      "name": "terrain_6_1",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 6,
+      "level": 1,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.06161786615848541,
+        0.02496884949505329,
+        0.07102175801992416
+      ],
+      "mean_actual": [
+        0.3096213638782501,
+        -0.002442612312734127,
+        -0.027854405343532562
+      ],
+      "duration_seconds": 8.4,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 30.870986938476562
+    },
+    {
+      "name": "terrain_6_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 6,
+      "level": 2,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.07188962399959564,
+        0.025524985045194626,
+        0.06719857454299927
+      ],
+      "mean_actual": [
+        0.30164989829063416,
+        -0.0030714902095496655,
+        -0.03150977939367294
+      ],
+      "duration_seconds": 8.64,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 31.091352462768555
+    },
+    {
+      "name": "terrain_6_3",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 6,
+      "level": 3,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.0725841224193573,
+        0.025850806385278702,
+        0.07713399827480316
+      ],
+      "mean_actual": [
+        0.30082935094833374,
+        -0.001678353059105575,
+        -0.03357778117060661
+      ],
+      "duration_seconds": 8.66,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 30.975927352905273
+    },
+    {
+      "name": "terrain_6_4",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 6,
+      "level": 4,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.27811071276664734,
+        0.22402556240558624,
+        0.9721360802650452
+      ],
+      "mean_actual": [
+        0.23075619339942932,
+        0.051800474524497986,
+        -0.24649015069007874
+      ],
+      "duration_seconds": 3.7600000000000002,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 5.9863433837890625
+    },
+    {
+      "name": "terrain_6_5",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 6,
+      "level": 5,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.25926023721694946,
+        0.28007277846336365,
+        0.981458842754364
+      ],
+      "mean_actual": [
+        0.23801518976688385,
+        -0.07099094986915588,
+        -0.24732185900211334
+      ],
+      "duration_seconds": 3.7,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 2.8875410556793213
+    },
+    {
+      "name": "terrain_6_6",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 6,
+      "level": 6,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.37777209281921387,
+        0.21941891312599182,
+        1.430603265762329
+      ],
+      "mean_actual": [
+        0.31755226850509644,
+        -0.07357679307460785,
+        -0.40359777212142944
+      ],
+      "duration_seconds": 4.3,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": -2.307481050491333
+    },
+    {
+      "name": "terrain_6_7",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 6,
+      "level": 7,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.2747005224227905,
+        0.3156591057777405,
+        1.6043919324874878
+      ],
+      "mean_actual": [
+        0.18413449823856354,
+        -0.11272824555635452,
+        -0.3514404296875
+      ],
+      "duration_seconds": 4.14,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 1.2187789678573608
+    },
+    {
+      "name": "terrain_6_8",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 6,
+      "level": 8,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.3846123218536377,
+        0.22323159873485565,
+        1.475679636001587
+      ],
+      "mean_actual": [
+        0.10903754830360413,
+        -0.08546431362628937,
+        -0.37160438299179077
+      ],
+      "duration_seconds": 3.66,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 0.06464701890945435
+    },
+    {
+      "name": "terrain_6_9",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 6,
+      "level": 9,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.2531064450740814,
+        0.21842439472675323,
+        0.9264543652534485
+      ],
+      "mean_actual": [
+        0.18587730824947357,
+        -0.08135143667459488,
+        -0.2733515799045563
+      ],
+      "duration_seconds": 3.5,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 3.9241116046905518
+    },
+    {
+      "name": "terrain_7_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 7,
+      "level": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04130639508366585,
+        0.03178733214735985,
+        0.09218242019414902
+      ],
+      "mean_actual": [
+        0.32537320256233215,
+        -0.0024422467686235905,
+        -0.03455090522766113
+      ],
+      "duration_seconds": 8.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 29.771848678588867
+    },
+    {
+      "name": "terrain_7_1",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 7,
+      "level": 1,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04366719722747803,
+        0.02991274558007717,
+        0.09692675620317459
+      ],
+      "mean_actual": [
+        0.3289101719856262,
+        0.0003840242570731789,
+        -0.03813481330871582
+      ],
+      "duration_seconds": 7.92,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 29.33530044555664
+    },
+    {
+      "name": "terrain_7_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 7,
+      "level": 2,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.049499429762363434,
+        0.03131429851055145,
+        0.10560537874698639
+      ],
+      "mean_actual": [
+        0.3349420428276062,
+        0.0019710585474967957,
+        -0.039194997400045395
+      ],
+      "duration_seconds": 7.78,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 28.619356155395508
+    },
+    {
+      "name": "terrain_7_3",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 7,
+      "level": 3,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.041340168565511703,
+        0.028382528573274612,
+        0.09075815230607986
+      ],
+      "mean_actual": [
+        0.3272341191768646,
+        0.00046257436042651534,
+        -0.03729269281029701
+      ],
+      "duration_seconds": 7.96,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 29.641267776489258
+    },
+    {
+      "name": "terrain_7_4",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 7,
+      "level": 4,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.051938969641923904,
+        0.04962209239602089,
+        0.14717429876327515
+      ],
+      "mean_actual": [
+        0.3306712806224823,
+        -0.0016933466540649533,
+        -0.051871463656425476
+      ],
+      "duration_seconds": 8.16,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 28.65367317199707
+    },
+    {
+      "name": "terrain_7_5",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 7,
+      "level": 5,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.2699836492538452,
+        0.1400524228811264,
+        0.7056435942649841
+      ],
+      "mean_actual": [
+        0.39532095193862915,
+        0.04061845317482948,
+        -0.14729051291942596
+      ],
+      "duration_seconds": 4.7,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 12.609203338623047
+    },
+    {
+      "name": "terrain_7_6",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 7,
+      "level": 6,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.39467519521713257,
+        0.20705662667751312,
+        0.6535356640815735
+      ],
+      "mean_actual": [
+        0.463874876499176,
+        0.08186499029397964,
+        -0.10965485125780106
+      ],
+      "duration_seconds": 5.04,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 10.731627464294434
+    },
+    {
+      "name": "terrain_7_7",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 7,
+      "level": 7,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.13307009637355804,
+        0.3438950181007385,
+        0.8938549160957336
+      ],
+      "mean_actual": [
+        0.3481408655643463,
+        0.10705964267253876,
+        -0.2352268546819687
+      ],
+      "duration_seconds": 5.8,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 12.72793197631836
+    },
+    {
+      "name": "terrain_7_8",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 7,
+      "level": 8,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.6301649212837219,
+        0.8029224276542664,
+        0.9157997369766235
+      ],
+      "mean_actual": [
+        0.5887593626976013,
+        -0.21659283339977264,
+        0.1198430210351944
+      ],
+      "duration_seconds": 5.86,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 0.5304737687110901
+    },
+    {
+      "name": "terrain_7_9",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 7,
+      "level": 9,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.346518874168396,
+        0.2620059549808502,
+        0.47171899676322937
+      ],
+      "mean_actual": [
+        0.4697781801223755,
+        0.12685969471931458,
+        -0.0955258160829544
+      ],
+      "duration_seconds": 4.46,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 7.206557273864746
+    },
+    {
+      "name": "terrain_1_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 1,
+      "level": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.052304234355688095,
+        0.01603781059384346,
+        0.08049216866493225
+      ],
+      "mean_actual": [
+        0.34328722953796387,
+        0.0020842296071350574,
+        0.0283332709223032
+      ],
+      "duration_seconds": 10.0,
+      "valid": true,
+      "terminal_reason": "time_limit",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 83.94892883300781
+    },
+    {
+      "name": "terrain_1_1",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 1,
+      "level": 1,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.061920132488012314,
+        0.03440895676612854,
+        0.08434323966503143
+      ],
+      "mean_actual": [
+        0.32109129428863525,
+        0.0027545345947146416,
+        0.02367357909679413
+      ],
+      "duration_seconds": 10.0,
+      "valid": true,
+      "terminal_reason": "time_limit",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 82.5245361328125
+    },
+    {
+      "name": "terrain_1_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 1,
+      "level": 2,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.07878502458333969,
+        0.038852088153362274,
+        0.09077732264995575
+      ],
+      "mean_actual": [
+        0.2880399823188782,
+        0.005394960753619671,
+        0.00778281781822443
+      ],
+      "duration_seconds": 10.0,
+      "valid": true,
+      "terminal_reason": "time_limit",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 80.96575164794922
+    },
+    {
+      "name": "terrain_1_3",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 1,
+      "level": 3,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.1020641103386879,
+        0.05189664289355278,
+        0.09145433455705643
+      ],
+      "mean_actual": [
+        0.25650328397750854,
+        0.015084881335496902,
+        0.01575806364417076
+      ],
+      "duration_seconds": 10.0,
+      "valid": true,
+      "terminal_reason": "time_limit",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 78.70686340332031
+    },
+    {
+      "name": "terrain_1_4",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 1,
+      "level": 4,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.09122723340988159,
+        0.052349068224430084,
+        0.0871785506606102
+      ],
+      "mean_actual": [
+        0.2616235315799713,
+        0.02242429554462433,
+        -0.02274508774280548
+      ],
+      "duration_seconds": 10.0,
+      "valid": true,
+      "terminal_reason": "time_limit",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 78.2323989868164
+    },
+    {
+      "name": "terrain_1_5",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 1,
+      "level": 5,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.16679444909095764,
+        0.06901200115680695,
+        0.11469098925590515
+      ],
+      "mean_actual": [
+        0.1903758943080902,
+        0.02812039665877819,
+        -0.02822876162827015
+      ],
+      "duration_seconds": 10.0,
+      "valid": true,
+      "terminal_reason": "time_limit",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 70.09968566894531
+    },
+    {
+      "name": "terrain_1_6",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 1,
+      "level": 6,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.17243126034736633,
+        0.07560274749994278,
+        0.12083053588867188
+      ],
+      "mean_actual": [
+        0.17725659906864166,
+        0.0277834665030241,
+        -0.022704169154167175
+      ],
+      "duration_seconds": 10.0,
+      "valid": true,
+      "terminal_reason": "time_limit",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 68.42230987548828
+    },
+    {
+      "name": "terrain_1_7",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 1,
+      "level": 7,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.22597160935401917,
+        0.2879146337509155,
+        0.38018107414245605
+      ],
+      "mean_actual": [
+        0.27961722016334534,
+        0.13091692328453064,
+        -0.06239283084869385
+      ],
+      "duration_seconds": 5.5200000000000005,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 27.946290969848633
+    },
+    {
+      "name": "terrain_1_8",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 1,
+      "level": 8,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.22955931723117828,
+        0.05882212892174721,
+        0.14334511756896973
+      ],
+      "mean_actual": [
+        0.13253898918628693,
+        0.004274945240467787,
+        0.018056008964776993
+      ],
+      "duration_seconds": 10.0,
+      "valid": true,
+      "terminal_reason": "time_limit",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 65.02741241455078
+    },
+    {
+      "name": "terrain_1_9",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 1,
+      "level": 9,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.37730884552001953,
+        0.36218196153640747,
+        0.9826468229293823
+      ],
+      "mean_actual": [
+        0.10037565976381302,
+        -0.030766349285840988,
+        0.08195524662733078
+      ],
+      "duration_seconds": 6.24,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 23.464466094970703
+    },
+    {
+      "name": "terrain_2_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 2,
+      "level": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.03506772592663765,
+        0.014912656508386135,
+        0.071927510201931
+      ],
+      "mean_actual": [
+        0.30680108070373535,
+        -0.003974933177232742,
+        0.039631813764572144
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 152.18601989746094
+    },
+    {
+      "name": "terrain_2_1",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 2,
+      "level": 1,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.036954816430807114,
+        0.016207406297326088,
+        0.07057105004787445
+      ],
+      "mean_actual": [
+        0.2990105152130127,
+        -0.003148650052025914,
+        0.03728709742426872
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 152.04446411132812
+    },
+    {
+      "name": "terrain_2_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 2,
+      "level": 2,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04880545660853386,
+        0.019036896526813507,
+        0.07209532707929611
+      ],
+      "mean_actual": [
+        0.32265573740005493,
+        -0.0036921019200235605,
+        0.008375982753932476
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 149.94100952148438
+    },
+    {
+      "name": "terrain_2_3",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 2,
+      "level": 3,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.049176715314388275,
+        0.020276861265301704,
+        0.07276983559131622
+      ],
+      "mean_actual": [
+        0.32506802678108215,
+        -0.0055691334418952465,
+        0.0043971179984509945
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 149.5328369140625
+    },
+    {
+      "name": "terrain_2_4",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 2,
+      "level": 4,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.05072767660021782,
+        0.035899568349123,
+        0.07632366567850113
+      ],
+      "mean_actual": [
+        0.32448139786720276,
+        -0.00834064930677414,
+        -0.0009477974381297827
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 147.75344848632812
+    },
+    {
+      "name": "terrain_2_5",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 2,
+      "level": 5,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.05706344544887543,
+        0.038764119148254395,
+        0.07963257282972336
+      ],
+      "mean_actual": [
+        0.3233031630516052,
+        -0.009531467221677303,
+        0.004277540370821953
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 146.56016540527344
+    },
+    {
+      "name": "terrain_2_6",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 2,
+      "level": 6,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.09773705154657364,
+        0.12833420932292938,
+        0.5527849197387695
+      ],
+      "mean_actual": [
+        0.30005669593811035,
+        0.01887354627251625,
+        -0.0883278101682663
+      ],
+      "duration_seconds": 12.94,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 91.82344055175781
+    },
+    {
+      "name": "terrain_2_7",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 2,
+      "level": 7,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.07275735586881638,
+        0.05273694172501564,
+        0.09893912822008133
+      ],
+      "mean_actual": [
+        0.28392502665519714,
+        -0.00846576876938343,
+        -0.0025803677272051573
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 142.38067626953125
+    },
+    {
+      "name": "terrain_2_8",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 2,
+      "level": 8,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.0711529329419136,
+        0.061032529920339584,
+        0.0940231904387474
+      ],
+      "mean_actual": [
+        0.30079030990600586,
+        -0.012857011519372463,
+        -0.006938922684639692
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 141.0549774169922
+    },
+    {
+      "name": "terrain_2_9",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 2,
+      "level": 9,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.20708993077278137,
+        0.20919831097126007,
+        0.921761691570282
+      ],
+      "mean_actual": [
+        0.2799927890300751,
+        0.07293959707021713,
+        -0.19544817507266998
+      ],
+      "duration_seconds": 5.66,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 33.02483367919922
+    },
+    {
+      "name": "terrain_3_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 3,
+      "level": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.0442175529897213,
+        0.014776733703911304,
+        0.07156175374984741
+      ],
+      "mean_actual": [
+        0.3347246050834656,
+        -0.00444372184574604,
+        0.043422725051641464
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 151.9120330810547
+    },
+    {
+      "name": "terrain_3_1",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 3,
+      "level": 1,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.050648562610149384,
+        0.015037859790027142,
+        0.07333982735872269
+      ],
+      "mean_actual": [
+        0.3410153090953827,
+        -0.004437113646417856,
+        0.04275637865066528
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 151.3453826904297
+    },
+    {
+      "name": "terrain_3_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 3,
+      "level": 2,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.05257570371031761,
+        0.015066596679389477,
+        0.07021945714950562
+      ],
+      "mean_actual": [
+        0.34416717290878296,
+        -0.005138182081282139,
+        0.04356656223535538
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 151.29318237304688
+    },
+    {
+      "name": "terrain_3_3",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 3,
+      "level": 3,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.0560602992773056,
+        0.01468408852815628,
+        0.0665452778339386
+      ],
+      "mean_actual": [
+        0.3465353846549988,
+        -0.005022386554628611,
+        0.04146609455347061
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 151.28761291503906
+    },
+    {
+      "name": "terrain_3_4",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 3,
+      "level": 4,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.06043614447116852,
+        0.014798655174672604,
+        0.06498096138238907
+      ],
+      "mean_actual": [
+        0.35161396861076355,
+        -0.0042945039458572865,
+        0.03793349862098694
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 151.03636169433594
+    },
+    {
+      "name": "terrain_3_5",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 3,
+      "level": 5,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.06325926631689072,
+        0.013690461404621601,
+        0.06093911454081535
+      ],
+      "mean_actual": [
+        0.3526665270328522,
+        -0.003442688612267375,
+        0.03617265820503235
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 151.0224609375
+    },
+    {
+      "name": "terrain_3_6",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 3,
+      "level": 6,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.0644855946302414,
+        0.013951924629509449,
+        0.05967038497328758
+      ],
+      "mean_actual": [
+        0.3528067469596863,
+        -0.0027678136248141527,
+        0.03477495163679123
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 150.9578094482422
+    },
+    {
+      "name": "terrain_3_7",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 3,
+      "level": 7,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.06595292687416077,
+        0.014567670412361622,
+        0.06185139715671539
+      ],
+      "mean_actual": [
+        0.3539917469024658,
+        -0.002523657400161028,
+        0.033207062631845474
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 150.69241333007812
+    },
+    {
+      "name": "terrain_3_8",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 3,
+      "level": 8,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.06572801619768143,
+        0.014913533814251423,
+        0.05606062710285187
+      ],
+      "mean_actual": [
+        0.3541964590549469,
+        -0.0017009807052090764,
+        0.02697184309363365
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 151.0501251220703
+    },
+    {
+      "name": "terrain_3_9",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 3,
+      "level": 9,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.06708480417728424,
+        0.015415288507938385,
+        0.060674458742141724
+      ],
+      "mean_actual": [
+        0.3532869219779968,
+        0.0003484376356936991,
+        0.021075036376714706
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 150.75294494628906
+    },
+    {
+      "name": "terrain_4_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 4,
+      "level": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.05859821289777756,
+        0.022559775039553642,
+        0.06283552944660187
+      ],
+      "mean_actual": [
+        0.3012332022190094,
+        0.005876731593161821,
+        -0.03235679119825363
+      ],
+      "duration_seconds": 4.58,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 18.45563316345215
+    },
+    {
+      "name": "terrain_4_1",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 4,
+      "level": 1,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.1445574015378952,
+        0.024775492027401924,
+        0.11629945039749146
+      ],
+      "mean_actual": [
+        0.2355247586965561,
+        0.006068082060664892,
+        -0.04588314890861511
+      ],
+      "duration_seconds": 5.84,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 19.343915939331055
+    },
+    {
+      "name": "terrain_4_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 4,
+      "level": 2,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.25537109375,
+        0.15418028831481934,
+        0.9059504866600037
+      ],
+      "mean_actual": [
+        0.22506141662597656,
+        0.032772235572338104,
+        -0.07783515006303787
+      ],
+      "duration_seconds": 3.68,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 3.36112642288208
+    },
+    {
+      "name": "terrain_4_3",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 4,
+      "level": 3,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.2862229645252228,
+        0.27146896719932556,
+        1.031904697418213
+      ],
+      "mean_actual": [
+        0.1579269915819168,
+        -0.1291579008102417,
+        -0.36106497049331665
+      ],
+      "duration_seconds": 3.74,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 4.124364852905273
+    },
+    {
+      "name": "terrain_4_4",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 4,
+      "level": 4,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.36302536725997925,
+        0.27103757858276367,
+        1.4102131128311157
+      ],
+      "mean_actual": [
+        0.15186277031898499,
+        -0.12803226709365845,
+        -0.2829671800136566
+      ],
+      "duration_seconds": 4.28,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": -0.04911729693412781
+    },
+    {
+      "name": "terrain_4_5",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 4,
+      "level": 5,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.4989112913608551,
+        0.40046948194503784,
+        1.9553786516189575
+      ],
+      "mean_actual": [
+        0.4024505019187927,
+        -0.04190026968717575,
+        -0.5402606725692749
+      ],
+      "duration_seconds": 4.6000000000000005,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": -5.6313796043396
+    },
+    {
+      "name": "terrain_4_6",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 4,
+      "level": 6,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.4436909556388855,
+        0.3169126510620117,
+        1.5748207569122314
+      ],
+      "mean_actual": [
+        0.056604258716106415,
+        -0.11702907830476761,
+        0.06818602979183197
+      ],
+      "duration_seconds": 5.48,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": -1.6773440837860107
+    },
+    {
+      "name": "terrain_4_7",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 4,
+      "level": 7,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.44900429248809814,
+        0.31710541248321533,
+        1.9743680953979492
+      ],
+      "mean_actual": [
+        0.08213839679956436,
+        -0.0537836067378521,
+        -0.2573681175708771
+      ],
+      "duration_seconds": 4.64,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": -5.217135429382324
+    },
+    {
+      "name": "terrain_4_8",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 4,
+      "level": 8,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.35303306579589844,
+        0.1627281904220581,
+        1.437207579612732
+      ],
+      "mean_actual": [
+        0.06410140544176102,
+        -0.0412278026342392,
+        -0.4418318271636963
+      ],
+      "duration_seconds": 5.2,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": -1.2203295230865479
+    },
+    {
+      "name": "terrain_4_9",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 4,
+      "level": 9,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.29425281286239624,
+        0.15520894527435303,
+        0.4906054139137268
+      ],
+      "mean_actual": [
+        0.15887302160263062,
+        -0.05438707396388054,
+        -0.07163193821907043
+      ],
+      "duration_seconds": 4.78,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 4.939378261566162
+    },
+    {
+      "name": "terrain_5_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 5,
+      "level": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.038724303245544434,
+        0.02525343745946884,
+        0.0776415690779686
+      ],
+      "mean_actual": [
+        0.3226385712623596,
+        0.0004536906199064106,
+        -0.03241925314068794
+      ],
+      "duration_seconds": 4.26,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 17.441730499267578
+    },
+    {
+      "name": "terrain_5_1",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 5,
+      "level": 1,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04099605232477188,
+        0.026449287310242653,
+        0.09178150445222855
+      ],
+      "mean_actual": [
+        0.32742631435394287,
+        0.0006395671516656876,
+        -0.035753294825553894
+      ],
+      "duration_seconds": 4.18,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 16.967729568481445
+    },
+    {
+      "name": "terrain_5_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 5,
+      "level": 2,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04149316996335983,
+        0.02864936552941799,
+        0.099631667137146
+      ],
+      "mean_actual": [
+        0.3220312297344208,
+        0.002413081005215645,
+        -0.04102441295981407
+      ],
+      "duration_seconds": 4.28,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 17.34559440612793
+    },
+    {
+      "name": "terrain_5_3",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 5,
+      "level": 3,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04347403347492218,
+        0.03571736067533493,
+        0.1342264711856842
+      ],
+      "mean_actual": [
+        0.3206206262111664,
+        0.003175082616508007,
+        -0.05292578414082527
+      ],
+      "duration_seconds": 4.44,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 17.70535659790039
+    },
+    {
+      "name": "terrain_5_4",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 5,
+      "level": 4,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.21184465289115906,
+        0.2030474841594696,
+        0.8253000974655151
+      ],
+      "mean_actual": [
+        0.374383807182312,
+        0.05747164413332939,
+        -0.23374053835868835
+      ],
+      "duration_seconds": 4.92,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 14.363899230957031
+    },
+    {
+      "name": "terrain_5_5",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 5,
+      "level": 5,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.05306802690029144,
+        0.046726614236831665,
+        0.17367969453334808
+      ],
+      "mean_actual": [
+        0.32345834374427795,
+        0.014761338010430336,
+        -0.07440569996833801
+      ],
+      "duration_seconds": 4.22,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 16.342052459716797
+    },
+    {
+      "name": "terrain_5_6",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 5,
+      "level": 6,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.16961902379989624,
+        0.21128404140472412,
+        0.9829965829849243
+      ],
+      "mean_actual": [
+        0.3481515645980835,
+        0.07688164710998535,
+        -0.2914544343948364
+      ],
+      "duration_seconds": 4.66,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 11.634384155273438
+    },
+    {
+      "name": "terrain_5_7",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 5,
+      "level": 7,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.5266037583351135,
+        0.6217976212501526,
+        1.7708215713500977
+      ],
+      "mean_actual": [
+        0.4756499230861664,
+        0.32131078839302063,
+        -0.5635861754417419
+      ],
+      "duration_seconds": 3.84,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": -8.31351375579834
+    },
+    {
+      "name": "terrain_5_8",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 5,
+      "level": 8,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.32997390627861023,
+        0.24016839265823364,
+        0.8755715489387512
+      ],
+      "mean_actual": [
+        0.47438499331474304,
+        0.08396495133638382,
+        -0.30777645111083984
+      ],
+      "duration_seconds": 2.3000000000000003,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 4.432265281677246
+    },
+    {
+      "name": "terrain_5_9",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 5,
+      "level": 9,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.3838770091533661,
+        0.2120710164308548,
+        0.7368549108505249
+      ],
+      "mean_actual": [
+        0.504040002822876,
+        0.08015383780002594,
+        -0.15287259221076965
+      ],
+      "duration_seconds": 2.42,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 4.268190383911133
+    },
+    {
+      "name": "terrain_6_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 6,
+      "level": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.07704038918018341,
+        0.02501729317009449,
+        0.06183125823736191
+      ],
+      "mean_actual": [
+        0.29611241817474365,
+        -0.001057861722074449,
+        -0.03168027102947235
+      ],
+      "duration_seconds": 8.78,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 31.624969482421875
+    },
+    {
+      "name": "terrain_6_1",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 6,
+      "level": 1,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.07538361847400665,
+        0.024546829983592033,
+        0.07920247316360474
+      ],
+      "mean_actual": [
+        0.2999092936515808,
+        -0.0012674181489273906,
+        -0.03220829367637634
+      ],
+      "duration_seconds": 8.66,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 31.205120086669922
+    },
+    {
+      "name": "terrain_6_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 6,
+      "level": 2,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.06320133805274963,
+        0.02407062239944935,
+        0.06490080803632736
+      ],
+      "mean_actual": [
+        0.3036194145679474,
+        -0.0008108844631351531,
+        -0.02886306494474411
+      ],
+      "duration_seconds": 8.540000000000001,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 31.57218360900879
+    },
+    {
+      "name": "terrain_6_3",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 6,
+      "level": 3,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.07286103814840317,
+        0.023172911256551743,
+        0.06506538391113281
+      ],
+      "mean_actual": [
+        0.2972325086593628,
+        -0.0007519743521697819,
+        -0.03256600722670555
+      ],
+      "duration_seconds": 8.74,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 31.64276123046875
+    },
+    {
+      "name": "terrain_6_4",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 6,
+      "level": 4,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.1849670708179474,
+        0.18707208335399628,
+        1.571099042892456
+      ],
+      "mean_actual": [
+        0.3304358422756195,
+        -0.04502711072564125,
+        -0.3848681151866913
+      ],
+      "duration_seconds": 3.5,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 4.5347981452941895
+    },
+    {
+      "name": "terrain_6_5",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 6,
+      "level": 5,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.21157307922840118,
+        0.10036064684391022,
+        1.00975501537323
+      ],
+      "mean_actual": [
+        0.2709701359272003,
+        -0.014784797094762325,
+        -0.2884971499443054
+      ],
+      "duration_seconds": 3.3200000000000003,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 7.1096110343933105
+    },
+    {
+      "name": "terrain_6_6",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 6,
+      "level": 6,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.174586683511734,
+        0.17491544783115387,
+        1.4432930946350098
+      ],
+      "mean_actual": [
+        0.3032222390174866,
+        -0.055702079087495804,
+        -0.37375208735466003
+      ],
+      "duration_seconds": 3.38,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 5.562927722930908
+    },
+    {
+      "name": "terrain_6_7",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 6,
+      "level": 7,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.32235661149024963,
+        0.15139669179916382,
+        0.9509193301200867
+      ],
+      "mean_actual": [
+        0.12015767395496368,
+        -0.0684073269367218,
+        0.18473027646541595
+      ],
+      "duration_seconds": 3.6,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 4.784770965576172
+    },
+    {
+      "name": "terrain_6_8",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 6,
+      "level": 8,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.30562397837638855,
+        0.30258387327194214,
+        0.9701247811317444
+      ],
+      "mean_actual": [
+        0.17846885323524475,
+        -0.12340593338012695,
+        -0.2601836919784546
+      ],
+      "duration_seconds": 3.52,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 3.1574032306671143
+    },
+    {
+      "name": "terrain_6_9",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 6,
+      "level": 9,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.2625155746936798,
+        0.28830358386039734,
+        1.1707017421722412
+      ],
+      "mean_actual": [
+        0.18624895811080933,
+        -0.10279040038585663,
+        -0.34614288806915283
+      ],
+      "duration_seconds": 3.86,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 2.361524820327759
+    },
+    {
+      "name": "terrain_7_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 7,
+      "level": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04461905360221863,
+        0.03129999712109566,
+        0.09526152163743973
+      ],
+      "mean_actual": [
+        0.3282063901424408,
+        -0.0023613153025507927,
+        -0.03347798436880112
+      ],
+      "duration_seconds": 7.9,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 29.386550903320312
+    },
+    {
+      "name": "terrain_7_1",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 7,
+      "level": 1,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04303591325879097,
+        0.033260006457567215,
+        0.09005340933799744
+      ],
+      "mean_actual": [
+        0.32986512780189514,
+        -0.002312618540599942,
+        -0.0365813672542572
+      ],
+      "duration_seconds": 7.88,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 29.365680694580078
+    },
+    {
+      "name": "terrain_7_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 7,
+      "level": 2,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04880170524120331,
+        0.03417053818702698,
+        0.10732145607471466
+      ],
+      "mean_actual": [
+        0.3325936496257782,
+        -0.000626220484264195,
+        -0.042870424687862396
+      ],
+      "duration_seconds": 7.82,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 28.6969051361084
+    },
+    {
+      "name": "terrain_7_3",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 7,
+      "level": 3,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.047808315604925156,
+        0.034207895398139954,
+        0.09876953810453415
+      ],
+      "mean_actual": [
+        0.3353671431541443,
+        -0.00026895166956819594,
+        -0.03964242711663246
+      ],
+      "duration_seconds": 7.76,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 28.65497398376465
+    },
+    {
+      "name": "terrain_7_4",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 7,
+      "level": 4,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.05638616159558296,
+        0.04838889464735985,
+        0.16279031336307526
+      ],
+      "mean_actual": [
+        0.3291538953781128,
+        -0.00043611874571070075,
+        -0.05242620408535004
+      ],
+      "duration_seconds": 8.16,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 28.44171142578125
+    },
+    {
+      "name": "terrain_7_5",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 7,
+      "level": 5,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.05784047022461891,
+        0.055413007736206055,
+        0.19494251906871796
+      ],
+      "mean_actual": [
+        0.3274160623550415,
+        0.00219868216663599,
+        -0.051088597625494
+      ],
+      "duration_seconds": 7.98,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 27.644758224487305
+    },
+    {
+      "name": "terrain_7_6",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 7,
+      "level": 6,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.5518563389778137,
+        0.3834068477153778,
+        1.105424165725708
+      ],
+      "mean_actual": [
+        0.5228537917137146,
+        0.11771604418754578,
+        -0.19017092883586884
+      ],
+      "duration_seconds": 5.62,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 7.6850457191467285
+    },
+    {
+      "name": "terrain_7_7",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 7,
+      "level": 7,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.29023683071136475,
+        0.2745154798030853,
+        0.9531322121620178
+      ],
+      "mean_actual": [
+        0.4259357750415802,
+        0.09395516663789749,
+        -0.254741907119751
+      ],
+      "duration_seconds": 4.74,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 9.097661972045898
+    },
+    {
+      "name": "terrain_7_8",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 7,
+      "level": 8,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.5733251571655273,
+        0.43932056427001953,
+        1.1614723205566406
+      ],
+      "mean_actual": [
+        0.5491840243339539,
+        -0.009387400932610035,
+        0.10795347392559052
+      ],
+      "duration_seconds": 5.46,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 7.211751937866211
+    },
+    {
+      "name": "terrain_7_9",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 7,
+      "level": 9,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.35856062173843384,
+        0.22388775646686554,
+        0.42916831374168396
+      ],
+      "mean_actual": [
+        0.4614335000514984,
+        0.090105801820755,
+        -0.10395842045545578
+      ],
+      "duration_seconds": 3.64,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 7.190150737762451
+    }
+  ],
+  "protocol": "motion_prior_basic",
+  "flat_window_seconds": 4.0,
+  "switch_segment_seconds": 2.0,
+  "invalid_count": 0,
+  "pass_counts": {
+    "standing": {
+      "passed": 3,
+      "attempts": 3
+    },
+    "forward": {
+      "passed": 6,
+      "attempts": 6
+    },
+    "backward": {
+      "passed": 0,
+      "attempts": 6
+    },
+    "left": {
+      "passed": 0,
+      "attempts": 6
+    },
+    "right": {
+      "passed": 0,
+      "attempts": 6
+    },
+    "yaw_left": {
+      "passed": 0,
+      "attempts": 6
+    },
+    "yaw_right": {
+      "passed": 0,
+      "attempts": 6
+    },
+    "terrain": {
+      "passed": 101,
+      "attempts": 210
+    }
+  },
+  "pass_rates": {
+    "standing": 1.0,
+    "forward": 1.0,
+    "backward": 0.0,
+    "left": 0.0,
+    "right": 0.0,
+    "yaw_left": 0.0,
+    "yaw_right": 0.0,
+    "coupled": 0.0
+  },
+  "flat_pass_rate": 0.23076923076923078,
+  "fall_rate": 0.23076923076923078,
+  "rmse": [
+    0.2525831860131036,
+    0.20695223425734,
+    0.8590278169175293
+  ],
+  "switch_pass_rate": 0.0,
+  "terrain_pass_rate": 0.48095238095238096,
+  "standard_flat_rows": [
+    {
+      "name": "standing_0",
+      "family": "standing",
+      "goal": [
+        0,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.029326019808650017,
+        0.013745068572461605,
+        0.023771077394485474
+      ],
+      "mean_actual": [
+        0.026273082941770554,
+        -0.010226244106888771,
+        -0.01123814843595028
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 38.54829406738281
+    },
+    {
+      "name": "backward_1",
+      "family": "backward",
+      "goal": [
+        -0.2,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.15484853088855743,
+        0.024461526423692703,
+        0.04896537587046623
+      ],
+      "mean_actual": [
+        -0.046029504388570786,
+        0.007143152412027121,
+        0.0006613715086132288
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 27.23768424987793
+    },
+    {
+      "name": "standing_0",
+      "family": "standing",
+      "goal": [
+        0,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.026768766343593597,
+        0.012357757426798344,
+        0.022912653163075447
+      ],
+      "mean_actual": [
+        0.023873524740338326,
+        -0.008613706566393375,
+        -0.008423471823334694
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 38.60430908203125
+    },
+    {
+      "name": "backward_1",
+      "family": "backward",
+      "goal": [
+        -0.2,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.15465375781059265,
+        0.023350045084953308,
+        0.0533110685646534
+      ],
+      "mean_actual": [
+        -0.046056777238845825,
+        0.007791451178491116,
+        0.0015267032431438565
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 27.241573333740234
+    },
+    {
+      "name": "standing_0",
+      "family": "standing",
+      "goal": [
+        0,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.0330083966255188,
+        0.013020047917962074,
+        0.02630319446325302
+      ],
+      "mean_actual": [
+        0.029592983424663544,
+        -0.009875121526420116,
+        -0.013225216418504715
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 38.493263244628906
+    },
+    {
+      "name": "backward_1",
+      "family": "backward",
+      "goal": [
+        -0.2,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.15639185905456543,
+        0.022266412153840065,
+        0.05282404646277428
+      ],
+      "mean_actual": [
+        -0.04428984597325325,
+        0.008378397673368454,
+        0.0011128198821097612
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 27.186595916748047
+    }
+  ]
+}

@@ -1,0 +1,5983 @@
+{
+  "rows": [
+    {
+      "name": "standing_0",
+      "family": "standing",
+      "goal": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.029326019808650017,
+        0.013745068572461605,
+        0.023771077394485474
+      ],
+      "mean_actual": [
+        0.026273082941770554,
+        -0.010226244106888771,
+        -0.01123814843595028
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 38.54829406738281
+    },
+    {
+      "name": "forward_0",
+      "family": "forward",
+      "goal": [
+        0.1,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.03718080371618271,
+        0.023852581158280373,
+        0.0275427158921957
+      ],
+      "mean_actual": [
+        0.13106511533260345,
+        0.021057777106761932,
+        -0.006297055631875992
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 27.114362716674805
+    },
+    {
+      "name": "forward_1",
+      "family": "forward",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.038466546684503555,
+        0.020465947687625885,
+        0.03683624789118767
+      ],
+      "mean_actual": [
+        0.3222765624523163,
+        0.009105412289500237,
+        -0.008191618137061596
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 34.3765983581543
+    },
+    {
+      "name": "forward_2",
+      "family": "forward",
+      "goal": [
+        0.5,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.046362053602933884,
+        0.024045728147029877,
+        0.0768677219748497
+      ],
+      "mean_actual": [
+        0.4799725413322449,
+        0.012795103713870049,
+        -0.03308454900979996
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 36.58145523071289
+    },
+    {
+      "name": "forward_3",
+      "family": "forward",
+      "goal": [
+        0.7,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.4190695881843567,
+        0.2553572356700897,
+        1.665954351425171
+      ],
+      "mean_actual": [
+        0.8829699158668518,
+        0.14642298221588135,
+        -0.4712722897529602
+      ],
+      "duration_seconds": 0.74,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 0.16447436809539795
+    },
+    {
+      "name": "forward_4",
+      "family": "forward",
+      "goal": [
+        0.375,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.034927383065223694,
+        0.022100944072008133,
+        0.0519736111164093
+      ],
+      "mean_actual": [
+        0.3800709843635559,
+        0.010045940987765789,
+        -0.013431898318231106
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 35.89879608154297
+    },
+    {
+      "name": "backward_0",
+      "family": "backward",
+      "goal": [
+        -0.1,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.08907052874565125,
+        0.016577674075961113,
+        0.03202934190630913
+      ],
+      "mean_actual": [
+        -0.011619623750448227,
+        -0.008035528473556042,
+        0.00988191831856966
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 26.180137634277344
+    },
+    {
+      "name": "backward_1",
+      "family": "backward",
+      "goal": [
+        -0.2,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.15484853088855743,
+        0.024461526423692703,
+        0.04896537587046623
+      ],
+      "mean_actual": [
+        -0.046029504388570786,
+        0.007143152412027121,
+        0.0006613715086132288
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 27.23768424987793
+    },
+    {
+      "name": "backward_2",
+      "family": "backward",
+      "goal": [
+        -0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.20930363237857819,
+        0.027416741475462914,
+        0.06763140112161636
+      ],
+      "mean_actual": [
+        -0.0935945212841034,
+        0.006542013492435217,
+        0.0005746377282775939
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 28.312711715698242
+    },
+    {
+      "name": "backward_3",
+      "family": "backward",
+      "goal": [
+        -0.175,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.14306138455867767,
+        0.022985778748989105,
+        0.046012140810489655
+      ],
+      "mean_actual": [
+        -0.0326995886862278,
+        0.006692053284496069,
+        0.002962591592222452
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 26.753440856933594
+    },
+    {
+      "name": "left_0",
+      "family": "left",
+      "goal": [
+        0,
+        0.1,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.042249929159879684,
+        0.08262022584676743,
+        0.042049579322338104
+      ],
+      "mean_actual": [
+        0.03901178389787674,
+        0.02813735418021679,
+        0.023986177518963814
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 25.172731399536133
+    },
+    {
+      "name": "left_1",
+      "family": "left",
+      "goal": [
+        0,
+        0.2,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.3931162357330322,
+        0.4269644618034363,
+        1.0809929370880127
+      ],
+      "mean_actual": [
+        0.14099565148353577,
+        0.17880380153656006,
+        -0.16621647775173187
+      ],
+      "duration_seconds": 1.78,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 3.726027488708496
+    },
+    {
+      "name": "left_2",
+      "family": "left",
+      "goal": [
+        0,
+        0.3,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.47914552688598633,
+        0.4819035530090332,
+        2.152606725692749
+      ],
+      "mean_actual": [
+        0.32403579354286194,
+        0.2299918383359909,
+        -0.8794993758201599
+      ],
+      "duration_seconds": 1.6400000000000001,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": -0.9931559562683105
+    },
+    {
+      "name": "left_3",
+      "family": "left",
+      "goal": [
+        0,
+        0.175,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.4322351813316345,
+        0.26336461305618286,
+        1.2497029304504395
+      ],
+      "mean_actual": [
+        0.23023824393749237,
+        0.2270430028438568,
+        -0.45917049050331116
+      ],
+      "duration_seconds": 1.8800000000000001,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 4.126394748687744
+    },
+    {
+      "name": "right_0",
+      "family": "right",
+      "goal": [
+        0,
+        -0.1,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.24511143565177917,
+        0.23338733613491058,
+        0.9969679117202759
+      ],
+      "mean_actual": [
+        0.10049610584974289,
+        -0.10477036237716675,
+        0.07350791990756989
+      ],
+      "duration_seconds": 2.6,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 7.239907264709473
+    },
+    {
+      "name": "right_1",
+      "family": "right",
+      "goal": [
+        0,
+        -0.2,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.3286856412887573,
+        0.14103908836841583,
+        1.3240665197372437
+      ],
+      "mean_actual": [
+        0.18786552548408508,
+        -0.17477519810199738,
+        -0.33033376932144165
+      ],
+      "duration_seconds": 1.54,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 5.7725958824157715
+    },
+    {
+      "name": "right_2",
+      "family": "right",
+      "goal": [
+        0,
+        -0.3,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.25747182965278625,
+        0.33716851472854614,
+        1.1574301719665527
+      ],
+      "mean_actual": [
+        0.08432478457689285,
+        -0.27402037382125854,
+        -0.07920341938734055
+      ],
+      "duration_seconds": 3.44,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 5.197703838348389
+    },
+    {
+      "name": "right_3",
+      "family": "right",
+      "goal": [
+        0,
+        -0.175,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.24778611958026886,
+        0.1921468824148178,
+        1.3460372686386108
+      ],
+      "mean_actual": [
+        -0.014014740474522114,
+        -0.1706632822751999,
+        0.6089720726013184
+      ],
+      "duration_seconds": 1.48,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 6.013741970062256
+    },
+    {
+      "name": "yaw_left_0",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.2
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.06756400316953659,
+        0.023779667913913727,
+        0.09248914569616318
+      ],
+      "mean_actual": [
+        0.06266447901725769,
+        0.011619338765740395,
+        0.11162946373224258
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 28.441261291503906
+    },
+    {
+      "name": "yaw_left_1",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.35
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.07065801322460175,
+        0.0239766463637352,
+        0.17001335322856903
+      ],
+      "mean_actual": [
+        0.06521810591220856,
+        0.0003833901428151876,
+        0.18576949834823608
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 30.138444900512695
+    },
+    {
+      "name": "yaw_left_2",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.4
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.06823388487100601,
+        0.0282219797372818,
+        0.2117675095796585
+      ],
+      "mean_actual": [
+        0.06142484024167061,
+        -0.007539331912994385,
+        0.1995452493429184
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 30.119075775146484
+    },
+    {
+      "name": "yaw_left_3",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.6
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.09725521504878998,
+        0.05986260250210762,
+        0.7656877636909485
+      ],
+      "mean_actual": [
+        0.050920892506837845,
+        -0.010128328576683998,
+        0.27976474165916443
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 22.705154418945312
+    },
+    {
+      "name": "yaw_left_4",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.475
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.06244420260190964,
+        0.0374331921339035,
+        0.30203279852867126
+      ],
+      "mean_actual": [
+        0.055198751389980316,
+        -0.0153533099219203,
+        0.2129528820514679
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 29.35628318786621
+    },
+    {
+      "name": "yaw_right_0",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.2
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.07123580574989319,
+        0.023087162524461746,
+        0.06530530005693436
+      ],
+      "mean_actual": [
+        0.06759347021579742,
+        -0.018414536491036415,
+        -0.1693306565284729
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 29.16236114501953
+    },
+    {
+      "name": "yaw_right_1",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.35
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.37245461344718933,
+        0.3697007894515991,
+        0.8901485800743103
+      ],
+      "mean_actual": [
+        0.24241866171360016,
+        0.10946912318468094,
+        -0.5884521007537842
+      ],
+      "duration_seconds": 3.2800000000000002,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 13.978155136108398
+    },
+    {
+      "name": "yaw_right_2",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.4
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.39632076025009155,
+        0.20553603768348694,
+        0.6404088139533997
+      ],
+      "mean_actual": [
+        0.2347642332315445,
+        0.03386843949556351,
+        -0.3599221706390381
+      ],
+      "duration_seconds": 3.38,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 17.59853744506836
+    },
+    {
+      "name": "yaw_right_3",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.6
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.3020055294036865,
+        0.30622321367263794,
+        1.2531033754348755
+      ],
+      "mean_actual": [
+        0.16008831560611725,
+        -0.09383846074342728,
+        -0.9347747564315796
+      ],
+      "duration_seconds": 3.0,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 10.216809272766113
+    },
+    {
+      "name": "yaw_right_4",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.475
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.31843796372413635,
+        0.15247833728790283,
+        0.5641451478004456
+      ],
+      "mean_actual": [
+        0.22071728110313416,
+        0.04046649858355522,
+        -0.49220961332321167
+      ],
+      "duration_seconds": 3.6,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 17.896263122558594
+    },
+    {
+      "name": "forward_yaw_0",
+      "family": "forward_yaw",
+      "goal": [
+        0.3,
+        0,
+        0.3
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.07333012670278549,
+        0.044323064386844635,
+        0.07171235233545303
+      ],
+      "mean_actual": [
+        0.36163821816444397,
+        -0.010731862857937813,
+        0.2790828347206116
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 27.94571304321289
+    },
+    {
+      "name": "forward_yaw_1",
+      "family": "forward_yaw",
+      "goal": [
+        0.3,
+        0,
+        -0.3
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.11822883039712906,
+        0.0255216546356678,
+        0.07256259024143219
+      ],
+      "mean_actual": [
+        0.4065805673599243,
+        -0.001377263804897666,
+        -0.2802872657775879
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 27.043508529663086
+    },
+    {
+      "name": "forward_yaw_2",
+      "family": "forward_yaw",
+      "goal": [
+        0.45,
+        0,
+        0.35
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.059615518897771835,
+        0.049038924276828766,
+        0.06874829530715942
+      ],
+      "mean_actual": [
+        0.48232173919677734,
+        -0.016860349103808403,
+        0.31999510526657104
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 31.751304626464844
+    },
+    {
+      "name": "forward_yaw_3",
+      "family": "forward_yaw",
+      "goal": [
+        0.45,
+        0,
+        -0.35
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.16884325444698334,
+        0.03137310966849327,
+        0.09663084894418716
+      ],
+      "mean_actual": [
+        0.5974493622779846,
+        0.00026799269835464656,
+        -0.32823798060417175
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 28.315908432006836
+    },
+    {
+      "name": "forward_lateral_0",
+      "family": "forward_lateral",
+      "goal": [
+        0.3,
+        0.1,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.30445677042007446,
+        0.3935573697090149,
+        0.8614557385444641
+      ],
+      "mean_actual": [
+        0.4067283570766449,
+        0.22225221991539001,
+        -0.31833237409591675
+      ],
+      "duration_seconds": 2.62,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 6.1604743003845215
+    },
+    {
+      "name": "forward_lateral_1",
+      "family": "forward_lateral",
+      "goal": [
+        0.3,
+        -0.1,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.06832924485206604,
+        0.05939388647675514,
+        0.07161234319210052
+      ],
+      "mean_actual": [
+        0.26078951358795166,
+        -0.047730837017297745,
+        -0.0301955696195364
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 23.209379196166992
+    },
+    {
+      "name": "forward_lateral_2",
+      "family": "forward_lateral",
+      "goal": [
+        0.25,
+        0.175,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.41136473417282104,
+        0.3752843141555786,
+        1.7142869234085083
+      ],
+      "mean_actual": [
+        0.39714449644088745,
+        0.15916746854782104,
+        -0.23531560599803925
+      ],
+      "duration_seconds": 2.56,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": -0.3033755123615265
+    },
+    {
+      "name": "forward_lateral_3",
+      "family": "forward_lateral",
+      "goal": [
+        0.25,
+        -0.175,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.4348807632923126,
+        0.30108484625816345,
+        1.3292542695999146
+      ],
+      "mean_actual": [
+        0.12463078647851944,
+        -0.20112155377864838,
+        -0.25239628553390503
+      ],
+      "duration_seconds": 2.2,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 0.287007212638855
+    },
+    {
+      "name": "lateral_yaw_0",
+      "family": "lateral_yaw",
+      "goal": [
+        0,
+        0.15,
+        0.4
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.2825106680393219,
+        0.36151665449142456,
+        2.5425264835357666
+      ],
+      "mean_actual": [
+        0.05114159733057022,
+        0.127590149641037,
+        -0.4349699914455414
+      ],
+      "duration_seconds": 2.22,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": -3.0543153285980225
+    },
+    {
+      "name": "lateral_yaw_1",
+      "family": "lateral_yaw",
+      "goal": [
+        0,
+        -0.15,
+        -0.4
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.48872917890548706,
+        0.36505353450775146,
+        1.1834176778793335
+      ],
+      "mean_actual": [
+        0.34428173303604126,
+        0.007725011557340622,
+        -0.899638295173645
+      ],
+      "duration_seconds": 2.96,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": -0.20921170711517334
+    },
+    {
+      "name": "lateral_yaw_2",
+      "family": "lateral_yaw",
+      "goal": [
+        0,
+        0.18,
+        -0.35
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.5160967111587524,
+        0.22282463312149048,
+        1.041914939880371
+      ],
+      "mean_actual": [
+        0.35745105147361755,
+        0.2151571363210678,
+        -0.5234591364860535
+      ],
+      "duration_seconds": 1.56,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 1.997062087059021
+    },
+    {
+      "name": "lateral_yaw_3",
+      "family": "lateral_yaw",
+      "goal": [
+        0,
+        -0.18,
+        0.35
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.12205874919891357,
+        0.10998346656560898,
+        0.3612646758556366
+      ],
+      "mean_actual": [
+        -0.09913024306297302,
+        -0.10230209678411484,
+        0.09664086997509003
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 17.211408615112305
+    },
+    {
+      "name": "start_stop",
+      "family": "switch",
+      "goal": [
+        0,
+        0,
+        0
+      ],
+      "sequence": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0.3,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.03643403574824333,
+        0.01692858524620533,
+        0.02991878055036068
+      ],
+      "mean_actual": [
+        0.12593647837638855,
+        0.001073840307071805,
+        -0.0011432977626100183
+      ],
+      "duration_seconds": 6.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 55.59194564819336
+    },
+    {
+      "name": "forward_reverse",
+      "family": "switch",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "sequence": [
+        [
+          0.3,
+          0,
+          0
+        ],
+        [
+          -0.2,
+          0,
+          0
+        ]
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.12509840726852417,
+        0.023815955966711044,
+        0.05003025010228157
+      ],
+      "mean_actual": [
+        0.14427946507930756,
+        0.012752121314406395,
+        -0.014710849151015282
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 30.24797248840332
+    },
+    {
+      "name": "lateral_reverse",
+      "family": "switch",
+      "goal": [
+        0,
+        0.2,
+        0
+      ],
+      "sequence": [
+        [
+          0,
+          0.2,
+          0
+        ],
+        [
+          0,
+          -0.2,
+          0
+        ]
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.3931162357330322,
+        0.4269644618034363,
+        1.0809929370880127
+      ],
+      "mean_actual": [
+        0.14099565148353577,
+        0.17880380153656006,
+        -0.16621647775173187
+      ],
+      "duration_seconds": 1.78,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 3.726027488708496
+    },
+    {
+      "name": "yaw_reverse",
+      "family": "switch",
+      "goal": [
+        0,
+        0,
+        0.4
+      ],
+      "sequence": [
+        [
+          0,
+          0,
+          0.4
+        ],
+        [
+          0,
+          0,
+          -0.4
+        ]
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.0635371059179306,
+        0.04046831279993057,
+        0.14767993986606598
+      ],
+      "mean_actual": [
+        0.05479766055941582,
+        -0.01840600185096264,
+        -0.12338747084140778
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 31.648889541625977
+    },
+    {
+      "name": "forward_to_lateral",
+      "family": "switch",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "sequence": [
+        [
+          0.3,
+          0,
+          0
+        ],
+        [
+          0,
+          0.2,
+          0
+        ]
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.24087733030319214,
+        0.18019594252109528,
+        0.5876362919807434
+      ],
+      "mean_actual": [
+        0.2724487781524658,
+        0.1035303995013237,
+        -0.14657190442085266
+      ],
+      "duration_seconds": 3.4,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 22.860376358032227
+    },
+    {
+      "name": "forward_to_turn",
+      "family": "switch",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "sequence": [
+        [
+          0.3,
+          0,
+          0
+        ],
+        [
+          0.3,
+          0,
+          0.4
+        ]
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.07461367547512054,
+        0.038912083953619,
+        0.06852586567401886
+      ],
+      "mean_actual": [
+        0.35528773069381714,
+        -0.0006475419504567981,
+        0.2041873037815094
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 31.649110794067383
+    },
+    {
+      "name": "terrain_1_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 1,
+      "level": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.05099620670080185,
+        0.018057677894830704,
+        0.08467685431241989
+      ],
+      "mean_actual": [
+        0.34111183881759644,
+        0.000891396717634052,
+        0.026198890060186386
+      ],
+      "duration_seconds": 10.0,
+      "valid": true,
+      "terminal_reason": "time_limit",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 83.88497924804688
+    },
+    {
+      "name": "terrain_1_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 1,
+      "level": 2,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.08654188364744186,
+        0.043517038226127625,
+        0.08418204635381699
+      ],
+      "mean_actual": [
+        0.26993536949157715,
+        0.008086171001195908,
+        0.019764335826039314
+      ],
+      "duration_seconds": 10.0,
+      "valid": true,
+      "terminal_reason": "time_limit",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 80.66007232666016
+    },
+    {
+      "name": "terrain_2_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 2,
+      "level": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.034952592104673386,
+        0.015468277968466282,
+        0.07184585183858871
+      ],
+      "mean_actual": [
+        0.3030795753002167,
+        -0.004442050587385893,
+        0.040061913430690765
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 152.15379333496094
+    },
+    {
+      "name": "terrain_2_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 2,
+      "level": 2,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.045461077243089676,
+        0.018693165853619576,
+        0.07291096448898315
+      ],
+      "mean_actual": [
+        0.3261927664279938,
+        -0.004994233604520559,
+        0.007406278513371944
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 150.05419921875
+    },
+    {
+      "name": "terrain_3_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 3,
+      "level": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04702902212738991,
+        0.015521664172410965,
+        0.07338563352823257
+      ],
+      "mean_actual": [
+        0.3371084928512573,
+        -0.003947029821574688,
+        0.04204802215099335
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 151.6033935546875
+    },
+    {
+      "name": "terrain_3_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 3,
+      "level": 2,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.05536189675331116,
+        0.015557627193629742,
+        0.06849560141563416
+      ],
+      "mean_actual": [
+        0.34629034996032715,
+        -0.00380654726177454,
+        0.04036414250731468
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 151.24856567382812
+    },
+    {
+      "name": "terrain_4_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 4,
+      "level": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04923601821064949,
+        0.0251194816082716,
+        0.0628112405538559
+      ],
+      "mean_actual": [
+        0.3099120259284973,
+        0.007610454689711332,
+        -0.03196857124567032
+      ],
+      "duration_seconds": 4.48,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 18.196273803710938
+    },
+    {
+      "name": "terrain_4_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 4,
+      "level": 2,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.33365222811698914,
+        0.18548597395420074,
+        1.0149980783462524
+      ],
+      "mean_actual": [
+        0.12836234271526337,
+        0.05859487131237984,
+        -0.2940577268600464
+      ],
+      "duration_seconds": 3.96,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 4.946783542633057
+    },
+    {
+      "name": "terrain_5_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 5,
+      "level": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.037811972200870514,
+        0.024534286931157112,
+        0.0748709887266159
+      ],
+      "mean_actual": [
+        0.32105574011802673,
+        -0.0017854213947430253,
+        -0.02847934700548649
+      ],
+      "duration_seconds": 4.3,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 17.596389770507812
+    },
+    {
+      "name": "terrain_5_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 5,
+      "level": 2,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.038917724043130875,
+        0.030626656487584114,
+        0.09704280644655228
+      ],
+      "mean_actual": [
+        0.31701064109802246,
+        0.0011905638966709375,
+        -0.03754176199436188
+      ],
+      "duration_seconds": 4.36,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 17.629039764404297
+    },
+    {
+      "name": "terrain_6_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 6,
+      "level": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.06827911734580994,
+        0.02506110817193985,
+        0.06560365110635757
+      ],
+      "mean_actual": [
+        0.30403247475624084,
+        -0.0037604982499033213,
+        -0.029816288501024246
+      ],
+      "duration_seconds": 8.6,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 30.96999740600586
+    },
+    {
+      "name": "terrain_6_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 6,
+      "level": 2,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.06506790220737457,
+        0.02505619265139103,
+        0.06020255386829376
+      ],
+      "mean_actual": [
+        0.3046850264072418,
+        -0.00317341648042202,
+        -0.027111971750855446
+      ],
+      "duration_seconds": 8.56,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 31.19728660583496
+    },
+    {
+      "name": "terrain_7_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 7,
+      "level": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04271823912858963,
+        0.03145449981093407,
+        0.10021887719631195
+      ],
+      "mean_actual": [
+        0.3271550238132477,
+        -0.002025805413722992,
+        -0.03950152546167374
+      ],
+      "duration_seconds": 8.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 29.316680908203125
+    },
+    {
+      "name": "terrain_7_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 7,
+      "level": 2,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04266081005334854,
+        0.03211606293916702,
+        0.10231910645961761
+      ],
+      "mean_actual": [
+        0.3284858763217926,
+        -0.0006642808439210057,
+        -0.035577625036239624
+      ],
+      "duration_seconds": 7.94,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 29.19074058532715
+    },
+    {
+      "name": "standing_0",
+      "family": "standing",
+      "goal": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.026768766343593597,
+        0.012357757426798344,
+        0.022912653163075447
+      ],
+      "mean_actual": [
+        0.023873524740338326,
+        -0.008613706566393375,
+        -0.008423471823334694
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 38.60430908203125
+    },
+    {
+      "name": "forward_0",
+      "family": "forward",
+      "goal": [
+        0.1,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.0344754122197628,
+        0.022478744387626648,
+        0.029171550646424294
+      ],
+      "mean_actual": [
+        0.1290178894996643,
+        0.020234940573573112,
+        -0.005071124527603388
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 27.17350959777832
+    },
+    {
+      "name": "forward_1",
+      "family": "forward",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.037098780274391174,
+        0.02038577012717724,
+        0.03468383848667145
+      ],
+      "mean_actual": [
+        0.31952229142189026,
+        0.00947495736181736,
+        -0.008341553620994091
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 34.388973236083984
+    },
+    {
+      "name": "forward_2",
+      "family": "forward",
+      "goal": [
+        0.5,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04704089090228081,
+        0.02362106926739216,
+        0.07567626237869263
+      ],
+      "mean_actual": [
+        0.4831567108631134,
+        0.013657177798449993,
+        -0.029368679970502853
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 36.60569381713867
+    },
+    {
+      "name": "forward_3",
+      "family": "forward",
+      "goal": [
+        0.7,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.5754372477531433,
+        0.4612955152988434,
+        1.9653111696243286
+      ],
+      "mean_actual": [
+        0.36161112785339355,
+        -0.2565767168998718,
+        -0.797723650932312
+      ],
+      "duration_seconds": 1.58,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": -3.70888090133667
+    },
+    {
+      "name": "forward_4",
+      "family": "forward",
+      "goal": [
+        0.375,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.0363243967294693,
+        0.020655911415815353,
+        0.051534052938222885
+      ],
+      "mean_actual": [
+        0.381534606218338,
+        0.010025815106928349,
+        -0.01413248386234045
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 35.9101448059082
+    },
+    {
+      "name": "backward_0",
+      "family": "backward",
+      "goal": [
+        -0.1,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.08856703341007233,
+        0.018256597220897675,
+        0.032833099365234375
+      ],
+      "mean_actual": [
+        -0.012018773704767227,
+        -0.007345176301896572,
+        0.012401019223034382
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 26.16762351989746
+    },
+    {
+      "name": "backward_1",
+      "family": "backward",
+      "goal": [
+        -0.2,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.15465375781059265,
+        0.023350045084953308,
+        0.0533110685646534
+      ],
+      "mean_actual": [
+        -0.046056777238845825,
+        0.007791451178491116,
+        0.0015267032431438565
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 27.241573333740234
+    },
+    {
+      "name": "backward_2",
+      "family": "backward",
+      "goal": [
+        -0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.20746636390686035,
+        0.03254407271742821,
+        0.07069971412420273
+      ],
+      "mean_actual": [
+        -0.09559348225593567,
+        0.008704843930900097,
+        -0.0033744678366929293
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 28.246326446533203
+    },
+    {
+      "name": "backward_3",
+      "family": "backward",
+      "goal": [
+        -0.175,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.14658191800117493,
+        0.02027777023613453,
+        0.04561945050954819
+      ],
+      "mean_actual": [
+        -0.02906702272593975,
+        0.006996610667556524,
+        0.000595530669670552
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 26.649066925048828
+    },
+    {
+      "name": "left_0",
+      "family": "left",
+      "goal": [
+        0,
+        0.1,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.0408211350440979,
+        0.08095195144414902,
+        0.04429136961698532
+      ],
+      "mean_actual": [
+        0.03746669366955757,
+        0.030207285657525063,
+        0.02449360117316246
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 25.280071258544922
+    },
+    {
+      "name": "left_1",
+      "family": "left",
+      "goal": [
+        0,
+        0.2,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.285836398601532,
+        0.24744024872779846,
+        1.194589614868164
+      ],
+      "mean_actual": [
+        0.1887226700782776,
+        0.23914997279644012,
+        -0.4126831889152527
+      ],
+      "duration_seconds": 1.86,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 5.895262718200684
+    },
+    {
+      "name": "left_2",
+      "family": "left",
+      "goal": [
+        0,
+        0.3,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.567267894744873,
+        0.4262375235557556,
+        1.3069369792938232
+      ],
+      "mean_actual": [
+        0.40217843651771545,
+        0.16080546379089355,
+        -0.438480943441391
+      ],
+      "duration_seconds": 1.32,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 1.880446195602417
+    },
+    {
+      "name": "left_3",
+      "family": "left",
+      "goal": [
+        0,
+        0.175,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.5217813849449158,
+        0.36197197437286377,
+        1.0378812551498413
+      ],
+      "mean_actual": [
+        0.17725302278995514,
+        0.2621593177318573,
+        -0.34187808632850647
+      ],
+      "duration_seconds": 2.54,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 4.543385028839111
+    },
+    {
+      "name": "right_0",
+      "family": "right",
+      "goal": [
+        0,
+        -0.1,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.23885178565979004,
+        0.12163987010717392,
+        1.474123477935791
+      ],
+      "mean_actual": [
+        0.07579699903726578,
+        -0.1162436231970787,
+        -0.26994070410728455
+      ],
+      "duration_seconds": 2.6,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 8.897481918334961
+    },
+    {
+      "name": "right_1",
+      "family": "right",
+      "goal": [
+        0,
+        -0.2,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.41504165530204773,
+        0.18993689119815826,
+        1.9569545984268188
+      ],
+      "mean_actual": [
+        0.18115414679050446,
+        -0.1944374442100525,
+        -0.16608785092830658
+      ],
+      "duration_seconds": 1.76,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 4.121185779571533
+    },
+    {
+      "name": "right_2",
+      "family": "right",
+      "goal": [
+        0,
+        -0.3,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.4892105758190155,
+        0.4180311858654022,
+        1.932686448097229
+      ],
+      "mean_actual": [
+        0.29308071732521057,
+        -0.499598890542984,
+        -0.7757796049118042
+      ],
+      "duration_seconds": 2.64,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 1.3853813409805298
+    },
+    {
+      "name": "right_3",
+      "family": "right",
+      "goal": [
+        0,
+        -0.175,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.11663877218961716,
+        0.13268440961837769,
+        0.6338992714881897
+      ],
+      "mean_actual": [
+        0.026043271645903587,
+        -0.14182698726654053,
+        0.22027349472045898
+      ],
+      "duration_seconds": 1.74,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 7.887365818023682
+    },
+    {
+      "name": "yaw_left_0",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.2
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.07052469998598099,
+        0.029416602104902267,
+        0.08980289846658707
+      ],
+      "mean_actual": [
+        0.06655003875494003,
+        0.014825630933046341,
+        0.11460372805595398
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 28.259458541870117
+    },
+    {
+      "name": "yaw_left_1",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.35
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.07147565484046936,
+        0.022914938628673553,
+        0.17150667309761047
+      ],
+      "mean_actual": [
+        0.06583752483129501,
+        -0.0004255695967003703,
+        0.1848614662885666
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 30.107421875
+    },
+    {
+      "name": "yaw_left_2",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.4
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.06625379621982574,
+        0.026063222438097,
+        0.2100735753774643
+      ],
+      "mean_actual": [
+        0.05792653560638428,
+        -0.007920721545815468,
+        0.20066200196743011
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 30.260847091674805
+    },
+    {
+      "name": "yaw_left_3",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.6
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.1060408353805542,
+        0.041233599185943604,
+        0.521582305431366
+      ],
+      "mean_actual": [
+        0.09904596954584122,
+        -0.022900257259607315,
+        0.2511601746082306
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 25.82645034790039
+    },
+    {
+      "name": "yaw_left_4",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.475
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.06324877589941025,
+        0.04375471547245979,
+        0.3065362572669983
+      ],
+      "mean_actual": [
+        0.04934549331665039,
+        -0.016388166695833206,
+        0.21389108896255493
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 29.21428680419922
+    },
+    {
+      "name": "yaw_right_0",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.2
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.07224608212709427,
+        0.02236536331474781,
+        0.05945686250925064
+      ],
+      "mean_actual": [
+        0.06799978762865067,
+        -0.01707131415605545,
+        -0.16953054070472717
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 29.209383010864258
+    },
+    {
+      "name": "yaw_right_1",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.35
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.6144049763679504,
+        0.2840406000614166,
+        1.2442104816436768
+      ],
+      "mean_actual": [
+        0.30777403712272644,
+        0.025252480059862137,
+        -0.579876720905304
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 12.38065242767334
+    },
+    {
+      "name": "yaw_right_2",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.4
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.4727967083454132,
+        0.19917389750480652,
+        1.4013159275054932
+      ],
+      "mean_actual": [
+        0.24337512254714966,
+        -0.044012244790792465,
+        -0.09541099518537521
+      ],
+      "duration_seconds": 3.58,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 12.755805969238281
+    },
+    {
+      "name": "yaw_right_3",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.6
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.2170669436454773,
+        0.08077219128608704,
+        0.5362182855606079
+      ],
+      "mean_actual": [
+        0.17030702531337738,
+        -0.0006459271535277367,
+        -0.5335638523101807
+      ],
+      "duration_seconds": 3.16,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 18.590124130249023
+    },
+    {
+      "name": "yaw_right_4",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.475
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.4330994188785553,
+        0.22877368330955505,
+        0.942825973033905
+      ],
+      "mean_actual": [
+        0.2989838719367981,
+        0.08636842668056488,
+        -0.6328889727592468
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 15.988886833190918
+    },
+    {
+      "name": "forward_yaw_0",
+      "family": "forward_yaw",
+      "goal": [
+        0.3,
+        0,
+        0.3
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.06795921176671982,
+        0.04092642292380333,
+        0.06980174779891968
+      ],
+      "mean_actual": [
+        0.355058491230011,
+        -0.011115755885839462,
+        0.27665093541145325
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 28.183549880981445
+    },
+    {
+      "name": "forward_yaw_1",
+      "family": "forward_yaw",
+      "goal": [
+        0.3,
+        0,
+        -0.3
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.11417800933122635,
+        0.027439668774604797,
+        0.06723441183567047
+      ],
+      "mean_actual": [
+        0.4035717844963074,
+        -0.006684755906462669,
+        -0.27489739656448364
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 27.19363784790039
+    },
+    {
+      "name": "forward_yaw_2",
+      "family": "forward_yaw",
+      "goal": [
+        0.45,
+        0,
+        0.35
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.05982402712106705,
+        0.045818135142326355,
+        0.0677109956741333
+      ],
+      "mean_actual": [
+        0.4830174744129181,
+        -0.01626531407237053,
+        0.32117488980293274
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 31.84066390991211
+    },
+    {
+      "name": "forward_yaw_3",
+      "family": "forward_yaw",
+      "goal": [
+        0.45,
+        0,
+        -0.35
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.3909071683883667,
+        0.28410691022872925,
+        0.5574473142623901
+      ],
+      "mean_actual": [
+        0.6975641846656799,
+        0.14164160192012787,
+        -0.4506854712963104
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 15.842825889587402
+    },
+    {
+      "name": "forward_lateral_0",
+      "family": "forward_lateral",
+      "goal": [
+        0.3,
+        0.1,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.24139951169490814,
+        0.22600267827510834,
+        0.6105861663818359
+      ],
+      "mean_actual": [
+        0.3928726613521576,
+        0.16111040115356445,
+        -0.18095910549163818
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 15.498866081237793
+    },
+    {
+      "name": "forward_lateral_1",
+      "family": "forward_lateral",
+      "goal": [
+        0.3,
+        -0.1,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.07255157083272934,
+        0.058398544788360596,
+        0.07036750763654709
+      ],
+      "mean_actual": [
+        0.25829243659973145,
+        -0.04782014712691307,
+        -0.02959485724568367
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 23.140817642211914
+    },
+    {
+      "name": "forward_lateral_2",
+      "family": "forward_lateral",
+      "goal": [
+        0.25,
+        0.175,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.4397119879722595,
+        0.28423526883125305,
+        1.498923420906067
+      ],
+      "mean_actual": [
+        0.4870222806930542,
+        0.14097553491592407,
+        -0.07259807735681534
+      ],
+      "duration_seconds": 2.4,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 0.18160393834114075
+    },
+    {
+      "name": "forward_lateral_3",
+      "family": "forward_lateral",
+      "goal": [
+        0.25,
+        -0.175,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.47395798563957214,
+        0.33917051553726196,
+        1.7147055864334106
+      ],
+      "mean_actual": [
+        0.1833520084619522,
+        -0.22879867255687714,
+        -0.05234577879309654
+      ],
+      "duration_seconds": 2.66,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": -3.05412220954895
+    },
+    {
+      "name": "lateral_yaw_0",
+      "family": "lateral_yaw",
+      "goal": [
+        0,
+        0.15,
+        0.4
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.262658029794693,
+        0.35112476348876953,
+        1.6984649896621704
+      ],
+      "mean_actual": [
+        0.07624246925115585,
+        0.19608363509178162,
+        -0.24550944566726685
+      ],
+      "duration_seconds": 1.76,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 2.097862958908081
+    },
+    {
+      "name": "lateral_yaw_1",
+      "family": "lateral_yaw",
+      "goal": [
+        0,
+        -0.15,
+        -0.4
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.8877068161964417,
+        0.5633652210235596,
+        1.4038729667663574
+      ],
+      "mean_actual": [
+        0.6560371518135071,
+        0.14050553739070892,
+        -0.8444846272468567
+      ],
+      "duration_seconds": 2.4,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": -1.6195955276489258
+    },
+    {
+      "name": "lateral_yaw_2",
+      "family": "lateral_yaw",
+      "goal": [
+        0,
+        0.18,
+        -0.35
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.4968720078468323,
+        0.4433337152004242,
+        1.158962368965149
+      ],
+      "mean_actual": [
+        0.21327079832553864,
+        0.3941287696361542,
+        -0.5294755101203918
+      ],
+      "duration_seconds": 2.74,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": -3.291203022003174
+    },
+    {
+      "name": "lateral_yaw_3",
+      "family": "lateral_yaw",
+      "goal": [
+        0,
+        -0.18,
+        0.35
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.12347786128520966,
+        0.11165231466293335,
+        0.35818564891815186
+      ],
+      "mean_actual": [
+        -0.09658730775117874,
+        -0.09749626368284225,
+        0.0905364528298378
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 16.97861671447754
+    },
+    {
+      "name": "start_stop",
+      "family": "switch",
+      "goal": [
+        0,
+        0,
+        0
+      ],
+      "sequence": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0.3,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.03989697992801666,
+        0.019010383635759354,
+        0.027660630643367767
+      ],
+      "mean_actual": [
+        0.12959492206573486,
+        0.005612155422568321,
+        0.0016521443612873554
+      ],
+      "duration_seconds": 6.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 55.45835494995117
+    },
+    {
+      "name": "forward_reverse",
+      "family": "switch",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "sequence": [
+        [
+          0.3,
+          0,
+          0
+        ],
+        [
+          -0.2,
+          0,
+          0
+        ]
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.11531146615743637,
+        0.030067862942814827,
+        0.05317864567041397
+      ],
+      "mean_actual": [
+        0.13510137796401978,
+        0.0204042699187994,
+        -0.020749686285853386
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 30.36147689819336
+    },
+    {
+      "name": "lateral_reverse",
+      "family": "switch",
+      "goal": [
+        0,
+        0.2,
+        0
+      ],
+      "sequence": [
+        [
+          0,
+          0.2,
+          0
+        ],
+        [
+          0,
+          -0.2,
+          0
+        ]
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.285836398601532,
+        0.24744024872779846,
+        1.194589614868164
+      ],
+      "mean_actual": [
+        0.1887226700782776,
+        0.23914997279644012,
+        -0.4126831889152527
+      ],
+      "duration_seconds": 1.86,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 5.895262718200684
+    },
+    {
+      "name": "yaw_reverse",
+      "family": "switch",
+      "goal": [
+        0,
+        0,
+        0.4
+      ],
+      "sequence": [
+        [
+          0,
+          0,
+          0.4
+        ],
+        [
+          0,
+          0,
+          -0.4
+        ]
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.06302687525749207,
+        0.03738923743367195,
+        0.14538231492042542
+      ],
+      "mean_actual": [
+        0.052841633558273315,
+        -0.017692632973194122,
+        -0.12010284513235092
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 31.80029296875
+    },
+    {
+      "name": "forward_to_lateral",
+      "family": "switch",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "sequence": [
+        [
+          0.3,
+          0,
+          0
+        ],
+        [
+          0,
+          0.2,
+          0
+        ]
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.3511139750480652,
+        0.32679158449172974,
+        1.207136869430542
+      ],
+      "mean_actual": [
+        0.2927374839782715,
+        0.2317114919424057,
+        -0.4931322932243347
+      ],
+      "duration_seconds": 3.88,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 18.70049476623535
+    },
+    {
+      "name": "forward_to_turn",
+      "family": "switch",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "sequence": [
+        [
+          0.3,
+          0,
+          0
+        ],
+        [
+          0.3,
+          0,
+          0.4
+        ]
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.07076595723628998,
+        0.03896564245223999,
+        0.0717129185795784
+      ],
+      "mean_actual": [
+        0.35077983140945435,
+        -0.000761143397539854,
+        0.20664115250110626
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 31.710599899291992
+    },
+    {
+      "name": "terrain_1_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 1,
+      "level": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.05605124309659004,
+        0.017662877216935158,
+        0.08314068615436554
+      ],
+      "mean_actual": [
+        0.34717127680778503,
+        0.00147686165291816,
+        0.02620064467191696
+      ],
+      "duration_seconds": 10.0,
+      "valid": true,
+      "terminal_reason": "time_limit",
+      "initial_yaw_rad": 0.0,
+      "reward": 83.60464477539062
+    },
+    {
+      "name": "terrain_1_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 1,
+      "level": 2,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.07362353056669235,
+        0.039983246475458145,
+        0.0963388979434967
+      ],
+      "mean_actual": [
+        0.2846124470233917,
+        0.006753146182745695,
+        0.016729218885302544
+      ],
+      "duration_seconds": 10.0,
+      "valid": true,
+      "terminal_reason": "time_limit",
+      "initial_yaw_rad": 0.0,
+      "reward": 81.1042709350586
+    },
+    {
+      "name": "terrain_2_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 2,
+      "level": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.035717107355594635,
+        0.015772588551044464,
+        0.07235933840274811
+      ],
+      "mean_actual": [
+        0.3081345856189728,
+        -0.004238266497850418,
+        0.0392739400267601
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 152.0952606201172
+    },
+    {
+      "name": "terrain_2_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 2,
+      "level": 2,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04859460890293121,
+        0.018860289826989174,
+        0.07081632316112518
+      ],
+      "mean_actual": [
+        0.32734382152557373,
+        -0.004221380688250065,
+        0.007869432680308819
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 149.93797302246094
+    },
+    {
+      "name": "terrain_3_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 3,
+      "level": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04314803704619408,
+        0.01482254359871149,
+        0.0712837427854538
+      ],
+      "mean_actual": [
+        0.33377978205680847,
+        -0.003941266797482967,
+        0.04280069097876549
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 152.0043487548828
+    },
+    {
+      "name": "terrain_3_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 3,
+      "level": 2,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.05381837859749794,
+        0.014690089970827103,
+        0.0695992112159729
+      ],
+      "mean_actual": [
+        0.34479930996894836,
+        -0.004017092287540436,
+        0.04093535244464874
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 151.3223876953125
+    },
+    {
+      "name": "terrain_4_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 4,
+      "level": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04833439737558365,
+        0.022686393931508064,
+        0.06121039018034935
+      ],
+      "mean_actual": [
+        0.30596691370010376,
+        0.006429721601307392,
+        -0.03174716979265213
+      ],
+      "duration_seconds": 4.5200000000000005,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 18.445615768432617
+    },
+    {
+      "name": "terrain_4_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 4,
+      "level": 2,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.3122072219848633,
+        0.2719774544239044,
+        1.129245638847351
+      ],
+      "mean_actual": [
+        0.1451013833284378,
+        -0.0533987395465374,
+        -0.21714282035827637
+      ],
+      "duration_seconds": 9.120000000000001,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 0.7666053771972656
+    },
+    {
+      "name": "terrain_5_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 5,
+      "level": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.03883714601397514,
+        0.02297949604690075,
+        0.07422858476638794
+      ],
+      "mean_actual": [
+        0.32397162914276123,
+        -0.0013546018162742257,
+        -0.030232444405555725
+      ],
+      "duration_seconds": 4.24,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 17.406721115112305
+    },
+    {
+      "name": "terrain_5_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 5,
+      "level": 2,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04060443118214607,
+        0.025639010593295097,
+        0.08887720853090286
+      ],
+      "mean_actual": [
+        0.3242638409137726,
+        0.00010727596236392856,
+        -0.03790713846683502
+      ],
+      "duration_seconds": 4.26,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 17.319623947143555
+    },
+    {
+      "name": "terrain_6_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 6,
+      "level": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.07439009845256805,
+        0.024862686172127724,
+        0.07718739658594131
+      ],
+      "mean_actual": [
+        0.2992812395095825,
+        -0.0020843090023845434,
+        -0.032552119344472885
+      ],
+      "duration_seconds": 8.72,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 31.19498634338379
+    },
+    {
+      "name": "terrain_6_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 6,
+      "level": 2,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.07188962399959564,
+        0.025524985045194626,
+        0.06719857454299927
+      ],
+      "mean_actual": [
+        0.30164989829063416,
+        -0.0030714902095496655,
+        -0.03150977939367294
+      ],
+      "duration_seconds": 8.64,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 31.091352462768555
+    },
+    {
+      "name": "terrain_7_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 7,
+      "level": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04130639508366585,
+        0.03178733214735985,
+        0.09218242019414902
+      ],
+      "mean_actual": [
+        0.32537320256233215,
+        -0.0024422467686235905,
+        -0.03455090522766113
+      ],
+      "duration_seconds": 8.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 29.771848678588867
+    },
+    {
+      "name": "terrain_7_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 7,
+      "level": 2,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.049499429762363434,
+        0.03131429851055145,
+        0.10560537874698639
+      ],
+      "mean_actual": [
+        0.3349420428276062,
+        0.0019710585474967957,
+        -0.039194997400045395
+      ],
+      "duration_seconds": 7.78,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 28.619356155395508
+    },
+    {
+      "name": "standing_0",
+      "family": "standing",
+      "goal": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.0330083966255188,
+        0.013020047917962074,
+        0.02630319446325302
+      ],
+      "mean_actual": [
+        0.029592983424663544,
+        -0.009875121526420116,
+        -0.013225216418504715
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 38.493263244628906
+    },
+    {
+      "name": "forward_0",
+      "family": "forward",
+      "goal": [
+        0.1,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.033608853816986084,
+        0.02269134670495987,
+        0.0299169160425663
+      ],
+      "mean_actual": [
+        0.12973879277706146,
+        0.020623795688152313,
+        -0.006039475090801716
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 27.177099227905273
+    },
+    {
+      "name": "forward_1",
+      "family": "forward",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.036992765963077545,
+        0.019081883132457733,
+        0.034638334065675735
+      ],
+      "mean_actual": [
+        0.31967413425445557,
+        0.00871863029897213,
+        -0.00785641185939312
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 34.417537689208984
+    },
+    {
+      "name": "forward_2",
+      "family": "forward",
+      "goal": [
+        0.5,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04498695582151413,
+        0.022631797939538956,
+        0.07456948608160019
+      ],
+      "mean_actual": [
+        0.47864359617233276,
+        0.01208893395960331,
+        -0.027623658999800682
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 36.683834075927734
+    },
+    {
+      "name": "forward_3",
+      "family": "forward",
+      "goal": [
+        0.7,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.3515394926071167,
+        0.7238202691078186,
+        1.6384031772613525
+      ],
+      "mean_actual": [
+        0.820736825466156,
+        0.4875243008136749,
+        -0.24291463196277618
+      ],
+      "duration_seconds": 1.5,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": -2.434325933456421
+    },
+    {
+      "name": "forward_4",
+      "family": "forward",
+      "goal": [
+        0.375,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.034227676689624786,
+        0.021509405225515366,
+        0.05117828771471977
+      ],
+      "mean_actual": [
+        0.37966975569725037,
+        0.00983721949160099,
+        -0.015149236656725407
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 35.93044662475586
+    },
+    {
+      "name": "backward_0",
+      "family": "backward",
+      "goal": [
+        -0.1,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.08957939594984055,
+        0.01685432530939579,
+        0.03126605227589607
+      ],
+      "mean_actual": [
+        -0.010988075286149979,
+        -0.006848729215562344,
+        0.011819864623248577
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 26.16335678100586
+    },
+    {
+      "name": "backward_1",
+      "family": "backward",
+      "goal": [
+        -0.2,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.15639185905456543,
+        0.022266412153840065,
+        0.05282404646277428
+      ],
+      "mean_actual": [
+        -0.04428984597325325,
+        0.008378397673368454,
+        0.0011128198821097612
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 27.186595916748047
+    },
+    {
+      "name": "backward_2",
+      "family": "backward",
+      "goal": [
+        -0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.20713655650615692,
+        0.030944213271141052,
+        0.07049424201250076
+      ],
+      "mean_actual": [
+        -0.09515902400016785,
+        0.0072358399629592896,
+        -0.0017269975505769253
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 28.257240295410156
+    },
+    {
+      "name": "backward_3",
+      "family": "backward",
+      "goal": [
+        -0.175,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.14430399239063263,
+        0.0223661158233881,
+        0.04540853574872017
+      ],
+      "mean_actual": [
+        -0.031832579523324966,
+        0.006921887863427401,
+        0.002573649864643812
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 26.72197914123535
+    },
+    {
+      "name": "left_0",
+      "family": "left",
+      "goal": [
+        0,
+        0.1,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.03985023498535156,
+        0.0836479440331459,
+        0.04408179968595505
+      ],
+      "mean_actual": [
+        0.03608503192663193,
+        0.02717231586575508,
+        0.024371683597564697
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 25.160799026489258
+    },
+    {
+      "name": "left_1",
+      "family": "left",
+      "goal": [
+        0,
+        0.2,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.2228350043296814,
+        0.1782670021057129,
+        0.6253767013549805
+      ],
+      "mean_actual": [
+        0.14743468165397644,
+        0.1721103936433792,
+        -0.21893219649791718
+      ],
+      "duration_seconds": 1.56,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 7.2810444831848145
+    },
+    {
+      "name": "left_2",
+      "family": "left",
+      "goal": [
+        0,
+        0.3,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.3219890892505646,
+        0.3295104503631592,
+        1.6923933029174805
+      ],
+      "mean_actual": [
+        0.16945281624794006,
+        0.36129775643348694,
+        -0.7462581396102905
+      ],
+      "duration_seconds": 1.22,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 3.747889518737793
+    },
+    {
+      "name": "left_3",
+      "family": "left",
+      "goal": [
+        0,
+        0.175,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.42392632365226746,
+        0.3664677143096924,
+        1.4976348876953125
+      ],
+      "mean_actual": [
+        0.22014077007770538,
+        0.2518211305141449,
+        -0.5815863609313965
+      ],
+      "duration_seconds": 1.86,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 4.776099681854248
+    },
+    {
+      "name": "right_0",
+      "family": "right",
+      "goal": [
+        0,
+        -0.1,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.5699657797813416,
+        0.4740216135978699,
+        2.0297658443450928
+      ],
+      "mean_actual": [
+        -0.20763233304023743,
+        -0.15052330493927002,
+        0.22830505669116974
+      ],
+      "duration_seconds": 3.64,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": -2.6245288848876953
+    },
+    {
+      "name": "right_1",
+      "family": "right",
+      "goal": [
+        0,
+        -0.2,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.3819267451763153,
+        0.26301807165145874,
+        1.0047658681869507
+      ],
+      "mean_actual": [
+        0.18058297038078308,
+        -0.2839874029159546,
+        -0.013362887315452099
+      ],
+      "duration_seconds": 1.68,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 4.8185343742370605
+    },
+    {
+      "name": "right_2",
+      "family": "right",
+      "goal": [
+        0,
+        -0.3,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.8385597467422485,
+        0.7498827576637268,
+        1.7769137620925903
+      ],
+      "mean_actual": [
+        0.5773561596870422,
+        0.10300160944461823,
+        -1.112610101699829
+      ],
+      "duration_seconds": 3.14,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": -2.8002891540527344
+    },
+    {
+      "name": "right_3",
+      "family": "right",
+      "goal": [
+        0,
+        -0.175,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.18738535046577454,
+        0.1598633974790573,
+        1.1497352123260498
+      ],
+      "mean_actual": [
+        0.09268036484718323,
+        -0.14285187423229218,
+        0.47274863719940186
+      ],
+      "duration_seconds": 1.6400000000000001,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 5.258533000946045
+    },
+    {
+      "name": "yaw_left_0",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.2
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.06787747144699097,
+        0.024804649874567986,
+        0.09139534085988998
+      ],
+      "mean_actual": [
+        0.06441202014684677,
+        0.01147415116429329,
+        0.11241792887449265
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 28.405439376831055
+    },
+    {
+      "name": "yaw_left_1",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.35
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.06718576699495316,
+        0.02315411902964115,
+        0.17109398543834686
+      ],
+      "mean_actual": [
+        0.06021903082728386,
+        -0.002646832726895809,
+        0.184854656457901
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 30.27536964416504
+    },
+    {
+      "name": "yaw_left_2",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.4
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.07032682001590729,
+        0.02736687660217285,
+        0.21068622171878815
+      ],
+      "mean_actual": [
+        0.06392823904752731,
+        -0.0073328278958797455,
+        0.1995334029197693
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 30.08389663696289
+    },
+    {
+      "name": "yaw_left_3",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.6
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.09400864690542221,
+        0.05029319226741791,
+        0.7660840749740601
+      ],
+      "mean_actual": [
+        0.04688766971230507,
+        -0.008652863092720509,
+        0.26318982243537903
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 23.498394012451172
+    },
+    {
+      "name": "yaw_left_4",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.475
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.05731471627950668,
+        0.04033283144235611,
+        0.3068539500236511
+      ],
+      "mean_actual": [
+        0.04578901827335358,
+        -0.015693414956331253,
+        0.2130436897277832
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 29.417219161987305
+    },
+    {
+      "name": "yaw_right_0",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.2
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.07445864379405975,
+        0.022179879248142242,
+        0.06008907034993172
+      ],
+      "mean_actual": [
+        0.06975840032100677,
+        -0.01745864935219288,
+        -0.1700030118227005
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 29.15266227722168
+    },
+    {
+      "name": "yaw_right_1",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.35
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.16540981829166412,
+        0.049830928444862366,
+        0.316561222076416
+      ],
+      "mean_actual": [
+        0.1408473551273346,
+        0.0023573385551571846,
+        -0.29319801926612854
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 25.999536514282227
+    },
+    {
+      "name": "yaw_right_2",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.4
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.4115748405456543,
+        0.4322350323200226,
+        1.26266348361969
+      ],
+      "mean_actual": [
+        0.23675769567489624,
+        0.17048387229442596,
+        -0.6471422910690308
+      ],
+      "duration_seconds": 3.22,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 11.258807182312012
+    },
+    {
+      "name": "yaw_right_3",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.6
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.46207723021507263,
+        0.3033197820186615,
+        0.8816315531730652
+      ],
+      "mean_actual": [
+        0.33020612597465515,
+        0.12473462522029877,
+        -0.9200985431671143
+      ],
+      "duration_seconds": 2.06,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 8.676010131835938
+    },
+    {
+      "name": "yaw_right_4",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.475
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.42497166991233826,
+        0.3084082305431366,
+        1.2249665260314941
+      ],
+      "mean_actual": [
+        -0.014689373783767223,
+        0.015470597892999649,
+        -0.41402125358581543
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 12.282414436340332
+    },
+    {
+      "name": "forward_yaw_0",
+      "family": "forward_yaw",
+      "goal": [
+        0.3,
+        0,
+        0.3
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.07475454360246658,
+        0.044391658157110214,
+        0.07139313966035843
+      ],
+      "mean_actual": [
+        0.36255139112472534,
+        -0.00995834730565548,
+        0.27502724528312683
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 27.896377563476562
+    },
+    {
+      "name": "forward_yaw_1",
+      "family": "forward_yaw",
+      "goal": [
+        0.3,
+        0,
+        -0.3
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.1171916201710701,
+        0.026416534557938576,
+        0.0679187923669815
+      ],
+      "mean_actual": [
+        0.4066395163536072,
+        -0.0034877124708145857,
+        -0.2784941792488098
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 27.118520736694336
+    },
+    {
+      "name": "forward_yaw_2",
+      "family": "forward_yaw",
+      "goal": [
+        0.45,
+        0,
+        0.35
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.06291817128658295,
+        0.0481816902756691,
+        0.07070637494325638
+      ],
+      "mean_actual": [
+        0.4794301688671112,
+        -0.013692343607544899,
+        0.3170919120311737
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 31.692489624023438
+    },
+    {
+      "name": "forward_yaw_3",
+      "family": "forward_yaw",
+      "goal": [
+        0.45,
+        0,
+        -0.35
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.4083406925201416,
+        0.3482000231742859,
+        1.1219011545181274
+      ],
+      "mean_actual": [
+        0.7098774313926697,
+        0.15786175429821014,
+        -0.4958042800426483
+      ],
+      "duration_seconds": 3.86,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 12.827147483825684
+    },
+    {
+      "name": "forward_lateral_0",
+      "family": "forward_lateral",
+      "goal": [
+        0.3,
+        0.1,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.11716455966234207,
+        0.08102765679359436,
+        0.2427271455526352
+      ],
+      "mean_actual": [
+        0.3342858850955963,
+        0.08316013216972351,
+        -0.015517834573984146
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 21.05278778076172
+    },
+    {
+      "name": "forward_lateral_1",
+      "family": "forward_lateral",
+      "goal": [
+        0.3,
+        -0.1,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.07835744321346283,
+        0.05620987340807915,
+        0.06899963319301605
+      ],
+      "mean_actual": [
+        0.24799314141273499,
+        -0.049907635897397995,
+        -0.027280034497380257
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 23.075298309326172
+    },
+    {
+      "name": "forward_lateral_2",
+      "family": "forward_lateral",
+      "goal": [
+        0.25,
+        0.175,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.2741253972053528,
+        0.394403338432312,
+        1.8147798776626587
+      ],
+      "mean_actual": [
+        0.22830483317375183,
+        0.3452291786670685,
+        -0.4274744391441345
+      ],
+      "duration_seconds": 2.38,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": -0.5790777206420898
+    },
+    {
+      "name": "forward_lateral_3",
+      "family": "forward_lateral",
+      "goal": [
+        0.25,
+        -0.175,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.4134797155857086,
+        0.32186436653137207,
+        1.8978266716003418
+      ],
+      "mean_actual": [
+        0.12864626944065094,
+        -0.24241527915000916,
+        -0.5955692529678345
+      ],
+      "duration_seconds": 2.7,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": -0.8000643849372864
+    },
+    {
+      "name": "lateral_yaw_0",
+      "family": "lateral_yaw",
+      "goal": [
+        0,
+        0.15,
+        0.4
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.42213353514671326,
+        0.5406364798545837,
+        2.4489378929138184
+      ],
+      "mean_actual": [
+        0.128383606672287,
+        -0.11756222695112228,
+        0.5314311385154724
+      ],
+      "duration_seconds": 3.02,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": -9.110187530517578
+    },
+    {
+      "name": "lateral_yaw_1",
+      "family": "lateral_yaw",
+      "goal": [
+        0,
+        -0.15,
+        -0.4
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.5980056524276733,
+        0.2677854597568512,
+        1.1950135231018066
+      ],
+      "mean_actual": [
+        0.42094799876213074,
+        -0.09296432882547379,
+        -0.897261381149292
+      ],
+      "duration_seconds": 2.36,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 1.581210732460022
+    },
+    {
+      "name": "lateral_yaw_2",
+      "family": "lateral_yaw",
+      "goal": [
+        0,
+        0.18,
+        -0.35
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.5282734632492065,
+        0.2285623550415039,
+        1.0140880346298218
+      ],
+      "mean_actual": [
+        0.40314429998397827,
+        0.2711956202983856,
+        -0.6738892793655396
+      ],
+      "duration_seconds": 1.6,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 1.5844192504882812
+    },
+    {
+      "name": "lateral_yaw_3",
+      "family": "lateral_yaw",
+      "goal": [
+        0,
+        -0.18,
+        0.35
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.09306632727384567,
+        0.12624476850032806,
+        0.35915976762771606
+      ],
+      "mean_actual": [
+        -0.07552122324705124,
+        -0.0904703214764595,
+        0.0806521475315094
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 17.30413246154785
+    },
+    {
+      "name": "start_stop",
+      "family": "switch",
+      "goal": [
+        0,
+        0,
+        0
+      ],
+      "sequence": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0.3,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.03650771081447601,
+        0.017279744148254395,
+        0.030186720192432404
+      ],
+      "mean_actual": [
+        0.12756039202213287,
+        0.0015228253323584795,
+        -0.001143628847785294
+      ],
+      "duration_seconds": 6.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 55.58070373535156
+    },
+    {
+      "name": "forward_reverse",
+      "family": "switch",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "sequence": [
+        [
+          0.3,
+          0,
+          0
+        ],
+        [
+          -0.2,
+          0,
+          0
+        ]
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.12016522139310837,
+        0.022167282178997993,
+        0.04722491279244423
+      ],
+      "mean_actual": [
+        0.13999570906162262,
+        0.011254488490521908,
+        -0.016238709911704063
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 30.45557403564453
+    },
+    {
+      "name": "lateral_reverse",
+      "family": "switch",
+      "goal": [
+        0,
+        0.2,
+        0
+      ],
+      "sequence": [
+        [
+          0,
+          0.2,
+          0
+        ],
+        [
+          0,
+          -0.2,
+          0
+        ]
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.2228350043296814,
+        0.1782670021057129,
+        0.6253767013549805
+      ],
+      "mean_actual": [
+        0.14743468165397644,
+        0.1721103936433792,
+        -0.21893219649791718
+      ],
+      "duration_seconds": 1.56,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 7.2810444831848145
+    },
+    {
+      "name": "yaw_reverse",
+      "family": "switch",
+      "goal": [
+        0,
+        0,
+        0.4
+      ],
+      "sequence": [
+        [
+          0,
+          0,
+          0.4
+        ],
+        [
+          0,
+          0,
+          -0.4
+        ]
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.06293465197086334,
+        0.03922544792294502,
+        0.14849360287189484
+      ],
+      "mean_actual": [
+        0.05477594956755638,
+        -0.01772979460656643,
+        -0.12326985597610474
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 31.677242279052734
+    },
+    {
+      "name": "forward_to_lateral",
+      "family": "switch",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "sequence": [
+        [
+          0.3,
+          0,
+          0
+        ],
+        [
+          0,
+          0.2,
+          0
+        ]
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.1487923264503479,
+        0.3695039749145508,
+        1.3191403150558472
+      ],
+      "mean_actual": [
+        0.2303406298160553,
+        0.17802976071834564,
+        -0.32632502913475037
+      ],
+      "duration_seconds": 3.42,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 20.80718231201172
+    },
+    {
+      "name": "forward_to_turn",
+      "family": "switch",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "sequence": [
+        [
+          0.3,
+          0,
+          0
+        ],
+        [
+          0.3,
+          0,
+          0.4
+        ]
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.06832659989595413,
+        0.036575958132743835,
+        0.07438414543867111
+      ],
+      "mean_actual": [
+        0.349441260099411,
+        -0.002040351275354624,
+        0.2049936056137085
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 31.831701278686523
+    },
+    {
+      "name": "terrain_1_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 1,
+      "level": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.052304234355688095,
+        0.01603781059384346,
+        0.08049216866493225
+      ],
+      "mean_actual": [
+        0.34328722953796387,
+        0.0020842296071350574,
+        0.0283332709223032
+      ],
+      "duration_seconds": 10.0,
+      "valid": true,
+      "terminal_reason": "time_limit",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 83.94892883300781
+    },
+    {
+      "name": "terrain_1_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 1,
+      "level": 2,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.07878502458333969,
+        0.038852088153362274,
+        0.09077732264995575
+      ],
+      "mean_actual": [
+        0.2880399823188782,
+        0.005394960753619671,
+        0.00778281781822443
+      ],
+      "duration_seconds": 10.0,
+      "valid": true,
+      "terminal_reason": "time_limit",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 80.96575164794922
+    },
+    {
+      "name": "terrain_2_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 2,
+      "level": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.03506772592663765,
+        0.014912656508386135,
+        0.071927510201931
+      ],
+      "mean_actual": [
+        0.30680108070373535,
+        -0.003974933177232742,
+        0.039631813764572144
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 152.18601989746094
+    },
+    {
+      "name": "terrain_2_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 2,
+      "level": 2,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04880545660853386,
+        0.019036896526813507,
+        0.07209532707929611
+      ],
+      "mean_actual": [
+        0.32265573740005493,
+        -0.0036921019200235605,
+        0.008375982753932476
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 149.94100952148438
+    },
+    {
+      "name": "terrain_3_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 3,
+      "level": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.0442175529897213,
+        0.014776733703911304,
+        0.07156175374984741
+      ],
+      "mean_actual": [
+        0.3347246050834656,
+        -0.00444372184574604,
+        0.043422725051641464
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 151.9120330810547
+    },
+    {
+      "name": "terrain_3_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 3,
+      "level": 2,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.05257570371031761,
+        0.015066596679389477,
+        0.07021945714950562
+      ],
+      "mean_actual": [
+        0.34416717290878296,
+        -0.005138182081282139,
+        0.04356656223535538
+      ],
+      "duration_seconds": 18.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 151.293212890625
+    },
+    {
+      "name": "terrain_4_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 4,
+      "level": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.05859821289777756,
+        0.022559775039553642,
+        0.06283552944660187
+      ],
+      "mean_actual": [
+        0.3012332022190094,
+        0.005876731593161821,
+        -0.03235679119825363
+      ],
+      "duration_seconds": 4.58,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 18.45563316345215
+    },
+    {
+      "name": "terrain_4_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 4,
+      "level": 2,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.25537109375,
+        0.15418028831481934,
+        0.9059504866600037
+      ],
+      "mean_actual": [
+        0.22506141662597656,
+        0.032772235572338104,
+        -0.07783515006303787
+      ],
+      "duration_seconds": 3.68,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 3.3611249923706055
+    },
+    {
+      "name": "terrain_5_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 5,
+      "level": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.038724303245544434,
+        0.02525343745946884,
+        0.0776415690779686
+      ],
+      "mean_actual": [
+        0.3226385712623596,
+        0.0004536906199064106,
+        -0.03241925314068794
+      ],
+      "duration_seconds": 4.26,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 17.441730499267578
+    },
+    {
+      "name": "terrain_5_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 5,
+      "level": 2,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04149316996335983,
+        0.02864936552941799,
+        0.099631667137146
+      ],
+      "mean_actual": [
+        0.3220312297344208,
+        0.002413081005215645,
+        -0.04102441295981407
+      ],
+      "duration_seconds": 4.28,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 17.345592498779297
+    },
+    {
+      "name": "terrain_6_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 6,
+      "level": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.07704038918018341,
+        0.02501729317009449,
+        0.06183125823736191
+      ],
+      "mean_actual": [
+        0.29611241817474365,
+        -0.001057861722074449,
+        -0.03168027102947235
+      ],
+      "duration_seconds": 8.78,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 31.624969482421875
+    },
+    {
+      "name": "terrain_6_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 6,
+      "level": 2,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.06320133805274963,
+        0.02407062239944935,
+        0.06490080803632736
+      ],
+      "mean_actual": [
+        0.3036194145679474,
+        -0.0008108844631351531,
+        -0.02886306494474411
+      ],
+      "duration_seconds": 8.540000000000001,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 31.572181701660156
+    },
+    {
+      "name": "terrain_7_0",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 7,
+      "level": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04461905360221863,
+        0.03129999712109566,
+        0.09526152163743973
+      ],
+      "mean_actual": [
+        0.3282063901424408,
+        -0.0023613153025507927,
+        -0.03347798436880112
+      ],
+      "duration_seconds": 7.9,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 29.386550903320312
+    },
+    {
+      "name": "terrain_7_2",
+      "family": "terrain",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 7,
+      "level": 2,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.04880170524120331,
+        0.03417053818702698,
+        0.10732145607471466
+      ],
+      "mean_actual": [
+        0.3325936496257782,
+        -0.000626220484264195,
+        -0.042870424687862396
+      ],
+      "duration_seconds": 7.82,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 28.6969051361084
+    }
+  ],
+  "protocol": "motion_prior_flat",
+  "flat_window_seconds": 4.0,
+  "switch_segment_seconds": 2.0,
+  "invalid_count": 0,
+  "pass_counts": {
+    "standing": {
+      "passed": 3,
+      "attempts": 3
+    },
+    "forward": {
+      "passed": 12,
+      "attempts": 15
+    },
+    "backward": {
+      "passed": 0,
+      "attempts": 12
+    },
+    "left": {
+      "passed": 0,
+      "attempts": 12
+    },
+    "right": {
+      "passed": 0,
+      "attempts": 12
+    },
+    "yaw_left": {
+      "passed": 0,
+      "attempts": 15
+    },
+    "yaw_right": {
+      "passed": 0,
+      "attempts": 15
+    },
+    "forward_yaw": {
+      "passed": 6,
+      "attempts": 12
+    },
+    "forward_lateral": {
+      "passed": 0,
+      "attempts": 12
+    },
+    "lateral_yaw": {
+      "passed": 0,
+      "attempts": 12
+    },
+    "switch": {
+      "passed": 6,
+      "attempts": 18
+    },
+    "terrain": {
+      "passed": 33,
+      "attempts": 42
+    }
+  },
+  "pass_rates": {
+    "standing": 1.0,
+    "forward": 0.8,
+    "backward": 0.0,
+    "left": 0.0,
+    "right": 0.0,
+    "yaw_left": 0.0,
+    "yaw_right": 0.0,
+    "forward_yaw": 0.5,
+    "forward_lateral": 0.0,
+    "lateral_yaw": 0.0,
+    "coupled": 0.16666666666666666
+  },
+  "flat_pass_rate": 0.175,
+  "fall_rate": 0.4083333333333333,
+  "rmse": [
+    0.29842869655608845,
+    0.23670816993625365,
+    0.9549790402490926
+  ],
+  "switch_pass_rate": 0.3333333333333333,
+  "terrain_pass_rate": 0.7857142857142857,
+  "standard_flat_rows": [
+    {
+      "name": "standing_0",
+      "family": "standing",
+      "goal": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.029326019808650017,
+        0.013745068572461605,
+        0.023771077394485474
+      ],
+      "mean_actual": [
+        0.026273082941770554,
+        -0.010226244106888771,
+        -0.01123814843595028
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 38.54829406738281
+    },
+    {
+      "name": "forward_1",
+      "family": "forward",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.038466546684503555,
+        0.020465947687625885,
+        0.03683624789118767
+      ],
+      "mean_actual": [
+        0.3222765624523163,
+        0.009105412289500237,
+        -0.008191618137061596
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 34.3765983581543
+    },
+    {
+      "name": "backward_1",
+      "family": "backward",
+      "goal": [
+        -0.2,
+        0,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.15484853088855743,
+        0.024461526423692703,
+        0.04896537587046623
+      ],
+      "mean_actual": [
+        -0.046029504388570786,
+        0.007143152412027121,
+        0.0006613715086132288
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 27.23768424987793
+    },
+    {
+      "name": "left_1",
+      "family": "left",
+      "goal": [
+        0,
+        0.2,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.3931162357330322,
+        0.4269644618034363,
+        1.0809929370880127
+      ],
+      "mean_actual": [
+        0.14099565148353577,
+        0.17880380153656006,
+        -0.16621647775173187
+      ],
+      "duration_seconds": 1.78,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 3.726027488708496
+    },
+    {
+      "name": "right_1",
+      "family": "right",
+      "goal": [
+        0,
+        -0.2,
+        0
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.3286856412887573,
+        0.14103908836841583,
+        1.3240665197372437
+      ],
+      "mean_actual": [
+        0.18786552548408508,
+        -0.17477519810199738,
+        -0.33033376932144165
+      ],
+      "duration_seconds": 1.54,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 5.7725958824157715
+    },
+    {
+      "name": "yaw_left_1",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.35
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.07065801322460175,
+        0.0239766463637352,
+        0.17001335322856903
+      ],
+      "mean_actual": [
+        0.06521810591220856,
+        0.0003833901428151876,
+        0.18576949834823608
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 30.138444900512695
+    },
+    {
+      "name": "yaw_right_1",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.35
+      ],
+      "seed": 2026,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.37245461344718933,
+        0.3697007894515991,
+        0.8901485800743103
+      ],
+      "mean_actual": [
+        0.24241866171360016,
+        0.10946912318468094,
+        -0.5884521007537842
+      ],
+      "duration_seconds": 3.2800000000000002,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": -0.02500000037252903,
+      "reward": 13.978155136108398
+    },
+    {
+      "name": "standing_0",
+      "family": "standing",
+      "goal": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.026768766343593597,
+        0.012357757426798344,
+        0.022912653163075447
+      ],
+      "mean_actual": [
+        0.023873524740338326,
+        -0.008613706566393375,
+        -0.008423471823334694
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 38.60430908203125
+    },
+    {
+      "name": "forward_1",
+      "family": "forward",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.037098780274391174,
+        0.02038577012717724,
+        0.03468383848667145
+      ],
+      "mean_actual": [
+        0.31952229142189026,
+        0.00947495736181736,
+        -0.008341553620994091
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 34.388973236083984
+    },
+    {
+      "name": "backward_1",
+      "family": "backward",
+      "goal": [
+        -0.2,
+        0,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.15465375781059265,
+        0.023350045084953308,
+        0.0533110685646534
+      ],
+      "mean_actual": [
+        -0.046056777238845825,
+        0.007791451178491116,
+        0.0015267032431438565
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 27.241573333740234
+    },
+    {
+      "name": "left_1",
+      "family": "left",
+      "goal": [
+        0,
+        0.2,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.285836398601532,
+        0.24744024872779846,
+        1.194589614868164
+      ],
+      "mean_actual": [
+        0.1887226700782776,
+        0.23914997279644012,
+        -0.4126831889152527
+      ],
+      "duration_seconds": 1.86,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 5.895262718200684
+    },
+    {
+      "name": "right_1",
+      "family": "right",
+      "goal": [
+        0,
+        -0.2,
+        0
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.41504165530204773,
+        0.18993689119815826,
+        1.9569545984268188
+      ],
+      "mean_actual": [
+        0.18115414679050446,
+        -0.1944374442100525,
+        -0.16608785092830658
+      ],
+      "duration_seconds": 1.76,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.0,
+      "reward": 4.121185779571533
+    },
+    {
+      "name": "yaw_left_1",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.35
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.07147565484046936,
+        0.022914938628673553,
+        0.17150667309761047
+      ],
+      "mean_actual": [
+        0.06583752483129501,
+        -0.0004255695967003703,
+        0.1848614662885666
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 30.107421875
+    },
+    {
+      "name": "yaw_right_1",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.35
+      ],
+      "seed": 2027,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.6144049763679504,
+        0.2840406000614166,
+        1.2442104816436768
+      ],
+      "mean_actual": [
+        0.30777403712272644,
+        0.025252480059862137,
+        -0.579876720905304
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.0,
+      "reward": 12.38065242767334
+    },
+    {
+      "name": "standing_0",
+      "family": "standing",
+      "goal": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.0330083966255188,
+        0.013020047917962074,
+        0.02630319446325302
+      ],
+      "mean_actual": [
+        0.029592983424663544,
+        -0.009875121526420116,
+        -0.013225216418504715
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 38.493263244628906
+    },
+    {
+      "name": "forward_1",
+      "family": "forward",
+      "goal": [
+        0.3,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": true,
+      "fall": false,
+      "rmse": [
+        0.036992765963077545,
+        0.019081883132457733,
+        0.034638334065675735
+      ],
+      "mean_actual": [
+        0.31967413425445557,
+        0.00871863029897213,
+        -0.00785641185939312
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 34.417537689208984
+    },
+    {
+      "name": "backward_1",
+      "family": "backward",
+      "goal": [
+        -0.2,
+        0,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.15639185905456543,
+        0.022266412153840065,
+        0.05282404646277428
+      ],
+      "mean_actual": [
+        -0.04428984597325325,
+        0.008378397673368454,
+        0.0011128198821097612
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 27.186595916748047
+    },
+    {
+      "name": "left_1",
+      "family": "left",
+      "goal": [
+        0,
+        0.2,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.2228350043296814,
+        0.1782670021057129,
+        0.6253767013549805
+      ],
+      "mean_actual": [
+        0.14743468165397644,
+        0.1721103936433792,
+        -0.21893219649791718
+      ],
+      "duration_seconds": 1.56,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 7.2810444831848145
+    },
+    {
+      "name": "right_1",
+      "family": "right",
+      "goal": [
+        0,
+        -0.2,
+        0
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": true,
+      "rmse": [
+        0.3819267451763153,
+        0.26301807165145874,
+        1.0047658681869507
+      ],
+      "mean_actual": [
+        0.18058297038078308,
+        -0.2839874029159546,
+        -0.013362887315452099
+      ],
+      "duration_seconds": 1.68,
+      "valid": true,
+      "terminal_reason": "physical_fall",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 4.8185343742370605
+    },
+    {
+      "name": "yaw_left_1",
+      "family": "yaw_left",
+      "goal": [
+        0,
+        0,
+        0.35
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.06718576699495316,
+        0.02315411902964115,
+        0.17109398543834686
+      ],
+      "mean_actual": [
+        0.06021903082728386,
+        -0.002646832726895809,
+        0.184854656457901
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 30.27536964416504
+    },
+    {
+      "name": "yaw_right_1",
+      "family": "yaw_right",
+      "goal": [
+        0,
+        0,
+        -0.35
+      ],
+      "seed": 2028,
+      "domain": 0,
+      "passed": false,
+      "fall": false,
+      "rmse": [
+        0.16540981829166412,
+        0.049830928444862366,
+        0.316561222076416
+      ],
+      "mean_actual": [
+        0.1408473551273346,
+        0.0023573385551571846,
+        -0.29319801926612854
+      ],
+      "duration_seconds": 4.0,
+      "valid": true,
+      "terminal_reason": "completed",
+      "initial_yaw_rad": 0.02500000037252903,
+      "reward": 25.999536514282227
+    }
+  ]
+}

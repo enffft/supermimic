@@ -1,0 +1,523 @@
+algo:
+  algo: supermimic
+  algo_log_name: supermimic
+  load_run: '-1'
+  checkpoint: -1
+  resume: false
+  seed: 2026
+  num_envs: 4096
+  iterations: 2147483647
+  buffer_steps: 1024
+  utd: 0.4
+  horizon: 8
+  goal_frames: 1
+  hist: 5
+  z_dim: 32
+  wm_hidden:
+  - 2048
+  - 2048
+  - 2048
+  wm_structured: true
+  policy_hidden:
+  - 2048
+  - 1024
+  - 512
+  - 256
+  critic_hidden:
+  - 256
+  - 128
+  wm_window: 8
+  wm_batches: 10
+  wm_batch: 2048
+  pi_batch: 2048
+  lr: 0.0004
+  pi_opt: adam
+  wm_opt: adam
+  no_sync: false
+  pi_ema: 0.0
+  gamma: 0.99
+  lam: 0.95
+  action_noise: 0.02
+  critic_epochs: 5
+  critic_minibatches: 4
+  no_critic: false
+  warmup_steps: 64
+  wm_only_iters: 250
+  lr_decay_iters: 250000
+  ckpt_every: 1000
+  log_every: 50
+  log_backend: none
+  amp: none
+  compile: false
+  test_hidden_dims: null
+  goal_mode: direct
+  terrain_training: true
+  terrain_conditioning: true
+  terrain_sensor_grad: true
+  critic_terrain_conditioning: true
+  profile: false
+  strict_finite: true
+  checkpoint_replay: true
+  command_start_weights:
+  - 0.06
+  - 0.2
+  - 0.12
+  - 0.26
+  - 0.2
+  - 0.16
+  actor_domain_weights:
+  - 1
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  actor_lr_scale: 1.0
+  actor_ramp_iters: 250
+  history_capacity: 8192
+  history_fraction: 0.5
+  wm_lr_scale: 1.0
+  critic_warmup_iters: 0
+  numbered_ckpt_every: null
+  init_actor_from: null
+  init_wm_from: null
+  driver_enabled: false
+training:
+  task_name: G1SuperMimic
+  sim_backend: mjwarp
+  collector_tensor_device: auto
+  sim2sim_strict: true
+  log_root: null
+  log_dir: null
+env:
+  seed: 2026
+  sim_dt: 0.005
+  ctrl_dt: 0.02
+  max_episode_seconds: 18.0
+  auto_reset: true
+  scale_rewards_by_dt: false
+  scene:
+    model_file: src/unisupermimic/assets/robots/go2w/terrain_robot.xml
+    default_keyframe_name: init_state
+    entities:
+      robot:
+        root_body_name: robot/base
+        body_names:
+        - robot/base
+        joint_names:
+        - robot/FL_hip_joint
+        - robot/FL_thigh_joint
+        - robot/FL_calf_joint
+        - robot/FR_hip_joint
+        - robot/FR_thigh_joint
+        - robot/FR_calf_joint
+        - robot/RL_hip_joint
+        - robot/RL_thigh_joint
+        - robot/RL_calf_joint
+        - robot/RR_hip_joint
+        - robot/RR_thigh_joint
+        - robot/RR_calf_joint
+        - robot/FL_wheel_joint
+        - robot/FR_wheel_joint
+        - robot/RL_wheel_joint
+        - robot/RR_wheel_joint
+        actuator_names:
+        - robot/FL_hip_joint
+        - robot/FL_thigh_joint
+        - robot/FL_calf_joint
+        - robot/FR_hip_joint
+        - robot/FR_thigh_joint
+        - robot/FR_calf_joint
+        - robot/RL_hip_joint
+        - robot/RL_thigh_joint
+        - robot/RL_calf_joint
+        - robot/RR_hip_joint
+        - robot/RR_thigh_joint
+        - robot/RR_calf_joint
+        - robot/FL_wheel_joint
+        - robot/FR_wheel_joint
+        - robot/RL_wheel_joint
+        - robot/RR_wheel_joint
+        geom_names:
+        - robot/FL_wheel_collision
+        - robot/FR_wheel_collision
+        - robot/RL_wheel_collision
+        - robot/RR_wheel_collision
+  observations:
+    policy:
+      enable_corruption: false
+      terms:
+        proprio:
+          func: unisupermimic.tasks.velocity.go2w.manager_terms.observation
+  actions:
+    mixed:
+      _target_: unisupermimic.tasks.velocity.go2w.manager_terms.Go2WMixedActionCfg
+      entity_name: robot
+      control:
+        dt: 0.02
+        leg_position_scale: 0.25
+        leg_kp: 40.0
+        leg_kd: 1.0
+        wheel_kp: 0.0
+        wheel_kd: 0.5
+        wheel_velocity_scale: 15.0
+        leg_effort_limits:
+        - 23.7
+        - 23.7
+        - 45.43
+        - 23.7
+        - 23.7
+        - 45.43
+        - 23.7
+        - 23.7
+        - 45.43
+        - 23.7
+        - 23.7
+        - 45.43
+        wheel_effort_limits:
+        - 15.0
+        - 15.0
+        - 15.0
+        - 15.0
+        full_leg_target_range: true
+        leg_limit_fraction: 0.95
+  commands:
+    velocity:
+      _target_: unisupermimic.tasks.velocity.go2w.manager_terms.VelocityCommandCfg
+      terrain_profile: mixed
+      terrain_curriculum: true
+      terrain_fixed_level: 0
+      terrain_max_level: 9
+      terrain_phase: skill
+      terrain_min_episodes: 3
+      terrain_target_progress: 1.2
+      terrain_recycle_probability: 0.15
+      terrain_coverage_weights:
+      - 0.2
+      - 0.25
+      - 0.2
+      - 0.15
+      - 0.1
+      - 0.06
+      - 0.03
+      - 0.01
+      spawn_height: 0.42
+      sampler:
+        terrain_level_count: 10
+        domain_weights:
+        - 0.4
+        - 0.15
+        - 0.075
+        - 0.075
+        - 0.15
+        - 0.15
+        flat_mode_weights:
+        - 0.06
+        - 0.2
+        - 0.12
+        - 0.26
+        - 0.2
+        - 0.16
+        flat_speed_level: 0
+        flat_hold_range:
+        - 2.0
+        - 5.0
+        terrain_hold_seconds: 18.02
+        seed: 2026
+        stairs_omni: false
+        flat_velocity_levels:
+        - - - -0.25
+            - 0.6
+          - - -0.25
+            - 0.25
+          - - -0.6
+            - 0.6
+        - - - -0.25
+            - 0.6
+          - - -0.25
+            - 0.25
+          - - -0.6
+            - 0.6
+        - - - -0.25
+            - 0.6
+          - - -0.25
+            - 0.25
+          - - -0.6
+            - 0.6
+        terrain_velocity_ranges:
+        - - - -0.2
+            - 0.6
+          - - -0.15
+            - 0.15
+          - - -0.35
+            - 0.35
+        - - - 0.15
+            - 0.55
+          - - -0.08
+            - 0.08
+          - - -0.2
+            - 0.2
+        - - - 0.15
+            - 0.55
+          - - -0.08
+            - 0.08
+          - - -0.2
+            - 0.2
+        - - - 0.2
+            - 0.45
+          - - -0.03
+            - 0.03
+          - - -0.1
+            - 0.1
+        - - - 0.2
+            - 0.45
+          - - -0.03
+            - 0.03
+          - - -0.1
+            - 0.1
+      reward:
+        track_vx: 3.0
+        track_vy: 3.0
+        track_yaw: 2.5
+        sigma_x: 0.25
+        sigma_y: 0.2
+        sigma_yaw: 0.35
+        zero_speed_baseline: true
+        stand_still: 0.25
+        stop_command_sigma: 0.05
+        stop_velocity_sigma: 0.15
+        terrain_alignment: 1.0
+        terrain_alignment_sigma: 0.16
+        max_target_tilt_deg: 35.0
+        base_lin_vel_z:
+        - -0.5
+        - -0.35
+        - -0.15
+        - -0.15
+        - -0.08
+        - -0.08
+        base_ang_vel_xy: -0.15
+        base_height_low: -40.0
+        min_safe_height: 0.25
+        leg_joint_deviation:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        leg_joint_limit: -1.0
+        leg_action_rate: -0.003
+        wheel_action_rate: -0.003
+        leg_torque: -2.0e-05
+        wheel_torque: -1.0e-05
+        leg_joint_acceleration: 0.0
+        wheel_joint_acceleration: 0.0
+        stop_reward_command_sigma: 0.02
+        tracking_error_cost:
+        - 0.25
+        - 0.6
+        - 0.3
+        physical_leg_action_rate: true
+        wheel_radius: 0.086
+        wheel_consistency: 0.0
+        side_drift: 0.0
+        stair_progress: 1.0
+        stair_success: 2.0
+        progress_gamma: 0.99
+        stair_axis_scale:
+        - 1.0
+        - 0.3
+        - 0.3
+      persistent_wm_coverage: false
+      automatic_wm_skill_transition: false
+      terrain_mode_conditioning: true
+      unified_curriculum: true
+      curriculum:
+        level_count: 10
+        coverage_fraction: 0.0
+        review_fraction: 0.2
+        domain_weights:
+        - 1
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+  terminations:
+    fallen:
+      func: unisupermimic.tasks.velocity.go2w.manager_terms.fallen
+    time_out:
+      func: unisupermimic.tasks.velocity.go2w.manager_terms.motion_prior_timeout
+      time_out: true
+  policy_observation_group: policy
+  critic_observation_group: null
+reward:
+  velocity:
+    func: unisupermimic.tasks.velocity.go2w.manager_terms.reward
+    weight: 1.0
+stage:
+  initial: flat_prior
+  auto_transition: true
+  max_stage: terrain
+  consecutive_evaluations: 1
+  max_flat_training_seconds: 14400
+  basic_assessment_seconds: 900
+  assessment_seconds: 1800
+  terrain_review_pass_rate: 0.65
+  min_flat_pass_rate: 0.3
+  max_fall_rate: 0.35
+  min_longitudinal_pass_rate: 0.33
+  pass_rates:
+    standing: 0.5
+  autonomous:
+    min_flat_pass_rate: 0.25
+    max_fall_rate: 0.25
+    pass_rates:
+      standing: 0.5
+      forward: 0.4
+motion_prior:
+  enabled: true
+  bank: data/go2w_motion_bank
+  horizon: 8
+  phase_samples: 48
+  command_scale:
+  - 0.75
+  - 0.35
+  - 0.8
+  max_command_distance: 0.28
+  matching_weights:
+  - 1.0
+  - 0.25
+  - 0.25
+  feature_scales:
+  - 0.25
+  - 3.0
+  - 5.0
+  feature_weights:
+  - 1.0
+  - 0.25
+  - 0.5
+  qualified_weight: 1.0
+  dynamic_candidate_weight: 0.5
+  lambda_prior: 0.6
+  warmup_collection:
+  - 0.1
+  - 0.0
+  - 0.5
+  early_collection:
+  - 0.2
+  - 0.0
+  - 0.3
+  late_collection:
+  - 0.15
+  - 0.0
+  - 0.1
+  local_steps:
+  - 8
+  - 16
+  local_reference_blend: 0.0
+  local_correlation: 0.8
+  local_leg_std: 0.01
+  local_wheel_std: 0.03
+  prior_taper_seconds: 3600
+  late_prior_fraction: 0.35
+  late_bank_fraction: 0.5
+  gradient_diagnostic_every: 250
+  flat_success_steps: 100
+  motion_bank_command_fraction: 0.8
+  fade_seconds: 1800.0
+  autonomous_three_axis_weight: 0.2
+  flat_initial_bounds:
+  - - -0.15
+    - 0.25
+  - - -0.1
+    - 0.1
+  - - -0.2
+    - 0.2
+  terrain_bounds:
+  - - - -0.35
+      - 0.75
+    - - -0.35
+      - 0.35
+    - - -0.8
+      - 0.8
+  - - - -0.25
+      - 0.6
+    - - -0.25
+      - 0.25
+    - - -0.6
+      - 0.6
+  - - - 0.2
+      - 0.5
+    - - 0
+      - 0
+    - - 0
+      - 0
+  - - - 0.15
+      - 0.4
+    - - 0
+      - 0
+    - - 0
+      - 0
+  - - - 0.15
+      - 0.4
+    - - 0
+      - 0
+    - - 0
+      - 0
+  - - - 0.15
+      - 0.4
+    - - 0
+      - 0
+    - - 0
+      - 0
+  - - - 0.15
+      - 0.35
+    - - 0
+      - 0
+    - - 0
+      - 0
+  - - - 0.15
+      - 0.35
+    - - 0
+      - 0
+    - - 0
+      - 0
+  stair_yaw_degrees:
+  - 0
+  - 3
+  - 5
+  - 10
+  terrain_entry_weights:
+  - 0.6
+  - 0.15
+  - 0.07
+  - 0.08
+  - 0.03
+  - 0.03
+  - 0.02
+  - 0.02
+  terrain_weights:
+  - 0.4
+  - 0.1
+  - 0.05
+  - 0.05
+  - 0.12
+  - 0.08
+  - 0.12
+  - 0.08
+  terrain_actor_weights:
+  - 0.4
+  - 0.1
+  - 0.07
+  - 0.07
+  - 0.12
+  - 0.08
+  - 0.1
+  - 0.06
+  protected_success_fraction: 0.2

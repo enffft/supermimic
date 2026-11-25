@@ -1,5 +1,7 @@
 # Go2W Motion Prior 与训练阶段
 
+十小时正式训练的评测、地形等级和侧移诊断已归档。 [十小时训练报告](validation/go2w_motion_prior/long_run/training_report.md)
+
 速度跟踪是 Go2W 的任务目标。Actor 在 SuperMimic 的 H8 imagination 中同时优化任务回报、Critic bootstrap 和逐帧运动状态模仿。101 条运动学参考（23 条 Qualified、78 条动态 Candidate）用于提供前期可探索的关节运动。Qualified 和 Candidate 的基础权重分别为 1.0 和 0.5。Actor 使用 50D 本体历史 × 5 加 7D goal，部署时根据当前速度目标和本体历史控制。 [Motion Bank 数据说明](go2w_motion_generation.md)
 
 ## 参考跟踪与真实采集

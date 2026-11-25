@@ -1,0 +1,2566 @@
+{
+  "prior": {
+    "holdout": [
+      {
+        "family": "forward",
+        "n": 103,
+        "horizon": 1,
+        "rmse": [
+          0.04683167114853859,
+          0.06545159220695496,
+          0.4067274332046509
+        ]
+      },
+      {
+        "family": "left",
+        "n": 69,
+        "horizon": 1,
+        "rmse": [
+          0.15806010365486145,
+          0.09315302968025208,
+          0.8057361841201782
+        ]
+      },
+      {
+        "family": "right",
+        "n": 70,
+        "horizon": 1,
+        "rmse": [
+          0.14018332958221436,
+          0.1320672482252121,
+          1.1834136247634888
+        ]
+      },
+      {
+        "family": "forward",
+        "n": 103,
+        "horizon": 8,
+        "rmse": [
+          0.19045324623584747,
+          0.21994498372077942,
+          1.407733678817749
+        ]
+      },
+      {
+        "family": "left",
+        "n": 69,
+        "horizon": 8,
+        "rmse": [
+          0.45958149433135986,
+          0.3195541501045227,
+          1.8759828805923462
+        ]
+      },
+      {
+        "family": "right",
+        "n": 70,
+        "horizon": 8,
+        "rmse": [
+          0.33449551463127136,
+          0.26647379994392395,
+          1.8347289562225342
+        ]
+      }
+    ],
+    "finite_differences": [
+      {
+        "family": "forward",
+        "step": 0,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.5603235363960266,
+        "model_norm": 0.5721904039382935,
+        "cosine": 0.975096583366394
+      },
+      {
+        "family": "left",
+        "step": 0,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.46458539366722107,
+        "model_norm": 0.5294094085693359,
+        "cosine": 0.9841433763504028
+      },
+      {
+        "family": "right",
+        "step": 0,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.4573652446269989,
+        "model_norm": 0.5195567011833191,
+        "cosine": 0.9663012623786926
+      },
+      {
+        "family": "forward",
+        "step": 0,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 21.204776763916016,
+        "model_norm": 3.9367432594299316,
+        "cosine": -0.17648839950561523
+      },
+      {
+        "family": "right",
+        "step": 0,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 14.845941543579102,
+        "model_norm": 2.6777541637420654,
+        "cosine": -0.11634191870689392
+      },
+      {
+        "family": "forward",
+        "step": 0,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.5530661940574646,
+        "model_norm": 0.5688811540603638,
+        "cosine": 0.9725659489631653
+      },
+      {
+        "family": "left",
+        "step": 0,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.45694565773010254,
+        "model_norm": 0.5295857787132263,
+        "cosine": 0.9872474670410156
+      },
+      {
+        "family": "right",
+        "step": 0,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.4728774428367615,
+        "model_norm": 0.51946622133255,
+        "cosine": 0.9843751192092896
+      },
+      {
+        "family": "forward",
+        "step": 0,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 17.714008331298828,
+        "model_norm": 3.7441086769104004,
+        "cosine": -0.14197230339050293
+      },
+      {
+        "family": "right",
+        "step": 0,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 7.478322505950928,
+        "model_norm": 2.639172077178955,
+        "cosine": -0.3241994380950928
+      },
+      {
+        "family": "forward",
+        "step": 5,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.5048819184303284,
+        "model_norm": 0.5442847609519958,
+        "cosine": 0.9920675158500671
+      },
+      {
+        "family": "left",
+        "step": 5,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.4873855710029602,
+        "model_norm": 0.49446403980255127,
+        "cosine": 0.9933553338050842
+      },
+      {
+        "family": "right",
+        "step": 5,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.46274521946907043,
+        "model_norm": 0.5403637886047363,
+        "cosine": 0.9840714931488037
+      },
+      {
+        "family": "forward",
+        "step": 5,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 11.792702674865723,
+        "model_norm": 1.9851202964782715,
+        "cosine": 0.5935265421867371
+      },
+      {
+        "family": "left",
+        "step": 5,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 30.901290893554688,
+        "model_norm": 1.3391523361206055,
+        "cosine": 0.723438024520874
+      },
+      {
+        "family": "right",
+        "step": 5,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 19.16255760192871,
+        "model_norm": 0.9557619690895081,
+        "cosine": 0.09604787081480026
+      },
+      {
+        "family": "forward",
+        "step": 5,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.5020734667778015,
+        "model_norm": 0.5445939302444458,
+        "cosine": 0.9905861020088196
+      },
+      {
+        "family": "left",
+        "step": 5,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.515346109867096,
+        "model_norm": 0.49392595887184143,
+        "cosine": 0.991098165512085
+      },
+      {
+        "family": "right",
+        "step": 5,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.4840349853038788,
+        "model_norm": 0.5402892827987671,
+        "cosine": 0.9813545942306519
+      },
+      {
+        "family": "forward",
+        "step": 5,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 4.56569242477417,
+        "model_norm": 1.9711803197860718,
+        "cosine": 0.5890985131263733
+      },
+      {
+        "family": "left",
+        "step": 5,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 26.974929809570312,
+        "model_norm": 1.3380529880523682,
+        "cosine": 0.576748251914978
+      },
+      {
+        "family": "right",
+        "step": 5,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 15.07791519165039,
+        "model_norm": 0.9552478194236755,
+        "cosine": -0.23592202365398407
+      },
+      {
+        "family": "forward",
+        "step": 12,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.5247797966003418,
+        "model_norm": 0.5654783248901367,
+        "cosine": 0.9898510575294495
+      },
+      {
+        "family": "left",
+        "step": 12,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.518648624420166,
+        "model_norm": 0.42895859479904175,
+        "cosine": 0.9628074169158936
+      },
+      {
+        "family": "right",
+        "step": 12,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.5939054489135742,
+        "model_norm": 0.5213562250137329,
+        "cosine": 0.9909589886665344
+      },
+      {
+        "family": "forward",
+        "step": 12,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 6.570230484008789,
+        "model_norm": 1.9048347473144531,
+        "cosine": 0.3909384608268738
+      },
+      {
+        "family": "left",
+        "step": 12,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 35.04165267944336,
+        "model_norm": 1.2950273752212524,
+        "cosine": 0.7644863724708557
+      },
+      {
+        "family": "right",
+        "step": 12,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 33.66830825805664,
+        "model_norm": 1.6194971799850464,
+        "cosine": 0.8042688965797424
+      },
+      {
+        "family": "forward",
+        "step": 12,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.5296441912651062,
+        "model_norm": 0.5676501393318176,
+        "cosine": 0.9895273447036743
+      },
+      {
+        "family": "left",
+        "step": 12,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.5312405824661255,
+        "model_norm": 0.42897629737854004,
+        "cosine": 0.9704139232635498
+      },
+      {
+        "family": "right",
+        "step": 12,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.5975106954574585,
+        "model_norm": 0.5185202360153198,
+        "cosine": 0.9949362277984619
+      },
+      {
+        "family": "forward",
+        "step": 12,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 4.528631210327148,
+        "model_norm": 1.8643864393234253,
+        "cosine": 0.5936742424964905
+      },
+      {
+        "family": "left",
+        "step": 12,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 32.24551010131836,
+        "model_norm": 1.2898579835891724,
+        "cosine": 0.7683805227279663
+      },
+      {
+        "family": "right",
+        "step": 12,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 24.12647819519043,
+        "model_norm": 1.6085807085037231,
+        "cosine": 0.7533324956893921
+      },
+      {
+        "family": "forward",
+        "step": 25,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.7737843990325928,
+        "model_norm": 0.6872256994247437,
+        "cosine": 0.9937444925308228
+      },
+      {
+        "family": "left",
+        "step": 25,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.6191567778587341,
+        "model_norm": 0.4398033022880554,
+        "cosine": 0.9578120708465576
+      },
+      {
+        "family": "right",
+        "step": 25,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.5723329186439514,
+        "model_norm": 0.5025530457496643,
+        "cosine": 0.9874005317687988
+      },
+      {
+        "family": "forward",
+        "step": 25,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 5.765699863433838,
+        "model_norm": 1.9545793533325195,
+        "cosine": 0.7487168908119202
+      },
+      {
+        "family": "left",
+        "step": 25,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 22.96099281311035,
+        "model_norm": 1.2153416872024536,
+        "cosine": 0.851104736328125
+      },
+      {
+        "family": "right",
+        "step": 25,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 18.726131439208984,
+        "model_norm": 1.295339584350586,
+        "cosine": 0.6330583095550537
+      },
+      {
+        "family": "forward",
+        "step": 25,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.6821916103363037,
+        "model_norm": 0.6814002394676208,
+        "cosine": 0.9932974576950073
+      },
+      {
+        "family": "left",
+        "step": 25,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.5915217995643616,
+        "model_norm": 0.439841091632843,
+        "cosine": 0.9856019616127014
+      },
+      {
+        "family": "right",
+        "step": 25,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.5750901699066162,
+        "model_norm": 0.500511109828949,
+        "cosine": 0.9855791926383972
+      },
+      {
+        "family": "forward",
+        "step": 25,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 7.043304920196533,
+        "model_norm": 1.9290745258331299,
+        "cosine": 0.39418458938598633
+      },
+      {
+        "family": "left",
+        "step": 25,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 16.272483825683594,
+        "model_norm": 1.2098934650421143,
+        "cosine": 0.7862933278083801
+      },
+      {
+        "family": "right",
+        "step": 25,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 36.12042999267578,
+        "model_norm": 1.3003284931182861,
+        "cosine": 0.3734947741031647
+      },
+      {
+        "family": "forward",
+        "step": 40,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.6544309854507446,
+        "model_norm": 0.6360137462615967,
+        "cosine": 0.9931830167770386
+      },
+      {
+        "family": "left",
+        "step": 40,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.6113430857658386,
+        "model_norm": 0.449503093957901,
+        "cosine": 0.9702926278114319
+      },
+      {
+        "family": "right",
+        "step": 40,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.5603748559951782,
+        "model_norm": 0.49349576234817505,
+        "cosine": 0.9852543473243713
+      },
+      {
+        "family": "forward",
+        "step": 40,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 5.762143135070801,
+        "model_norm": 2.040738105773926,
+        "cosine": 0.07900693267583847
+      },
+      {
+        "family": "left",
+        "step": 40,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 16.215436935424805,
+        "model_norm": 1.1615188121795654,
+        "cosine": 0.9178978800773621
+      },
+      {
+        "family": "right",
+        "step": 40,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 76.76725006103516,
+        "model_norm": 1.343951940536499,
+        "cosine": 0.31486672163009644
+      },
+      {
+        "family": "forward",
+        "step": 40,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.6647990942001343,
+        "model_norm": 0.6351747512817383,
+        "cosine": 0.9968842267990112
+      },
+      {
+        "family": "left",
+        "step": 40,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.6017535924911499,
+        "model_norm": 0.44948887825012207,
+        "cosine": 0.9767709970474243
+      },
+      {
+        "family": "right",
+        "step": 40,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.5837767124176025,
+        "model_norm": 0.4924735724925995,
+        "cosine": 0.9912331700325012
+      },
+      {
+        "family": "forward",
+        "step": 40,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 15.419759750366211,
+        "model_norm": 2.019519329071045,
+        "cosine": -0.001825384795665741
+      },
+      {
+        "family": "left",
+        "step": 40,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 15.029674530029297,
+        "model_norm": 1.1619601249694824,
+        "cosine": 0.9135845899581909
+      },
+      {
+        "family": "right",
+        "step": 40,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 46.083961486816406,
+        "model_norm": 1.341298222541809,
+        "cosine": 0.37017005681991577
+      }
+    ]
+  },
+  "autonomous": {
+    "holdout": [
+      {
+        "family": "forward",
+        "n": 103,
+        "horizon": 1,
+        "rmse": [
+          0.05962662026286125,
+          0.06682764738798141,
+          0.35731399059295654
+        ]
+      },
+      {
+        "family": "left",
+        "n": 69,
+        "horizon": 1,
+        "rmse": [
+          0.12294332683086395,
+          0.09104949980974197,
+          0.6348469853401184
+        ]
+      },
+      {
+        "family": "right",
+        "n": 70,
+        "horizon": 1,
+        "rmse": [
+          0.14868281781673431,
+          0.11810961365699768,
+          1.3033355474472046
+        ]
+      },
+      {
+        "family": "forward",
+        "n": 103,
+        "horizon": 8,
+        "rmse": [
+          0.19218741357326508,
+          0.24895867705345154,
+          1.187623381614685
+        ]
+      },
+      {
+        "family": "left",
+        "n": 69,
+        "horizon": 8,
+        "rmse": [
+          0.409715861082077,
+          0.2577258348464966,
+          1.4588102102279663
+        ]
+      },
+      {
+        "family": "right",
+        "n": 70,
+        "horizon": 8,
+        "rmse": [
+          0.3180345892906189,
+          0.26172080636024475,
+          1.8160758018493652
+        ]
+      }
+    ],
+    "finite_differences": [
+      {
+        "family": "forward",
+        "step": 0,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.5246615409851074,
+        "model_norm": 0.44619348645210266,
+        "cosine": 0.9304172396659851
+      },
+      {
+        "family": "left",
+        "step": 0,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.4207383394241333,
+        "model_norm": 0.4050227999687195,
+        "cosine": 0.990678608417511
+      },
+      {
+        "family": "right",
+        "step": 0,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.4411192834377289,
+        "model_norm": 0.4157842695713043,
+        "cosine": 0.9801157116889954
+      },
+      {
+        "family": "forward",
+        "step": 0,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 10.630970001220703,
+        "model_norm": 1.6774464845657349,
+        "cosine": -0.006134379655122757
+      },
+      {
+        "family": "right",
+        "step": 0,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 53.17905044555664,
+        "model_norm": 1.0930936336517334,
+        "cosine": -0.2685120701789856
+      },
+      {
+        "family": "forward",
+        "step": 0,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.48032665252685547,
+        "model_norm": 0.4440540671348572,
+        "cosine": 0.9580406546592712
+      },
+      {
+        "family": "left",
+        "step": 0,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.414999783039093,
+        "model_norm": 0.4046209454536438,
+        "cosine": 0.9899535775184631
+      },
+      {
+        "family": "right",
+        "step": 0,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.44049710035324097,
+        "model_norm": 0.41592931747436523,
+        "cosine": 0.9792916178703308
+      },
+      {
+        "family": "forward",
+        "step": 0,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 6.831023216247559,
+        "model_norm": 1.6549049615859985,
+        "cosine": 0.2083931863307953
+      },
+      {
+        "family": "right",
+        "step": 0,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 14.14343547821045,
+        "model_norm": 1.091134786605835,
+        "cosine": 0.1711241900920868
+      },
+      {
+        "family": "forward",
+        "step": 5,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.428265243768692,
+        "model_norm": 0.43831774592399597,
+        "cosine": 0.9946431517601013
+      },
+      {
+        "family": "left",
+        "step": 5,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.47173744440078735,
+        "model_norm": 0.4046565890312195,
+        "cosine": 0.9865252375602722
+      },
+      {
+        "family": "right",
+        "step": 5,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.6181684136390686,
+        "model_norm": 0.40502867102622986,
+        "cosine": 0.8336931467056274
+      },
+      {
+        "family": "forward",
+        "step": 5,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 17.314916610717773,
+        "model_norm": 1.6421834230422974,
+        "cosine": -0.3840762972831726
+      },
+      {
+        "family": "left",
+        "step": 5,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 59.22399139404297,
+        "model_norm": 1.3154327869415283,
+        "cosine": -0.6289302110671997
+      },
+      {
+        "family": "forward",
+        "step": 5,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.4352041780948639,
+        "model_norm": 0.43868350982666016,
+        "cosine": 0.9970541000366211
+      },
+      {
+        "family": "left",
+        "step": 5,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.5451704263687134,
+        "model_norm": 0.40633425116539,
+        "cosine": 0.9664331078529358
+      },
+      {
+        "family": "right",
+        "step": 5,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.52329021692276,
+        "model_norm": 0.4066041111946106,
+        "cosine": 0.9646704196929932
+      },
+      {
+        "family": "forward",
+        "step": 5,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 8.718477249145508,
+        "model_norm": 1.6374421119689941,
+        "cosine": -0.0967131108045578
+      },
+      {
+        "family": "left",
+        "step": 5,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 18.659774780273438,
+        "model_norm": 1.2697383165359497,
+        "cosine": -0.7033743858337402
+      },
+      {
+        "family": "forward",
+        "step": 12,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.63923579454422,
+        "model_norm": 0.6704147458076477,
+        "cosine": 0.9953474998474121
+      },
+      {
+        "family": "left",
+        "step": 12,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.5001250505447388,
+        "model_norm": 0.4173223078250885,
+        "cosine": 0.9734752178192139
+      },
+      {
+        "family": "right",
+        "step": 12,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.4206116199493408,
+        "model_norm": 0.36359140276908875,
+        "cosine": 0.9700748324394226
+      },
+      {
+        "family": "forward",
+        "step": 12,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 14.123751640319824,
+        "model_norm": 1.9681177139282227,
+        "cosine": 0.01080089807510376
+      },
+      {
+        "family": "left",
+        "step": 12,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 4.8092522621154785,
+        "model_norm": 1.9155704975128174,
+        "cosine": 0.898600161075592
+      },
+      {
+        "family": "right",
+        "step": 12,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 18.094472885131836,
+        "model_norm": 0.63795405626297,
+        "cosine": 0.0021258131600916386
+      },
+      {
+        "family": "forward",
+        "step": 12,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.6206672191619873,
+        "model_norm": 0.6498111486434937,
+        "cosine": 0.9952999353408813
+      },
+      {
+        "family": "left",
+        "step": 12,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.4667525291442871,
+        "model_norm": 0.4177454710006714,
+        "cosine": 0.9740208983421326
+      },
+      {
+        "family": "right",
+        "step": 12,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.47804689407348633,
+        "model_norm": 0.3575826585292816,
+        "cosine": 0.9433257579803467
+      },
+      {
+        "family": "forward",
+        "step": 12,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 11.949368476867676,
+        "model_norm": 1.9510612487792969,
+        "cosine": 0.18727967143058777
+      },
+      {
+        "family": "left",
+        "step": 12,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 13.263208389282227,
+        "model_norm": 1.899743914604187,
+        "cosine": 0.02590816840529442
+      },
+      {
+        "family": "right",
+        "step": 12,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 4.981585502624512,
+        "model_norm": 0.6324737668037415,
+        "cosine": 0.35768499970436096
+      },
+      {
+        "family": "forward",
+        "step": 25,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.9104743599891663,
+        "model_norm": 0.7412492036819458,
+        "cosine": 0.9050571918487549
+      },
+      {
+        "family": "left",
+        "step": 25,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.4222526550292969,
+        "model_norm": 0.376650869846344,
+        "cosine": 0.9794970750808716
+      },
+      {
+        "family": "right",
+        "step": 25,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.35514551401138306,
+        "model_norm": 0.3483821749687195,
+        "cosine": 0.9712061882019043
+      },
+      {
+        "family": "forward",
+        "step": 25,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 28.261276245117188,
+        "model_norm": 2.1073591709136963,
+        "cosine": -0.2499898225069046
+      },
+      {
+        "family": "left",
+        "step": 25,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 59.3673095703125,
+        "model_norm": 1.9747626781463623,
+        "cosine": 0.3758385479450226
+      },
+      {
+        "family": "right",
+        "step": 25,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 22.640911102294922,
+        "model_norm": 0.8957901000976562,
+        "cosine": 0.25675803422927856
+      },
+      {
+        "family": "forward",
+        "step": 25,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.9006747007369995,
+        "model_norm": 0.7198728322982788,
+        "cosine": 0.9540503025054932
+      },
+      {
+        "family": "left",
+        "step": 25,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.46064552664756775,
+        "model_norm": 0.3767684996128082,
+        "cosine": 0.9701133966445923
+      },
+      {
+        "family": "right",
+        "step": 25,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.3739601671695709,
+        "model_norm": 0.34828177094459534,
+        "cosine": 0.9887956976890564
+      },
+      {
+        "family": "forward",
+        "step": 25,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 24.254966735839844,
+        "model_norm": 2.174400568008423,
+        "cosine": -0.15830540657043457
+      },
+      {
+        "family": "left",
+        "step": 25,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 25.427152633666992,
+        "model_norm": 1.9374136924743652,
+        "cosine": 0.41508063673973083
+      },
+      {
+        "family": "right",
+        "step": 25,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 10.96349811553955,
+        "model_norm": 0.8928594589233398,
+        "cosine": 0.19939474761486053
+      },
+      {
+        "family": "forward",
+        "step": 40,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.8993485569953918,
+        "model_norm": 0.7885668873786926,
+        "cosine": 0.9888885021209717
+      },
+      {
+        "family": "left",
+        "step": 40,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.4124000668525696,
+        "model_norm": 0.3734573721885681,
+        "cosine": 0.984327495098114
+      },
+      {
+        "family": "right",
+        "step": 40,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.34472328424453735,
+        "model_norm": 0.3037090003490448,
+        "cosine": 0.9810945391654968
+      },
+      {
+        "family": "forward",
+        "step": 40,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 15.929404258728027,
+        "model_norm": 2.4640722274780273,
+        "cosine": 0.6706681847572327
+      },
+      {
+        "family": "left",
+        "step": 40,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 7.511561393737793,
+        "model_norm": 1.9073774814605713,
+        "cosine": 0.5675392746925354
+      },
+      {
+        "family": "right",
+        "step": 40,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 19.084796905517578,
+        "model_norm": 0.9802476167678833,
+        "cosine": 0.32318413257598877
+      },
+      {
+        "family": "forward",
+        "step": 40,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.8826215267181396,
+        "model_norm": 0.7808508276939392,
+        "cosine": 0.9918488264083862
+      },
+      {
+        "family": "left",
+        "step": 40,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.42643973231315613,
+        "model_norm": 0.37393689155578613,
+        "cosine": 0.9891337156295776
+      },
+      {
+        "family": "right",
+        "step": 40,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.338712602853775,
+        "model_norm": 0.30572471022605896,
+        "cosine": 0.9904145002365112
+      },
+      {
+        "family": "forward",
+        "step": 40,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 14.377760887145996,
+        "model_norm": 2.3652541637420654,
+        "cosine": 0.6185298562049866
+      },
+      {
+        "family": "left",
+        "step": 40,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 16.849287033081055,
+        "model_norm": 1.885596752166748,
+        "cosine": 0.4174354374408722
+      },
+      {
+        "family": "right",
+        "step": 40,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 10.183526039123535,
+        "model_norm": 0.9804894328117371,
+        "cosine": 0.4816944897174835
+      }
+    ]
+  },
+  "terrain": {
+    "holdout": [
+      {
+        "family": "forward",
+        "n": 103,
+        "horizon": 1,
+        "rmse": [
+          0.06565167009830475,
+          0.06438252329826355,
+          0.3052213191986084
+        ]
+      },
+      {
+        "family": "left",
+        "n": 69,
+        "horizon": 1,
+        "rmse": [
+          0.11700504273176193,
+          0.07195281982421875,
+          0.48865655064582825
+        ]
+      },
+      {
+        "family": "right",
+        "n": 70,
+        "horizon": 1,
+        "rmse": [
+          0.106160007417202,
+          0.09004367142915726,
+          1.171524167060852
+        ]
+      },
+      {
+        "family": "forward",
+        "n": 103,
+        "horizon": 8,
+        "rmse": [
+          0.23330816626548767,
+          0.2441764920949936,
+          0.7266771197319031
+        ]
+      },
+      {
+        "family": "left",
+        "n": 69,
+        "horizon": 8,
+        "rmse": [
+          0.2692827880382538,
+          0.3370327949523926,
+          1.676467776298523
+        ]
+      },
+      {
+        "family": "right",
+        "n": 70,
+        "horizon": 8,
+        "rmse": [
+          0.37612566351890564,
+          0.3289403021335602,
+          1.5970088243484497
+        ]
+      }
+    ],
+    "finite_differences": [
+      {
+        "family": "forward",
+        "step": 0,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.5347020030021667,
+        "model_norm": 0.5281981229782104,
+        "cosine": 0.9910134077072144
+      },
+      {
+        "family": "left",
+        "step": 0,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.4629794955253601,
+        "model_norm": 0.44109663367271423,
+        "cosine": 0.9804025888442993
+      },
+      {
+        "family": "right",
+        "step": 0,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.4915870130062103,
+        "model_norm": 0.49668270349502563,
+        "cosine": 0.9793174266815186
+      },
+      {
+        "family": "forward",
+        "step": 0,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 25.722951889038086,
+        "model_norm": 2.1498966217041016,
+        "cosine": 0.5552690625190735
+      },
+      {
+        "family": "left",
+        "step": 0,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 5.881287574768066,
+        "model_norm": 1.3511515855789185,
+        "cosine": 0.49050575494766235
+      },
+      {
+        "family": "right",
+        "step": 0,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 30.84548568725586,
+        "model_norm": 1.0055737495422363,
+        "cosine": 0.5464798808097839
+      },
+      {
+        "family": "forward",
+        "step": 0,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.5261187553405762,
+        "model_norm": 0.5256368517875671,
+        "cosine": 0.9920393228530884
+      },
+      {
+        "family": "left",
+        "step": 0,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.45677149295806885,
+        "model_norm": 0.44121262431144714,
+        "cosine": 0.9821633696556091
+      },
+      {
+        "family": "right",
+        "step": 0,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.48752933740615845,
+        "model_norm": 0.4964734613895416,
+        "cosine": 0.9787389039993286
+      },
+      {
+        "family": "forward",
+        "step": 0,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 18.194381713867188,
+        "model_norm": 2.1422104835510254,
+        "cosine": 0.17745918035507202
+      },
+      {
+        "family": "left",
+        "step": 0,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 3.8949363231658936,
+        "model_norm": 1.3451977968215942,
+        "cosine": 0.39214828610420227
+      },
+      {
+        "family": "right",
+        "step": 0,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 8.006110191345215,
+        "model_norm": 0.9998070597648621,
+        "cosine": 0.0730055719614029
+      },
+      {
+        "family": "forward",
+        "step": 5,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.5629096627235413,
+        "model_norm": 0.588126003742218,
+        "cosine": 0.9956018924713135
+      },
+      {
+        "family": "left",
+        "step": 5,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.5422571897506714,
+        "model_norm": 0.5571011900901794,
+        "cosine": 0.9773898124694824
+      },
+      {
+        "family": "right",
+        "step": 5,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 1.3502031564712524,
+        "model_norm": 0.4455815255641937,
+        "cosine": 0.8996449112892151
+      },
+      {
+        "family": "forward",
+        "step": 5,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 10.996030807495117,
+        "model_norm": 1.9892079830169678,
+        "cosine": 0.22553327679634094
+      },
+      {
+        "family": "left",
+        "step": 5,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 79.27792358398438,
+        "model_norm": 2.2264766693115234,
+        "cosine": 0.80698561668396
+      },
+      {
+        "family": "right",
+        "step": 5,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 7.46271276473999,
+        "model_norm": 1.42945396900177,
+        "cosine": 0.8081299066543579
+      },
+      {
+        "family": "forward",
+        "step": 5,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.5324385762214661,
+        "model_norm": 0.5873355865478516,
+        "cosine": 0.9988602995872498
+      },
+      {
+        "family": "left",
+        "step": 5,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.5290413498878479,
+        "model_norm": 0.5579822659492493,
+        "cosine": 0.9789823293685913
+      },
+      {
+        "family": "right",
+        "step": 5,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.814873218536377,
+        "model_norm": 0.44542697072029114,
+        "cosine": 0.9415465593338013
+      },
+      {
+        "family": "forward",
+        "step": 5,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 11.487863540649414,
+        "model_norm": 1.9888437986373901,
+        "cosine": 0.30538609623908997
+      },
+      {
+        "family": "left",
+        "step": 5,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 55.242496490478516,
+        "model_norm": 2.1519246101379395,
+        "cosine": 0.7797598242759705
+      },
+      {
+        "family": "right",
+        "step": 5,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 6.97361946105957,
+        "model_norm": 1.4311264753341675,
+        "cosine": 0.840211033821106
+      },
+      {
+        "family": "forward",
+        "step": 12,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.493096262216568,
+        "model_norm": 0.5041018128395081,
+        "cosine": 0.9883144497871399
+      },
+      {
+        "family": "left",
+        "step": 12,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.6766685247421265,
+        "model_norm": 0.47445613145828247,
+        "cosine": 0.9643482565879822
+      },
+      {
+        "family": "right",
+        "step": 12,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.4604758024215698,
+        "model_norm": 0.4245624244213104,
+        "cosine": 0.9801976680755615
+      },
+      {
+        "family": "forward",
+        "step": 12,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 26.03150177001953,
+        "model_norm": 2.6925601959228516,
+        "cosine": 0.3199589252471924
+      },
+      {
+        "family": "left",
+        "step": 12,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 14.549552917480469,
+        "model_norm": 1.7532613277435303,
+        "cosine": 0.6783145666122437
+      },
+      {
+        "family": "right",
+        "step": 12,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 12.702289581298828,
+        "model_norm": 2.3849539756774902,
+        "cosine": -0.2573586702346802
+      },
+      {
+        "family": "forward",
+        "step": 12,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.4925767183303833,
+        "model_norm": 0.5045416355133057,
+        "cosine": 0.9875586032867432
+      },
+      {
+        "family": "left",
+        "step": 12,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.5866957902908325,
+        "model_norm": 0.47462016344070435,
+        "cosine": 0.9826849102973938
+      },
+      {
+        "family": "right",
+        "step": 12,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.45672085881233215,
+        "model_norm": 0.4246571362018585,
+        "cosine": 0.9902170300483704
+      },
+      {
+        "family": "forward",
+        "step": 12,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 19.720531463623047,
+        "model_norm": 2.6701509952545166,
+        "cosine": 0.15005193650722504
+      },
+      {
+        "family": "left",
+        "step": 12,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 10.09380054473877,
+        "model_norm": 1.768537163734436,
+        "cosine": 0.8148517608642578
+      },
+      {
+        "family": "right",
+        "step": 12,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 12.050058364868164,
+        "model_norm": 2.339700698852539,
+        "cosine": -0.49675872921943665
+      },
+      {
+        "family": "forward",
+        "step": 25,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.519358217716217,
+        "model_norm": 0.5424527525901794,
+        "cosine": 0.9820768237113953
+      },
+      {
+        "family": "left",
+        "step": 25,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.6521104574203491,
+        "model_norm": 0.5352861285209656,
+        "cosine": 0.955764651298523
+      },
+      {
+        "family": "right",
+        "step": 25,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.4507984519004822,
+        "model_norm": 0.4165869951248169,
+        "cosine": 0.9806177020072937
+      },
+      {
+        "family": "forward",
+        "step": 25,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 8.628564834594727,
+        "model_norm": 2.289928913116455,
+        "cosine": -0.2881336808204651
+      },
+      {
+        "family": "left",
+        "step": 25,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 8.403206825256348,
+        "model_norm": 2.1060967445373535,
+        "cosine": 0.45284104347229004
+      },
+      {
+        "family": "right",
+        "step": 25,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 51.554203033447266,
+        "model_norm": 1.3871155977249146,
+        "cosine": 0.48798197507858276
+      },
+      {
+        "family": "forward",
+        "step": 25,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.5411828756332397,
+        "model_norm": 0.5436365604400635,
+        "cosine": 0.9691807627677917
+      },
+      {
+        "family": "left",
+        "step": 25,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.6418283581733704,
+        "model_norm": 0.5340149402618408,
+        "cosine": 0.9850081205368042
+      },
+      {
+        "family": "right",
+        "step": 25,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.45655879378318787,
+        "model_norm": 0.41684290766716003,
+        "cosine": 0.9770058989524841
+      },
+      {
+        "family": "forward",
+        "step": 25,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 15.455621719360352,
+        "model_norm": 2.2870826721191406,
+        "cosine": -0.12632188200950623
+      },
+      {
+        "family": "left",
+        "step": 25,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 10.27196216583252,
+        "model_norm": 2.1686787605285645,
+        "cosine": 0.7661079168319702
+      },
+      {
+        "family": "right",
+        "step": 25,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 39.2511100769043,
+        "model_norm": 1.3836705684661865,
+        "cosine": 0.5494049787521362
+      },
+      {
+        "family": "forward",
+        "step": 40,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.5682811737060547,
+        "model_norm": 0.5469515323638916,
+        "cosine": 0.9898900389671326
+      },
+      {
+        "family": "left",
+        "step": 40,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.6991422176361084,
+        "model_norm": 0.5677964091300964,
+        "cosine": 0.9905049800872803
+      },
+      {
+        "family": "right",
+        "step": 40,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.3868303894996643,
+        "model_norm": 0.39206773042678833,
+        "cosine": 0.9865443110466003
+      },
+      {
+        "family": "forward",
+        "step": 40,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 13.008156776428223,
+        "model_norm": 2.235112428665161,
+        "cosine": 0.05936680734157562
+      },
+      {
+        "family": "left",
+        "step": 40,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 15.249002456665039,
+        "model_norm": 1.726805329322815,
+        "cosine": 0.6110621690750122
+      },
+      {
+        "family": "right",
+        "step": 40,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 6.248688220977783,
+        "model_norm": 1.2300877571105957,
+        "cosine": 0.14477704465389252
+      },
+      {
+        "family": "forward",
+        "step": 40,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.5702235698699951,
+        "model_norm": 0.5480339527130127,
+        "cosine": 0.985917329788208
+      },
+      {
+        "family": "left",
+        "step": 40,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.7664229869842529,
+        "model_norm": 0.565348744392395,
+        "cosine": 0.9701613187789917
+      },
+      {
+        "family": "right",
+        "step": 40,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.4092053472995758,
+        "model_norm": 0.39199861884117126,
+        "cosine": 0.9823541641235352
+      },
+      {
+        "family": "forward",
+        "step": 40,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 9.2644681930542,
+        "model_norm": 2.228386640548706,
+        "cosine": -0.042729467153549194
+      },
+      {
+        "family": "left",
+        "step": 40,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 9.736038208007812,
+        "model_norm": 1.7577862739562988,
+        "cosine": 0.6915915012359619
+      },
+      {
+        "family": "right",
+        "step": 40,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 8.11361312866211,
+        "model_norm": 1.2228606939315796,
+        "cosine": 0.0995333269238472
+      }
+    ]
+  },
+  "last": {
+    "holdout": [
+      {
+        "family": "forward",
+        "n": 103,
+        "horizon": 1,
+        "rmse": [
+          0.05680114030838013,
+          0.020638225600123405,
+          0.2334781140089035
+        ]
+      },
+      {
+        "family": "left",
+        "n": 69,
+        "horizon": 1,
+        "rmse": [
+          0.08968482911586761,
+          0.0561746321618557,
+          0.431046724319458
+        ]
+      },
+      {
+        "family": "right",
+        "n": 70,
+        "horizon": 1,
+        "rmse": [
+          0.06768757104873657,
+          0.05777507647871971,
+          0.788061261177063
+        ]
+      },
+      {
+        "family": "forward",
+        "n": 103,
+        "horizon": 8,
+        "rmse": [
+          0.09324882924556732,
+          0.18421466648578644,
+          0.6386628746986389
+        ]
+      },
+      {
+        "family": "left",
+        "n": 69,
+        "horizon": 8,
+        "rmse": [
+          0.35549190640449524,
+          0.2326480597257614,
+          1.3174711465835571
+        ]
+      },
+      {
+        "family": "right",
+        "n": 70,
+        "horizon": 8,
+        "rmse": [
+          0.2441679686307907,
+          0.23325079679489136,
+          1.1056618690490723
+        ]
+      }
+    ],
+    "finite_differences": [
+      {
+        "family": "forward",
+        "step": 0,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.4035142958164215,
+        "model_norm": 0.3018864691257477,
+        "cosine": 0.956562340259552
+      },
+      {
+        "family": "left",
+        "step": 0,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.4349733293056488,
+        "model_norm": 0.3840935230255127,
+        "cosine": 0.9795874953269958
+      },
+      {
+        "family": "right",
+        "step": 0,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.36116936802864075,
+        "model_norm": 0.40583640336990356,
+        "cosine": 0.938130795955658
+      },
+      {
+        "family": "forward",
+        "step": 0,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 7.156357288360596,
+        "model_norm": 1.4070056676864624,
+        "cosine": 0.15199866890907288
+      },
+      {
+        "family": "left",
+        "step": 0,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 12.533682823181152,
+        "model_norm": 1.440093994140625,
+        "cosine": 0.4508923590183258
+      },
+      {
+        "family": "right",
+        "step": 0,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 3.9193930625915527,
+        "model_norm": 1.2056095600128174,
+        "cosine": -0.3280763328075409
+      },
+      {
+        "family": "forward",
+        "step": 0,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.37169918417930603,
+        "model_norm": 0.30187109112739563,
+        "cosine": 0.9615964889526367
+      },
+      {
+        "family": "left",
+        "step": 0,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.4371149241924286,
+        "model_norm": 0.3832974135875702,
+        "cosine": 0.9802578091621399
+      },
+      {
+        "family": "right",
+        "step": 0,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.3821512758731842,
+        "model_norm": 0.4053645133972168,
+        "cosine": 0.9437612891197205
+      },
+      {
+        "family": "forward",
+        "step": 0,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 3.498692750930786,
+        "model_norm": 1.3999662399291992,
+        "cosine": 0.5504440665245056
+      },
+      {
+        "family": "left",
+        "step": 0,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 6.372049808502197,
+        "model_norm": 1.409934401512146,
+        "cosine": 0.3645124137401581
+      },
+      {
+        "family": "right",
+        "step": 0,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 2.1347827911376953,
+        "model_norm": 1.2012825012207031,
+        "cosine": -0.016729675233364105
+      },
+      {
+        "family": "forward",
+        "step": 5,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.32009562849998474,
+        "model_norm": 0.3221414387226105,
+        "cosine": 0.9429370760917664
+      },
+      {
+        "family": "left",
+        "step": 5,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.4791616201400757,
+        "model_norm": 0.2760479748249054,
+        "cosine": 0.851809561252594
+      },
+      {
+        "family": "right",
+        "step": 5,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.5427958369255066,
+        "model_norm": 0.41559892892837524,
+        "cosine": 0.9904398322105408
+      },
+      {
+        "family": "forward",
+        "step": 5,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 17.880403518676758,
+        "model_norm": 1.7105642557144165,
+        "cosine": -0.414678156375885
+      },
+      {
+        "family": "left",
+        "step": 5,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 32.934974670410156,
+        "model_norm": 1.0793908834457397,
+        "cosine": 0.12288804352283478
+      },
+      {
+        "family": "forward",
+        "step": 5,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.32121753692626953,
+        "model_norm": 0.3207402229309082,
+        "cosine": 0.9506556391716003
+      },
+      {
+        "family": "left",
+        "step": 5,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.40990158915519714,
+        "model_norm": 0.27540647983551025,
+        "cosine": 0.9440116882324219
+      },
+      {
+        "family": "right",
+        "step": 5,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.5599320530891418,
+        "model_norm": 0.4142649471759796,
+        "cosine": 0.9928850531578064
+      },
+      {
+        "family": "forward",
+        "step": 5,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 19.094308853149414,
+        "model_norm": 1.7007900476455688,
+        "cosine": -0.2810560166835785
+      },
+      {
+        "family": "left",
+        "step": 5,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 13.012923240661621,
+        "model_norm": 1.0707001686096191,
+        "cosine": -0.6761447191238403
+      },
+      {
+        "family": "forward",
+        "step": 12,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.34356439113616943,
+        "model_norm": 0.3490138053894043,
+        "cosine": 0.9696128964424133
+      },
+      {
+        "family": "left",
+        "step": 12,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.30347269773483276,
+        "model_norm": 0.3114204704761505,
+        "cosine": 0.9678879976272583
+      },
+      {
+        "family": "right",
+        "step": 12,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.34837034344673157,
+        "model_norm": 0.33033663034439087,
+        "cosine": 0.7793967723846436
+      },
+      {
+        "family": "forward",
+        "step": 12,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 8.512447357177734,
+        "model_norm": 1.7120081186294556,
+        "cosine": 0.15484032034873962
+      },
+      {
+        "family": "left",
+        "step": 12,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 23.81465721130371,
+        "model_norm": 0.8087161183357239,
+        "cosine": 0.22861777245998383
+      },
+      {
+        "family": "forward",
+        "step": 12,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.3562672734260559,
+        "model_norm": 0.3483753800392151,
+        "cosine": 0.9715466499328613
+      },
+      {
+        "family": "left",
+        "step": 12,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.34443092346191406,
+        "model_norm": 0.3112684190273285,
+        "cosine": 0.9796268939971924
+      },
+      {
+        "family": "right",
+        "step": 12,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.4112232029438019,
+        "model_norm": 0.32944831252098083,
+        "cosine": 0.913274884223938
+      },
+      {
+        "family": "forward",
+        "step": 12,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 4.426004409790039,
+        "model_norm": 1.7072402238845825,
+        "cosine": 0.0036360789090394974
+      },
+      {
+        "family": "left",
+        "step": 12,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 9.327975273132324,
+        "model_norm": 0.8032706379890442,
+        "cosine": 0.1022396981716156
+      },
+      {
+        "family": "forward",
+        "step": 25,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.466213583946228,
+        "model_norm": 0.39365795254707336,
+        "cosine": 0.9759631156921387
+      },
+      {
+        "family": "left",
+        "step": 25,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.31336748600006104,
+        "model_norm": 0.2801283895969391,
+        "cosine": 0.9864221811294556
+      },
+      {
+        "family": "right",
+        "step": 25,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.37562069296836853,
+        "model_norm": 0.3456813395023346,
+        "cosine": 0.9863556027412415
+      },
+      {
+        "family": "forward",
+        "step": 25,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 16.100730895996094,
+        "model_norm": 2.0099403858184814,
+        "cosine": -0.5533962845802307
+      },
+      {
+        "family": "left",
+        "step": 25,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 18.038379669189453,
+        "model_norm": 1.6986255645751953,
+        "cosine": 0.30119213461875916
+      },
+      {
+        "family": "right",
+        "step": 25,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 45.04777908325195,
+        "model_norm": 1.6495027542114258,
+        "cosine": -0.13291756808757782
+      },
+      {
+        "family": "forward",
+        "step": 25,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.46461543440818787,
+        "model_norm": 0.3934619426727295,
+        "cosine": 0.975455641746521
+      },
+      {
+        "family": "left",
+        "step": 25,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.31684499979019165,
+        "model_norm": 0.27926570177078247,
+        "cosine": 0.988072395324707
+      },
+      {
+        "family": "right",
+        "step": 25,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.3596653938293457,
+        "model_norm": 0.3449806272983551,
+        "cosine": 0.9897354245185852
+      },
+      {
+        "family": "forward",
+        "step": 25,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 12.847949981689453,
+        "model_norm": 2.011915922164917,
+        "cosine": -0.19929954409599304
+      },
+      {
+        "family": "left",
+        "step": 25,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 12.309417724609375,
+        "model_norm": 1.677511215209961,
+        "cosine": 0.2326594740152359
+      },
+      {
+        "family": "right",
+        "step": 25,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 12.364083290100098,
+        "model_norm": 1.6343460083007812,
+        "cosine": -0.2070777863264084
+      },
+      {
+        "family": "forward",
+        "step": 40,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.45937153697013855,
+        "model_norm": 0.37873774766921997,
+        "cosine": 0.981480062007904
+      },
+      {
+        "family": "left",
+        "step": 40,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.3260567784309387,
+        "model_norm": 0.2762034833431244,
+        "cosine": 0.984171986579895
+      },
+      {
+        "family": "right",
+        "step": 40,
+        "epsilon": 0.01,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.41187041997909546,
+        "model_norm": 0.34819263219833374,
+        "cosine": 0.9878016114234924
+      },
+      {
+        "family": "forward",
+        "step": 40,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 17.730846405029297,
+        "model_norm": 2.1609225273132324,
+        "cosine": 0.41882017254829407
+      },
+      {
+        "family": "left",
+        "step": 40,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 26.296905517578125,
+        "model_norm": 1.6857386827468872,
+        "cosine": -0.0475868284702301
+      },
+      {
+        "family": "right",
+        "step": 40,
+        "epsilon": 0.01,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 14.241998672485352,
+        "model_norm": 1.7719565629959106,
+        "cosine": 0.05572056770324707
+      },
+      {
+        "family": "forward",
+        "step": 40,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.4494781494140625,
+        "model_norm": 0.37800127267837524,
+        "cosine": 0.9826287031173706
+      },
+      {
+        "family": "left",
+        "step": 40,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.3295285105705261,
+        "model_norm": 0.27535438537597656,
+        "cosine": 0.981464684009552
+      },
+      {
+        "family": "right",
+        "step": 40,
+        "epsilon": 0.03,
+        "horizon": 1,
+        "n": 16,
+        "physical_norm": 0.4195958077907562,
+        "model_norm": 0.3477190434932709,
+        "cosine": 0.9883732795715332
+      },
+      {
+        "family": "forward",
+        "step": 40,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 16.16412925720215,
+        "model_norm": 2.149582624435425,
+        "cosine": 0.4831591546535492
+      },
+      {
+        "family": "left",
+        "step": 40,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 17.120399475097656,
+        "model_norm": 1.6659736633300781,
+        "cosine": 0.061504073441028595
+      },
+      {
+        "family": "right",
+        "step": 40,
+        "epsilon": 0.03,
+        "horizon": 8,
+        "n": 16,
+        "physical_norm": 10.69477367401123,
+        "model_norm": 1.7567615509033203,
+        "cosine": -0.21627476811408997
+      }
+    ]
+  }
+}
